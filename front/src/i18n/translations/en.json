@@ -1,0 +1,72 @@
+{
+	"global": {
+		"success": "Success",
+		"information": "Information",
+		"confirmation": "Confirmation",
+		"error": "Error",
+		"error-occurred": "An error has occurred. Please, try again later.",
+		"yes": "Yes",
+		"no": "No"
+	},
+	"app": {
+		"loading-text": ""
+	},
+	"login": {
+		"h-title": "GuardedBox",
+		"h-login": "Login",
+		"txt-email": "Email",
+		"txt-password": "Password",
+		"btn-get-code": "Get Code",
+		"popover-get-code": "If the credentials are correct, you will receive an email with your login code. For security reasons, no notification is made if the credentials are not correct.",
+		"btn-lost-password": "Lost Password",
+		"txt-code": "Code",
+		"btn-login": "Login",
+		"popover-login-failed": "The credentials are not correct. Please, try again.",
+		"btn-cancel-login": "Cancel",
+		"h-register": "Register",
+		"txt-register-email": "Email",
+		"btn-register": "Register",
+		"register-success-modal-title": "Email Sent",
+		"register-success-modal-body": "You will receive an email with the instructions to complete the registration process.",
+		"register-mail-just-sent": "A registration email was sent to that email address a few minutes ago. Please, follow the instructions in the email to complete the registration process.",
+		"register-temporarily-locked": "For security reasons, you can only make a registration request every 5 minutes. Please, wait before trying again."
+	},
+	"registration": {
+		"h-title": "GuardedBox",
+		"h-registration": "Registration",
+		"txt-email": "Email",
+		"info-password": "Please, choose a strong password. It must have at least {passwordMinlength} characters. Try to use a sentence you can remember. Your password will be used to encrypt your secrets.",
+		"txt-password": "Password",
+		"password-length": "Length ",
+		"password-strength": "Strength ",
+		"info-security-questions": "Please, choose {numberOfSecurityQuestions} questions and answers only you know. If you forget your password, the answers to these questions will be the only way to recover your secrets. The answers must have at least {securityAnswerMinLength} characters.",
+		"txt-security-question": "Question {i}",
+		"txt-security-answer": "Answer {i}",
+		"btn-register": "Register",
+		"registration-completed": "Your account has been successfully registered.",
+		"registration-token-not-found": "Sorry, the registration code is not valid. Please, start over the registration process again.",
+		"registration-token-expired": "Sorry, the registration code has expired. Please, start over the registration process again.",
+		"password-insufficient-length": "Your password must have at least {passwordMinLength} characters.",
+		"password-insufficient-strength": "Please, choose a stronger password.",
+		"password-repeated-in-security-question": "Please, do not repeat the password in a question.",
+		"password-repeated-in-security-answer": "Please, do not repeat the password in an answer.",
+		"security-question-not-trimmed": "Be careful! Do not include spaces at the beginning or end of a question.",
+		"security-question-repeated-in-password": "Please, do not repeat a question in the password.",
+		"security-question-repeated": "Please, do not repeat a question.",
+		"security-question-repeated-in-answer": "Please, do not repeat a question in an answer.",
+		"security-answer-not-trimmed": "Be careful! Do not include spaces at the beginning or end of an answer.",
+		"security-answer-insufficient-length": "Your answers must have at least {securityAnswerMinLength} characters.",
+		"security-answer-insufficient-strength": "Please, choose a stronger answer.",
+		"security-answer-repeated-in-password": "Please, do not repeat an answer in the password.",
+		"security-answer-repeated": "Please, do not repeat an answer.",
+		"security-answer-repeated-in-question": "Please, do not repeat an answer in a question."
+	},
+	"navigation-bar": {
+		"brand": "GuardedBox",
+		"my-secrets": "My Secrets",
+		"logout": "Logout"
+	},
+	"my-secrets": {
+		"title": "My Secrets"
+	}
+}

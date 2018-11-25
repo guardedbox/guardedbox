@@ -1,0 +1,159 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Project -->
+	<groupId>com.guardedbox</groupId>
+	<artifactId>guardedbox</artifactId>
+	<version>1.0.0</version>
+	<name>${project.artifactId}</name>
+
+	<!-- Properties -->
+	<properties>
+
+		<!-- Java Version -->
+		<java.version>1.8</java.version>
+
+		<!-- Source Encoding -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Built By -->
+		<builtBy>s3curitybug@gmail.com</builtBy>
+
+		<!-- Plugin Versions -->
+		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+
+		<!-- Dependency Versions -->
+		<javax-validation.version>2.0.1.Final</javax-validation.version>
+		<hibernate-validator.version>6.0.13.Final</hibernate-validator.version>
+
+	</properties>
+
+	<!-- Profiles -->
+	<profiles>
+
+		<!-- Profile: dev-local -->
+		<profile>
+			<id>dev-local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<filters>
+					<filter>profiles/dev-local.properties</filter>
+				</filters>
+			</build>
+		</profile>
+
+	</profiles>
+
+	<!-- Parent -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.17.RELEASE</version>
+	</parent>
+
+	<!-- Build -->
+	<build>
+
+		<!-- Plugins -->
+		<plugins>
+
+			<!-- Spring Boot Maven Plugin -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- Maven War Plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Built-By>${builtBy}</Built-By>
+							<Implementation-Vendor>${builtBy}</Implementation-Vendor>
+							<Implementation-URL></Implementation-URL>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<!-- Exec Maven Plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<configuration>
+					<workingDirectory>front</workingDirectory>
+					<executable>npm</executable>
+					<arguments>
+						<argument>run</argument>
+						<argument>pro</argument>
+					</arguments>
+				</configuration>
+				<executions>
+					<execution>
+						<id>npm</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<!-- Dependencies -->
+	<dependencies>
+
+		<!-- Spring Boot Starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- MySQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<!-- Spring Boot Data JPA -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- Spring Transaction -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+
+		<!-- Spring Object Relational Mapping -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+
+		<!-- Spring Boot Mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+	</dependencies>
+
+</project>

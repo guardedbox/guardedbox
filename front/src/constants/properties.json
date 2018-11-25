@@ -1,0 +1,32 @@
+{
+	"login": {
+		"loginCodeLength": 10,
+		"loginCodePattern": "[a-zA-Z0-9]{10}"
+	},
+	"registration": {
+		"registrationTokenPattern": "^[a-zA-Z0-9]{64}$",
+		"passwordMinLength": 20,
+		"passwordMinStrength": 100,
+		"numberOfSecurityQuestions": 3,
+		"securityQuestionMaxLength": 256,
+		"securityAnswerMinLength": 9,
+		"securityAnswerMinStrength": 75
+	},
+	"captcha": {
+		"siteKey": "6LelO20UAAAAAO4XqsCkH2CbAI1bz-sjlKEbXJ56",
+		"header": "Captcha-Response"
+	},
+	"encryption": {
+		"rsaKeyBits": 2048
+	},
+	"passwordStrength": {
+		"maxLength": 40,
+		"strongPasswordCharset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+	},
+	"constraints": {
+		"emailMaxLength": 254,
+		"emailPattern": ".+@.+\\..{2,}",
+		"secretNameMaxLength": 64,
+		"secretValueMaxLength": 4096
+	}
+}

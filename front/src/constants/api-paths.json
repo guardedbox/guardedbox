@@ -1,0 +1,13 @@
+{
+	"session": {
+		"info": "/api/session/info",
+		"obtainLoginCode": "/api/session/obtain-login-code",
+		"login": "/api/session/login",
+		"logout": "/api/session/logout"
+	},
+	"registration": {
+		"obtainRegistrationToken": "/api/registration/obtain-registration-token",
+		"getRegistrationTokenInfo": "/api/registration/get-registration-token-info",
+		"registerAccount": "/api/registration/register-account"
+	}
+}

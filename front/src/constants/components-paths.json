@@ -1,0 +1,7 @@
+{
+	"login": "/login",
+	"registration": "/registration",
+	"mySecrets": "/my-secrets",
+	"defaultComponent": "/my-secrets",
+	"navbarComponents": "/(my-secrets)"
+}

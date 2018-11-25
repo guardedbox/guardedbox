@@ -1,0 +1,26 @@
+/**
+ * Overrides
+ */
+.react-overlay-loader-spinner:before {
+	border-color: #8eadc3;
+	border-top-color: #125c8e;
+}
+
+.progress {
+	height: 0.95rem;
+}
+
+/*
+ * Custom Defaults.
+ */
+
+/*
+ * Custom Classes.
+ */
+.spaced {
+	margin: .2rem;
+}
+
+.group-spaced>* {
+	margin: .2rem;
+}

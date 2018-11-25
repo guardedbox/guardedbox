@@ -1,0 +1,7 @@
+/.project
+/.settings
+/.classpath
+/.checkstyle
+/secrets/
+/target/
+/front/node_modules/

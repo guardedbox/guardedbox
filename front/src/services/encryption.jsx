@@ -1,10 +1,13 @@
-import cryptico, { RSAKey } from 'cryptico-js';
+import cryptico, { RSAKey } from 'services/cryptico.js';
 import { Base64 } from 'js-base64';
 import { modalMessage } from 'services/modal.jsx';
 import properties from 'constants/properties.json';
 
 var privateKey = null
 var publicKey = '';
+
+window.generateKeyPair = generateKeyPair;
+window.getPublicKey = getPublicKey;
 
 /**
  * Generates and internally stores a key pair derived from a password.

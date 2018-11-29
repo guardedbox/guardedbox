@@ -6,12 +6,16 @@ services:
     image: s3curitybug/guardedbox
     command: --spring.config.location=file:/run/secrets/config.properties,file:/run/secrets/secrets.properties
     ports:
-      - "8080:8080"
       - "8443:8443"
     secrets:
       - config.properties
       - secrets.properties
       - myserver.p12
+  guardedbox-nginx:
+    container_name: guardedbox-nginx
+    image: s3curitybug/guardedbox-nginx
+    ports:
+      - "8080:8080"
 
 secrets:
   config.properties:

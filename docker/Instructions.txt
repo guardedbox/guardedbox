@@ -1,5 +1,7 @@
 cd /project/root/path
 mvn clean install
-docker image build -t s3curitybug/guardedbox -f docker/Dockerfile .
+docker image build -t s3curitybug/guardedbox -f docker/guardedbox/Dockerfile .
 docker image push s3curitybug/guardedbox
+docker image build -t s3curitybug/guardedbox-nginx -f docker/guardedbox-nginx/Dockerfile .
+docker image push s3curitybug/guardedbox-nginx
 docker-compose -f docker/docker-compose.yml up

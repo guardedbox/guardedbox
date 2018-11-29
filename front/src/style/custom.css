@@ -24,3 +24,9 @@
 .group-spaced>* {
 	margin: .2rem;
 }
+
+.icon-inline {
+	margin: 6px 4px;
+	width: 20px;
+	text-align: center;
+}

@@ -2,14 +2,14 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "4"
+    deployment.kubernetes.io/revision: "5"
   creationTimestamp: 2018-11-28T15:30:12Z
-  generation: 5
+  generation: 8
   labels:
     app: guardedbox
   name: guardedbox
   namespace: default
-  resourceVersion: "104819"
+  resourceVersion: "173318"
   selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/guardedbox
   uid: 7f1719a3-f322-11e8-868f-42010a84013b
 spec:
@@ -40,6 +40,7 @@ spec:
         volumeMounts:
         - mountPath: /etc/config
           name: config-volume
+          readOnly: true
         - mountPath: /etc/secrets
           name: secrets-volume
           readOnly: true
@@ -85,13 +86,13 @@ spec:
 status:
   availableReplicas: 1
   conditions:
-  - lastTransitionTime: 2018-11-28T15:32:13Z
-    lastUpdateTime: 2018-11-28T15:32:13Z
+  - lastTransitionTime: 2018-11-28T23:25:22Z
+    lastUpdateTime: 2018-11-28T23:25:22Z
     message: Deployment has minimum availability.
     reason: MinimumReplicasAvailable
     status: "True"
     type: Available
-  observedGeneration: 5
+  observedGeneration: 8
   readyReplicas: 1
   replicas: 1
   updatedReplicas: 1

@@ -5,7 +5,7 @@ import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, InputGroup, Ale
 import Octicon, { Eye, Key } from '@githubprimer/octicons-react';
 import favicon from 'images/favicon.png';
 import { get, post } from 'services/rest.jsx';
-import { generateKeyPair, deleteKeyPair, getPublicKey, exportPrivateKey } from 'services/encryption.jsx';
+import { generateKeyPair, keySeed, deleteKeyPair, getPublicKey, exportPrivateKey } from 'services/encryption.jsx';
 import { modalMessage } from 'services/modal.jsx';
 import { passwordStrength, isRepeated } from 'services/strength.jsx';
 import { sha512 } from 'services/hash.jsx';
@@ -44,6 +44,7 @@ class Registration extends Component {
         this.state = {
             token: '',
             email: '',
+            entropyExpander: '',
             password: '',
             passwordLength: 0,
             passwordStrength: 0,
@@ -86,7 +87,8 @@ class Registration extends Component {
 
                     this.setState({
                         token: token,
-                        email: response.email
+                        email: response.email,
+                        entropyExpander: response.entropyExpander
                     }, () => {
                         this.txtPassword.current.focus();
                     });
@@ -386,23 +388,21 @@ class Registration extends Component {
 
                         window.session = response;
 
-                        var passwordStr = this.state.email + ':' + this.state.password;
-                        var securityAnswers = this.state.securityAnswers.slice();
-                        for (var i = 0; i < securityAnswers.length; i++)
-                            securityAnswers[i] = securityAnswers[i].toLowerCase();
-                        var securityAnswersStr = this.state.email + ':' + JSON.stringify(securityAnswers);
+                        generateKeyPair(keySeed(this.state.email, this.state.password, this.state.entropyExpander));
+                        var publicKeyFromPassword = getPublicKey();
 
-                        generateKeyPair(passwordStr);
+                        var securityAnswers = this.state.securityAnswers.slice();
+                        for (var i = 0; i < securityAnswers.length; i++) securityAnswers[i] = securityAnswers[i].toLowerCase();
+                        var exportedPrivateKey = exportPrivateKey(keySeed(this.state.email, JSON.stringify(securityAnswers), this.state.entropyExpander));
 
                         post({
                             url: apiPaths.registration.registerAccount,
                             body: {
                                 registrationToken: this.state.token,
-                                password: sha512(passwordStr),
+                                publicKey: publicKeyFromPassword,
                                 securityQuestions: this.state.securityQuestions,
-                                securityAnswers: sha512(securityAnswersStr),
-                                publicKey: getPublicKey(),
-                                encryptedPrivateKey: exportPrivateKey(securityAnswersStr)
+                                encryptedPrivateKey: exportedPrivateKey.encryptedPrivateKey,
+                                publicKeyFromSecurityAnswers: exportedPrivateKey.publicKey
                             },
                             loadingChained: true,
                             captchaValue: captchaValue,

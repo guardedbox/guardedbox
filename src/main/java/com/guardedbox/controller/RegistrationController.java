@@ -4,6 +4,7 @@ import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
 import static com.guardedbox.constants.Constraints.CAPTCHA_RESPONSE_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.CAPTCHA_RESPONSE_PATTERN;
 import static com.guardedbox.constants.SecurityParameters.CAPTCHA_RESPONSE_HEADER;
+import static com.guardedbox.constants.SecurityParameters.ENTROPY_EXPANDER_LENGTH;
 import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
 import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_MIN_TTL;
 import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_TTL;
@@ -192,6 +193,7 @@ public class RegistrationController {
             if (prevRegistrationTokenDto == null) {
                 registrationTokenDto = new RegistrationTokenDto();
                 registrationTokenDto.setEmail(obtainRegistrationTokenDto.getEmail());
+                registrationTokenDto.setEntropyExpander(randomService.randomHexString(ENTROPY_EXPANDER_LENGTH));
             } else {
                 registrationTokenDto = prevRegistrationTokenDto;
             }

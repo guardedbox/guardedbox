@@ -13,9 +13,11 @@ import java.security.SecureRandom;
 @Service
 public class RandomService {
 
+    /** Hexadecimal charset. */
+    private static final char[] HEX_CHARSET = "0123456789abcdef".toCharArray();
+
     /** Alphanumeric charset. */
-    private static final char[] ALPHANUMERIC_CHARSET =
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
+    private static final char[] ALPHANUMERIC_CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
 
     /** Random generator. */
     private final SecureRandom secureRandom;
@@ -146,6 +148,25 @@ public class RandomService {
             double max) {
 
         return randomDouble() * (max - min) + min;
+
+    }
+
+    /**
+     * Generates a random hexadecimal String of the introduced length.
+     * 
+     * @param length The length of the String.
+     * @return The generated String.
+     */
+    public String randomHexString(
+            int length) {
+
+        StringBuilder str = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            str.append(HEX_CHARSET[secureRandom.nextInt(HEX_CHARSET.length)]);
+        }
+
+        return str.toString();
 
     }
 

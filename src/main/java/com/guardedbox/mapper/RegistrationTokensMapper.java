@@ -32,6 +32,7 @@ public class RegistrationTokensMapper {
         registrationTokenDto.setEmail(registrationTokenEntity.getEmail());
         registrationTokenDto.setToken(registrationTokenEntity.getToken());
         registrationTokenDto.setExpeditionTime(registrationTokenEntity.getExpeditionTime());
+        registrationTokenDto.setEntropyExpander(registrationTokenEntity.getEntropyExpander());
 
         return registrationTokenDto;
 
@@ -55,6 +56,7 @@ public class RegistrationTokensMapper {
         registrationTokenEntity.setEmail(registrationTokenDto.getEmail());
         registrationTokenEntity.setToken(registrationTokenDto.getToken());
         registrationTokenEntity.setExpeditionTime(registrationTokenDto.getExpeditionTime());
+        registrationTokenEntity.setEntropyExpander(registrationTokenDto.getEntropyExpander());
 
         return registrationTokenEntity;
 

@@ -4,6 +4,8 @@ import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
+import static com.guardedbox.constants.Constraints.HEX_PATTERN;
+import static com.guardedbox.constants.SecurityParameters.ENTROPY_EXPANDER_LENGTH;
 import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
 
 import java.io.Serializable;
@@ -61,6 +63,13 @@ public class RegistrationTokenEntity
     @Column(name = "expedition_time")
     @NotNull
     private Timestamp expeditionTime;
+
+    /** Entropy Expander. */
+    @Column(name = "entropy_expander")
+    @NotNull
+    @Pattern(regexp = HEX_PATTERN)
+    @Size(min = ENTROPY_EXPANDER_LENGTH, max = ENTROPY_EXPANDER_LENGTH)
+    private String entropyExpander;
 
     /**
      * @return The registrationTokenId.
@@ -120,6 +129,21 @@ public class RegistrationTokenEntity
     public void setExpeditionTime(
             Timestamp expeditionTime) {
         this.expeditionTime = expeditionTime;
+    }
+
+    /**
+     * @return The entropyExpander.
+     */
+    public String getEntropyExpander() {
+        return entropyExpander;
+    }
+
+    /**
+     * @param entropyExpander The entropyExpander to set.
+     */
+    public void setEntropyExpander(
+            String entropyExpander) {
+        this.entropyExpander = entropyExpander;
     }
 
 }

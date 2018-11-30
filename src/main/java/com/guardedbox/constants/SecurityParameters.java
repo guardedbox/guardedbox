@@ -17,6 +17,9 @@ public final class SecurityParameters {
     /** Login code time to live (ms). */
     public static final long LOGIN_CODE_TTL = 10 * 60 * 1000L;
 
+    /** Entropy expander length (number of hexadecimal characters). */
+    public static final int ENTROPY_EXPANDER_LENGTH = 256;
+
     /** Registration token length. */
     public static final int REGISTRATION_TOKEN_LENGTH = 64;
 

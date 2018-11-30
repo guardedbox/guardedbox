@@ -8,7 +8,7 @@ import { get, post } from 'services/rest.jsx';
 import { loading, notLoading } from 'services/loading.jsx';
 import { modalMessage } from 'services/modal.jsx';
 import { generateKeyPair } from 'services/encryption.jsx';
-import { sha512 } from 'services/hash.jsx';
+import { sha512, hashPasswordForLogin, hashPasswordForKeyGen } from 'services/hash.jsx';
 import { executeCaptcha } from 'services/captcha.jsx';
 import properties from 'constants/properties.json';
 import apiPaths from 'constants/api-paths.json';
@@ -131,7 +131,7 @@ class Login extends Component {
                             loadingChained: true,
                             body: {
                                 email: this.state.email,
-                                password: sha512(this.state.email + ':' + this.state.password),
+                                password: hashPasswordForLogin(this.state.email, this.state.password),
                                 code: this.state.code
                             },
                             captchaValue: captchaValue,
@@ -141,7 +141,7 @@ class Login extends Component {
 
                                     window.views.app.resetUserData(false, () => {
 
-                                        generateKeyPair(this.state.email + ':' + this.state.password);
+                                        generateKeyPair(hashPasswordForKeyGen(this.state.email, this.state.password, ''));
 
                                         notLoading(() => {
                                             this.props.history.push(componentsPaths.defaultComponent);

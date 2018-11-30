@@ -26,6 +26,9 @@ public class RegistrationTokenDto {
     @JsonIgnore
     private Timestamp expeditionTime;
 
+    /** Entropy Expander. */
+    private String entropyExpander;
+
     /**
      * @return The registrationTokenId.
      */
@@ -84,6 +87,21 @@ public class RegistrationTokenDto {
     public void setExpeditionTime(
             Timestamp expeditionTime) {
         this.expeditionTime = expeditionTime;
+    }
+
+    /**
+     * @return The entropyExpander.
+     */
+    public String getEntropyExpander() {
+        return entropyExpander;
+    }
+
+    /**
+     * @param entropyExpander The entropyExpander to set.
+     */
+    public void setEntropyExpander(
+            String entropyExpander) {
+        this.entropyExpander = entropyExpander;
     }
 
 }

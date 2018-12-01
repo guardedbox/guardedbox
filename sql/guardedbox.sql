@@ -22,14 +22,14 @@ DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
   `account_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(254) CHARACTER SET utf8 DEFAULT NULL,
-  `password` varchar(60) CHARACTER SET utf8 DEFAULT NULL,
-  `security_questions` varchar(4096) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `security_answers` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `entropy_expander` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `public_key` varchar(344) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `security_questions` varchar(4096) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `encrypted_private_key` varchar(4593) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `public_key_from_security_answers` varchar(344) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`account_id`),
   KEY `EMAIL` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,10 +44,46 @@ CREATE TABLE `registration_token` (
   `email` varchar(254) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `token` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `expedition_time` timestamp NULL DEFAULT NULL,
+  `entropy_expander` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`registration_token_id`),
   KEY `EMAIL` (`email`),
   KEY `TOKEN` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `secret`
+--
+
+DROP TABLE IF EXISTS `secret`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `secret` (
+  `secret_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) DEFAULT NULL,
+  `name` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
+  `value` varchar(16377) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`secret_id`),
+  KEY `ACCOUNT_ID` (`account_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `shared_secret`
+--
+
+DROP TABLE IF EXISTS `shared_secret`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `shared_secret` (
+  `shared_secret_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `secret_id` bigint(20) DEFAULT NULL,
+  `account_id` bigint(20) DEFAULT NULL,
+  `value` varchar(16377) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`shared_secret_id`),
+  KEY `SECRET_ID` (`secret_id`),
+  KEY `ACCOUNT_ID` (`account_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

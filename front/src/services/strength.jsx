@@ -35,3 +35,27 @@ export function isRepeated(string1, string2) {
     else return 0;
 
 }
+
+/**
+ * Generates a random password and returns an object with its value, length and strength.
+ * 
+ * @param {number} length The password length.
+ * 
+ */
+export function generateRandomPassword(length) {
+
+    var charset = properties.passwordStrength.strongPasswordCharset;
+
+    var value = "";
+    for (var i = 0; i < length; i++)
+        value += charset.charAt(Math.floor(Math.random() * charset.length));
+
+    var ret = {
+        value: value,
+        length: value.length,
+        strength: passwordStrength(value)
+    };
+
+    return ret;
+
+}

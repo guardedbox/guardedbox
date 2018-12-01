@@ -13,6 +13,23 @@
 /*
  * Custom Defaults.
  */
+table {
+	table-layout: fixed;
+}
+
+td {
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
+
+input[type='number'] {
+	-moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
 
 /*
  * Custom Classes.
@@ -25,8 +42,23 @@
 	margin: .2rem;
 }
 
+.space-between-icons {
+	width: .25rem;
+	display: inline-block;
+}
+
+.button-icon {
+	margin-right: .25rem;
+}
+
 .icon-inline {
 	margin: 6px 4px;
 	width: 20px;
 	text-align: center;
+}
+
+.badge-progress {
+	height: 0.95rem;
+	font-size: 0.625rem;
+	font-weight: 100;
 }

@@ -2,6 +2,7 @@
 	"login": "/login",
 	"registration": "/registration",
 	"mySecrets": "/my-secrets",
+	"secretsSharedWithMe": "/secrets-shared-with-me",
 	"defaultComponent": "/my-secrets",
-	"navbarComponents": "/(my-secrets)"
+	"navbarComponents": "/(my-secrets|secrets-shared-with-me)"
 }

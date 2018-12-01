@@ -11,5 +11,19 @@
 		"obtainRegistrationToken": "/api/registration/obtain-registration-token",
 		"getRegistrationTokenInfo": "/api/registration/get-registration-token-info",
 		"registerAccount": "/api/registration/register-account"
+	},
+	"mySecrets": {
+		"getAll": "/api/my-secrets/get-all",
+		"newSecret": "/api/my-secrets/new-secret",
+		"editSecret": "/api/my-secrets/edit-secret",
+		"deleteSecret": "/api/my-secrets/delete-secret"
+	},
+	"sharedSecrets": {
+		"getAccountPublicKey": "/api/shared-secrets/get-account-public-key",
+		"getSharedSecretAccounts": "/api/shared-secrets/get-shared-secret-accounts",
+		"getAllSecretsSharedWithMe": "/api/shared-secrets/get-all-secrets-shared-with-me",
+		"shareSecret": "/api/shared-secrets/share-secret",
+		"unshareSecret": "/api/shared-secrets/unshare-secret",
+		"rejectSharedSecret": "/api/shared-secrets/reject-shared-secret"
 	}
 }

@@ -64,9 +64,58 @@
 	"navigation-bar": {
 		"brand": "GuardedBox",
 		"my-secrets": "My Secrets",
+		"secrets-shared-with-me": "Secrets Shared With Me",
 		"logout": "Logout"
 	},
 	"my-secrets": {
-		"title": "My Secrets"
+		"title": "My Secrets",
+		"btn-new-secret": "New Secret",
+		"btn-reload": "Reload",
+		"no-secrets": "Nothing in my pockets, nothing up my sleeves. Add a secret!",
+		"secrets-table-name": "Name",
+		"secrets-table-value": "Value",
+		"new-secret-modal-title": "New Secret",
+		"new-secret-modal-txt-name": "Name",
+		"new-secret-modal-txt-value": "Value",
+		"new-secret-modal-value-length": "Length ",
+		"new-secret-modal-value-strength": "Strength ",
+		"new-secret-modal-label-generate-random-value": "Generate Random Value: ",
+		"new-secret-modal-btn-generate-random-value": "Generate",
+		"new-secret-modal-txt-generate-random-value-length": "Length",
+		"new-secret-modal-btn-create": "Create",
+		"new-secret-modal-btn-cancel": "Cancel",
+		"edit-secret-modal-title": "Edit Secret",
+		"edit-secret-modal-txt-name": "Name",
+		"edit-secret-modal-txt-value": "Value",
+		"edit-secret-modal-value-length": "Length ",
+		"edit-secret-modal-value-strength": "Strength ",
+		"edit-secret-modal-label-generate-random-value": "Generate Random Value: ",
+		"edit-secret-modal-btn-generate-random-value": "Generate",
+		"edit-secret-modal-txt-generate-random-value-length": "Length",
+		"edit-secret-modal-btn-edit": "Edit",
+		"edit-secret-modal-btn-cancel": "Cancel",
+		"delete-secret-modal-title": "Confirmation",
+		"delete-secret-modal-body": "The secret will be deleted! Are you sure?",
+		"share-secret-modal-title": "Share Secret",
+		"share-secret-modal-txt-email": "Email",
+		"share-secret-modal-btn-share": "Share",
+		"secret-does-not-exist": "The secret does not exist."
+	},
+	"shared-secrets": {
+		"email-not-registered": "That email is not registed.",
+		"do-not-self-share": "You cannot share one of your secrets with yourself.",
+		"secret-already-shared-with-email": "The secret is already shared with that email.",
+		"secret-not-shared-with-email": "The secret is not shared with that email.",
+		"secret-not-shared-with-you": "That secret is not shared with you."
+	},
+	"secrets-shared-with-me": {
+		"title": "Secrets Shared With Me",
+		"btn-reload": "Reload",
+		"no-secrets": "Nobody shared anything with you. What a pitty!",
+		"h-from": "From ",
+		"secrets-table-name": "Name",
+		"secrets-table-value": "Value",
+		"reject-shared-secret-modal-title": "Confirmation",
+		"reject-shared-secret-modal-body": "Are you sure you want to reject this secret shared with you?"
 	}
 }

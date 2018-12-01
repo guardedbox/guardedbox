@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.guardedbox.dto.AccountWithPasswordDto;
+import com.guardedbox.dto.AccountWithEntropyExpanderDto;
+import com.guardedbox.dto.AccountWithPublicKeyDto;
 import com.guardedbox.dto.NewAccountDto;
 import com.guardedbox.entity.AccountFullEntity;
-import com.guardedbox.entity.AccountWithPasswordEntity;
+import com.guardedbox.entity.AccountWithEntropyExpanderEntity;
+import com.guardedbox.entity.AccountWithPublicKeyEntity;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,17 +44,39 @@ public class AccountsMapper {
      * @param accountEntity The Account Entity.
      * @return The Account DTO.
      */
-    public AccountWithPasswordDto toDtoWithPassword(
-            AccountWithPasswordEntity accountEntity) {
+    public AccountWithEntropyExpanderDto toDtoWithEntropyExpander(
+            AccountWithEntropyExpanderEntity accountEntity) {
 
         if (accountEntity == null)
             return null;
 
-        AccountWithPasswordDto accountDto = new AccountWithPasswordDto();
+        AccountWithEntropyExpanderDto accountDto = new AccountWithEntropyExpanderDto();
 
         accountDto.setAccountId(accountEntity.getAccountId());
         accountDto.setEmail(accountEntity.getEmail());
-        accountDto.setPassword(accountEntity.getPassword());
+        accountDto.setEntropyExpander(accountEntity.getEntropyExpander());
+
+        return accountDto;
+
+    }
+
+    /**
+     * Maps an Account Entity to DTO.
+     * 
+     * @param accountEntity The Account Entity.
+     * @return The Account DTO.
+     */
+    public AccountWithPublicKeyDto toDtoWithPublicKey(
+            AccountWithPublicKeyEntity accountEntity) {
+
+        if (accountEntity == null)
+            return null;
+
+        AccountWithPublicKeyDto accountDto = new AccountWithPublicKeyDto();
+
+        accountDto.setAccountId(accountEntity.getAccountId());
+        accountDto.setEmail(accountEntity.getEmail());
+        accountDto.setPublicKey(accountEntity.getPublicKey());
 
         return accountDto;
 
@@ -73,11 +97,11 @@ public class AccountsMapper {
         AccountFullEntity accountEntity = new AccountFullEntity();
 
         accountEntity.setEmail(accountDto.getEmail());
-        accountEntity.setPassword(accountDto.getPassword());
-        accountEntity.setSecurityQuestions(compactSecurityQuestions(accountDto.getSecurityQuestions()));
-        accountEntity.setSecurityAnswers(accountDto.getSecurityAnswers());
+        accountEntity.setEntropyExpander(accountDto.getEntropyExpander());
         accountEntity.setPublicKey(accountDto.getPublicKey());
+        accountEntity.setSecurityQuestions(compactSecurityQuestions(accountDto.getSecurityQuestions()));
         accountEntity.setEncryptedPrivateKey(accountDto.getEncryptedPrivateKey());
+        accountEntity.setPublicKeyFromSecurityAnswers(accountDto.getPublicKeyFromSecurityAnswers());
 
         return accountEntity;
 

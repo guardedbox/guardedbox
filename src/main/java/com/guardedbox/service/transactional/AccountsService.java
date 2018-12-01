@@ -3,12 +3,15 @@ package com.guardedbox.service.transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guardedbox.dto.AccountWithPasswordDto;
+import com.guardedbox.dto.AccountWithEntropyExpanderDto;
+import com.guardedbox.dto.AccountWithPublicKeyDto;
 import com.guardedbox.dto.NewAccountDto;
 import com.guardedbox.entity.AccountFullEntity;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.repository.AccountFullEntitiesRepository;
-import com.guardedbox.repository.AccountWithPasswordEntitiesRepository;
+import com.guardedbox.repository.AccountWithEntropyExpanderEntitiesRepository;
+import com.guardedbox.repository.AccountWithPublicKeyEntitiesRepository;
+import com.guardedbox.service.RandomService;
 
 import javax.transaction.Transactional;
 
@@ -25,26 +28,38 @@ public class AccountsService {
     /** AccountFullEntitiesRepository. */
     private final AccountFullEntitiesRepository accountFullEntitiesRepository;
 
-    /** AccountWithPasswordEntitiesRepository. */
-    private final AccountWithPasswordEntitiesRepository accountWithPasswordEntitiesRepository;
+    /** AccountWithEntropyExpanderEntitiesRepository. */
+    private final AccountWithEntropyExpanderEntitiesRepository accountWithEntropyExpanderEntitiesRepository;
+
+    /** AccountWithPublicKeyEntitiesRepository. */
+    private final AccountWithPublicKeyEntitiesRepository accountWithPublicKeyEntitiesRepository;
 
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
+
+    /** RandomService. */
+    private final RandomService randomService;
 
     /**
      * Constructor with Attributes.
      * 
      * @param accountFullEntitiesRepository AccountFullEntitiesRepository.
-     * @param accountWithPasswordEntitiesRepository AccountWithPasswordEntitiesRepository.
+     * @param accountWithEntropyExpanderEntitiesRepository AccountWithEntropyExpanderEntitiesRepository.
+     * @param accountWithPublicKeyEntitiesRepository AccountWithPublicKeyEntitiesRepository.
      * @param accountsMapper AccountsMapper.
+     * @param randomService RandomService.
      */
     public AccountsService(
             @Autowired AccountFullEntitiesRepository accountFullEntitiesRepository,
-            @Autowired AccountWithPasswordEntitiesRepository accountWithPasswordEntitiesRepository,
-            @Autowired AccountsMapper accountsMapper) {
+            @Autowired AccountWithEntropyExpanderEntitiesRepository accountWithEntropyExpanderEntitiesRepository,
+            @Autowired AccountWithPublicKeyEntitiesRepository accountWithPublicKeyEntitiesRepository,
+            @Autowired AccountsMapper accountsMapper,
+            @Autowired RandomService randomService) {
         this.accountFullEntitiesRepository = accountFullEntitiesRepository;
-        this.accountWithPasswordEntitiesRepository = accountWithPasswordEntitiesRepository;
+        this.accountWithEntropyExpanderEntitiesRepository = accountWithEntropyExpanderEntitiesRepository;
+        this.accountWithPublicKeyEntitiesRepository = accountWithPublicKeyEntitiesRepository;
         this.accountsMapper = accountsMapper;
+        this.randomService = randomService;
     }
 
     /**
@@ -58,11 +73,20 @@ public class AccountsService {
 
     /**
      * @param email Account.email.
-     * @return The AccountWithPasswordDto corresponding to the introduced email.
+     * @return The AccountWithEntropyExpanderDto corresponding to the introduced email.
      */
-    public AccountWithPasswordDto getAccountWithPassword(
+    public AccountWithEntropyExpanderDto getAccountWithEntropyExpander(
             String email) {
-        return accountsMapper.toDtoWithPassword(accountWithPasswordEntitiesRepository.findByEmail(email));
+        return accountsMapper.toDtoWithEntropyExpander(accountWithEntropyExpanderEntitiesRepository.findByEmail(email));
+    }
+
+    /**
+     * @param email Account.email.
+     * @return The AccountWithPublicKeyDto corresponding to the introduced email.
+     */
+    public AccountWithPublicKeyDto getAccountWithPublicKey(
+            String email) {
+        return accountsMapper.toDtoWithPublicKey(accountWithPublicKeyEntitiesRepository.findByEmail(email));
     }
 
     /**

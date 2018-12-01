@@ -74,7 +74,7 @@ docker-compose -f docker/docker-compose.yml up
 
 Both images are available at Docker Hub:
 
-https://hub.docker.com/r/s3curitybug/guardedbox/
-https://hub.docker.com/r/s3curitybug/guardedbox-nginx/
+- https://hub.docker.com/r/s3curitybug/guardedbox/
+- https://hub.docker.com/r/s3curitybug/guardedbox-nginx/
 
 They still require a MySQL instance and a properties file that may be introduced in a external volume.

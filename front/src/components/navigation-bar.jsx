@@ -27,6 +27,12 @@ class NavigationBar extends Component {
             email: window.session ? window.session.email : ''
         };
 
+        setTimeout(() => {
+            this.setState({
+                email: window.session ? window.session.email : ''
+            });
+        }, 1000);
+
     }
 
     logout() {

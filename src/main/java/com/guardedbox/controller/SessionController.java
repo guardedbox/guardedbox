@@ -261,6 +261,7 @@ public class SessionController {
 
         }
 
+        // Remove login session attributes in case of error.
         if (error != null) {
             removeLoginSessionAttributes(session);
         }

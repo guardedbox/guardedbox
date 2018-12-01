@@ -29,6 +29,7 @@ class Login extends Component {
         this.getCode = this.getCode.bind(this);
         this.login = this.login.bind(this);
         this.cancelLogin = this.cancelLogin.bind(this);
+        this.lostPassword = this.lostPassword.bind(this);
         this.register = this.register.bind(this);
 
         // Refs.
@@ -208,6 +209,12 @@ class Login extends Component {
         }, () => {
             this.txtEmail.current.focus();
         });
+
+    }
+
+    lostPassword() {
+
+        modalMessage('Sorry', 'Unimplemented');
 
     }
 

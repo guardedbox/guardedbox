@@ -7,6 +7,8 @@ import com.guardedbox.dto.AccountWithEntropyExpanderDto;
 import com.guardedbox.dto.AccountWithPublicKeyDto;
 import com.guardedbox.dto.NewAccountDto;
 import com.guardedbox.entity.AccountFullEntity;
+import com.guardedbox.entity.AccountWithPublicKeyEntity;
+import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.repository.AccountFullEntitiesRepository;
 import com.guardedbox.repository.AccountWithEntropyExpanderEntitiesRepository;
@@ -83,6 +85,18 @@ public class AccountsService {
     }
 
     /**
+     * @param email Account.email.
+     * @param accountId Account.accountId to check if its own public key is being requested.
+     * @return The AccountWithPublicKeyDto corresponding to the introduced email. Checks if it exists and does not correspond to the introduced
+     *         accoundId.
+     */
+    public AccountWithPublicKeyDto getAndCheckAccountWithPublicKey(
+            String email,
+            Long accountId) {
+        return accountsMapper.toDtoWithPublicKey(findAndCheckAccountWithPublicKey(email, accountId));
+    }
+
+    /**
      * Creates an Account.
      * 
      * @param newAccountDto NewAccountDto with the new Account data.
@@ -91,6 +105,35 @@ public class AccountsService {
             NewAccountDto newAccountDto) {
         AccountFullEntity accountFullEntity = accountsMapper.fromDto(newAccountDto);
         accountFullEntitiesRepository.save(accountFullEntity);
+    }
+
+    /**
+     * Finds an AccountWithPublicKey by email and checks if it exists and does not correspond to an accoundId.
+     * 
+     * @param email The email.
+     * @param accountId The accountId.
+     * @return The AccountWithPublicKey.
+     */
+    protected AccountWithPublicKeyEntity findAndCheckAccountWithPublicKey(
+            String email,
+            Long accountId) {
+
+        AccountWithPublicKeyEntity account = accountWithPublicKeyEntitiesRepository.findByEmail(email);
+
+        if (account == null) {
+            throw new ServiceException(
+                    String.format("Email %s is not registered", email))
+                            .setErrorCode("shared-secrets.email-not-registered");
+        }
+
+        if (accountId != null && accountId.equals(account.getAccountId())) {
+            throw new ServiceException(
+                    String.format("Email %s public key should not be retrieved by account %s since it is its own public key", email, accountId))
+                            .setErrorCode("shared-secrets.do-not-self-share");
+        }
+
+        return account;
+
     }
 
 }

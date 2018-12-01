@@ -1,8 +1,11 @@
 package com.guardedbox.controller;
 
-import static com.guardedbox.constants.Constraints.CAPTCHA_RESPONSE_MAX_LENGTH;
-import static com.guardedbox.constants.Constraints.CAPTCHA_RESPONSE_PATTERN;
-import static com.guardedbox.constants.SecurityParameters.CAPTCHA_RESPONSE_HEADER;
+import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
+import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
+import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
+import static com.guardedbox.constants.SecurityParameters.ENTROPY_EXPANDER_LENGTH;
+import static com.guardedbox.constants.SecurityParameters.LOGIN_CHALLENGE_LENGTH;
+import static com.guardedbox.constants.SecurityParameters.LOGIN_CHALLENGE_TTL;
 import static com.guardedbox.constants.SecurityParameters.LOGIN_CODE_LENGTH;
 import static com.guardedbox.constants.SecurityParameters.LOGIN_CODE_TTL;
 
@@ -19,17 +22,17 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guardedbox.constants.SessionAttributes;
-import com.guardedbox.dto.AccountWithPasswordDto;
+import com.guardedbox.dto.AccountWithEntropyExpanderDto;
+import com.guardedbox.dto.AccountWithPublicKeyDto;
+import com.guardedbox.dto.LoginChallengeDto;
 import com.guardedbox.dto.ObtainLoginCodeDto;
 import com.guardedbox.dto.SessionInfoDto;
 import com.guardedbox.dto.SuccessDto;
-import com.guardedbox.exception.ServiceException;
-import com.guardedbox.service.CaptchaVerificationService;
 import com.guardedbox.service.EmailService;
 import com.guardedbox.service.ExecutionTimeService;
 import com.guardedbox.service.RandomService;
@@ -41,8 +44,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -84,9 +87,6 @@ public class SessionController {
     /** Current Session. */
     private final HttpSession session;
 
-    /** CaptchaVerificationService. */
-    private final CaptchaVerificationService captchaVerificationService;
-
     /** PasswordEncoder. */
     private final PasswordEncoder passwordEncoder;
 
@@ -103,7 +103,6 @@ public class SessionController {
      * @param randomService RandomService.
      * @param emailService EmailService.
      * @param request Current Request.
-     * @param captchaVerificationService CaptchaVerificationService.
      * @param session Current Session.
      * @param passwordEncoder PasswordEncoder.
      * @param csrfTokenRepository CsrfTokenRepository.
@@ -117,7 +116,6 @@ public class SessionController {
             @Autowired EmailService emailService,
             @Autowired HttpServletRequest request,
             @Autowired HttpSession session,
-            @Autowired CaptchaVerificationService captchaVerificationService,
             @Autowired PasswordEncoder passwordEncoder,
             @Autowired CsrfTokenRepository csrfTokenRepository) {
         this.loginCodeEmailSubject = loginCodeEmailSubject;
@@ -127,7 +125,6 @@ public class SessionController {
         this.randomService = randomService;
         this.emailService = emailService;
         this.request = request;
-        this.captchaVerificationService = captchaVerificationService;
         this.session = session;
         this.passwordEncoder = passwordEncoder;
         this.csrfTokenRepository = csrfTokenRepository;
@@ -163,27 +160,90 @@ public class SessionController {
     }
 
     /**
+     * @param email An email.
+     * @return The entropy expander of the account corresponding to the introduced email.
+     */
+    @GetMapping("/get-account-entropy-expander")
+    public AccountWithEntropyExpanderDto getAccountEntropyExpander(
+            @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
+
+        AccountWithEntropyExpanderDto account = accountsService.getAccountWithEntropyExpander(email);
+
+        if (account == null) {
+            account = new AccountWithEntropyExpanderDto();
+            account.setEmail(email);
+            account.setEntropyExpander(randomService.randomHexString(ENTROPY_EXPANDER_LENGTH));
+        }
+
+        return account;
+
+    }
+
+    /**
+     * @param email An email.
+     * @return A login challenge for the introduced email.
+     */
+    @GetMapping("/get-login-challenge")
+    public LoginChallengeDto getLoginChallenge(
+            @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
+
+        long currentTime = System.currentTimeMillis();
+
+        // Generate the challenge.
+        String challenge = randomService.randomAlphanumericString(LOGIN_CHALLENGE_LENGTH);
+
+        // Store it in session.
+        session.setAttribute(SessionAttributes.LOGIN_CHALLENGE, challenge);
+        session.setAttribute(SessionAttributes.LOGIN_CHALLENGE_EMAIL, email);
+        session.setAttribute(SessionAttributes.LOGIN_CHALLENGE_EXPIRATION, currentTime + LOGIN_CHALLENGE_TTL);
+
+        // Return it.
+        LoginChallengeDto loginChallengeDto = new LoginChallengeDto();
+        loginChallengeDto.setChallenge(challenge);
+
+        return loginChallengeDto;
+
+    }
+
+    /**
      * Generates a login code, sends it by email, and stores it in a session attribute.
      * 
      * @param obtainLoginCodeDto Object with the necessary credentials to generate and send a login code.
-     * @param captchaResponse Header with the response to the captcha challenge.
      * @return Object indicating if the execution was successful.
      */
     @PostMapping("/obtain-login-code")
     public SuccessDto obtainLoginCode(
-            @RequestBody(required = true) @Valid ObtainLoginCodeDto obtainLoginCodeDto,
-            @RequestHeader(name = CAPTCHA_RESPONSE_HEADER, required = true) @NotBlank @Pattern(regexp = CAPTCHA_RESPONSE_PATTERN) @Size(max = CAPTCHA_RESPONSE_MAX_LENGTH) String captchaResponse) {
+            @RequestBody(required = true) @Valid ObtainLoginCodeDto obtainLoginCodeDto) {
 
         long currentTime = System.currentTimeMillis();
+        String error = null;
 
-        // Check if the captcha response is valid.
-        if (!captchaVerificationService.verifyCaptchaResponse(captchaResponse)) {
-            throw new ServiceException("Captcha response is invalid");
+        // Check if the account exists.
+        AccountWithPublicKeyDto accountWithPublicKeyDto = accountsService.getAccountWithPublicKey(obtainLoginCodeDto.getEmail());
+        if (accountWithPublicKeyDto == null) {
+            error = "Email is not registered";
         }
 
-        // Check if the credentials are correct.
-        AccountWithPasswordDto accountWithPasswordDto = accountsService.getAccountWithPassword(obtainLoginCodeDto.getEmail());
-        if (accountWithPasswordDto != null && passwordEncoder.matches(obtainLoginCodeDto.getPassword(), accountWithPasswordDto.getPassword())) {
+        if (error == null) {
+
+            // Check if the login challenge is correct.
+            String loginChallenge = (String) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE);
+            String loginChallengeEmail = (String) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE_EMAIL);
+            Long loginChallengeExpiration = (Long) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE_EXPIRATION);
+
+            if (loginChallenge == null) {
+                error = "No login challenge has been generated";
+            } else if (loginChallengeEmail == null || !loginChallengeEmail.equals(obtainLoginCodeDto.getEmail())) {
+                error = "Login email does not match login challenge email";
+            } else if (loginChallengeExpiration == null || loginChallengeExpiration < currentTime) {
+                error = "Login challenge is expired";
+            } else if (!passwordEncoder.matches(obtainLoginCodeDto.getChallengeResponse(), accountWithPublicKeyDto.getPublicKey())) {
+                error = "Introduced login challenge is incorrect";
+            }
+
+        }
+
+        if (error == null) {
 
             // Generate the login code.
             String loginCode = randomService.randomAlphanumericString(LOGIN_CODE_LENGTH);
@@ -201,11 +261,36 @@ public class SessionController {
 
         }
 
+        if (error != null) {
+            removeLoginSessionAttributes(session);
+        }
+
         // Fix execution time.
         executionTimeService.fix(currentTime, OBTAIN_LOGIN_CODE_EXECUTION_TIME);
 
         // Successful result (always).
         return new SuccessDto(true);
+
+    }
+
+    /**
+     * Removes all login challenge and login code session attributes.
+     * 
+     * @param session Current Session.
+     */
+    public static void removeLoginSessionAttributes(
+            HttpSession session) {
+
+        // Remove login challenge session attributes.
+        session.removeAttribute(SessionAttributes.LOGIN_CHALLENGE);
+        session.removeAttribute(SessionAttributes.LOGIN_CHALLENGE_EMAIL);
+        session.removeAttribute(SessionAttributes.LOGIN_CHALLENGE_EXPIRATION);
+
+        // Remove login code session attributes.
+        session.removeAttribute(SessionAttributes.LOGIN_CODE);
+        session.removeAttribute(SessionAttributes.LOGIN_CODE_EMAIL);
+        session.removeAttribute(SessionAttributes.LOGIN_CODE_EXPIRATION);
+        session.removeAttribute(SessionAttributes.LOGIN_REQUEST_CODE);
 
     }
 

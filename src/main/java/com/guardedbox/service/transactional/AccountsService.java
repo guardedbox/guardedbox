@@ -11,7 +11,6 @@ import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.repository.AccountFullEntitiesRepository;
 import com.guardedbox.repository.AccountWithEntropyExpanderEntitiesRepository;
 import com.guardedbox.repository.AccountWithPublicKeyEntitiesRepository;
-import com.guardedbox.service.RandomService;
 
 import javax.transaction.Transactional;
 
@@ -37,9 +36,6 @@ public class AccountsService {
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
 
-    /** RandomService. */
-    private final RandomService randomService;
-
     /**
      * Constructor with Attributes.
      * 
@@ -47,19 +43,16 @@ public class AccountsService {
      * @param accountWithEntropyExpanderEntitiesRepository AccountWithEntropyExpanderEntitiesRepository.
      * @param accountWithPublicKeyEntitiesRepository AccountWithPublicKeyEntitiesRepository.
      * @param accountsMapper AccountsMapper.
-     * @param randomService RandomService.
      */
     public AccountsService(
             @Autowired AccountFullEntitiesRepository accountFullEntitiesRepository,
             @Autowired AccountWithEntropyExpanderEntitiesRepository accountWithEntropyExpanderEntitiesRepository,
             @Autowired AccountWithPublicKeyEntitiesRepository accountWithPublicKeyEntitiesRepository,
-            @Autowired AccountsMapper accountsMapper,
-            @Autowired RandomService randomService) {
+            @Autowired AccountsMapper accountsMapper) {
         this.accountFullEntitiesRepository = accountFullEntitiesRepository;
         this.accountWithEntropyExpanderEntitiesRepository = accountWithEntropyExpanderEntitiesRepository;
         this.accountWithPublicKeyEntitiesRepository = accountWithPublicKeyEntitiesRepository;
         this.accountsMapper = accountsMapper;
-        this.randomService = randomService;
     }
 
     /**

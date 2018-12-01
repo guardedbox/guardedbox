@@ -70,7 +70,7 @@ class Registration extends Component {
         var token = uriParams.token;
 
         if (!this.isRegistrationTokenValid(token)) {
-            window.views.app.resetUserData(true);
+            window.views.app.resetUserData(true, true);
             return;
         }
 
@@ -97,7 +97,7 @@ class Registration extends Component {
                 serviceExceptionCallback: (response) => {
 
                     modalMessage('global.error', response.errorCode || 'global.error-occurred', () => {
-                        window.views.app.resetUserData(true);
+                        window.views.app.resetUserData(true, true);
                     });
 
                 }
@@ -106,7 +106,7 @@ class Registration extends Component {
         }, () => {
 
             modalMessage('global.error', 'global.error-occurred', () => {
-                window.views.app.resetUserData(true);
+                window.views.app.resetUserData(true, true);
             });
 
         });
@@ -409,14 +409,14 @@ class Registration extends Component {
                             callback: (response) => {
 
                                 modalMessage('global.success', 'registration.registration-completed', () => {
-                                    window.views.app.resetUserData(true);
+                                    window.views.app.resetUserData(true, true);
                                 });
 
                             },
                             serviceExceptionCallback: (response) => {
 
                                 modalMessage('global.error', response.errorCode || 'global.error-occurred', () => {
-                                    window.views.app.resetUserData(true);
+                                    window.views.app.resetUserData(true, true);
                                 });
 
                             }

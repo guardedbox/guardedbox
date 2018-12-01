@@ -4,7 +4,7 @@ import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
 import static com.guardedbox.constants.Constraints.HEX_PATTERN;
-import static com.guardedbox.constants.Constraints.SHA512_HEX_LENGTH;
+import static com.guardedbox.constants.Constraints.SIGNATURE_MAX_LENGTH;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -25,11 +25,11 @@ public class ObtainLoginCodeDto {
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
     private String email;
 
-    /** Password. */
+    /** Challenge Response. */
     @NotBlank
     @Pattern(regexp = HEX_PATTERN)
-    @Size(min = SHA512_HEX_LENGTH, max = SHA512_HEX_LENGTH)
-    private String password;
+    @Size(max = SIGNATURE_MAX_LENGTH)
+    private String challengeResponse;
 
     /**
      * @return The email.
@@ -47,18 +47,18 @@ public class ObtainLoginCodeDto {
     }
 
     /**
-     * @return The password.
+     * @return The challengeResponse.
      */
-    public String getPassword() {
-        return password;
+    public String getChallengeResponse() {
+        return challengeResponse;
     }
 
     /**
-     * @param password The password to set.
+     * @param challengeResponse The challengeResponse to set.
      */
-    public void setPassword(
-            String password) {
-        this.password = password;
+    public void setChallengeResponse(
+            String challengeResponse) {
+        this.challengeResponse = challengeResponse;
     }
 
 }

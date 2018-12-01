@@ -1,21 +1,14 @@
 package com.guardedbox.config.security;
 
-import static com.guardedbox.constants.Constraints.CAPTCHA_RESPONSE_MAX_LENGTH;
-import static com.guardedbox.constants.Constraints.CAPTCHA_RESPONSE_PATTERN;
-import static com.guardedbox.constants.SecurityParameters.CAPTCHA_RESPONSE_HEADER;
-
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guardedbox.constants.SessionAttributes;
 import com.guardedbox.dto.LoginDto;
-import com.guardedbox.exception.ServiceException;
-import com.guardedbox.service.CaptchaVerificationService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,26 +36,20 @@ public class AuthenticationFilter
     /** Current Session. */
     private final HttpSession session;
 
-    /** CaptchaVerificationService. */
-    private final CaptchaVerificationService captchaVerificationService;
-
     /**
      * Constructor with Attributes.
      * 
      * @param objectMapper ObjectMapper.
      * @param validator Validator.
      * @param session Current Session.
-     * @param captchaVerificationService CaptchaVerificationService.
      */
     public AuthenticationFilter(
             ObjectMapper objectMapper,
             Validator validator,
-            HttpSession session,
-            CaptchaVerificationService captchaVerificationService) {
+            HttpSession session) {
         this.objectMapper = objectMapper;
         this.validator = validator;
         this.session = session;
-        this.captchaVerificationService = captchaVerificationService;
     }
 
     /**
@@ -76,17 +63,6 @@ public class AuthenticationFilter
         // Check that request method is post.
         if (!request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
-        }
-
-        // Check if the captcha response is valid.
-        String captchaResponse = request.getHeader(CAPTCHA_RESPONSE_HEADER);
-        if (StringUtils.isEmpty(captchaResponse)
-                || captchaResponse.length() > CAPTCHA_RESPONSE_MAX_LENGTH
-                || !captchaResponse.matches(CAPTCHA_RESPONSE_PATTERN)) {
-            throw new AuthenticationServiceException("Captcha response is invalid");
-        }
-        if (!captchaVerificationService.verifyCaptchaResponse(captchaResponse)) {
-            throw new ServiceException("Captcha response is invalid");
         }
 
         // Parse request body.
@@ -103,7 +79,7 @@ public class AuthenticationFilter
 
         // Build the authentication token based on the introduced email and password.
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginDto.getEmail(), loginDto.getPassword());
+                loginDto.getEmail(), loginDto.getChallengeResponse());
         setDetails(request, authenticationToken);
 
         // Store the introduced login code in a session attribute.

@@ -38,6 +38,9 @@ public final class Constraints {
     /** Encrypted Value Pattern. */
     public static final String ENCRYPTED_VALUE_PATTERN = "[a-zA-Z0-9+\\/=?]*";
 
+    /** Signature Max Length. */
+    public static final int SIGNATURE_MAX_LENGTH = 512;
+
     /** Security Question Maximum Length. */
     public static final int SECURITY_QUESTION_MAX_LENGTH = 256;
 

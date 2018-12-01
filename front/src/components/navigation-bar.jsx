@@ -34,7 +34,7 @@ class NavigationBar extends Component {
             url: apiPaths.session.logout,
             callback: (response) => {
 
-                window.views.app.resetUserData(true);
+                window.views.app.resetUserData(true, true);
 
             }
         });

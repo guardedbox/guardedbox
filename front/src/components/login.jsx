@@ -7,7 +7,7 @@ import favicon from 'images/favicon.png';
 import { get, post } from 'services/rest.jsx';
 import { loading, notLoading } from 'services/loading.jsx';
 import { modalMessage } from 'services/modal.jsx';
-import { generateKeyPair } from 'services/encryption.jsx';
+import { generateKeyPair, keySeed, sign } from 'services/encryption.jsx';
 import { sha512, hashPasswordForLogin, hashPasswordForKeyGen } from 'services/hash.jsx';
 import { executeCaptcha } from 'services/captcha.jsx';
 import properties from 'constants/properties.json';
@@ -41,6 +41,8 @@ class Login extends Component {
             email: '',
             password: '',
             passwordVisible: false,
+            entropyExpander: '',
+            loginChallengeResponse: '',
             code: '',
             getCodeEnabled: true,
             loginEnabled: false,
@@ -69,40 +71,72 @@ class Login extends Component {
             loginFailedPopoverActive: false
         }, () => {
 
-            executeCaptcha((captchaValue) => {
+            get({
+                url: apiPaths.session.info,
+                loadingChain: true,
+                callback: (response) => {
 
-                get({
-                    url: apiPaths.session.info,
-                    loadingChained: true,
-                    loadingChain: true,
-                    callback: (response) => {
+                    window.session = response;
 
-                        window.session = response;
+                    get({
+                        url: apiPaths.session.getAccountEntropyExpander,
+                        params: {
+                            email: this.state.email
+                        },
+                        loadingChained: true,
+                        loadingChain: true,
+                        callback: (response) => {
 
-                        post({
-                            url: apiPaths.session.obtainLoginCode,
-                            loadingChained: true,
-                            body: {
-                                email: this.state.email,
-                                password: sha512(this.state.email + ':' + this.state.password)
-                            },
-                            captchaValue: captchaValue,
-                            callback: (response) => {
+                            this.setState({
+                                entropyExpander: response.entropyExpander
+                            }, () => {
 
-                                this.setState({
-                                    getCodeEnabled: false,
-                                    loginEnabled: true,
-                                    getCodePopoverActive: true
-                                }, () => {
-                                    this.txtCode.current.focus();
+                                generateKeyPair(keySeed(this.state.email, this.state.password, this.state.entropyExpander));
+
+                                get({
+                                    url: apiPaths.session.getLoginChallenge,
+                                    params: {
+                                        email: this.state.email
+                                    },
+                                    loadingChained: true,
+                                    loadingChain: true,
+                                    callback: (response) => {
+
+                                        this.setState({
+                                            loginChallengeResponse: sign(response.challenge)
+                                        }, () => {
+
+                                            post({
+                                                url: apiPaths.session.obtainLoginCode,
+                                                loadingChained: true,
+                                                body: {
+                                                    email: this.state.email,
+                                                    challengeResponse: this.state.loginChallengeResponse
+                                                },
+                                                callback: (response) => {
+
+                                                    this.setState({
+                                                        getCodeEnabled: false,
+                                                        loginEnabled: true,
+                                                        getCodePopoverActive: true
+                                                    }, () => {
+                                                        this.txtCode.current.focus();
+                                                    });
+
+                                                }
+                                            });
+
+                                        });
+
+                                    }
                                 });
 
-                            }
-                        });
+                            });
 
-                    }
-                });
+                        }
+                    });
 
+                }
             });
 
         });
@@ -115,64 +149,47 @@ class Login extends Component {
             getCodePopoverActive: false
         }, () => {
 
-            executeCaptcha((captchaValue) => {
+            get({
+                url: apiPaths.session.info,
+                loadingChain: true,
+                callback: (response) => {
 
-                get({
-                    url: apiPaths.session.info,
-                    loadingChained: true,
-                    loadingChain: true,
-                    callback: (response) => {
+                    window.session = response;
 
-                        window.session = response;
+                    post({
+                        url: apiPaths.session.login,
+                        loadingChained: true,
+                        body: {
+                            email: this.state.email,
+                            challengeResponse: this.state.loginChallengeResponse,
+                            code: this.state.code
+                        },
+                        callback: (response) => {
 
-                        post({
-                            url: apiPaths.session.login,
-                            loadingChain: true,
-                            loadingChained: true,
-                            body: {
-                                email: this.state.email,
-                                password: hashPasswordForLogin(this.state.email, this.state.password),
-                                code: this.state.code
-                            },
-                            captchaValue: captchaValue,
-                            callback: (response) => {
+                            if (response.success) {
 
-                                if (response.success) {
+                                window.views.app.resetUserData(false, false, () => {
+                                    this.props.history.push(componentsPaths.defaultComponent);
+                                });
 
-                                    window.views.app.resetUserData(false, () => {
+                            } else {
 
-                                        generateKeyPair(hashPasswordForKeyGen(this.state.email, this.state.password, ''));
+                                this.txtCode.current.value = this.txtCode.current.defaultValue;
 
-                                        notLoading(() => {
-                                            this.props.history.push(componentsPaths.defaultComponent);
-                                        });
-
-                                    });
-
-                                } else {
-
-                                    notLoading(() => {
-
-                                        this.txtCode.current.value = this.txtCode.current.defaultValue;
-
-                                        this.setState({
-                                            getCodeEnabled: true,
-                                            loginEnabled: false,
-                                            loginFailedPopoverActive: true
-                                        }, () => {
-                                            this.txtEmail.current.focus();
-                                        });
-
-                                    });
-
-                                }
+                                this.setState({
+                                    getCodeEnabled: true,
+                                    loginEnabled: false,
+                                    loginFailedPopoverActive: true
+                                }, () => {
+                                    this.txtEmail.current.focus();
+                                });
 
                             }
-                        });
 
-                    }
-                });
+                        }
+                    });
 
+                }
             });
 
         });

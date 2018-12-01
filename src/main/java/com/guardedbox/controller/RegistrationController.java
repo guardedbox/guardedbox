@@ -12,7 +12,6 @@ import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_TTL
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -92,9 +91,6 @@ public class RegistrationController {
     /** CaptchaVerificationService. */
     private final CaptchaVerificationService captchaVerificationService;
 
-    /** PasswordEncoder. */
-    private final PasswordEncoder passwordEncoder;
-
     /**
      * Constructor with Attributes.
      * 
@@ -109,7 +105,6 @@ public class RegistrationController {
      * @param randomService Random Service.
      * @param emailService Email Service.
      * @param captchaVerificationService CaptchaVerificationService.
-     * @param passwordEncoder PasswordEncoder.
      */
     public RegistrationController(
             @Value("${internet.url}") String internetUrl,
@@ -122,8 +117,7 @@ public class RegistrationController {
             @Autowired ExecutionTimeService executionTimeService,
             @Autowired RandomService randomService,
             @Autowired EmailService emailService,
-            @Autowired CaptchaVerificationService captchaVerificationService,
-            @Autowired PasswordEncoder passwordEncoder) {
+            @Autowired CaptchaVerificationService captchaVerificationService) {
         this.internetUrl = internetUrl;
         this.registrationEmailSubject = registrationEmailSubject;
         this.registrationEmailBody = registrationEmailBody;
@@ -135,7 +129,6 @@ public class RegistrationController {
         this.randomService = randomService;
         this.emailService = emailService;
         this.captchaVerificationService = captchaVerificationService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -283,8 +276,7 @@ public class RegistrationController {
 
         // Create the new account.
         newAccountDto.setEmail(registrationTokenDto.getEmail());
-        newAccountDto.setPassword(passwordEncoder.encode(newAccountDto.getPassword()));
-        newAccountDto.setSecurityAnswers(passwordEncoder.encode(newAccountDto.getSecurityAnswers()));
+        newAccountDto.setEntropyExpander(registrationTokenDto.getEntropyExpander());
         accountsService.newAccount(newAccountDto);
 
         // Delete the registration token.

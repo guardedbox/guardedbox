@@ -140,12 +140,12 @@ function processSuccess(opts, response) {
 
     } else if (response.status == 401 || response.status == 403) {
 
-        window.views.app.resetUserData(true);
+        window.views.app.resetUserData(true, true);
 
     } else {
 
         modalMessage('global.error', 'global.error-occurred', () => {
-            window.views.app.resetUserData(true);
+            window.views.app.resetUserData(true, true);
         });
 
     }
@@ -155,7 +155,7 @@ function processSuccess(opts, response) {
 function processError(opts, error) {
 
     modalMessage('global.error', 'global.error-occurred', () => {
-        window.views.app.resetUserData(true);
+        window.views.app.resetUserData(true, true);
     });
 
 }

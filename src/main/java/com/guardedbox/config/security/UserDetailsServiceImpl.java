@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.guardedbox.constants.Roles;
 import com.guardedbox.constants.SessionAttributes;
-import com.guardedbox.dto.AccountWithPasswordDto;
+import com.guardedbox.dto.AccountWithPublicKeyDto;
 import com.guardedbox.service.ExecutionTimeService;
 import com.guardedbox.service.transactional.AccountsService;
 
@@ -70,14 +70,32 @@ public class UserDetailsServiceImpl
             throws UsernameNotFoundException {
 
         long currentTime = System.currentTimeMillis();
+        String error = null;
 
         // Check if the account exists.
-        AccountWithPasswordDto accountWithPasswordDto = accountsService.getAccountWithPassword(username);
-        UsernameNotFoundException usernameNotFoundException = null;
+        AccountWithPublicKeyDto accountWithPublicKeyDto = accountsService.getAccountWithPublicKey(username);
+        if (accountWithPublicKeyDto == null) {
+            error = "Email is not registered";
+        }
 
-        if (accountWithPasswordDto == null) {
-            usernameNotFoundException = new UsernameNotFoundException("Email is not registered");
-        } else {
+        if (error == null) {
+
+            // Check if the login challenge is correct.
+            String loginChallenge = (String) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE);
+            String loginChallengeEmail = (String) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE_EMAIL);
+            Long loginChallengeExpiration = (Long) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE_EXPIRATION);
+
+            if (loginChallenge == null) {
+                error = "No login challenge has been generated";
+            } else if (loginChallengeEmail == null || !loginChallengeEmail.equals(username)) {
+                error = "Login email does not match login challenge email";
+            } else if (loginChallengeExpiration == null || loginChallengeExpiration < currentTime) {
+                error = "Login challenge is expired";
+            }
+
+        }
+
+        if (error == null) {
 
             // Check if the login code is correct.
             String loginCode = (String) session.getAttribute(SessionAttributes.LOGIN_CODE);
@@ -86,35 +104,29 @@ public class UserDetailsServiceImpl
             String loginReqCode = (String) session.getAttribute(SessionAttributes.LOGIN_REQUEST_CODE);
 
             if (loginCode == null) {
-                usernameNotFoundException = new UsernameNotFoundException("No login code has been generated");
+                error = "No login code has been generated";
             } else if (loginCodeEmail == null || !loginCodeEmail.equals(username)) {
-                usernameNotFoundException = new UsernameNotFoundException("Login email does not match login code email");
+                error = "Login email does not match login code email";
             } else if (loginCodeExpiration == null || loginCodeExpiration < currentTime) {
-                usernameNotFoundException = new UsernameNotFoundException("Login code is expired");
+                error = "Login code is expired";
             } else if (!loginCode.equals(loginReqCode)) {
-                usernameNotFoundException = new UsernameNotFoundException("Introduced login code is incorrect");
+                error = "Introduced login code is incorrect";
             }
 
         }
-
-        // Remove login code session attributes.
-        session.removeAttribute(SessionAttributes.LOGIN_CODE);
-        session.removeAttribute(SessionAttributes.LOGIN_CODE_EMAIL);
-        session.removeAttribute(SessionAttributes.LOGIN_CODE_EXPIRATION);
-        session.removeAttribute(SessionAttributes.LOGIN_REQUEST_CODE);
 
         // Fix execution time.
         executionTimeService.fix(currentTime, LOAD_USER_BY_USERNAME_EXECUTION_TIME);
 
         // Unsuccessful result.
-        if (usernameNotFoundException != null)
-            throw usernameNotFoundException;
+        if (error != null)
+            throw new UsernameNotFoundException(error);
 
         // Successful result.
-        session.setAttribute(SessionAttributes.ACCOUNT_ID, accountWithPasswordDto.getAccountId());
-        session.setAttribute(SessionAttributes.ACCOUNT_EMAIL, accountWithPasswordDto.getEmail());
+        session.setAttribute(SessionAttributes.ACCOUNT_ID, accountWithPublicKeyDto.getAccountId());
+        session.setAttribute(SessionAttributes.ACCOUNT_EMAIL, accountWithPublicKeyDto.getEmail());
 
-        return new User(username, accountWithPasswordDto.getPassword(), Arrays.asList(Roles.ROLE_ACCOUNT));
+        return new User(username, accountWithPublicKeyDto.getPublicKey(), Arrays.asList(Roles.ROLE_ACCOUNT));
 
     }
 

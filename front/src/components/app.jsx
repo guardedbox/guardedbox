@@ -76,7 +76,7 @@ class App extends Component {
                 } else if (location.pathname !== componentsPaths.login) {
 
                     if (!response.authenticated || (prevEmail && prevEmail !== response.email) || !isKeyPairGenerated()) {
-                        this.resetUserData(true);
+                        this.resetUserData(true, true);
                     } else if (location.pathname === '/') {
                         this.props.history.push(componentsPaths.defaultComponent);
                     } else if (location.pathname === componentsPaths.mySecrets) {
@@ -97,9 +97,10 @@ class App extends Component {
 
     }
 
-    resetUserData(redirectToLogin, callback) {
+    resetUserData(deleteKeys, redirectToLogin, callback) {
 
-        deleteKeyPair();
+        if (deleteKeys)
+            deleteKeyPair();
 
         this.setState({
         }, () => {

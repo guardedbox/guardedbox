@@ -1,7 +1,5 @@
 package com.guardedbox.config.security;
 
-import static com.guardedbox.constants.SecurityParameters.BCRYPT_ROUNDS;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -23,7 +20,6 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guardedbox.dto.SuccessDto;
-import com.guardedbox.service.CaptchaVerificationService;
 
 import java.io.IOException;
 
@@ -54,9 +50,6 @@ public class SecurityConfig
     /** Current Session. */
     private final HttpSession session;
 
-    /** CaptchaVerificationService. */
-    private final CaptchaVerificationService captchaVerificationService;
-
     /**
      * Constructor with Attributes.
      * 
@@ -64,19 +57,16 @@ public class SecurityConfig
      * @param objectMapper ObjectMapper.
      * @param validator Validator.
      * @param session Current Session.
-     * @param captchaVerificationService CaptchaVerificationService.
      */
     public SecurityConfig(
             @Autowired UserDetailsService userDetailsService,
             @Autowired ObjectMapper objectMapper,
             @Autowired Validator validator,
-            @Autowired HttpSession session,
-            @Autowired CaptchaVerificationService captchaVerificationService) {
+            @Autowired HttpSession session) {
         this.userDetailsService = userDetailsService;
         this.objectMapper = objectMapper;
         this.validator = validator;
         this.session = session;
-        this.captchaVerificationService = captchaVerificationService;
     }
 
     /**
@@ -88,7 +78,7 @@ public class SecurityConfig
     @Bean
     public AuthenticationFilter authenticationFilter()
             throws Exception {
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(objectMapper, validator, session, captchaVerificationService);
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(objectMapper, validator, session);
         authenticationFilter.setFilterProcessesUrl("/api/session/login");
         authenticationFilter.setAuthenticationSuccessHandler(this::loginSuccessHandler);
         authenticationFilter.setAuthenticationFailureHandler(this::loginFailureHandler);
@@ -112,11 +102,11 @@ public class SecurityConfig
     /**
      * Bean: PasswordEncoder.
      * 
-     * @return BCryptPasswordEncoder.
+     * @return LoginChallengePasswordEncoder.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(BCRYPT_ROUNDS);
+        return new LoginChallengePasswordEncoder(session);
     }
 
     /**
@@ -158,6 +148,8 @@ public class SecurityConfig
 
                 // Allow Session, Password Recovery and Registration Endpoints.
                 .and().authorizeRequests().antMatchers("/api/session/info").permitAll()
+                .and().authorizeRequests().antMatchers("/api/session/get-account-entropy-expander").permitAll()
+                .and().authorizeRequests().antMatchers("/api/session/get-login-challenge").permitAll()
                 .and().authorizeRequests().antMatchers("/api/session/obtain-login-code").permitAll()
                 .and().authorizeRequests().antMatchers("/api/session/login").permitAll()
                 .and().authorizeRequests().antMatchers("/api/session/logout").permitAll()
@@ -191,6 +183,8 @@ public class SecurityConfig
             Authentication authentication)
             throws IOException {
 
+        // SessionController.removeLoginSessionAttributes(session);
+
         request.changeSessionId();
         csrfTokenRepository().saveToken(csrfTokenRepository().generateToken(request), request, response);
 
@@ -214,6 +208,8 @@ public class SecurityConfig
             HttpServletResponse response,
             AuthenticationException e)
             throws IOException {
+
+        // SessionController.removeLoginSessionAttributes(session);
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

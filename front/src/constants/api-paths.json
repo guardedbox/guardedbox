@@ -1,6 +1,8 @@
 {
 	"session": {
 		"info": "/api/session/info",
+		"getAccountEntropyExpander": "/api/session/get-account-entropy-expander",
+		"getLoginChallenge": "/api/session/get-login-challenge",
 		"obtainLoginCode": "/api/session/obtain-login-code",
 		"login": "/api/session/login",
 		"logout": "/api/session/logout"

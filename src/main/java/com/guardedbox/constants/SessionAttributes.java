@@ -8,6 +8,15 @@ package com.guardedbox.constants;
  */
 public final class SessionAttributes {
 
+    /** Session attribute in which the challenge generated in the get-login-challenge request is stored. */
+    public static final String LOGIN_CHALLENGE = "login-challenge";
+
+    /** Session attribute in which the email introduced in the get-login-challenge request is stored. */
+    public static final String LOGIN_CHALLENGE_EMAIL = "login-challenge-email";
+
+    /** Session attribute in which the expiration time of the login challenge is stored. */
+    public static final String LOGIN_CHALLENGE_EXPIRATION = "login-challenge-expiration";
+
     /** Session attribute in which the code generated in the obtain-login-code request is stored. */
     public static final String LOGIN_CODE = "login-code";
 

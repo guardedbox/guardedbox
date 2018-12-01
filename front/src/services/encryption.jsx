@@ -1,4 +1,4 @@
-import cryptico, { RSAKey } from 'services/cryptico.js';
+import cryptico, { RSAKey } from 'cryptico-js';
 import { sha512, hmacSha512 } from 'services/hash.jsx';
 import { Base64 } from 'js-base64';
 import { modalMessage } from 'services/modal.jsx';
@@ -6,6 +6,9 @@ import properties from 'constants/properties.json';
 
 var privateKey = null
 var publicKey = '';
+
+window.encrypt = encrypt;
+window.decrypt = decrypt;
 
 /**
  * Generates and internally stores a key pair derived from a seed.
@@ -16,6 +19,7 @@ var publicKey = '';
 export function generateKeyPair(seed) {
 
     privateKey = cryptico.generateRSAKey(seed, properties.encryption.rsaKeyBits);
+    window.privateKey = privateKey;
     publicKey = cryptico.publicKeyString(privateKey);
 
     Math.seedrandom();
@@ -121,6 +125,20 @@ export function decrypt(cipherText, privKey) {
 }
 
 /**
+ * Signs a message and returns it signed.
+ * 
+ * @param {string} plainText The message to sign.
+ * @param {Cryptico.RSAKey} privKey The private key used to sign. Defaults to the stored private key.
+ */
+export function sign(plainText, privKey) {
+
+    var result = (privKey || privateKey).signString(plainText, 'sha256');
+
+    return result;
+
+}
+
+/**
  * Exports the stored private key, encrypted with a public key derived from a seed.
  * 
  * @param {string} seed The seed.
@@ -129,7 +147,6 @@ export function decrypt(cipherText, privKey) {
 export function exportPrivateKey(seed) {
 
     var pubKey = cryptico.publicKeyString(cryptico.generateRSAKey(seed, properties.encryption.rsaKeyBits));
-    console.log(pubKey);
     var privateKeyPlainText = JSON.stringify(privateKey);
     var privateKeyCipherText = encrypt(privateKeyPlainText, pubKey);
 

@@ -23,7 +23,8 @@ class NavigationBar extends Component {
 
         // State.
         this.state = {
-            navbarTogglerActive: false
+            navbarTogglerActive: false,
+            email: window.session ? window.session.email : ''
         };
 
     }
@@ -64,10 +65,11 @@ class NavigationBar extends Component {
 
                         <Nav className="mr-auto" navbar>
                             <NavItem><NavLink tag={RRNavLink} to={componentsPaths.mySecrets} activeClassName="active">{t('navigation-bar.my-secrets')}</NavLink></NavItem>
+                            <NavItem><NavLink tag={RRNavLink} to={componentsPaths.secretsSharedWithMe} activeClassName="active">{t('navigation-bar.secrets-shared-with-me')}</NavLink></NavItem>
                         </Nav>
 
                         <Nav className="ml-auto" navbar>
-                            <NavItem><NavLink tag={RRNavLink} to='/' activeClassName="active">{window.session ? window.session.email : ''}</NavLink></NavItem>
+                            <NavItem><NavLink tag={RRNavLink} to='/' activeClassName="active">{this.state.email}</NavLink></NavItem>
                             <div className="form-inline"><Button color="secondary" size="sm" onClick={this.logout}>{t('navigation-bar.logout')}</Button></div>
                         </Nav>
 

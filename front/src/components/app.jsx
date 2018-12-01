@@ -9,6 +9,7 @@ import Login from 'components/login.jsx';
 import Registration from 'components/registration.jsx';
 import NavigationBar from 'components/navigation-bar.jsx';
 import MySecrets from 'components/my-secrets.jsx';
+import SecretsSharedWithMe from 'components/secrets-shared-with-me.jsx';
 import { get, post } from 'services/rest.jsx';
 import { isKeyPairGenerated, deleteKeyPair } from 'services/encryption.jsx';
 import { captchaOnChange, captchaOnErrored } from 'services/captcha.jsx';
@@ -43,7 +44,9 @@ class App extends Component {
             modalConfirmationHeader: '',
             modalConfirmationBody: '',
             modalConfirmationYesCallback: null,
-            modalConfirmationNoCallback: null
+            modalConfirmationNoCallback: null,
+            mySecrets: null,
+            secretsSharedWithMe: null,
         }
 
     }
@@ -81,6 +84,8 @@ class App extends Component {
                         this.props.history.push(componentsPaths.defaultComponent);
                     } else if (location.pathname === componentsPaths.mySecrets) {
                         this.handleLocationChangeToComponent(window.views.mySecrets);
+                    } else if (location.pathname === componentsPaths.secretsSharedWithMe) {
+                        this.handleLocationChangeToComponent(window.views.secretsSharedWithMe);
                     }
 
                 }
@@ -103,6 +108,8 @@ class App extends Component {
             deleteKeyPair();
 
         this.setState({
+            mySecrets: null,
+            secretsSharedWithMe: null
         }, () => {
 
             if (callback)
@@ -173,6 +180,7 @@ class App extends Component {
                 <Route exact path={componentsPaths.registration} component={Registration} />
                 <Route exact path={componentsPaths.navbarComponents} component={NavigationBar} />
                 <Route exact path={componentsPaths.mySecrets} component={MySecrets} />
+                <Route exact path={componentsPaths.secretsSharedWithMe} component={SecretsSharedWithMe} />
 
                 <ReCAPTCHA sitekey={properties.captcha.siteKey} size="invisible" onChange={captchaOnChange} onErrored={captchaOnErrored} />
 

@@ -59,4 +59,10 @@ public final class Constraints {
     /** Captcha Response Maximum Length. */
     public static final int CAPTCHA_RESPONSE_MAX_LENGTH = 1024;
 
+    /** Secret Name Maximum Length. */
+    public static final int SECRET_NAME_MAX_LENGTH = 64;
+
+    /** Secret Value Maximum Length. */
+    public static final int SECRET_VALUE_MAX_LENGTH = 16384;
+
 }

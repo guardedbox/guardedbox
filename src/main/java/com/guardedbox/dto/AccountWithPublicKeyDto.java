@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * DTO: Account.
- * Contains the following fields: accountId, email, password.
+ * Contains the following fields: accoundId, email, publicKey.
  * 
  * @author s3curitybug@gmail.com
  *
  */
-public class AccountWithPasswordDto {
+public class AccountWithPublicKeyDto {
 
     /** Account ID. */
     @JsonIgnore
@@ -18,9 +18,15 @@ public class AccountWithPasswordDto {
     /** Email. */
     private String email;
 
-    /** Password. */
-    @JsonIgnore
-    private String password;
+    /** Public Key. */
+    private String publicKey;
+
+    /**
+     * @return The email.
+     */
+    public String getEmail() {
+        return email;
+    }
 
     /**
      * @return The accountId.
@@ -38,13 +44,6 @@ public class AccountWithPasswordDto {
     }
 
     /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
      * @param email The email to set.
      */
     public void setEmail(
@@ -53,18 +52,18 @@ public class AccountWithPasswordDto {
     }
 
     /**
-     * @return The password.
+     * @return The publicKey.
      */
-    public String getPassword() {
-        return password;
+    public String getPublicKey() {
+        return publicKey;
     }
 
     /**
-     * @param password The password to set.
+     * @param publicKey The publicKey to set.
      */
-    public void setPassword(
-            String password) {
-        this.password = password;
+    public void setPublicKey(
+            String publicKey) {
+        this.publicKey = publicKey;
     }
 
 }

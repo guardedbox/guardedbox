@@ -1,24 +1,31 @@
 package com.guardedbox.service.transactional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guardedbox.dto.AccountWithEntropyExpanderDto;
-import com.guardedbox.dto.AccountWithPublicKeyDto;
-import com.guardedbox.dto.NewAccountDto;
+import com.guardedbox.dto.AccountDto;
+import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
+import com.guardedbox.dto.AccountWithSaltDto;
+import com.guardedbox.dto.AccountWithSigningPublicKeyDto;
+import com.guardedbox.dto.CreateAccountDto;
+import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.AccountFullEntity;
-import com.guardedbox.entity.AccountWithPublicKeyEntity;
+import com.guardedbox.entity.AccountWithEncryptionPublicKeyEntity;
+import com.guardedbox.entity.AccountWithSaltEntity;
+import com.guardedbox.entity.AccountWithSigningPublicKeyEntity;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
+import com.guardedbox.repository.AccountEntitiesRepository;
 import com.guardedbox.repository.AccountFullEntitiesRepository;
-import com.guardedbox.repository.AccountWithEntropyExpanderEntitiesRepository;
-import com.guardedbox.repository.AccountWithPublicKeyEntitiesRepository;
-
-import javax.transaction.Transactional;
+import com.guardedbox.repository.AccountWithEncryptionPublicKeyEntitiesRepository;
+import com.guardedbox.repository.AccountWithSaltEntitiesRepository;
+import com.guardedbox.repository.AccountWithSigningPublicKeyEntitiesRepository;
 
 /**
  * Service: Account.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -26,34 +33,46 @@ import javax.transaction.Transactional;
 @Transactional
 public class AccountsService {
 
+    /** AccountEntitiesRepository. */
+    private final AccountEntitiesRepository accountEntitiesRepository;
+
+    /** AccountWithSaltEntitiesRepository. */
+    private final AccountWithSaltEntitiesRepository accountWithSaltEntitiesRepository;
+
+    /** AccountWithEncryptionPublicKeyEntitiesRepository. */
+    private final AccountWithEncryptionPublicKeyEntitiesRepository accountWithEncryptionPublicKeyEntitiesRepository;
+
+    /** AccountWithSigningPublicKeyEntitiesRepository. */
+    private final AccountWithSigningPublicKeyEntitiesRepository accountWithSigningPublicKeyEntitiesRepository;
+
     /** AccountFullEntitiesRepository. */
     private final AccountFullEntitiesRepository accountFullEntitiesRepository;
-
-    /** AccountWithEntropyExpanderEntitiesRepository. */
-    private final AccountWithEntropyExpanderEntitiesRepository accountWithEntropyExpanderEntitiesRepository;
-
-    /** AccountWithPublicKeyEntitiesRepository. */
-    private final AccountWithPublicKeyEntitiesRepository accountWithPublicKeyEntitiesRepository;
 
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
 
     /**
      * Constructor with Attributes.
-     * 
-     * @param accountFullEntitiesRepository AccountFullEntitiesRepository.
-     * @param accountWithEntropyExpanderEntitiesRepository AccountWithEntropyExpanderEntitiesRepository.
+     *
+     * @param accountEntitiesRepository AccountEntitiesRepository.
+     * @param accountWithSaltEntitiesRepository AccountWithSaltEntitiesRepository.
+     * @param accountWithEncryptionPublicKeyEntitiesRepository AccountWithEncryptionPublicKeyEntitiesRepository.
      * @param accountWithPublicKeyEntitiesRepository AccountWithPublicKeyEntitiesRepository.
+     * @param accountFullEntitiesRepository AccountFullEntitiesRepository.
      * @param accountsMapper AccountsMapper.
      */
     public AccountsService(
+            @Autowired AccountEntitiesRepository accountEntitiesRepository,
+            @Autowired AccountWithSaltEntitiesRepository accountWithSaltEntitiesRepository,
+            @Autowired AccountWithEncryptionPublicKeyEntitiesRepository accountWithEncryptionPublicKeyEntitiesRepository,
+            @Autowired AccountWithSigningPublicKeyEntitiesRepository accountWithPublicKeyEntitiesRepository,
             @Autowired AccountFullEntitiesRepository accountFullEntitiesRepository,
-            @Autowired AccountWithEntropyExpanderEntitiesRepository accountWithEntropyExpanderEntitiesRepository,
-            @Autowired AccountWithPublicKeyEntitiesRepository accountWithPublicKeyEntitiesRepository,
             @Autowired AccountsMapper accountsMapper) {
+        this.accountEntitiesRepository = accountEntitiesRepository;
+        this.accountWithSaltEntitiesRepository = accountWithSaltEntitiesRepository;
+        this.accountWithEncryptionPublicKeyEntitiesRepository = accountWithEncryptionPublicKeyEntitiesRepository;
+        this.accountWithSigningPublicKeyEntitiesRepository = accountWithPublicKeyEntitiesRepository;
         this.accountFullEntitiesRepository = accountFullEntitiesRepository;
-        this.accountWithEntropyExpanderEntitiesRepository = accountWithEntropyExpanderEntitiesRepository;
-        this.accountWithPublicKeyEntitiesRepository = accountWithPublicKeyEntitiesRepository;
         this.accountsMapper = accountsMapper;
     }
 
@@ -61,75 +80,174 @@ public class AccountsService {
      * @param email Account.email.
      * @return Boolean indicating if an Account corresponding to the introduced email exists.
      */
-    public boolean isEmailRegistered(
+    public boolean existsAccountByEmail(
             String email) {
+
         return accountFullEntitiesRepository.existsByEmail(email);
+
+    }
+
+    /**
+     * @param salt Account.salt.
+     * @return Boolean indicating if an Account corresponding to the introduced salt exists.
+     */
+    public boolean existsAccountBySalt(
+            String salt) {
+
+        return accountFullEntitiesRepository.existsBySalt(salt);
+
     }
 
     /**
      * @param email Account.email.
-     * @return The AccountWithEntropyExpanderDto corresponding to the introduced email.
+     * @return The AccountDto corresponding to the introduced email. Checks if it exists.
      */
-    public AccountWithEntropyExpanderDto getAccountWithEntropyExpander(
+    public AccountDto getAndCheckAccountByEmail(
             String email) {
-        return accountsMapper.toDtoWithEntropyExpander(accountWithEntropyExpanderEntitiesRepository.findByEmail(email));
+
+        return accountsMapper.toDto(findAndCheckAccountByEmail(email));
+
     }
 
     /**
      * @param email Account.email.
-     * @return The AccountWithPublicKeyDto corresponding to the introduced email.
+     * @return The AccountWithSaltDto corresponding to the introduced email. Checks if it exists.
      */
-    public AccountWithPublicKeyDto getAccountWithPublicKey(
+    public AccountWithSaltDto getAndCheckAccountWithSaltByEmail(
             String email) {
-        return accountsMapper.toDtoWithPublicKey(accountWithPublicKeyEntitiesRepository.findByEmail(email));
+
+        return accountsMapper.toDtoWithSalt(findAndCheckAccountWithSaltByEmail(email));
+
     }
 
     /**
      * @param email Account.email.
-     * @param accountId Account.accountId to check if its own public key is being requested.
-     * @return The AccountWithPublicKeyDto corresponding to the introduced email. Checks if it exists and does not correspond to the introduced
-     *         accoundId.
+     * @return The AccountWithEncryptionPublicKeyDto corresponding to the introduced email. Checks if it exists.
      */
-    public AccountWithPublicKeyDto getAndCheckAccountWithPublicKey(
-            String email,
-            Long accountId) {
-        return accountsMapper.toDtoWithPublicKey(findAndCheckAccountWithPublicKey(email, accountId));
+    public AccountWithEncryptionPublicKeyDto getAndCheckAccountWithEncryptionPublicKeyByEmail(
+            String email) {
+
+        return accountsMapper.toDtoWithEncryptionPublicKey(findAndCheckAccountWithEncryptionPublicKeyByEmail(email));
+
+    }
+
+    /**
+     * @param email Account.email.
+     * @return The AccountWithSigningPublicKeyDto corresponding to the introduced email. Checks if it exists.
+     */
+    public AccountWithSigningPublicKeyDto getAndCheckAccountWithSigningPublicKeyByEmail(
+            String email) {
+
+        return accountsMapper.toDtoWithSigningPublicKey(findAndCheckAccountWithSigningPublicKeyByEmail(email));
+
     }
 
     /**
      * Creates an Account.
-     * 
-     * @param newAccountDto NewAccountDto with the new Account data.
+     *
+     * @param createAccountDto CreateAccountDto with the new Account data.
+     * @return AccountDto with the new Account data.
      */
-    public void newAccount(
-            NewAccountDto newAccountDto) {
-        AccountFullEntity accountFullEntity = accountsMapper.fromDto(newAccountDto);
-        accountFullEntitiesRepository.save(accountFullEntity);
+    public AccountDto createAccount(
+            CreateAccountDto createAccountDto) {
+
+        // Check if the email is already registered.
+        if (existsAccountByEmail(createAccountDto.getEmail())) {
+            throw new ServiceException(
+                    String.format("Account was not created since email %s is already registered", createAccountDto.getEmail()))
+                            .setErrorCode("accounts.email-already-registered").addAdditionalData("email", createAccountDto.getEmail());
+        }
+
+        // Check if the salt exists.
+        if (existsAccountBySalt(createAccountDto.getSalt())) {
+            throw new ServiceException(
+                    String.format("Account was not created since salt %s already exists", createAccountDto.getSalt()));
+        }
+
+        // Create the new account.
+        AccountFullEntity accountFullEntity = accountsMapper.fromDto(createAccountDto);
+        return accountsMapper.toDto(accountFullEntitiesRepository.save(accountFullEntity));
+
     }
 
     /**
-     * Finds an AccountWithPublicKey by email and checks if it exists and does not correspond to an accoundId.
-     * 
+     * Finds an AccountEntity by email and checks if it exists.
+     *
      * @param email The email.
-     * @param accountId The accountId.
-     * @return The AccountWithPublicKey.
+     * @return The AccountEntity.
      */
-    protected AccountWithPublicKeyEntity findAndCheckAccountWithPublicKey(
-            String email,
-            Long accountId) {
+    protected AccountEntity findAndCheckAccountByEmail(
+            String email) {
 
-        AccountWithPublicKeyEntity account = accountWithPublicKeyEntitiesRepository.findByEmail(email);
+        AccountEntity account = accountEntitiesRepository.findByEmail(email);
 
         if (account == null) {
             throw new ServiceException(
                     String.format("Email %s is not registered", email))
-                            .setErrorCode("shared-secrets.email-not-registered");
+                            .setErrorCode("accounts.email-not-registered").addAdditionalData("email", email);
         }
 
-        if (accountId != null && accountId.equals(account.getAccountId())) {
+        return account;
+
+    }
+
+    /**
+     * Finds an AccountWithSalt by email and checks if it exists.
+     *
+     * @param email The email.
+     * @return The AccountWithSalt.
+     */
+    protected AccountWithSaltEntity findAndCheckAccountWithSaltByEmail(
+            String email) {
+
+        AccountWithSaltEntity account = accountWithSaltEntitiesRepository.findByEmail(email);
+
+        if (account == null) {
             throw new ServiceException(
-                    String.format("Email %s public key should not be retrieved by account %s since it is its own public key", email, accountId))
-                            .setErrorCode("shared-secrets.do-not-self-share");
+                    String.format("Email %s is not registered", email))
+                            .setErrorCode("accounts.email-not-registered").addAdditionalData("email", email);
+        }
+
+        return account;
+
+    }
+
+    /**
+     * Finds an AccountWithEncryptionPublicKey by email and checks if it exists.
+     *
+     * @param email The email.
+     * @return The AccountWithEncryptionPublicKeyEntity.
+     */
+    protected AccountWithEncryptionPublicKeyEntity findAndCheckAccountWithEncryptionPublicKeyByEmail(
+            String email) {
+
+        AccountWithEncryptionPublicKeyEntity account = accountWithEncryptionPublicKeyEntitiesRepository.findByEmail(email);
+
+        if (account == null) {
+            throw new ServiceException(
+                    String.format("Email %s is not registered", email))
+                            .setErrorCode("accounts.email-not-registered").addAdditionalData("email", email);
+        }
+
+        return account;
+
+    }
+
+    /**
+     * Finds an AccountWithSigningPublicKey by email and checks if it exists.
+     *
+     * @param email The email.
+     * @return The AccountWithSigningPublicKeyEntity.
+     */
+    protected AccountWithSigningPublicKeyEntity findAndCheckAccountWithSigningPublicKeyByEmail(
+            String email) {
+
+        AccountWithSigningPublicKeyEntity account = accountWithSigningPublicKeyEntitiesRepository.findByEmail(email);
+
+        if (account == null) {
+            throw new ServiceException(
+                    String.format("Email %s is not registered", email))
+                            .setErrorCode("accounts.email-not-registered").addAdditionalData("email", email);
         }
 
         return account;

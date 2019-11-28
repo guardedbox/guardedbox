@@ -1,41 +1,38 @@
 package com.guardedbox.constants;
 
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 /**
  * Security Parameters.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
 public final class SecurityParameters {
 
-    /** Entropy expander length (number of hexadecimal characters). */
-    public static final int ENTROPY_EXPANDER_LENGTH = 256;
+    /** Signature Algorithm. */
+    public static final String SIGNATURE_ALGORITHM = "Ed25519";
 
-    /** Login challenge length. */
-    public static final int LOGIN_CHALLENGE_LENGTH = 128;
+    /** Signature Algorithm Identifier. */
+    public static final AlgorithmIdentifier SIGNATURE_ALGORITHM_ID = new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519);
 
-    /** Login challenge time to live (ms). */
-    public static final long LOGIN_CHALLENGE_TTL = 10 * 60 * 1000L;
+    /** Mining Algorithm. */
+    public static final String MINING_ALGORITHM = "HmacSHA512";
 
-    /** Login code length. */
-    public static final int LOGIN_CODE_LENGTH = 10;
+    /** Mining Proof Threshold. */
+    public static final byte[] MINING_PROOF_THRESHOLD = {0, 63};
 
-    /** Login code time to live (ms). */
-    public static final long LOGIN_CODE_TTL = 10 * 60 * 1000L;
+    /** Bcrypt Rounds. */
+    public static final int BCRYPT_ROUNDS = 10;
 
-    /** Registration token length. */
-    public static final int REGISTRATION_TOKEN_LENGTH = 64;
+    /** Registration Token Length (number of alphanumeric characters). */
+    public static final int REGISTRATION_TOKEN_LENGTH = 86;
 
-    /** Registration token time to live (ms). */
-    public static final long REGISTRATION_TOKEN_TTL = 2 * 60 * 60 * 1000L;
+    /** Challenge Length (number of bytes). */
+    public static final int CHALLENGE_LENGTH = 64;
 
-    /** Registration token minimum time to live (ms). Tokens will not be overridden during this time since its expedition. */
-    public static final long REGISTRATION_TOKEN_MIN_TTL = 5 * 60 * 1000L;
-
-    /** Number of security questions. */
-    public static final int N_SECURITY_QUESTIONS = 3;
-
-    /** Name of the captcha response header. */
-    public static final String CAPTCHA_RESPONSE_HEADER = "Captcha-Response";
+    /** One Time Password Length (number of alphanumeric characters). */
+    public static final int OTP_LENGTH = 10;
 
 }

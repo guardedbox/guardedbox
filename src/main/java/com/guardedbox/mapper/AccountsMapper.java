@@ -1,63 +1,46 @@
 package com.guardedbox.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.LinkedList;
+
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.guardedbox.dto.AccountWithEntropyExpanderDto;
-import com.guardedbox.dto.AccountWithPublicKeyDto;
+import com.guardedbox.dto.AccountDto;
+import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
+import com.guardedbox.dto.AccountWithSaltDto;
 import com.guardedbox.dto.AccountWithSecretsDto;
-import com.guardedbox.dto.NewAccountDto;
+import com.guardedbox.dto.AccountWithSigningPublicKeyDto;
+import com.guardedbox.dto.CreateAccountDto;
 import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.AccountFullEntity;
-import com.guardedbox.entity.AccountWithEntropyExpanderEntity;
-import com.guardedbox.entity.AccountWithPublicKeyEntity;
-
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import com.guardedbox.entity.AccountWithEncryptionPublicKeyEntity;
+import com.guardedbox.entity.AccountWithSaltEntity;
+import com.guardedbox.entity.AccountWithSigningPublicKeyEntity;
 
 /**
  * Mapper: Account.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
 @Service
 public class AccountsMapper {
 
-    /** ObjectMapper. */
-    private final ObjectMapper objectMapper;
-
-    /**
-     * Constructor with Attributes.
-     * 
-     * @param objectMapper ObjectMapper.
-     */
-    public AccountsMapper(
-            @Autowired ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
     /**
      * Maps an Account Entity to DTO.
-     * 
+     *
      * @param accountEntity The Account Entity.
      * @return The Account DTO.
      */
-    public AccountWithEntropyExpanderDto toDtoWithEntropyExpander(
-            AccountWithEntropyExpanderEntity accountEntity) {
+    public AccountDto toDto(
+            AccountEntity accountEntity) {
 
         if (accountEntity == null)
             return null;
 
-        AccountWithEntropyExpanderDto accountDto = new AccountWithEntropyExpanderDto();
+        AccountDto accountDto = new AccountDto();
 
         accountDto.setAccountId(accountEntity.getAccountId());
         accountDto.setEmail(accountEntity.getEmail());
-        accountDto.setEntropyExpander(accountEntity.getEntropyExpander());
 
         return accountDto;
 
@@ -65,21 +48,20 @@ public class AccountsMapper {
 
     /**
      * Maps an Account Entity to DTO.
-     * 
+     *
      * @param accountEntity The Account Entity.
      * @return The Account DTO.
      */
-    public AccountWithPublicKeyDto toDtoWithPublicKey(
-            AccountWithPublicKeyEntity accountEntity) {
+    public AccountDto toDto(
+            AccountFullEntity accountEntity) {
 
         if (accountEntity == null)
             return null;
 
-        AccountWithPublicKeyDto accountDto = new AccountWithPublicKeyDto();
+        AccountDto accountDto = new AccountDto();
 
         accountDto.setAccountId(accountEntity.getAccountId());
         accountDto.setEmail(accountEntity.getEmail());
-        accountDto.setPublicKey(accountEntity.getPublicKey());
 
         return accountDto;
 
@@ -87,12 +69,78 @@ public class AccountsMapper {
 
     /**
      * Maps an Account Entity to DTO.
-     * 
+     *
+     * @param accountEntity The Account Entity.
+     * @return The Account DTO.
+     */
+    public AccountWithSaltDto toDtoWithSalt(
+            AccountWithSaltEntity accountEntity) {
+
+        if (accountEntity == null)
+            return null;
+
+        AccountWithSaltDto accountDto = new AccountWithSaltDto();
+
+        accountDto.setAccountId(accountEntity.getAccountId());
+        accountDto.setEmail(accountEntity.getEmail());
+        accountDto.setSalt(accountEntity.getSalt());
+
+        return accountDto;
+
+    }
+
+    /**
+     * Maps an Account Entity to DTO.
+     *
+     * @param accountEntity The Account Entity.
+     * @return The Account DTO.
+     */
+    public AccountWithEncryptionPublicKeyDto toDtoWithEncryptionPublicKey(
+            AccountWithEncryptionPublicKeyEntity accountEntity) {
+
+        if (accountEntity == null)
+            return null;
+
+        AccountWithEncryptionPublicKeyDto accountDto = new AccountWithEncryptionPublicKeyDto();
+
+        accountDto.setAccountId(accountEntity.getAccountId());
+        accountDto.setEmail(accountEntity.getEmail());
+        accountDto.setEncryptionPublicKey(accountEntity.getEncryptionPublicKey());
+
+        return accountDto;
+
+    }
+
+    /**
+     * Maps an Account Entity to DTO.
+     *
+     * @param accountEntity The Account Entity.
+     * @return The Account DTO.
+     */
+    public AccountWithSigningPublicKeyDto toDtoWithSigningPublicKey(
+            AccountWithSigningPublicKeyEntity accountEntity) {
+
+        if (accountEntity == null)
+            return null;
+
+        AccountWithSigningPublicKeyDto accountDto = new AccountWithSigningPublicKeyDto();
+
+        accountDto.setAccountId(accountEntity.getAccountId());
+        accountDto.setEmail(accountEntity.getEmail());
+        accountDto.setSigningPublicKey(accountEntity.getSigningPublicKey());
+
+        return accountDto;
+
+    }
+
+    /**
+     * Maps an Account Entity to DTO.
+     *
      * @param accountEntity The Account Entity.
      * @return The Account DTO.
      */
     public AccountWithSecretsDto toDtoWithSecrets(
-            AccountEntity accountEntity) {
+            AccountWithEncryptionPublicKeyEntity accountEntity) {
 
         if (accountEntity == null)
             return null;
@@ -101,6 +149,7 @@ public class AccountsMapper {
 
         accountDto.setAccountId(accountEntity.getAccountId());
         accountDto.setEmail(accountEntity.getEmail());
+        accountDto.setEncryptionPublicKey(accountEntity.getEncryptionPublicKey());
         accountDto.setSecrets(new LinkedList<>());
 
         return accountDto;
@@ -109,12 +158,12 @@ public class AccountsMapper {
 
     /**
      * Maps an Account DTO to Entity.
-     * 
+     *
      * @param accountDto The Account DTO.
      * @return The Account Entity.
      */
     public AccountFullEntity fromDto(
-            NewAccountDto accountDto) {
+            CreateAccountDto accountDto) {
 
         if (accountDto == null)
             return null;
@@ -122,47 +171,11 @@ public class AccountsMapper {
         AccountFullEntity accountEntity = new AccountFullEntity();
 
         accountEntity.setEmail(accountDto.getEmail());
-        accountEntity.setEntropyExpander(accountDto.getEntropyExpander());
-        accountEntity.setPublicKey(accountDto.getPublicKey());
-        accountEntity.setSecurityQuestions(compactSecurityQuestions(accountDto.getSecurityQuestions()));
-        accountEntity.setEncryptedPrivateKey(accountDto.getEncryptedPrivateKey());
-        accountEntity.setPublicKeyFromSecurityAnswers(accountDto.getPublicKeyFromSecurityAnswers());
+        accountEntity.setSalt(accountDto.getSalt());
+        accountEntity.setEncryptionPublicKey(accountDto.getEncryptionPublicKey());
+        accountEntity.setSigningPublicKey(accountDto.getSigningPublicKey());
 
         return accountEntity;
-
-    }
-
-    /**
-     * Transforms a List of security questions into a String representing them.
-     * 
-     * @param securityQuestionsList The List of security questions.
-     * @return The String representing the List of security questions.
-     */
-    public String compactSecurityQuestions(
-            List<String> securityQuestionsList) {
-
-        try {
-            return objectMapper.writeValueAsString(securityQuestionsList);
-        } catch (JsonProcessingException e) {
-            return null;
-        }
-
-    }
-
-    /**
-     * Transforms a String representing security questions into a List of them.
-     * 
-     * @param securityQuestionsString The String representing security questions.
-     * @return The List of security questions.
-     */
-    public List<String> parseSecurityQuestions(
-            String securityQuestionsString) {
-
-        try {
-            return objectMapper.readValue(securityQuestionsString, new TypeReference<List<String>>() {});
-        } catch (IOException e) {
-            return null;
-        }
 
     }
 

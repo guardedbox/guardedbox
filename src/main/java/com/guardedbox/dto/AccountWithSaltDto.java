@@ -1,15 +1,21 @@
 package com.guardedbox.dto;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * DTO: Account.
- * Contains the following fields: accoundId, email, publicKey.
- * 
+ * Contains the following fields: accountId, email, salt.
+ *
  * @author s3curitybug@gmail.com
  *
  */
-public class AccountWithPublicKeyDto {
+public class AccountWithSaltDto
+        implements Serializable {
+
+    /** Serial Version UID. */
+    private static final long serialVersionUID = 8311168168735591089L;
 
     /** Account ID. */
     @JsonIgnore
@@ -18,8 +24,8 @@ public class AccountWithPublicKeyDto {
     /** Email. */
     private String email;
 
-    /** Public Key. */
-    private String publicKey;
+    /** Salt. */
+    private String salt;
 
     /**
      * @return The email.
@@ -52,18 +58,18 @@ public class AccountWithPublicKeyDto {
     }
 
     /**
-     * @return The publicKey.
+     * @return The salt.
      */
-    public String getPublicKey() {
-        return publicKey;
+    public String getSalt() {
+        return salt;
     }
 
     /**
-     * @param publicKey The publicKey to set.
+     * @param salt The salt to set.
      */
-    public void setPublicKey(
-            String publicKey) {
-        this.publicKey = publicKey;
+    public void setSalt(
+            String salt) {
+        this.salt = salt;
     }
 
 }

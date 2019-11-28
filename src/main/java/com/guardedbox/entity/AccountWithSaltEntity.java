@@ -1,10 +1,10 @@
 package com.guardedbox.entity;
 
+import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.Constraints.HEX_PATTERN;
-import static com.guardedbox.constants.SecurityParameters.ENTROPY_EXPANDER_LENGTH;
+import static com.guardedbox.constants.Constraints.SALT_LENGTH;
 
 import java.io.Serializable;
 
@@ -24,13 +24,13 @@ import javax.validation.constraints.Size;
 /**
  * Entity: Account.
  * Contains the following fields: accountId, email, publicKey.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
 @Entity
 @Table(name = "account")
-public class AccountWithEntropyExpanderEntity
+public class AccountWithSaltEntity
         implements Serializable {
 
     /** Serial Version UID. */
@@ -38,7 +38,7 @@ public class AccountWithEntropyExpanderEntity
 
     /** Account ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     @Positive
     private Long accountId;
@@ -50,12 +50,12 @@ public class AccountWithEntropyExpanderEntity
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
     private String email;
 
-    /** Entropy Expander. */
-    @Column(name = "entropy_expander")
+    /** Salt. */
+    @Column(name = "salt")
     @NotNull
-    @Pattern(regexp = HEX_PATTERN)
-    @Size(min = ENTROPY_EXPANDER_LENGTH, max = ENTROPY_EXPANDER_LENGTH)
-    private String entropyExpander;
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = SALT_LENGTH, max = SALT_LENGTH)
+    private String salt;
 
     /**
      * @return The accountId.
@@ -88,18 +88,18 @@ public class AccountWithEntropyExpanderEntity
     }
 
     /**
-     * @return The entropyExpander.
+     * @return The salt.
      */
-    public String getEntropyExpander() {
-        return entropyExpander;
+    public String getSalt() {
+        return salt;
     }
 
     /**
-     * @param entropyExpander The entropyExpander to set.
+     * @param salt The salt to set.
      */
-    public void setEntropyExpander(
-            String entropyExpander) {
-        this.entropyExpander = entropyExpander;
+    public void setSalt(
+            String salt) {
+        this.salt = salt;
     }
 
 }

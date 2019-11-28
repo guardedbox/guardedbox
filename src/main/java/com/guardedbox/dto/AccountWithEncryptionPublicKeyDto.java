@@ -1,21 +1,21 @@
 package com.guardedbox.dto;
 
 import java.io.Serializable;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * DTO: Account with Secrets associated to it.
+ * DTO: Account.
+ * Contains the following fields: accountId, email, encryptionPublicKey.
  *
  * @author s3curitybug@gmail.com
  *
  */
-public class AccountWithSecretsDto
+public class AccountWithEncryptionPublicKeyDto
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = 8481536477701691288L;
+    private static final long serialVersionUID = -6202084704147455366L;
 
     /** Account ID. */
     @JsonIgnore
@@ -26,9 +26,6 @@ public class AccountWithSecretsDto
 
     /** Encryption Public Key. */
     private String encryptionPublicKey;
-
-    /** Secrets. */
-    private List<SecretDto> secrets;
 
     /**
      * @return The accountId.
@@ -73,21 +70,6 @@ public class AccountWithSecretsDto
     public void setEncryptionPublicKey(
             String encryptionPublicKey) {
         this.encryptionPublicKey = encryptionPublicKey;
-    }
-
-    /**
-     * @return The secrets.
-     */
-    public List<SecretDto> getSecrets() {
-        return secrets;
-    }
-
-    /**
-     * @param secrets The secrets to set.
-     */
-    public void setSecrets(
-            List<SecretDto> secrets) {
-        this.secrets = secrets;
     }
 
 }

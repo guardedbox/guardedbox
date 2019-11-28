@@ -1,15 +1,21 @@
 package com.guardedbox.dto;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * DTO: Account.
- * Contains the following fields: accoundId, email, entropyExpander.
- * 
+ * Contains the following fields: accountId, email, signingPublicKey.
+ *
  * @author s3curitybug@gmail.com
  *
  */
-public class AccountWithEntropyExpanderDto {
+public class AccountWithSigningPublicKeyDto
+        implements Serializable {
+
+    /** Serial Version UID. */
+    private static final long serialVersionUID = 374106389578555109L;
 
     /** Account ID. */
     @JsonIgnore
@@ -18,15 +24,8 @@ public class AccountWithEntropyExpanderDto {
     /** Email. */
     private String email;
 
-    /** Entropy Expander. */
-    private String entropyExpander;
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
+    /** Signing Public Key. */
+    private String signingPublicKey;
 
     /**
      * @return The accountId.
@@ -44,6 +43,13 @@ public class AccountWithEntropyExpanderDto {
     }
 
     /**
+     * @return The email.
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
      * @param email The email to set.
      */
     public void setEmail(
@@ -52,18 +58,18 @@ public class AccountWithEntropyExpanderDto {
     }
 
     /**
-     * @return The entropyExpander.
+     * @return The signingPublicKey.
      */
-    public String getEntropyExpander() {
-        return entropyExpander;
+    public String getSigningPublicKey() {
+        return signingPublicKey;
     }
 
     /**
-     * @param entropyExpander The entropyExpander to set.
+     * @param signingPublicKey The signingPublicKey to set.
      */
-    public void setEntropyExpander(
-            String entropyExpander) {
-        this.entropyExpander = entropyExpander;
+    public void setSigningPublicKey(
+            String signingPublicKey) {
+        this.signingPublicKey = signingPublicKey;
     }
 
 }

@@ -4,20 +4,21 @@ import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.Constraints.ENCRYPTED_PRIVATE_KEY_LENGTH;
-import static com.guardedbox.constants.Constraints.ENCRYPTED_VALUE_PATTERN;
-import static com.guardedbox.constants.Constraints.HEX_PATTERN;
-import static com.guardedbox.constants.Constraints.PUBLIC_KEY_LENGTH;
-import static com.guardedbox.constants.Constraints.SECURITY_QUESTIONS_MAX_LENGTH;
-import static com.guardedbox.constants.SecurityParameters.ENTROPY_EXPANDER_LENGTH;
+import static com.guardedbox.constants.Constraints.ENCRYPTION_PUBLIC_KEY_LENGTH;
+import static com.guardedbox.constants.Constraints.SALT_LENGTH;
+import static com.guardedbox.constants.Constraints.SIGNING_PUBLIC_KEY_LENGTH;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -29,7 +30,7 @@ import javax.validation.constraints.Size;
 /**
  * Entity: Account.
  * Contains all the fields.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -43,7 +44,7 @@ public class AccountFullEntity
 
     /** Account ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     @Positive
     private Long accountId;
@@ -55,39 +56,34 @@ public class AccountFullEntity
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
     private String email;
 
-    /** Entropy Expander. */
-    @Column(name = "entropy_expander")
+    /** Salt. */
+    @Column(name = "salt")
     @NotNull
-    @Pattern(regexp = HEX_PATTERN)
-    @Size(min = ENTROPY_EXPANDER_LENGTH, max = ENTROPY_EXPANDER_LENGTH)
-    private String entropyExpander;
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = SALT_LENGTH, max = SALT_LENGTH)
+    private String salt;
 
-    /** Public Key. */
-    @Column(name = "public_key")
+    /** Encryption Public Key. */
+    @Column(name = "encryption_public_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = PUBLIC_KEY_LENGTH, max = PUBLIC_KEY_LENGTH)
-    private String publicKey;
+    @Size(min = ENCRYPTION_PUBLIC_KEY_LENGTH, max = ENCRYPTION_PUBLIC_KEY_LENGTH)
+    private String encryptionPublicKey;
 
-    /** Security Questions. */
-    @Column(name = "security_questions")
-    @NotBlank
-    @Size(max = SECURITY_QUESTIONS_MAX_LENGTH)
-    private String securityQuestions;
-
-    /** Encrypted Private Key. */
-    @Column(name = "encrypted_private_key")
-    @NotBlank
-    @Pattern(regexp = ENCRYPTED_VALUE_PATTERN)
-    @Size(min = ENCRYPTED_PRIVATE_KEY_LENGTH, max = ENCRYPTED_PRIVATE_KEY_LENGTH)
-    private String encryptedPrivateKey;
-
-    /** Public Key from Security Questions. */
-    @Column(name = "public_key_from_security_answers")
+    /** Signing Public Key. */
+    @Column(name = "signing_public_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = PUBLIC_KEY_LENGTH, max = PUBLIC_KEY_LENGTH)
-    private String publicKeyFromSecurityAnswers;
+    @Size(min = SIGNING_PUBLIC_KEY_LENGTH, max = SIGNING_PUBLIC_KEY_LENGTH)
+    private String signingPublicKey;
+
+    /** Secrets. */
+    @OneToMany(mappedBy = "ownerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SecretEntity> ownedSecrets;
+
+    /** Secrets Shared with this Account. */
+    @OneToMany(mappedBy = "receiverAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SharedSecretEntity> receivedSharedSecrets;
 
     /**
      * @return The accountId.
@@ -120,78 +116,78 @@ public class AccountFullEntity
     }
 
     /**
-     * @return The entropyExpander.
+     * @return The salt.
      */
-    public String getEntropyExpander() {
-        return entropyExpander;
+    public String getSalt() {
+        return salt;
     }
 
     /**
-     * @param entropyExpander The entropyExpander to set.
+     * @param salt The salt to set.
      */
-    public void setEntropyExpander(
-            String entropyExpander) {
-        this.entropyExpander = entropyExpander;
+    public void setSalt(
+            String salt) {
+        this.salt = salt;
     }
 
     /**
-     * @return The publicKey.
+     * @return The encryptionPublicKey.
      */
-    public String getPublicKey() {
-        return publicKey;
+    public String getEncryptionPublicKey() {
+        return encryptionPublicKey;
     }
 
     /**
-     * @param publicKey The publicKey to set.
+     * @param encryptionPublicKey The encryptionPublicKey to set.
      */
-    public void setPublicKey(
-            String publicKey) {
-        this.publicKey = publicKey;
+    public void setEncryptionPublicKey(
+            String encryptionPublicKey) {
+        this.encryptionPublicKey = encryptionPublicKey;
     }
 
     /**
-     * @return The securityQuestions.
+     * @return The signingPublicKey.
      */
-    public String getSecurityQuestions() {
-        return securityQuestions;
+    public String getSigningPublicKey() {
+        return signingPublicKey;
     }
 
     /**
-     * @param securityQuestions The securityQuestions to set.
+     * @param signingPublicKey The signingPublicKey to set.
      */
-    public void setSecurityQuestions(
-            String securityQuestions) {
-        this.securityQuestions = securityQuestions;
+    public void setSigningPublicKey(
+            String signingPublicKey) {
+        this.signingPublicKey = signingPublicKey;
     }
 
     /**
-     * @return The encryptedPrivateKey.
+     * @return The ownedSecrets.
      */
-    public String getEncryptedPrivateKey() {
-        return encryptedPrivateKey;
+    public List<SecretEntity> getOwnedSecrets() {
+        return ownedSecrets;
     }
 
     /**
-     * @param encryptedPrivateKey The encryptedPrivateKey to set.
+     * @param ownedSecrets The ownedSecrets to set.
      */
-    public void setEncryptedPrivateKey(
-            String encryptedPrivateKey) {
-        this.encryptedPrivateKey = encryptedPrivateKey;
+    public void setOwnedSecrets(
+            List<SecretEntity> ownedSecrets) {
+        this.ownedSecrets = ownedSecrets;
     }
 
     /**
-     * @return The publicKeyFromSecurityAnswers.
+     * @return The receivedSharedSecrets.
      */
-    public String getPublicKeyFromSecurityAnswers() {
-        return publicKeyFromSecurityAnswers;
+    public List<SharedSecretEntity> getReceivedSharedSecrets() {
+        return receivedSharedSecrets;
     }
 
     /**
-     * @param publicKeyFromSecurityAnswers The publicKeyFromSecurityAnswers to set.
+     * @param receivedSharedSecrets The receivedSharedSecrets to set.
      */
-    public void setPublicKeyFromSecurityAnswers(
-            String publicKeyFromSecurityAnswers) {
-        this.publicKeyFromSecurityAnswers = publicKeyFromSecurityAnswers;
+    public void setReceivedSharedSecrets(
+            List<SharedSecretEntity> receivedSharedSecrets) {
+        this.receivedSharedSecrets = receivedSharedSecrets;
     }
 
 }

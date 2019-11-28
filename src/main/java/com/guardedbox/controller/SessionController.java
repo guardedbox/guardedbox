@@ -1,85 +1,77 @@
 package com.guardedbox.controller;
 
-import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
-import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
-import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.SecurityParameters.ENTROPY_EXPANDER_LENGTH;
-import static com.guardedbox.constants.SecurityParameters.LOGIN_CHALLENGE_LENGTH;
-import static com.guardedbox.constants.SecurityParameters.LOGIN_CHALLENGE_TTL;
-import static com.guardedbox.constants.SecurityParameters.LOGIN_CODE_LENGTH;
-import static com.guardedbox.constants.SecurityParameters.LOGIN_CODE_TTL;
+import static com.guardedbox.constants.Roles.ROLE_ACCOUNT;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.guardedbox.constants.SessionAttributes;
-import com.guardedbox.dto.AccountWithEntropyExpanderDto;
-import com.guardedbox.dto.AccountWithPublicKeyDto;
-import com.guardedbox.dto.LoginChallengeDto;
-import com.guardedbox.dto.ObtainLoginCodeDto;
-import com.guardedbox.dto.SessionInfoDto;
-import com.guardedbox.dto.SuccessDto;
-import com.guardedbox.service.EmailService;
-import com.guardedbox.service.ExecutionTimeService;
-import com.guardedbox.service.RandomService;
-import com.guardedbox.service.transactional.AccountsService;
-
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.guardedbox.config.AuthenticationPrincipal;
+import com.guardedbox.constants.SessionAttributes;
+import com.guardedbox.dto.AccountDto;
+import com.guardedbox.dto.ChallengeDto;
+import com.guardedbox.dto.OtpDto;
+import com.guardedbox.dto.OtpResponseDto;
+import com.guardedbox.dto.SessionInfoDto;
+import com.guardedbox.dto.SignedChallengeResponseDto;
+import com.guardedbox.dto.SuccessDto;
+import com.guardedbox.exception.ServiceException;
+import com.guardedbox.service.ChallengeService;
+import com.guardedbox.service.ExecutionTimeService;
+import com.guardedbox.service.OtpService;
+import com.guardedbox.service.SessionAccountService;
+import com.guardedbox.service.transactional.AccountsService;
 
 /**
  * Controller: Session Handling.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
 @RestController
 @RequestMapping("/api/session")
 @Validated
-@PropertySource("classpath:email/email_en.properties")
 public class SessionController {
 
-    /** Execution time of the obtain login code request (ms). */
-    private static final long OBTAIN_LOGIN_CODE_EXECUTION_TIME = 3000L;
+    /** Indicates if environment is dev, based on property environment. */
+    private final boolean dev;
 
-    /** Property: login-code.email.subject. */
-    private final String loginCodeEmailSubject;
+    /** Property: security-parameters.otp.execution-time. */
+    private final long otpExecutionTime;
 
-    /** Property: login-code.email.body. */
-    private final String loginCodeEmailBody;
+    /** Property: security-parameters.login.execution-time. */
+    private final long loginExecutionTime;
 
     /** AccountsService. */
     private final AccountsService accountsService;
 
+    /** SessionAccountService. */
+    private final SessionAccountService sessionAccount;
+
     /** ExecutionTimeService. */
     private final ExecutionTimeService executionTimeService;
 
-    /** RandomService. */
-    private final RandomService randomService;
+    /** ChallengeService. */
+    private final ChallengeService challengeService;
 
-    /** EmailService. */
-    private final EmailService emailService;
+    /** OtpService. */
+    private final OtpService otpService;
 
     /** Current Request. */
     private final HttpServletRequest request;
@@ -87,211 +79,200 @@ public class SessionController {
     /** Current Session. */
     private final HttpSession session;
 
-    /** PasswordEncoder. */
-    private final PasswordEncoder passwordEncoder;
-
-    /** CsrfTokenRepository. */
-    private final CsrfTokenRepository csrfTokenRepository;
-
     /**
      * Constructor with Attributes.
-     * 
-     * @param loginCodeEmailSubject Property: login-code.email.subject.
-     * @param loginCodeEmailBody Property: login-code.email.body.
+     *
+     * @param dev Indicates if environment is dev, based on property environment.
+     * @param otpExecutionTime Property: security-parameters.otp.execution-time.
+     * @param loginExecutionTime Property: security-parameters.login.execution-time.
      * @param accountsService AccountsService.
+     * @param sessionAccount SessionAccountService.
      * @param executionTimeService ExecutionTimeService.
-     * @param randomService RandomService.
-     * @param emailService EmailService.
+     * @param challengeService ChallengeService.
+     * @param otpService OtpService.
      * @param request Current Request.
      * @param session Current Session.
-     * @param passwordEncoder PasswordEncoder.
-     * @param csrfTokenRepository CsrfTokenRepository.
      */
     public SessionController(
-            @Value("${login-code.email.subject}") String loginCodeEmailSubject,
-            @Value("${login-code.email.body}") String loginCodeEmailBody,
+            @Value("#{'${environment}' == 'dev'}") boolean dev,
+            @Value("${security-parameters.otp.execution-time}") long otpExecutionTime,
+            @Value("${security-parameters.login.execution-time}") long loginExecutionTime,
             @Autowired AccountsService accountsService,
+            @Autowired SessionAccountService sessionAccount,
             @Autowired ExecutionTimeService executionTimeService,
-            @Autowired RandomService randomService,
-            @Autowired EmailService emailService,
+            @Autowired ChallengeService challengeService,
+            @Autowired OtpService otpService,
             @Autowired HttpServletRequest request,
-            @Autowired HttpSession session,
-            @Autowired PasswordEncoder passwordEncoder,
-            @Autowired CsrfTokenRepository csrfTokenRepository) {
-        this.loginCodeEmailSubject = loginCodeEmailSubject;
-        this.loginCodeEmailBody = loginCodeEmailBody;
+            @Autowired HttpSession session) {
+        this.dev = dev;
+        this.otpExecutionTime = otpExecutionTime;
+        this.loginExecutionTime = loginExecutionTime;
         this.accountsService = accountsService;
+        this.sessionAccount = sessionAccount;
         this.executionTimeService = executionTimeService;
-        this.randomService = randomService;
-        this.emailService = emailService;
+        this.challengeService = challengeService;
+        this.otpService = otpService;
         this.request = request;
         this.session = session;
-        this.passwordEncoder = passwordEncoder;
-        this.csrfTokenRepository = csrfTokenRepository;
     }
 
     /**
      * @return The current session information.
      */
-    @GetMapping("/info")
-    public SessionInfoDto sessionInfo() {
+    @GetMapping()
+    public SessionInfoDto getSessionInfo() {
 
         SessionInfoDto sessionInfoDto = new SessionInfoDto();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AccountDto sessionAccountDto = sessionAccount.getAccount();
 
-        // Authentication.
-        boolean authenticated = !(authentication instanceof AnonymousAuthenticationToken);
-        if (authenticated) {
+        if (sessionAccountDto != null) {
             sessionInfoDto.setAuthenticated(true);
-            sessionInfoDto.setEmail(authentication.getName());
+            sessionInfoDto.setEmail(sessionAccountDto.getEmail());
         }
-
-        // Roles.
-        List<String> roles = new ArrayList<>(authentication.getAuthorities().size());
-        for (GrantedAuthority authority : authentication.getAuthorities())
-            roles.add(authority.getAuthority());
-        sessionInfoDto.setRoles(roles);
-
-        // CSRF.
-        sessionInfoDto.setCsrfToken(csrfTokenRepository.loadToken(request));
 
         return sessionInfoDto;
 
     }
 
     /**
-     * @param email An email.
-     * @return The entropy expander of the account corresponding to the introduced email.
+     * @return A challenge.
      */
-    @GetMapping("/get-account-entropy-expander")
-    public AccountWithEntropyExpanderDto getAccountEntropyExpander(
-            @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
+    @PostMapping("/challenge")
+    public ChallengeDto getChallenge() {
 
-        AccountWithEntropyExpanderDto account = accountsService.getAccountWithEntropyExpander(email);
-
-        if (account == null) {
-            account = new AccountWithEntropyExpanderDto();
-            account.setEmail(email);
-            account.setEntropyExpander(randomService.randomHexString(ENTROPY_EXPANDER_LENGTH));
-        }
-
-        return account;
-
-    }
-
-    /**
-     * @param email An email.
-     * @return A login challenge for the introduced email.
-     */
-    @GetMapping("/get-login-challenge")
-    public LoginChallengeDto getLoginChallenge(
-            @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
-
-        long currentTime = System.currentTimeMillis();
+        // Remove the challenge and the one time password from the current session.
+        session.removeAttribute(SessionAttributes.CHALLENGE);
+        session.removeAttribute(SessionAttributes.OTP);
 
         // Generate the challenge.
-        String challenge = randomService.randomAlphanumericString(LOGIN_CHALLENGE_LENGTH);
+        ChallengeDto challengeDto = challengeService.generateChallenge();
 
-        // Store it in session.
-        session.setAttribute(SessionAttributes.LOGIN_CHALLENGE, challenge);
-        session.setAttribute(SessionAttributes.LOGIN_CHALLENGE_EMAIL, email);
-        session.setAttribute(SessionAttributes.LOGIN_CHALLENGE_EXPIRATION, currentTime + LOGIN_CHALLENGE_TTL);
+        // Store it in the current session.
+        session.setAttribute(SessionAttributes.CHALLENGE, challengeDto);
 
         // Return it.
-        LoginChallengeDto loginChallengeDto = new LoginChallengeDto();
-        loginChallengeDto.setChallenge(challenge);
-
-        return loginChallengeDto;
+        return challengeDto;
 
     }
 
     /**
-     * Generates a login code, sends it by email, and stores it in a session attribute.
-     * 
-     * @param obtainLoginCodeDto Object with the necessary credentials to generate and send a login code.
+     * Verifies the signed response to a previously requested challenge, and generates and sends a one time password.
+     *
+     * @param signedChallengeResponseDto Object with the signed response to a previously requested challenge.
      * @return Object indicating if the execution was successful.
      */
-    @PostMapping("/obtain-login-code")
-    public SuccessDto obtainLoginCode(
-            @RequestBody(required = true) @Valid ObtainLoginCodeDto obtainLoginCodeDto) {
+    @PostMapping("/otp")
+    public SuccessDto obtainOtp(
+            @RequestBody(required = true) @Valid SignedChallengeResponseDto signedChallengeResponseDto) {
 
-        long currentTime = System.currentTimeMillis();
-        String error = null;
+        long startTime = System.currentTimeMillis();
 
-        // Check if the account exists.
-        AccountWithPublicKeyDto accountWithPublicKeyDto = accountsService.getAccountWithPublicKey(obtainLoginCodeDto.getEmail());
-        if (accountWithPublicKeyDto == null) {
-            error = "Email is not registered";
-        }
+        try {
 
-        if (error == null) {
-
-            // Check if the login challenge is correct.
-            String loginChallenge = (String) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE);
-            String loginChallengeEmail = (String) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE_EMAIL);
-            Long loginChallengeExpiration = (Long) session.getAttribute(SessionAttributes.LOGIN_CHALLENGE_EXPIRATION);
-
-            if (loginChallenge == null) {
-                error = "No login challenge has been generated";
-            } else if (loginChallengeEmail == null || !loginChallengeEmail.equals(obtainLoginCodeDto.getEmail())) {
-                error = "Login email does not match login challenge email";
-            } else if (loginChallengeExpiration == null || loginChallengeExpiration < currentTime) {
-                error = "Login challenge is expired";
-            } else if (!passwordEncoder.matches(obtainLoginCodeDto.getChallengeResponse(), accountWithPublicKeyDto.getPublicKey())) {
-                error = "Introduced login challenge is incorrect";
+            // Check if a challenge was previously requested.
+            ChallengeDto challengeDto = (ChallengeDto) session.getAttribute(SessionAttributes.CHALLENGE);
+            if (challengeDto == null) {
+                throw new ServiceException("Challenge is not stored in session");
             }
 
-        }
+            // Remove the challenge and the one time password from the current session.
+            session.removeAttribute(SessionAttributes.CHALLENGE);
+            session.removeAttribute(SessionAttributes.OTP);
 
-        if (error == null) {
+            // Verify the signed challenge response.
+            if (!challengeService.verifySignedChallengeResponse(signedChallengeResponseDto, challengeDto)) {
+                throw new ServiceException("Challenge response is incorrect");
+            }
 
-            // Generate the login code.
-            String loginCode = randomService.randomAlphanumericString(LOGIN_CODE_LENGTH);
+            // Generate and send the one time password.
+            OtpDto otpDto = null;
+            if (dev) {
+                otpDto = new OtpDto();
+                otpDto.setEmail(signedChallengeResponseDto.getEmail());
+            } else {
+                otpDto = otpService.generateAndSendOtp(signedChallengeResponseDto.getEmail());
+            }
 
-            // Send it by email.
-            emailService.send(
-                    obtainLoginCodeDto.getEmail(),
-                    loginCodeEmailSubject,
-                    String.format(loginCodeEmailBody, loginCode));
+            // Store it in the current session.
+            session.setAttribute(SessionAttributes.OTP, otpDto);
 
-            // Store it in session.
-            session.setAttribute(SessionAttributes.LOGIN_CODE, loginCode);
-            session.setAttribute(SessionAttributes.LOGIN_CODE_EMAIL, obtainLoginCodeDto.getEmail());
-            session.setAttribute(SessionAttributes.LOGIN_CODE_EXPIRATION, currentTime + LOGIN_CODE_TTL);
-
-        }
-
-        // Remove login session attributes in case of error.
-        if (error != null) {
-            removeLoginSessionAttributes(session);
+        } catch (Exception e) {
         }
 
         // Fix execution time.
-        executionTimeService.fix(currentTime, OBTAIN_LOGIN_CODE_EXECUTION_TIME);
+        executionTimeService.fix(startTime, otpExecutionTime);
 
-        // Successful result (always).
+        // Successful result.
         return new SuccessDto(true);
 
     }
 
     /**
-     * Removes all login challenge and login code session attributes.
-     * 
-     * @param session Current Session.
+     * Performs a login.
+     *
+     * @param otpResponseDto Object with the response to a previously requested one time password.
+     * @return Object indicating if the login was successful.
      */
-    public static void removeLoginSessionAttributes(
-            HttpSession session) {
+    @PostMapping("/login")
+    public SuccessDto login(
+            @RequestBody(required = true) @Valid OtpResponseDto otpResponseDto) {
 
-        // Remove login challenge session attributes.
-        session.removeAttribute(SessionAttributes.LOGIN_CHALLENGE);
-        session.removeAttribute(SessionAttributes.LOGIN_CHALLENGE_EMAIL);
-        session.removeAttribute(SessionAttributes.LOGIN_CHALLENGE_EXPIRATION);
+        long startTime = System.currentTimeMillis();
 
-        // Remove login code session attributes.
-        session.removeAttribute(SessionAttributes.LOGIN_CODE);
-        session.removeAttribute(SessionAttributes.LOGIN_CODE_EMAIL);
-        session.removeAttribute(SessionAttributes.LOGIN_CODE_EXPIRATION);
-        session.removeAttribute(SessionAttributes.LOGIN_REQUEST_CODE);
+        try {
+
+            // Check if a one time password was previously generated.
+            OtpDto otpDto = (OtpDto) session.getAttribute(SessionAttributes.OTP);
+            if (otpDto == null) {
+                throw new ServiceException("One time password is not stored in session");
+            }
+
+            // Remove the challenge and the one time password from the current session.
+            session.removeAttribute(SessionAttributes.CHALLENGE);
+            session.removeAttribute(SessionAttributes.OTP);
+
+            // Verify the one time password response.
+            if (!dev && !otpService.verifyOtp(otpResponseDto, otpDto)) {
+                throw new ServiceException("One time password response is incorrect");
+            }
+
+            // Set the authentication.
+            AccountDto accountDto = accountsService.getAndCheckAccountByEmail(otpDto.getEmail());
+            AuthenticationPrincipal authenticationPrincipal = new AuthenticationPrincipal(accountDto);
+            List<GrantedAuthority> roles = Arrays.asList(ROLE_ACCOUNT);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationPrincipal, null, roles);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Change session ID (Cookie).
+            request.changeSessionId();
+
+            // Successful result.
+            return new SuccessDto(true);
+
+        } catch (Exception e) {
+
+            return new SuccessDto(false);
+
+        } finally {
+
+            // Fix execution time.
+            executionTimeService.fix(startTime, loginExecutionTime);
+
+        }
+
+    }
+
+    /**
+     * Performs a logout.
+     *
+     * @return Object indicating if the logout was successful.
+     */
+    @PostMapping("/logout")
+    public SuccessDto logout() {
+
+        session.invalidate();
+
+        return new SuccessDto(true);
 
     }
 

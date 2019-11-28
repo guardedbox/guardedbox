@@ -8,7 +8,7 @@ import com.guardedbox.entity.AccountFullEntity;
 /**
  * Repository: Account.
  * Entity: AccountFullEntity.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -22,5 +22,12 @@ public interface AccountFullEntitiesRepository
      */
     boolean existsByEmail(
             String email);
+
+    /**
+     * @param salt AccountFullEntity.salt.
+     * @return Boolean indicating if an AccountFullEntity corresponding to the introduced salt exists.
+     */
+    boolean existsBySalt(
+            String salt);
 
 }

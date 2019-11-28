@@ -22,6 +22,12 @@ const AES = {
     ivLength: 12 // bytes
 };
 
+const MINING = {
+    nonceLength: 64, // bytes
+    hmacHash: 'sha512',
+    proofThreshold: [0, 63]
+};
+
 var currentSessionKeys = {
     ecdhKeyPair: null,
     eddsaKeyPair: null,
@@ -205,6 +211,37 @@ export function sign(plainText, plainTextFormat = 'utf8', outputFormat = 'base64
     try {
 
         return currentSessionKeys.eddsaKeyPair.sign({ input: plainText, inputFormat: plainTextFormat, outputFormat: outputFormat });
+
+    } catch (err) {
+        modalMessage(t('global.error'), t('global.error-occurred'));
+        return '';
+    }
+
+}
+
+/**
+ * Mines a message, finding a nonce such that the first bytes of hmac(message, nonce) are lower than a predefined threshold.
+ * 
+ * @param {(Uint8Array|string)} plainText The message to mine.
+ * @param {string} [plainTextFormat] The format of the message to mine, in case it is a string. Default: utf8.
+ * @param {string} [outputFormat] The format of the output nonce. Default: base64.
+ * @returns {(Uint8Array|string)} The found nonce that fulfills the mining condition.
+ */
+export function mine(plainText, plainTextFormat = 'utf8', outputFormat = 'base64') {
+
+    try {
+
+        do {
+
+            var nonce = randomBytes(MINING.nonceLength);
+            var proof = hmac({ algorithm: MINING.hmacHash, input: plainText, inputFormat: plainTextFormat, key: nonce });
+
+            var valid = true;
+            for (var i = 0; i < MINING.proofThreshold.length; i++) valid = valid && (proof[i] <= MINING.proofThreshold[i]);
+
+        } while (!valid);
+
+        return outputFormat ? nonce.toString(outputFormat) : nonce;
 
     } catch (err) {
         modalMessage(t('global.error'), t('global.error-occurred'));

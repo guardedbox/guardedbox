@@ -4,8 +4,6 @@ import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.Constraints.HEX_PATTERN;
-import static com.guardedbox.constants.SecurityParameters.ENTROPY_EXPANDER_LENGTH;
 import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
 
 import java.io.Serializable;
@@ -25,25 +23,25 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 /**
- * Entity: RegistrationToken.
- * 
+ * Entity: Registration.
+ *
  * @author s3curitybug@gmail.com
  *
  */
 @Entity
-@Table(name = "registration_token")
-public class RegistrationTokenEntity
+@Table(name = "registration")
+public class RegistrationEntity
         implements Serializable {
 
     /** Serial Version UID. */
     private static final long serialVersionUID = 3592027573303303253L;
 
-    /** Registration Token ID. */
+    /** Registration ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "registration_token_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "registration_id")
     @Positive
-    private Long registrationTokenId;
+    private Long registrationId;
 
     /** Email. */
     @Column(name = "email")
@@ -64,26 +62,19 @@ public class RegistrationTokenEntity
     @NotNull
     private Timestamp expeditionTime;
 
-    /** Entropy Expander. */
-    @Column(name = "entropy_expander")
-    @NotNull
-    @Pattern(regexp = HEX_PATTERN)
-    @Size(min = ENTROPY_EXPANDER_LENGTH, max = ENTROPY_EXPANDER_LENGTH)
-    private String entropyExpander;
-
     /**
-     * @return The registrationTokenId.
+     * @return The registrationId.
      */
-    public Long getRegistrationTokenId() {
-        return registrationTokenId;
+    public Long getRegistrationId() {
+        return registrationId;
     }
 
     /**
-     * @param registrationTokenId The registrationTokenId to set.
+     * @param registrationId The registrationId to set.
      */
-    public void setRegistrationTokenId(
-            Long registrationTokenId) {
-        this.registrationTokenId = registrationTokenId;
+    public void setRegistrationId(
+            Long registrationId) {
+        this.registrationId = registrationId;
     }
 
     /**
@@ -129,21 +120,6 @@ public class RegistrationTokenEntity
     public void setExpeditionTime(
             Timestamp expeditionTime) {
         this.expeditionTime = expeditionTime;
-    }
-
-    /**
-     * @return The entropyExpander.
-     */
-    public String getEntropyExpander() {
-        return entropyExpander;
-    }
-
-    /**
-     * @param entropyExpander The entropyExpander to set.
-     */
-    public void setEntropyExpander(
-            String entropyExpander) {
-        this.entropyExpander = entropyExpander;
     }
 
 }

@@ -1,20 +1,25 @@
 package com.guardedbox.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * DTO: RegistrationToken.
- * 
+ * DTO: Registration.
+ *
  * @author s3curitybug@gmail.com
  *
  */
-public class RegistrationTokenDto {
+public class RegistrationDto
+        implements Serializable {
 
-    /** Registration Token ID. */
+    /** Serial Version UID. */
+    private static final long serialVersionUID = 998073884156272898L;
+
+    /** Registration ID. */
     @JsonIgnore
-    private Long registrationTokenId;
+    private Long registrationId;
 
     /** Email. */
     private String email;
@@ -26,22 +31,19 @@ public class RegistrationTokenDto {
     @JsonIgnore
     private Timestamp expeditionTime;
 
-    /** Entropy Expander. */
-    private String entropyExpander;
-
     /**
-     * @return The registrationTokenId.
+     * @return The registrationId.
      */
-    public Long getRegistrationTokenId() {
-        return registrationTokenId;
+    public Long getRegistrationId() {
+        return registrationId;
     }
 
     /**
-     * @param registrationTokenId The registrationTokenId to set.
+     * @param registrationId The registrationId to set.
      */
-    public void setRegistrationTokenId(
-            Long registrationTokenId) {
-        this.registrationTokenId = registrationTokenId;
+    public void setRegistrationId(
+            Long registrationId) {
+        this.registrationId = registrationId;
     }
 
     /**
@@ -87,21 +89,6 @@ public class RegistrationTokenDto {
     public void setExpeditionTime(
             Timestamp expeditionTime) {
         this.expeditionTime = expeditionTime;
-    }
-
-    /**
-     * @return The entropyExpander.
-     */
-    public String getEntropyExpander() {
-        return entropyExpander;
-    }
-
-    /**
-     * @param entropyExpander The entropyExpander to set.
-     */
-    public void setEntropyExpander(
-            String entropyExpander) {
-        this.entropyExpander = entropyExpander;
     }
 
 }

@@ -16,10 +16,12 @@ import com.guardedbox.dto.EditSecretSharingDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.SecretEntity;
+import com.guardedbox.entity.SecretWithOwnerAccountEncryptionPublicKeyEntity;
 import com.guardedbox.entity.SharedSecretEntity;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.SecretsMapper;
 import com.guardedbox.repository.SecretEntitiesRepository;
+import com.guardedbox.repository.SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository;
 
 /**
  * Service: Secret.
@@ -34,6 +36,9 @@ public class SecretsService {
     /** SecretEntitiesRepository. */
     private final SecretEntitiesRepository secretEntitiesRepository;
 
+    /** SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository. */
+    private final SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository;
+
     /** SecretsMapper. */
     private final SecretsMapper secretsMapper;
 
@@ -41,12 +46,15 @@ public class SecretsService {
      * Constructor with Attributes.
      *
      * @param secretEntitiesRepository SecretEntitiesRepository.
+     * @param secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository.
      * @param secretsMapper SecretsMapper.
      */
     public SecretsService(
             @Autowired SecretEntitiesRepository secretEntitiesRepository,
+            @Autowired SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository,
             @Autowired SecretsMapper secretsMapper) {
         this.secretEntitiesRepository = secretEntitiesRepository;
+        this.secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository = secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository;
         this.secretsMapper = secretsMapper;
     }
 
@@ -146,6 +154,35 @@ public class SecretsService {
             Long ownerAccountId) {
 
         SecretEntity secret = secretEntitiesRepository.findById(secretId).orElse(null);
+
+        if (secret == null) {
+            throw new ServiceException(String.format("Secret %s does not exist", secretId))
+                    .setErrorCode("my-secrets.secret-does-not-exist");
+        }
+
+        if (ownerAccountId != null && !ownerAccountId.equals(secret.getOwnerAccount().getAccountId())) {
+            throw new AuthorizationServiceException(String.format(
+                    "Secret %s cannot be managed by account %s since it belongs to account %s",
+                    secretId, ownerAccountId, secret.getOwnerAccount().getAccountId()));
+        }
+
+        return secret;
+
+    }
+
+    /**
+     * Finds a Secret by secretId and checks if it exists and belongs to an ownerAccountId.
+     *
+     * @param secretId The secretId.
+     * @param ownerAccountId The accountId.
+     * @return The Secret.
+     */
+    protected SecretWithOwnerAccountEncryptionPublicKeyEntity findAndCheckSecretWithOwnerAccountEncryptionPublicKey(
+            Long secretId,
+            Long ownerAccountId) {
+
+        SecretWithOwnerAccountEncryptionPublicKeyEntity secret =
+                secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository.findById(secretId).orElse(null);
 
         if (secret == null) {
             throw new ServiceException(String.format("Secret %s does not exist", secretId))

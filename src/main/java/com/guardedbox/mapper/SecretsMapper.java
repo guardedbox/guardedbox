@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.guardedbox.dto.CreateSecretDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.entity.SecretEntity;
+import com.guardedbox.entity.SecretWithOwnerAccountEncryptionPublicKeyEntity;
 
 /**
  * Mapper: Secret.
@@ -26,6 +27,28 @@ public class SecretsMapper {
      */
     public SecretDto toDto(
             SecretEntity secretEntity) {
+
+        if (secretEntity == null)
+            return null;
+
+        SecretDto secretDto = new SecretDto();
+
+        secretDto.setSecretId(secretEntity.getSecretId());
+        secretDto.setName(secretEntity.getName());
+        secretDto.setValue(secretEntity.getValue());
+
+        return secretDto;
+
+    }
+
+    /**
+     * Maps a Secret Entity to DTO.
+     *
+     * @param secretEntity The Secret Entity.
+     * @return The Secret DTO.
+     */
+    public SecretDto toDto(
+            SecretWithOwnerAccountEncryptionPublicKeyEntity secretEntity) {
 
         if (secretEntity == null)
             return null;

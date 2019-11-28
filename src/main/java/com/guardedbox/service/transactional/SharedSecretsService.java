@@ -10,13 +10,13 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guardedbox.dto.AccountWithPublicKeyDto;
+import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
 import com.guardedbox.dto.AccountWithSecretsDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.dto.ShareSecretDto;
-import com.guardedbox.entity.AccountWithPublicKeyEntity;
+import com.guardedbox.entity.AccountWithEncryptionPublicKeyEntity;
 import com.guardedbox.entity.SecretEntity;
-import com.guardedbox.entity.SecretWithOwnerAccountPublicKeyEntity;
+import com.guardedbox.entity.SecretWithOwnerAccountEncryptionPublicKeyEntity;
 import com.guardedbox.entity.SharedSecretEntity;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
@@ -83,7 +83,7 @@ public class SharedSecretsService {
 
         for (SharedSecretEntity receivedSharedSecret : receivedSharedSecrets) {
 
-            AccountWithPublicKeyEntity ownerAccount = receivedSharedSecret.getSecret().getOwnerAccount();
+            AccountWithEncryptionPublicKeyEntity ownerAccount = receivedSharedSecret.getSecret().getOwnerAccount();
             AccountWithSecretsDto ownerAccountWithSecrets = ownerAccountsWithSecrets.get(ownerAccount.getAccountId());
             if (ownerAccountWithSecrets == null) {
                 ownerAccountWithSecrets = accountsMapper.toDtoWithSecrets(ownerAccount);
@@ -106,16 +106,16 @@ public class SharedSecretsService {
      * @param secretId Secret.secretId of the shared secret.
      * @return The List of accounts with which the introduced secretId is shared.
      */
-    public List<AccountWithPublicKeyDto> getSharedSecretReceiverAccounts(
+    public List<AccountWithEncryptionPublicKeyDto> getSharedSecretReceiverAccounts(
             Long ownerAccountId,
             Long secretId) {
 
         SecretEntity secret = secretsService.findAndCheckSecret(secretId, ownerAccountId);
         List<SharedSecretEntity> sharedSecrets = secret.getSharedSecrets();
 
-        List<AccountWithPublicKeyDto> receiverAccounts = new ArrayList<>(sharedSecrets.size());
+        List<AccountWithEncryptionPublicKeyDto> receiverAccounts = new ArrayList<>(sharedSecrets.size());
         for (SharedSecretEntity sharedSecret : sharedSecrets)
-            receiverAccounts.add(accountsMapper.toDtoWithPublicKey(sharedSecret.getReceiverAccount()));
+            receiverAccounts.add(accountsMapper.toDtoWithEncryptionPublicKey(sharedSecret.getReceiverAccount()));
 
         return receiverAccounts;
 
@@ -133,11 +133,11 @@ public class SharedSecretsService {
             Long secretId,
             ShareSecretDto shareSecretDto) {
 
-        SecretWithOwnerAccountPublicKeyEntity secret =
-                secretsService.findAndCheckSecret(secretId, ownerAccountId);
+        SecretWithOwnerAccountEncryptionPublicKeyEntity secret =
+                secretsService.findAndCheckSecretWithOwnerAccountEncryptionPublicKey(secretId, ownerAccountId);
 
-        AccountWithPublicKeyEntity receiverAccount =
-                accountsService.findAndCheckAccountWithPublicKeyByEmail(shareSecretDto.getReceiverEmail());
+        AccountWithEncryptionPublicKeyEntity receiverAccount =
+                accountsService.findAndCheckAccountWithEncryptionPublicKeyByEmail(shareSecretDto.getReceiverEmail());
         if (receiverAccount.getAccountId().equals(ownerAccountId)) {
             throw new ServiceException(String.format(
                     "Secret %s belongs to email %s", secretId, shareSecretDto.getReceiverEmail()))
@@ -176,8 +176,8 @@ public class SharedSecretsService {
 
         secretsService.findAndCheckSecret(secretId, ownerAccountId);
 
-        AccountWithPublicKeyEntity reveiverAccount =
-                accountsService.findAndCheckAccountWithPublicKeyByEmail(receiverEmail);
+        AccountWithEncryptionPublicKeyEntity reveiverAccount =
+                accountsService.findAndCheckAccountWithEncryptionPublicKeyByEmail(receiverEmail);
 
         SharedSecretEntity sharedSecret =
                 sharedSecretEntitiesRepository.findBySecretSecretIdAndReceiverAccountAccountId(secretId, reveiverAccount.getAccountId());

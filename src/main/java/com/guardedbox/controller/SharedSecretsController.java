@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guardedbox.dto.AccountWithPublicKeyDto;
+import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
 import com.guardedbox.dto.AccountWithSecretsDto;
 import com.guardedbox.dto.ShareSecretDto;
 import com.guardedbox.dto.SuccessDto;
@@ -76,7 +76,7 @@ public class SharedSecretsController {
      * @return All the accounts with which the introduced secret is shared.
      */
     @GetMapping("/sent/{secret-id}/receiver-accounts")
-    public List<AccountWithPublicKeyDto> getSharedSecretReceiverAccounts(
+    public List<AccountWithEncryptionPublicKeyDto> getSharedSecretReceiverAccounts(
             @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId) {
 
         return sharedSecretsService.getSharedSecretReceiverAccounts(sessionAccount.getAccountId(), secretId);

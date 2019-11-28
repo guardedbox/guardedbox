@@ -1,6 +1,6 @@
 package com.guardedbox.entity;
 
-import static com.guardedbox.constants.Constraints.ENCRYPTED_VALUE_PATTERN;
+import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.SECRET_VALUE_MAX_LENGTH;
 
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import javax.validation.constraints.Size;
 
 /**
  * Entity: SharedSecret.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -36,7 +36,7 @@ public class SharedSecretEntity
 
     /** Shared Secret ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "shared_secret_id")
     @Positive
     private Long sharedSecretId;
@@ -45,18 +45,18 @@ public class SharedSecretEntity
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "secret_id")
     @NotNull
-    private SecretEntity secret;
+    private SecretWithOwnerAccountEncryptionPublicKeyEntity secret;
 
-    /** Account. */
+    /** Receiver Account. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "receiver_account_id")
     @NotNull
-    private AccountWithPublicKeyEntity account;
+    private AccountWithEncryptionPublicKeyEntity receiverAccount;
 
     /** Value. */
     @Column(name = "value")
     @NotBlank
-    @Pattern(regexp = ENCRYPTED_VALUE_PATTERN)
+    @Pattern(regexp = BASE64_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
 
@@ -78,7 +78,7 @@ public class SharedSecretEntity
     /**
      * @return The secret.
      */
-    public SecretEntity getSecret() {
+    public SecretWithOwnerAccountEncryptionPublicKeyEntity getSecret() {
         return secret;
     }
 
@@ -86,23 +86,23 @@ public class SharedSecretEntity
      * @param secret The secret to set.
      */
     public void setSecret(
-            SecretEntity secret) {
+            SecretWithOwnerAccountEncryptionPublicKeyEntity secret) {
         this.secret = secret;
     }
 
     /**
-     * @return The account.
+     * @return The receiverAccount.
      */
-    public AccountWithPublicKeyEntity getAccount() {
-        return account;
+    public AccountWithEncryptionPublicKeyEntity getReceiverAccount() {
+        return receiverAccount;
     }
 
     /**
-     * @param account The account to set.
+     * @param receiverAccount The receiverAccount to set.
      */
-    public void setAccount(
-            AccountWithPublicKeyEntity account) {
-        this.account = account;
+    public void setReceiverAccount(
+            AccountWithEncryptionPublicKeyEntity receiverAccount) {
+        this.receiverAccount = receiverAccount;
     }
 
     /**

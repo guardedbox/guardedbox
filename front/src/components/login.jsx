@@ -1,137 +1,110 @@
 import React, { Component } from 'react';
-import { withNamespaces } from 'react-i18next';
-import { withRouter } from 'react-router-dom'
 import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, InputGroup, Button, Popover, PopoverBody, Modal, ModalHeader, ModalBody } from 'reactstrap';
-import Octicon, { Eye, Key } from '@githubprimer/octicons-react'
-import favicon from 'images/favicon.png';
-import { get, post } from 'services/rest.jsx';
-import { loading, notLoading } from 'services/loading.jsx';
+import Octicon, { Eye, Key } from '@primer/octicons-react'
+import logo from 'images/logo.png';
+import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
+import { t } from 'services/translation.jsx';
+import { rest } from 'services/rest.jsx';
+import { notLoading } from 'services/loading.jsx';
+import { updateSessionInfo } from 'services/session.jsx';
+import { changeLocation } from 'services/location.jsx';
 import { modalMessage } from 'services/modal.jsx';
-import { generateKeyPair, keySeed, sign } from 'services/encryption.jsx';
-import { sha512, hashPasswordForLogin, hashPasswordForKeyGen } from 'services/hash.jsx';
-import { executeCaptcha } from 'services/captcha.jsx';
+import { generateSessionKeys, sign, mine } from 'services/crypto/crypto.jsx';
 import properties from 'constants/properties.json';
-import apiPaths from 'constants/api-paths.json';
-import componentsPaths from 'constants/components-paths.json';
+import views from 'constants/views.json';
 
 class Login extends Component {
 
+    state = {
+        email: '',
+        password: '',
+        passwordVisible: false,
+        code: '',
+        getCodeEnabled: true,
+        loginEnabled: false,
+        getCodePopoverActive: false,
+        loginFailedPopoverActive: false,
+        registerEmail: '',
+        registerPopoverActive: false
+    };
+
+    txtEmail = React.createRef();
+    txtPassword = React.createRef();
+    txtCode = React.createRef();
+
     constructor(props) {
 
-        // Props.
         super(props);
-
-        // Global reference to this component.
-        window.views.login = this;
-
-        // Functions binding to this.
-        this.showHidePassword = this.showHidePassword.bind(this);
-        this.getCode = this.getCode.bind(this);
-        this.login = this.login.bind(this);
-        this.cancelLogin = this.cancelLogin.bind(this);
-        this.lostPassword = this.lostPassword.bind(this);
-        this.register = this.register.bind(this);
-
-        // Refs.
-        this.txtEmail = React.createRef();
-        this.txtPassword = React.createRef();
-        this.txtCode = React.createRef();
-
-        // State.
-        this.state = {
-            email: '',
-            password: '',
-            passwordVisible: false,
-            entropyExpander: '',
-            loginChallengeResponse: '',
-            code: '',
-            getCodeEnabled: true,
-            loginEnabled: false,
-            getCodePopoverActive: false,
-            loginFailedPopoverActive: false,
-            registerEmail: '',
-            registerPopoverActive: false,
-            captchaFunction: null
-        };
+        registerViewComponent('login', this);
 
     }
 
-    showHidePassword() {
+    showHidePassword = () => {
 
         this.setState({
             passwordVisible: !this.state.passwordVisible
         }, () => {
-            this.txtPassword.current.select();
+
+            if (this.state.getCodeEnabled) {
+                this.txtPassword.current.select();
+            } else if (this.state.loginEnabled) {
+                this.txtCode.current.select();
+            }
+
         });
 
     }
 
-    getCode() {
+    getCode = () => {
+
+        var email = this.state.email;
+        var password = this.state.password;
 
         this.setState({
             loginFailedPopoverActive: false
         }, () => {
 
-            get({
-                url: apiPaths.session.info,
+            rest({
+                method: 'get',
+                url: '/api/accounts/salt',
+                params: {
+                    'email': email
+                },
                 loadingChain: true,
                 callback: (response) => {
 
-                    window.session = response;
+                    var salt = response.salt;
+                    generateSessionKeys(password, salt);
 
-                    get({
-                        url: apiPaths.session.getAccountEntropyExpander,
-                        params: {
-                            email: this.state.email
-                        },
+                    rest({
+                        method: 'post',
+                        url: '/api/session/challenge',
                         loadingChained: true,
                         loadingChain: true,
                         callback: (response) => {
 
-                            this.setState({
-                                entropyExpander: response.entropyExpander
-                            }, () => {
+                            var challenge = response.challenge;
+                            var signedChallengeResponse = sign(challenge, 'base64');
 
-                                generateKeyPair(keySeed(this.state.email, this.state.password, this.state.entropyExpander));
+                            rest({
+                                method: 'post',
+                                url: '/api/session/otp',
+                                loadingChained: true,
+                                body: {
+                                    email: this.state.email,
+                                    signedChallengeResponse: signedChallengeResponse
+                                },
+                                callback: (response) => {
 
-                                get({
-                                    url: apiPaths.session.getLoginChallenge,
-                                    params: {
-                                        email: this.state.email
-                                    },
-                                    loadingChained: true,
-                                    loadingChain: true,
-                                    callback: (response) => {
+                                    this.setState({
+                                        getCodeEnabled: false,
+                                        loginEnabled: true,
+                                        getCodePopoverActive: true
+                                    }, () => {
+                                        this.txtCode.current.focus();
+                                    });
 
-                                        this.setState({
-                                            loginChallengeResponse: sign(response.challenge)
-                                        }, () => {
-
-                                            post({
-                                                url: apiPaths.session.obtainLoginCode,
-                                                loadingChained: true,
-                                                body: {
-                                                    email: this.state.email,
-                                                    challengeResponse: this.state.loginChallengeResponse
-                                                },
-                                                callback: (response) => {
-
-                                                    this.setState({
-                                                        getCodeEnabled: false,
-                                                        loginEnabled: true,
-                                                        getCodePopoverActive: true
-                                                    }, () => {
-                                                        this.txtCode.current.focus();
-                                                    });
-
-                                                }
-                                            });
-
-                                        });
-
-                                    }
-                                });
-
+                                }
                             });
 
                         }
@@ -144,51 +117,50 @@ class Login extends Component {
 
     }
 
-    login() {
+    login = () => {
+
+        var code = this.state.code;
 
         this.setState({
             getCodePopoverActive: false
         }, () => {
 
-            get({
-                url: apiPaths.session.info,
+            rest({
+                method: 'post',
+                url: 'api/session/login',
+                body: {
+                    otp: code
+                },
                 loadingChain: true,
                 callback: (response) => {
 
-                    window.session = response;
+                    if (response.success) {
 
-                    post({
-                        url: apiPaths.session.login,
-                        loadingChained: true,
-                        body: {
-                            email: this.state.email,
-                            challengeResponse: this.state.loginChallengeResponse,
-                            code: this.state.code
-                        },
-                        callback: (response) => {
-
-                            if (response.success) {
-
-                                window.views.app.resetUserData(false, false, () => {
-                                    this.props.history.push(componentsPaths.defaultComponent);
-                                });
-
-                            } else {
-
-                                this.txtCode.current.value = this.txtCode.current.defaultValue;
-
-                                this.setState({
-                                    getCodeEnabled: true,
-                                    loginEnabled: false,
-                                    loginFailedPopoverActive: true
-                                }, () => {
-                                    this.txtEmail.current.focus();
-                                });
-
+                        updateSessionInfo({
+                            loading: true,
+                            loadingChained: true,
+                            callback: () => {
+                                changeLocation(views.defaultPath);
                             }
+                        });
 
-                        }
-                    });
+                    } else {
+
+                        notLoading(() => {
+
+                            this.txtCode.current.value = '';
+
+                            this.setState({
+                                getCodeEnabled: true,
+                                loginEnabled: false,
+                                loginFailedPopoverActive: true
+                            }, () => {
+                                this.txtEmail.current.focus();
+                            });
+
+                        });
+
+                    }
 
                 }
             });
@@ -197,7 +169,7 @@ class Login extends Component {
 
     }
 
-    cancelLogin() {
+    cancelLogin = () => {
 
         this.txtCode.current.value = this.txtCode.current.defaultValue;
 
@@ -212,100 +184,162 @@ class Login extends Component {
 
     }
 
-    lostPassword() {
+    register = () => {
 
-        modalMessage('Sorry', 'Unimplemented');
+        var registerEmail = this.state.registerEmail;
 
-    }
+        rest({
+            method: 'post',
+            url: '/api/session/challenge',
+            loadingChain: true,
+            callback: (response) => {
 
-    register() {
+                var challenge = response.challenge;
+                var minedChallengeResponse = mine(challenge, 'base64');
 
-        executeCaptcha((captchaValue) => {
+                rest({
+                    method: 'post',
+                    url: '/api/registrations',
+                    loadingChained: true,
+                    body: {
+                        email: registerEmail,
+                        minedChallengeResponse: minedChallengeResponse
+                    },
+                    callback: (response) => {
 
-            get({
-                url: apiPaths.session.info,
-                loadingChained: true,
-                loadingChain: true,
-                callback: (response) => {
+                        modalMessage(t('login.register-success-modal-title'), t('login.register-success-modal-body'));
 
-                    window.session = response;
+                    }
+                });
 
-                    post({
-                        url: apiPaths.registration.obtainRegistrationToken,
-                        body: {
-                            email: this.state.registerEmail
-                        },
-                        captchaValue: captchaValue,
-                        loadingChained: true,
-                        callback: (response) => {
-
-                            modalMessage('login.register-success-modal-title', 'login.register-success-modal-body');
-
-                        }
-                    });
-
-                }
-            });
-
+            }
         });
 
     }
 
-    render() {
-
-        const t = this.props.t;
+    render = () => {
 
         return (
             <Container>
                 <Row>
 
-                    <Col style={{ marginTop: '25%' }}>
+                    <Col className="logo-col">
                         <div className="text-center">
                             <h1>{t('login.h-title')}</h1>
-                            <img src={favicon} style={{ marginTop: '5em', marginBottom: '5em' }} />
+                            <img src={logo} style={{ marginTop: '5em', marginBottom: '5em' }} />
                         </div>
                     </Col>
 
-                    <Col style={{ marginTop: '8%' }}>
+                    <Col className="main-col">
                         <Jumbotron className="text-center">
 
                             <h4>{t('login.h-login')}</h4><hr />
-                            <Form onSubmit={(e) => { e.preventDefault(); this.getCode(); }}>
+                            <Form onSubmit={(e) => { e.preventDefault(); this.getCode(); }} >
                                 <fieldset disabled={!this.state.getCodeEnabled}>
-                                    <FormGroup><Input innerRef={this.txtEmail} type="email" autoComplete="section-login username" placeholder={t('login.txt-email')} pattern={properties.constraints.emailPattern} maxLength={properties.constraints.emailMaxLength} required autoFocus onChange={(e) => { this.setState({ email: e.target.value }) }} /></FormGroup>
                                     <FormGroup>
-                                        <InputGroup>
-                                            <Input innerRef={this.txtPassword} type={this.state.passwordVisible ? "text" : "password"} autoComplete="section-login current-password" placeholder={t('login.txt-password')} required onChange={(e) => { this.setState({ password: e.target.value }) }} />
-                                            <span className="icon-inline" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}><Octicon icon={this.state.passwordVisible ? Key : Eye} /></span>
-                                        </InputGroup>
+                                        <Input
+                                            id="login_txt-email"
+                                            innerRef={this.txtEmail}
+                                            type="email"
+                                            autoComplete="section-login username"
+                                            placeholder={t('login.txt-email')}
+                                            pattern={properties.general.emailPattern}
+                                            maxLength={properties.general.emailMaxLength}
+                                            required
+                                            autoFocus
+                                            onChange={(e) => { this.setState({ email: e.target.value }) }}
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Input
+                                            innerRef={this.txtPassword}
+                                            type={this.state.passwordVisible ? "text" : "password"}
+                                            autoComplete="section-login current-password"
+                                            placeholder={t('login.txt-password')}
+                                            required
+                                            onChange={(e) => { this.setState({ password: e.target.value }) }}
+                                        />
                                     </FormGroup>
                                     <FormGroup className="group-spaced">
-                                        <Button id="login_btn-get-code" type="submit" color="primary">{t('login.btn-get-code')}</Button>
-                                        <Button onClick={this.lostPassword} color="primary">{t('login.btn-lost-password')}</Button>
+                                        <Button type="submit" color="primary">{t('login.btn-get-code')}</Button>
                                     </FormGroup>
                                 </fieldset>
-                                <Popover target="login_btn-get-code" placement="right" isOpen={this.state.getCodePopoverActive} toggle={() => { this.setState({ getCodePopoverActive: false }) }}>
-                                    <PopoverBody>{t('login.popover-get-code')}</PopoverBody>
+                                <Popover
+                                    target="login_txt-email"
+                                    trigger="legacy"
+                                    placement="right"
+                                    isOpen={this.state.loginFailedPopoverActive}
+                                    toggle={() => { this.setState({ loginFailedPopoverActive: false }) }}
+                                >
+                                    <PopoverBody>{t('login.popover-login-failed')}</PopoverBody>
                                 </Popover>
                             </Form>
 
                             <Form onSubmit={(e) => { e.preventDefault(); this.login(); }}>
                                 <fieldset disabled={!this.state.loginEnabled}>
-                                    <FormGroup><Input innerRef={this.txtCode} type="text" autoComplete="off" placeholder={t('login.txt-code')} pattern={properties.login.loginCodePattern} maxLength={properties.login.loginCodeLength} required onChange={(e) => { this.setState({ code: e.target.value }) }} /></FormGroup>
+                                    <FormGroup style={{ display: 'none' }}>
+                                        <Input
+                                            type="email"
+                                            autoComplete="section-login username"
+                                            value={this.state.email}
+                                            readOnly
+                                        />
+                                        <Input
+                                            type="password"
+                                            autoComplete="section-login current-password"
+                                            value={this.state.password}
+                                            readOnly
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Input
+                                            id="login_txt-code"
+                                            innerRef={this.txtCode}
+                                            type={this.state.passwordVisible ? "text" : "password"}
+                                            autoComplete="section-login one-time-code"
+                                            placeholder={t('login.txt-code')}
+                                            pattern={properties.login.loginCodePattern}
+                                            maxLength={properties.login.loginCodeMaxLength}
+                                            required
+                                            onChange={(e) => { this.setState({ code: e.target.value }) }}
+                                        />
+                                    </FormGroup>
                                     <FormGroup className="group-spaced">
-                                        <Button id="login_btn-login" type="submit" color="primary">{t('login.btn-login')}</Button>
+                                        <span className="icon-inline float-left"></span>
+                                        <Button type="submit" color="primary">{t('login.btn-login')}</Button>
                                         <Button onClick={this.cancelLogin} color="primary">{t('login.btn-cancel-login')}</Button>
+                                        <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>
+                                            <Octicon icon={this.state.passwordVisible ? Key : Eye} />
+                                        </span>
                                     </FormGroup>
                                 </fieldset>
-                                <Popover target="login_btn-login" placement="right" isOpen={this.state.loginFailedPopoverActive} toggle={() => { this.setState({ loginFailedPopoverActive: false }) }}>
-                                    <PopoverBody>{t('login.popover-login-failed')}</PopoverBody>
+                                <Popover
+                                    target="login_txt-code"
+                                    trigger="legacy"
+                                    placement="right"
+                                    isOpen={this.state.getCodePopoverActive}
+                                    toggle={() => { this.setState({ getCodePopoverActive: false }) }}
+                                >
+                                    <PopoverBody>{t('login.popover-get-code')}</PopoverBody>
                                 </Popover>
                             </Form>
 
-                            <h4 style={{ marginTop: '4.325em' }}>{t('login.h-register')}</h4><hr />
+                            <h4 style={{ marginTop: '2.75rem' }}>{t('login.h-register')}</h4><hr />
                             <Form onSubmit={(e) => { e.preventDefault(); this.register(); }}>
-                                <FormGroup><Input type="email" autoComplete="off" placeholder={t('login.txt-register-email')} pattern={properties.constraints.emailPattern} maxLength={properties.constraints.emailMaxLength} required onChange={(e) => { this.setState({ registerEmail: e.target.value }) }} /></FormGroup>
-                                <FormGroup><Button id="login_btn-register" type="submit" color="primary">{t('login.btn-register')}</Button></FormGroup>
+                                <FormGroup>
+                                    <Input
+                                        type="email"
+                                        autoComplete="off"
+                                        placeholder={t('login.txt-register-email')}
+                                        pattern={properties.general.emailPattern}
+                                        maxLength={properties.general.emailMaxLength}
+                                        required
+                                        onChange={(e) => { this.setState({ registerEmail: e.target.value }) }}
+                                    />
+                                </FormGroup>
+                                <FormGroup className="group-spaced">
+                                    <Button type="submit" color="primary">{t('login.btn-register')}</Button>
+                                </FormGroup>
                             </Form>
 
                         </Jumbotron>
@@ -313,10 +347,10 @@ class Login extends Component {
 
                 </Row>
             </Container>
-        )
+        );
 
     }
 
 }
 
-export default withNamespaces()(withRouter(Login));
+export default Login;

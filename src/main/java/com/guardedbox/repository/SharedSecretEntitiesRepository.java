@@ -20,25 +20,25 @@ public interface SharedSecretEntitiesRepository
     /**
      * @param secretId Secret.secretId.
      * @param accountId Account.accountId.
-     * @return The SharedSecretEntity corresponding to the introduced secretId and accountId.
+     * @return The SharedSecretEntity corresponding to the introduced secretId and receiver accountId.
      */
-    SharedSecretEntity findBySecretSecretIdAndAccountAccountId(
+    SharedSecretEntity findBySecretSecretIdAndReceiverAccountAccountId(
             Long secretId,
             Long accountId);
 
     /**
      * @param accountId Account.accountId.
-     * @return The List of SharedSecretEntity corresponding to the introduced accountId, ordered by Account.email and Secret.name.
+     * @return The List of SharedSecretEntity corresponding to the introduced receiver accountId, ordered by owner Account.email and Secret.name.
      */
-    List<SharedSecretEntity> findByAccountAccountIdOrderByAccountEmailAscSecretNameAsc(
+    List<SharedSecretEntity> findByReceiverAccountAccountIdOrderBySecretOwnerAccountEmailAscSecretNameAsc(
             Long accountId);
 
     /**
      * @param accountId Account.accountId.
-     * @return The List of SharedSecretEntity corresponding to Secrets corresponding to the introduced accountId, ordered by Account.email and
-     *         Secret.name.
+     * @return The List of SharedSecretEntity corresponding to Secrets corresponding to the introduced owner accountId, ordered by owner Account.email
+     *         and Secret.name.
      */
-    List<SharedSecretEntity> findBySecretAccountAccountIdOrderByAccountEmailAscSecretNameAsc(
+    List<SharedSecretEntity> findBySecretOwnerAccountAccountIdOrderBySecretOwnerAccountEmailAscSecretNameAsc(
             Long accountId);
 
 }

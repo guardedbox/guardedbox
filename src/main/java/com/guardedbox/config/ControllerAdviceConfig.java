@@ -1,5 +1,8 @@
 package com.guardedbox.config;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.guardedbox.dto.ServiceExceptionDto;
 import com.guardedbox.exception.ServiceException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 /**
  * Global Controller Configuration.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -37,7 +37,7 @@ public class ControllerAdviceConfig {
 
     /**
      * Constructor with Attributes.
-     * 
+     *
      * @param request Current Request.
      * @param session Current Session.
      */
@@ -51,10 +51,9 @@ public class ControllerAdviceConfig {
 
     /**
      * Exception handler for ServiceException.
-     * 
+     *
      * @param e The ServiceException.
      * @return Bad Request (400) with ServiceExceptionDto body.
-     * 
      */
     @ExceptionHandler
     @ResponseBody
@@ -77,10 +76,9 @@ public class ControllerAdviceConfig {
 
     /**
      * Exception handler for AuthenticationServiceException.
-     * 
+     *
      * @param e The AuthenticationServiceException.
      * @return Unauthorized (401) with no body.
-     * 
      */
     @ExceptionHandler
     public ResponseEntity<?> exceptionHandler(
@@ -100,10 +98,9 @@ public class ControllerAdviceConfig {
 
     /**
      * Exception handler for AuthorizationServiceException.
-     * 
+     *
      * @param e The AuthorizationServiceException.
      * @return Forbidden (403) with no body.
-     * 
      */
     @ExceptionHandler
     public ResponseEntity<?> exceptionHandler(
@@ -123,10 +120,9 @@ public class ControllerAdviceConfig {
 
     /**
      * Exception handler for generic Exception.
-     * 
+     *
      * @param e The Exception.
      * @return Not Found (404) with no body.
-     * 
      */
     @ExceptionHandler
     public ResponseEntity<?> exceptionHandler(

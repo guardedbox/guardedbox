@@ -1,23 +1,23 @@
 package com.guardedbox.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ErrorAttributes;
-import org.springframework.boot.autoconfigure.web.ErrorController;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.ServletWebRequest;
+
 /**
  * Global Configuration for Error Handling.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -36,7 +36,7 @@ public class ErrorHandlingConfig
 
     /**
      * Constructor with Attributes.
-     * 
+     *
      * @param errorAttributes Used to retrieve request error attributes.
      * @param request Current Request.
      * @param session Current Session.
@@ -52,15 +52,14 @@ public class ErrorHandlingConfig
 
     /**
      * Error handler.
-     * 
+     *
      * @return Unauthorized (401), Forbidden (403) or Not Found (404) with no body.
-     * 
      */
     @RequestMapping(value = "/error", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
             RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.OPTIONS, RequestMethod.PATCH, RequestMethod.TRACE})
     public ResponseEntity<?> error() {
 
-        Map<String, Object> requestErrorAttributes = errorAttributes.getErrorAttributes(new ServletRequestAttributes(request), true);
+        Map<String, Object> requestErrorAttributes = errorAttributes.getErrorAttributes(new ServletWebRequest(request), true);
         HttpStatus errorStatus = HttpStatus.valueOf((Integer) requestErrorAttributes.get("status"));
 
         if (HttpStatus.UNAUTHORIZED.equals(errorStatus) || HttpStatus.FORBIDDEN.equals(errorStatus)) {

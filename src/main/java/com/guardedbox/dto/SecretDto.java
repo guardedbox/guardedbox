@@ -1,12 +1,18 @@
 package com.guardedbox.dto;
 
+import java.io.Serializable;
+
 /**
  * DTO: Secret.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
-public class SecretDto {
+public class SecretDto
+        implements Serializable {
+
+    /** Serial Version UID. */
+    private static final long serialVersionUID = -3608188899441682632L;
 
     /** Secret ID. */
     private Long secretId;

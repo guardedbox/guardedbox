@@ -1,12 +1,18 @@
 package com.guardedbox.dto;
 
+import java.io.Serializable;
+
 /**
  * DTO: Response to successful or unsuccessful requests.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
-public class SuccessDto {
+public class SuccessDto
+        implements Serializable {
+
+    /** Serial Version UID. */
+    private static final long serialVersionUID = 5354004949662300001L;
 
     /** Success. */
     private boolean success;

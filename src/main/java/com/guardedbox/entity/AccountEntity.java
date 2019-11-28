@@ -20,7 +20,7 @@ import javax.validation.constraints.Size;
 /**
  * Entity: Account.
  * Contains the following fields: accountId, email.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -34,7 +34,7 @@ public class AccountEntity
 
     /** Account ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     @Positive
     private Long accountId;
@@ -53,7 +53,7 @@ public class AccountEntity
 
     /**
      * Constructor with Attributes.
-     * 
+     *
      * @param accountId AccountId.
      */
     public AccountEntity(

@@ -7,10 +7,7 @@ import { HashRouter } from 'react-router-dom';
 import App from 'components/app.jsx';
 import bootstrapCss from 'style/bootstrap.min.css';
 import customCss from 'style/custom.css';
-import favicon from 'images/favicon.png';
-
-// Initialization.
-window.views = {};
+import favicon from 'images/favicon.ico';
 
 // Rendering.
 ReactDOM.render(

@@ -1,17 +1,17 @@
 package com.guardedbox.service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
 /**
  * Email Utils Service.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -23,7 +23,7 @@ public class EmailService {
 
     /**
      * Constructor with Attributes.
-     * 
+     *
      * @param javaMailSender JavaMailSender.
      */
     public EmailService(
@@ -33,7 +33,7 @@ public class EmailService {
 
     /**
      * Sends an email.
-     * 
+     *
      * @param to Receiver.
      * @param subject Subject.
      * @param content HTML Content.
@@ -55,6 +55,31 @@ public class EmailService {
         }
 
         javaMailSender.send(mimeMessage);
+
+    }
+
+    /**
+     * Sends an email asynchronously.
+     *
+     * @param to Receiver.
+     * @param subject Subject.
+     * @param content HTML Content.
+     */
+    public void sendAsync(
+            String to,
+            String subject,
+            String content) {
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                send(to, subject, content);
+
+            }
+
+        }).start();
 
     }
 

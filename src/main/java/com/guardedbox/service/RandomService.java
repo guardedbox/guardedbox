@@ -1,20 +1,19 @@
 package com.guardedbox.service;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
-
 /**
- * Random Utils Service.
- * 
+ * Random Service.
+ *
  * @author s3curitybug@gmail.com
  *
  */
 @Service
 public class RandomService {
-
-    /** Hexadecimal charset. */
-    private static final char[] HEX_CHARSET = "0123456789abcdef".toCharArray();
 
     /** Alphanumeric charset. */
     private static final char[] ALPHANUMERIC_CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
@@ -30,8 +29,19 @@ public class RandomService {
     }
 
     /**
+     * Generates a random boolean.
+     *
+     * @return The generated boolean.
+     */
+    public boolean randomBoolean() {
+
+        return secureRandom.nextBoolean();
+
+    }
+
+    /**
      * Generates a random int.
-     * 
+     *
      * @return The generated int.
      */
     public int randomInt() {
@@ -42,7 +52,7 @@ public class RandomService {
 
     /**
      * Generates a random int between min and max.
-     * 
+     *
      * @param min Minimum generated int.
      * @param max Maximum generated int.
      * @return The generated int.
@@ -66,7 +76,7 @@ public class RandomService {
 
     /**
      * Generates a random long.
-     * 
+     *
      * @return The generated long.
      */
     public long randomLong() {
@@ -77,7 +87,7 @@ public class RandomService {
 
     /**
      * Generates a random long between min and max.
-     * 
+     *
      * @param min Minimum generated long.
      * @param max Maximum generated long.
      * @return The generated long.
@@ -101,7 +111,7 @@ public class RandomService {
 
     /**
      * Generates a random float between 0 and 1.
-     * 
+     *
      * @return The generated float.
      */
     public float randomFloat() {
@@ -112,7 +122,7 @@ public class RandomService {
 
     /**
      * Generates a random float between min and max.
-     * 
+     *
      * @param min Minimum generated float.
      * @param max Maximum generated float.
      * @return The generated float.
@@ -127,7 +137,7 @@ public class RandomService {
 
     /**
      * Generates a random double between 0 and 1.
-     * 
+     *
      * @return The generated double.
      */
     public double randomDouble() {
@@ -138,7 +148,7 @@ public class RandomService {
 
     /**
      * Generates a random double between min and max.
-     * 
+     *
      * @param min Minimum generated double.
      * @param max Maximum generated double.
      * @return The generated double.
@@ -152,27 +162,55 @@ public class RandomService {
     }
 
     /**
-     * Generates a random hexadecimal String of the introduced length.
-     * 
-     * @param length The length of the String.
-     * @return The generated String.
+     * Generates a random array of bytes of the introduced length.
+     *
+     * @param length The length of the array.
+     * @return The generated array.
      */
-    public String randomHexString(
+    public byte[] randomBytes(
             int length) {
 
-        StringBuilder str = new StringBuilder(length);
+        byte[] randomBytes = new byte[length];
 
-        for (int i = 0; i < length; i++) {
-            str.append(HEX_CHARSET[secureRandom.nextInt(HEX_CHARSET.length)]);
-        }
+        secureRandom.nextBytes(randomBytes);
 
-        return str.toString();
+        return randomBytes;
+
+    }
+
+    /**
+     * Generates a random array of bytes of the introduced length and encodes it to hexadecimal format.
+     *
+     * @param length The length of the array.
+     * @return The generated hexadecimal String.
+     */
+    public String randomBytesHex(
+            int length) {
+
+        byte[] randomBytes = randomBytes(length);
+
+        return new String(Hex.encode(randomBytes));
+
+    }
+
+    /**
+     * Generates a random array of bytes of the introduced length and encodes it to base64 format.
+     *
+     * @param length The length of the array.
+     * @return The generated base64 String.
+     */
+    public String randomBytesBase64(
+            int length) {
+
+        byte[] randomBytes = randomBytes(length);
+
+        return Base64.getEncoder().encodeToString(randomBytes);
 
     }
 
     /**
      * Generates a random alphanumeric String of the introduced length.
-     * 
+     *
      * @param length The length of the String.
      * @return The generated String.
      */

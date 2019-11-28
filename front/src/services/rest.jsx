@@ -1,161 +1,105 @@
-import { loading, notLoading } from 'services/loading.jsx';
+import { loading as loadingF, notLoading as notLoadingF } from 'services/loading.jsx';
+import { reset } from 'services/session.jsx';
+import { t } from 'services/translation.jsx';
 import { modalMessage } from 'services/modal.jsx';
-import properties from 'constants/properties.json';
 
 /**
- * REST GET.
+ * REST Request.
  * 
- * @param {object} opts The options.
- * {
- *  url: {string},
- *  params: {object},
- *  captchaValue: {string},
- *  loading: {boolean},
- *  loadingChain: {boolean},
- *  loadingChained: {boolean},
- *  callback: {function(responseJson {object})},
- *  serviceExceptionCallback: {function(responseJson {object})}
- * }
- * 
+ * @param {object} options The options.
+ * @param {string} options.method The request method: get, post, put, delete.
+ * @param {string} options.url The URL.
+ * @param {object} [options.pathVariables] The URL path variables.
+ * @param {object} [options.params] The URL parameters.
+ * @param {object} [options.body] The request body.
+ * @param {boolean} [options.loading = true] Set the loading state during the request.
+ * @param {boolean} [options.loadingChain = false] Indicates if the loading state should not be deactivated once the request has finished.
+ * @param {boolean} [options.loadingChained = false] Indicates if the loading state was already active.
+ * @param {function} [options.callback] Invoked once the request has finished. Receives a parameter: {object} responseJson.
+ * @param {function} [options.serviceExceptionCallback] Invoked once the request has finished in case of service exception. Receives a parameter: {object} responseJson.
  */
-export function get(opts) {
+export function rest({
+    method,
+    url,
+    pathVariables,
+    params,
+    body,
+    loading = true,
+    loadingChain = false,
+    loadingChained = false,
+    callback,
+    serviceExceptionCallback
+}) {
 
-    if ((opts.loading || !('loading' in opts)) && !opts.loadingChained) loading();
+    if (loading && !loadingChained) loadingF();
 
-    var url = opts.url;
-    if (opts.params) {
-        url += '?' + Object.keys(opts.params)
-            .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(opts.params[k])).join('&');
+    var fullUrl = url;
+    if (pathVariables) {
+        Object.keys(pathVariables).forEach((pathVariable) => { fullUrl = fullUrl.replace('{' + pathVariable + '}', encodeURIComponent(pathVariables[pathVariable])) });
+    }
+    if (params) {
+        fullUrl += '?' + Object.keys(params).map((param) => encodeURIComponent(param) + '=' + encodeURIComponent(params[param])).join('&');
     }
 
     var headers = {
         'Accept': 'application/json'
     };
-    if (window.session && window.session.csrfToken) {
-        headers[window.session.csrfToken.headerName] = window.session.csrfToken.token;
-    }
-    if (opts.captchaValue) {
-        headers[properties.captcha.header] = opts.captchaValue;
-    }
-
-    fetch(url, {
-        method: 'GET',
-        headers: headers
-    }).then((response) => {
-        if ((opts.loading || !('loading' in opts))
-            && (!opts.loadingChain || response.status < 200 || response.status >= 300)) {
-            notLoading(() => {
-                processSuccess(opts, response);
-            });
-        } else {
-            processSuccess(opts, response);
-        }
-    }).catch((error) => {
-        if (opts.loading || !('loading' in opts)) {
-            notLoading(() => {
-                processError(opts, error);
-            });
-        } else {
-            processError(opts, error);
-        }
-    });
-
-}
-
-/**
- * REST POST.
- * 
- * @param {object} opts The options.
- * {
- *  url: {string},
- *  body: {object},
- *  captchaValue: {string},
- *  loading: {boolean},
- *  loadingChain: {boolean},
- *  loadingChained: {boolean},
- *  callback: {function(responseJson {object})},
- *  serviceExceptionCallback: {function(responseJson {object})}
- * }
- * 
- */
-export function post(opts) {
-
-    if ((opts.loading || !('loading' in opts)) && !opts.loadingChained) loading();
-
-    var headers = {
-        'Accept': 'application/json'
-    };
-    if (opts.body) {
+    if (body) {
         headers['Content-Type'] = 'application/json';
     }
-    if (window.session && window.session.csrfToken) {
-        headers[window.session.csrfToken.headerName] = window.session.csrfToken.token;
-    }
-    if (opts.captchaValue) {
-        headers[properties.captcha.header] = opts.captchaValue;
-    }
 
-    fetch(opts.url, {
-        method: 'POST',
+    fetch(fullUrl, {
+        method: method,
         headers: headers,
-        body: opts.body ? JSON.stringify(opts.body) : null
+        body: body ? JSON.stringify(body) : null
     }).then((response) => {
-        if ((opts.loading || !('loading' in opts))
-            && (!opts.loadingChain || response.status < 200 || response.status >= 300)) {
-            notLoading(() => {
-                processSuccess(opts, response);
-            });
+        if (loading && (!loadingChain || response.status < 200 || response.status >= 300)) {
+            notLoadingF(() => { processSuccess(callback, serviceExceptionCallback, response); });
         } else {
-            processSuccess(opts, response);
+            processSuccess(callback, serviceExceptionCallback, response);
         }
     }).catch((error) => {
-        if (opts.loading || !('loading' in opts)) {
-            notLoading(() => {
-                processError(opts, error);
-            });
+        if (loading) {
+            notLoadingF(() => { processError(error); });
         } else {
-            processError(opts, error);
+            processError(error);
         }
     });
 
 }
 
-function processSuccess(opts, response) {
+function processSuccess(callback, serviceExceptionCallback, response) {
 
     if (response.status >= 200 && response.status < 300) {
 
-        if (opts.callback) {
-            response.json().then(opts.callback);
+        if (callback) {
+            response.json().then(callback);
         }
 
     } else if (response.status == 400) {
 
         response.json().then((responseJson) => {
-            if (opts.serviceExceptionCallback) {
-                opts.serviceExceptionCallback(responseJson);
+            if (serviceExceptionCallback) {
+                serviceExceptionCallback(responseJson);
             } else {
-                modalMessage('global.error', responseJson.errorCode || 'global.error-occurred');
+                modalMessage(t('global.error'), t(responseJson.errorCode || 'global.error-occurred', responseJson.additionalData));
             }
         });
 
     } else if (response.status == 401 || response.status == 403) {
 
-        window.views.app.resetUserData(true, true);
+        reset();
 
     } else {
 
-        modalMessage('global.error', 'global.error-occurred', () => {
-            window.views.app.resetUserData(true, true);
-        });
+        modalMessage(t('global.error'), t('global.error-occurred'), reset);
 
     }
 
 }
 
-function processError(opts, error) {
+function processError(error) {
 
-    modalMessage('global.error', 'global.error-occurred', () => {
-        window.views.app.resetUserData(true, true);
-    });
+    modalMessage(t('global.error'), t('global.error-occurred'), reset);
 
 }

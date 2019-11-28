@@ -1,17 +1,17 @@
 package com.guardedbox.mapper;
 
-import org.springframework.stereotype.Service;
-
-import com.guardedbox.dto.NewSecretDto;
-import com.guardedbox.dto.SecretDto;
-import com.guardedbox.entity.SecretEntity;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+import com.guardedbox.dto.CreateSecretDto;
+import com.guardedbox.dto.SecretDto;
+import com.guardedbox.entity.SecretEntity;
+
 /**
  * Mapper: Secret.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -20,7 +20,7 @@ public class SecretsMapper {
 
     /**
      * Maps a Secret Entity to DTO.
-     * 
+     *
      * @param secretEntity The Secret Entity.
      * @return The Secret DTO.
      */
@@ -42,7 +42,7 @@ public class SecretsMapper {
 
     /**
      * Maps a List of Secret Entities to List of Secret DTOs.
-     * 
+     *
      * @param secretEntities The List of Secret Entities.
      * @return The List of Secret DTOs.
      */
@@ -63,12 +63,12 @@ public class SecretsMapper {
 
     /**
      * Maps a Secret DTO to Entity.
-     * 
+     *
      * @param secretDto The Secret DTO.
      * @return The Secret Entity.
      */
     public SecretEntity fromDto(
-            NewSecretDto secretDto) {
+            CreateSecretDto secretDto) {
 
         if (secretDto == null)
             return null;

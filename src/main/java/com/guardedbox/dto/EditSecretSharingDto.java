@@ -1,10 +1,12 @@
 package com.guardedbox.dto;
 
+import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.Constraints.ENCRYPTED_VALUE_PATTERN;
 import static com.guardedbox.constants.Constraints.SECRET_VALUE_MAX_LENGTH;
+
+import java.io.Serializable;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -13,37 +15,41 @@ import javax.validation.constraints.Size;
 
 /**
  * DTO: Subitem of the body of the edit secret request.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
-public class EditSecretSharingDto {
+public class EditSecretSharingDto
+        implements Serializable {
+
+    /** Serial Version UID. */
+    private static final long serialVersionUID = -7478132885860250725L;
 
     /** Email. */
     @NotBlank
     @Email(regexp = EMAIL_PATTERN)
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
-    private String email;
+    private String receiverEmail;
 
     /** Value. */
     @NotBlank
-    @Pattern(regexp = ENCRYPTED_VALUE_PATTERN)
+    @Pattern(regexp = BASE64_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
 
     /**
-     * @return The email.
+     * @return The receiverEmail.
      */
-    public String getEmail() {
-        return email;
+    public String getReceiverEmail() {
+        return receiverEmail;
     }
 
     /**
-     * @param email The email to set.
+     * @param receiverEmail The receiverEmail to set.
      */
-    public void setEmail(
-            String email) {
-        this.email = email;
+    public void setReceiverEmail(
+            String receiverEmail) {
+        this.receiverEmail = receiverEmail;
     }
 
     /**

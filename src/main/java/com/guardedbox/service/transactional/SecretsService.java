@@ -1,13 +1,18 @@
 package com.guardedbox.service.transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
-import com.guardedbox.dto.DeleteSecretDto;
+import com.guardedbox.dto.CreateSecretDto;
 import com.guardedbox.dto.EditSecretDto;
 import com.guardedbox.dto.EditSecretSharingDto;
-import com.guardedbox.dto.NewSecretDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.SecretEntity;
@@ -16,15 +21,9 @@ import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.SecretsMapper;
 import com.guardedbox.repository.SecretEntitiesRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.transaction.Transactional;
-
 /**
  * Service: Secret.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -40,7 +39,7 @@ public class SecretsService {
 
     /**
      * Constructor with Attributes.
-     * 
+     *
      * @param secretEntitiesRepository SecretEntitiesRepository.
      * @param secretsMapper SecretsMapper.
      */
@@ -52,58 +51,64 @@ public class SecretsService {
     }
 
     /**
-     * @param accountId Account.accountId.
-     * @return The List of SecretDtos corresponding to the introduced accountId.
+     * @param ownerAccountId Account.accountId.
+     * @return The List of SecretDtos corresponding to the introduced owner accountId.
      */
-    public List<SecretDto> getAllAccountSecrets(
-            Long accountId) {
-        return secretsMapper.toDto(secretEntitiesRepository.findByAccountAccountIdOrderByNameAsc(accountId));
+    public List<SecretDto> getSecretsByOwnerAccountId(
+            Long ownerAccountId) {
+
+        return secretsMapper.toDto(secretEntitiesRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
+
     }
 
     /**
      * Creates a Secret.
-     * 
-     * @param accountId Account.accountId.
-     * @param newSecretDto NewSecretDto with the new Secret data.
-     * @return SecretDto with the new Secret data.
+     *
+     * @param ownerAccountId Account.accountId of the secret owner.
+     * @param createSecretDto CreateSecretDto with the new Secret data.
+     * @return SecretDto with the created Secret data.
      */
-    public SecretDto newSecret(
-            Long accountId,
-            NewSecretDto newSecretDto) {
-        SecretEntity secret = secretsMapper.fromDto(newSecretDto);
-        secret.setAccount(new AccountEntity(accountId));
+    public SecretDto createSecret(
+            Long ownerAccountId,
+            CreateSecretDto createSecretDto) {
+
+        SecretEntity secret = secretsMapper.fromDto(createSecretDto);
+        secret.setOwnerAccount(new AccountEntity(ownerAccountId));
         return secretsMapper.toDto(secretEntitiesRepository.save(secret));
+
     }
 
     /**
      * Edits a Secret.
-     * 
-     * @param accountId Account.accountId.
-     * @param editSecretDto EditSecretDto with the Secret new data.
+     *
+     * @param ownerAccountId Account.accountId of the secret owner.
+     * @param secretId ID of the Secret to be edited.
+     * @param editSecretDto EditSecretDto with the Secret edition data.
      * @return SecretDto with the edited Secret data.
      */
     public SecretDto editSecret(
-            Long accountId,
+            Long ownerAccountId,
+            Long secretId,
             EditSecretDto editSecretDto) {
 
-        SecretEntity secret = findAndCheckSecret(editSecretDto.getSecretId(), accountId);
+        SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId);
 
         secret.setName(editSecretDto.getName());
         secret.setValue(editSecretDto.getValue());
 
         if (editSecretDto.getSharings().size() != secret.getSharedSecrets().size()) {
             throw new ServiceException(String.format(
-                    "Edit secret sharings do not match secret %s current sharings", editSecretDto.getSecretId()));
+                    "Edit secret sharings do not match secret %s current sharings", secretId));
         }
         Map<String, EditSecretSharingDto> editSecretSharings = new HashMap<>();
         for (EditSecretSharingDto editSecretSharing : editSecretDto.getSharings()) {
-            editSecretSharings.put(editSecretSharing.getEmail(), editSecretSharing);
+            editSecretSharings.put(editSecretSharing.getReceiverEmail(), editSecretSharing);
         }
         for (SharedSecretEntity sharedSecret : secret.getSharedSecrets()) {
-            EditSecretSharingDto editSecretSharing = editSecretSharings.get(sharedSecret.getAccount().getEmail());
+            EditSecretSharingDto editSecretSharing = editSecretSharings.get(sharedSecret.getReceiverAccount().getEmail());
             if (editSecretSharing == null) {
                 throw new ServiceException(String.format(
-                        "Edit secret sharings do not match secret %s current sharings", editSecretDto.getSecretId()));
+                        "Edit secret sharings do not match secret %s current sharings", secretId));
             }
             sharedSecret.setValue(editSecretSharing.getValue());
         }
@@ -114,41 +119,43 @@ public class SecretsService {
 
     /**
      * Deletes a Secret.
-     * 
-     * @param accountId Account.accountId.
-     * @param deleteSecretDto DeleteSecretDto with the Secret to be deleted data.
+     *
+     * @param ownerAccountId Account.accountId of the secret owner.
+     * @param secretId ID of the Secret to be deleted.
      * @return SecretDto with the deleted Secret data.
      */
     public SecretDto deleteSecret(
-            Long accountId,
-            DeleteSecretDto deleteSecretDto) {
-        SecretEntity secret = findAndCheckSecret(deleteSecretDto.getSecretId(), accountId);
+            Long ownerAccountId,
+            Long secretId) {
+
+        SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId);
         secretEntitiesRepository.delete(secret);
         return secretsMapper.toDto(secret);
+
     }
 
     /**
-     * Finds a Secret by secretId and checks if it exists and belongs to an accoundId.
-     * 
+     * Finds a Secret by secretId and checks if it exists and belongs to an ownerAccountId.
+     *
      * @param secretId The secretId.
-     * @param accountId The accoundId.
+     * @param ownerAccountId The accountId.
      * @return The Secret.
      */
     protected SecretEntity findAndCheckSecret(
             Long secretId,
-            Long accountId) {
+            Long ownerAccountId) {
 
-        SecretEntity secret = secretEntitiesRepository.findOne(secretId);
+        SecretEntity secret = secretEntitiesRepository.findById(secretId).orElse(null);
 
         if (secret == null) {
             throw new ServiceException(String.format("Secret %s does not exist", secretId))
                     .setErrorCode("my-secrets.secret-does-not-exist");
         }
 
-        if (accountId != null && !accountId.equals(secret.getAccount().getAccountId())) {
+        if (ownerAccountId != null && !ownerAccountId.equals(secret.getOwnerAccount().getAccountId())) {
             throw new AuthorizationServiceException(String.format(
                     "Secret %s cannot be managed by account %s since it belongs to account %s",
-                    secretId, accountId, secret.getAccount().getAccountId()));
+                    secretId, ownerAccountId, secret.getOwnerAccount().getAccountId()));
         }
 
         return secret;

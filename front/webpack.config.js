@@ -1,7 +1,7 @@
 const Path = require('path')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
@@ -12,70 +12,82 @@ module.exports = (env, argv) => ({
         filename: 'js/bundle.js'
     },
     resolve: {
-		modules: [
-			Path.resolve('./node_modules'),
-			Path.resolve('./src')
-		]
+        modules: [
+            Path.resolve('./node_modules'),
+            Path.resolve('./src')
+        ]
     },
     module: {
         rules: [
-	        {
-	            test: /\.(js|jsx)$/,
-	            exclude: /(node_modules)/,
-	            use: 'babel-loader'
-	        },
-	        {
-				test: /\.css$/,
-				use: [
-					argv.mode !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
-					'css-loader'
-				]
-	    	},
-	    	{
-	            test: /\.(gif|png|jpe?g|svg)$/,
-	            use: {
-					loader: 'file-loader',
-					options: {
-						name: '/img/[name].[ext]',
-					}
-	            }
-	        },
-	    	{
-	            test: /\.(woff2?|eot|ttf)$/,
-	            use: {
-					loader: 'file-loader',
-					options: {
-						name: '/font/[name].[ext]',
-					}
-	            }
-	        }
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /(node_modules)/,
+                use: 'babel-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    argv.mode !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
+                    'css-loader'
+                ]
+            },
+            {
+                test: /favicon\.(gif|png|jpe?g|ico|svg)$/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name: '/[name].[ext]',
+                    }
+                }
+            },
+            {
+                test: /(?<!favicon)\.(gif|png|jpe?g|ico|svg)$/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name: '/img/[name].[ext]',
+                    }
+                }
+            },
+            {
+                test: /\.(woff2?|eot|ttf)$/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name: '/font/[name].[ext]',
+                    }
+                }
+            }
         ]
     },
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
-                uglifyOptions: {
+            new TerserPlugin({
+                terserOptions: {
+                    ecma: 8,
                     output: {
                         comments: false
                     }
-                }
+                },
+                extractComments: false
             }),
             new OptimizeCSSAssetsPlugin({
-            	cssProcessorOptions: {
-            		safe: true,
-            		discardComments: {
-        				removeAll: true
-    				}
-            	}
+                cssProcessor: require('cssnano'),
+                cssProcessorPluginOptions: {
+                    preset: [
+                        'default',
+                        {
+                            discardComments: { 
+                                removeAll: true 
+                            }
+                        }
+                    ]
+                }
             })
         ]
     },
     plugins: [
-        new CleanWebpackPlugin([
-            '../src/main/resources/static'
-        ], {
-            allowExternal: true
-        }),
+        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             template: "./src/index.html",
             filename: "index.html",

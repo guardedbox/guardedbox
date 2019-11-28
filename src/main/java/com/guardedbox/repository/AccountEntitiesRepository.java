@@ -16,4 +16,11 @@ public interface AccountEntitiesRepository
         extends JpaRepository<AccountEntity, Long>,
         JpaSpecificationExecutor<AccountEntity> {
 
+    /**
+     * @param email AccountEntity.email.
+     * @return The AccountEntity corresponding to the introduced email.
+     */
+    AccountEntity findByEmail(
+            String email);
+
 }

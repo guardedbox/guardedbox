@@ -1,6 +1,6 @@
 package com.guardedbox.entity;
 
-import static com.guardedbox.constants.Constraints.ENCRYPTED_VALUE_PATTERN;
+import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.SECRET_NAME_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.SECRET_VALUE_MAX_LENGTH;
 
@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 
 /**
  * Entity: Secret.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -40,16 +40,16 @@ public class SecretEntity
 
     /** Secret ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "secret_id")
     @Positive
     private Long secretId;
 
-    /** Account. */
+    /** Owner Account. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "owner_account_id")
     @NotNull
-    private AccountEntity account;
+    private AccountEntity ownerAccount;
 
     /** Name. */
     @Column(name = "name")
@@ -60,7 +60,7 @@ public class SecretEntity
     /** Value. */
     @Column(name = "value")
     @NotBlank
-    @Pattern(regexp = ENCRYPTED_VALUE_PATTERN)
+    @Pattern(regexp = BASE64_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
 
@@ -84,18 +84,18 @@ public class SecretEntity
     }
 
     /**
-     * @return The account.
+     * @return The ownerAccount.
      */
-    public AccountEntity getAccount() {
-        return account;
+    public AccountEntity getOwnerAccount() {
+        return ownerAccount;
     }
 
     /**
-     * @param account The account to set.
+     * @param ownerAccount The ownerAccount to set.
      */
-    public void setAccount(
-            AccountEntity account) {
-        this.account = account;
+    public void setOwnerAccount(
+            AccountEntity ownerAccount) {
+        this.ownerAccount = ownerAccount;
     }
 
     /**

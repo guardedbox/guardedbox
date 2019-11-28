@@ -1,10 +1,11 @@
+import { getViewComponent } from 'services/view-components.jsx';
+
 var loadingActive = 0;
 
 /**
  * Activates the loading state.
  * 
- * @param {function} callback This function will be passed to the app setState callback.
- * 
+ * @param {function} [callback] This function will be passed to the app setState callback.
  */
 export function loading(callback) {
 
@@ -14,10 +15,10 @@ export function loading(callback) {
 
         document.onkeydown = (e) => { return false; }
 
-        window.views.app.setState({
+        getViewComponent('app').setState({
             loading: true
         }, () => {
-            document.getElementsByClassName("react-overlay-loader-spinner")[0].parentElement.style.zIndex = 1051;
+            document.getElementsByClassName("react-overlay-loader-spinner")[0].parentElement.style.zIndex = 1060;
             if (callback) setTimeout(callback, 50);
         });
 
@@ -28,8 +29,7 @@ export function loading(callback) {
 /**
  * Deactivates the loading state.
  * 
- * @param {function} callback This function will be passed to the app setState callback.
- * 
+ * @param {function} [callback] This function will be passed to the app setState callback.
  */
 export function notLoading(callback) {
 
@@ -41,7 +41,7 @@ export function notLoading(callback) {
 
             document.onkeydown = null;
 
-            window.views.app.setState({
+            getViewComponent('app').setState({
                 loading: false
             }, () => {
                 if (callback) setTimeout(callback, 50);
@@ -57,8 +57,8 @@ export function notLoading(callback) {
  * Activates the loading state for some time, and then deactivates it.
  * 
  * @param {number} loadingTime The time the loading state will remain active.
- * @param {function} loadingCallback This function will be executed when the loading state is activated.
- * @param {function} notLoadingCallback This function will be executed when the loading state is deactivated.
+ * @param {function} [loadingCallback] This function will be executed when the loading state is activated.
+ * @param {function} [notLoadingCallback] This function will be executed when the loading state is deactivated.
  */
 export function temporaryLoading(loadingTime, loadingCallback, notLoadingCallback) {
 

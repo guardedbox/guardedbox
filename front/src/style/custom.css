@@ -1,5 +1,5 @@
-/**
- * Overrides
+/*
+ * Overrides.
  */
 .react-overlay-loader-spinner:before {
 	border-color: #8eadc3;
@@ -8,6 +8,14 @@
 
 .progress {
 	height: 0.95rem;
+}
+
+.jumbotron {
+	padding: 3.5rem 2rem 2rem 1.75rem;
+}
+
+.tooltip {
+  pointer-events: none;
 }
 
 /*
@@ -34,6 +42,14 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 /*
  * Custom Classes.
  */
+.logo-col {
+	margin-top: 15%
+}
+
+.main-col {
+	margin-top: 4%;
+}
+
 .spaced {
 	margin: .2rem;
 }
@@ -43,7 +59,12 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .space-between-icons {
-	width: .25rem;
+	width: .35rem;
+	display: inline-block;
+}
+
+.space-between-text-and-icons {
+	width: 1rem;
 	display: inline-block;
 }
 

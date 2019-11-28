@@ -1,0 +1,15 @@
+{
+	"viewPaths": {
+		"login": "/login",
+		"registration": "/registration",
+		"mySecrets": "/my-secrets",
+		"secretsSharedWithMe": "/secrets-shared-with-me"
+	},
+	"navbarPaths": "/(my-secrets|secrets-shared-with-me)",
+	"defaultPath": "/my-secrets",
+	"publicPaths": [
+		"/",
+		"/login",
+		"/registration"
+	]
+}

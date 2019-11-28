@@ -1,23 +1,5 @@
 package com.guardedbox.service.transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.guardedbox.dto.AccountWithPublicKeyDto;
-import com.guardedbox.dto.AccountWithSecretsDto;
-import com.guardedbox.dto.RejectSharedSecretDto;
-import com.guardedbox.dto.SecretDto;
-import com.guardedbox.dto.ShareSecretDto;
-import com.guardedbox.dto.UnshareSecretDto;
-import com.guardedbox.entity.AccountEntity;
-import com.guardedbox.entity.AccountWithPublicKeyEntity;
-import com.guardedbox.entity.SecretEntity;
-import com.guardedbox.entity.SharedSecretEntity;
-import com.guardedbox.exception.ServiceException;
-import com.guardedbox.mapper.AccountsMapper;
-import com.guardedbox.mapper.SecretsMapper;
-import com.guardedbox.repository.SharedSecretEntitiesRepository;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,9 +7,25 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.guardedbox.dto.AccountWithPublicKeyDto;
+import com.guardedbox.dto.AccountWithSecretsDto;
+import com.guardedbox.dto.SecretDto;
+import com.guardedbox.dto.ShareSecretDto;
+import com.guardedbox.entity.AccountWithPublicKeyEntity;
+import com.guardedbox.entity.SecretEntity;
+import com.guardedbox.entity.SecretWithOwnerAccountPublicKeyEntity;
+import com.guardedbox.entity.SharedSecretEntity;
+import com.guardedbox.exception.ServiceException;
+import com.guardedbox.mapper.AccountsMapper;
+import com.guardedbox.mapper.SecretsMapper;
+import com.guardedbox.repository.SharedSecretEntitiesRepository;
+
 /**
  * Service: SharedSecret.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -52,7 +50,7 @@ public class SharedSecretsService {
 
     /**
      * Constructor with Attributes.
-     * 
+     *
      * @param sharedSecretEntitiesRepository SharedSecretEntitiesRepository.
      * @param secretsService SecretsService.
      * @param accountsService AccountsService.
@@ -73,79 +71,91 @@ public class SharedSecretsService {
     }
 
     /**
-     * @param accountId Account.accountId.
-     * @param secretId Secret.secretId.
-     * @return The List of accounts with which the introduced secretId is shared.
+     * @param receiverAccountId Account.accountId of the shared secrets receiver.
+     * @return The List of secrets shared with the introduced accountId, grouped by owner account.
      */
-    public List<AccountWithPublicKeyDto> getSharedSecretAccounts(
-            Long accountId,
-            Long secretId) {
+    public List<AccountWithSecretsDto> getSecretsSharedWithAccount(
+            Long receiverAccountId) {
 
-        SecretEntity secret = secretsService.findAndCheckSecret(secretId, accountId);
-        List<SharedSecretEntity> sharedSecrets = secret.getSharedSecrets();
+        Map<Long, AccountWithSecretsDto> ownerAccountsWithSecrets = new LinkedHashMap<>();
+        List<SharedSecretEntity> receivedSharedSecrets = sharedSecretEntitiesRepository
+                .findByReceiverAccountAccountIdOrderBySecretOwnerAccountEmailAscSecretNameAsc(receiverAccountId);
 
-        List<AccountWithPublicKeyDto> accounts = new ArrayList<>(sharedSecrets.size());
-        for (SharedSecretEntity sharedSecret : sharedSecrets)
-            accounts.add(accountsMapper.toDtoWithPublicKey(sharedSecret.getAccount()));
+        for (SharedSecretEntity receivedSharedSecret : receivedSharedSecrets) {
 
-        return accounts;
+            AccountWithPublicKeyEntity ownerAccount = receivedSharedSecret.getSecret().getOwnerAccount();
+            AccountWithSecretsDto ownerAccountWithSecrets = ownerAccountsWithSecrets.get(ownerAccount.getAccountId());
+            if (ownerAccountWithSecrets == null) {
+                ownerAccountWithSecrets = accountsMapper.toDtoWithSecrets(ownerAccount);
+                ownerAccountsWithSecrets.put(ownerAccount.getAccountId(), ownerAccountWithSecrets);
+            }
+
+            SecretDto receivedSecret = secretsMapper.toDto(receivedSharedSecret.getSecret());
+            receivedSecret.setValue(receivedSharedSecret.getValue());
+
+            ownerAccountWithSecrets.getSecrets().add(receivedSecret);
+
+        }
+
+        return new ArrayList<>(ownerAccountsWithSecrets.values());
 
     }
 
     /**
-     * @param accountId Account.accountId.
-     * @return The List of AccountWithSecretsDto representing the secrets shared with the introduced accountId.
+     * @param ownerAccountId Account.accountId of the secret owner.
+     * @param secretId Secret.secretId of the shared secret.
+     * @return The List of accounts with which the introduced secretId is shared.
      */
-    public List<AccountWithSecretsDto> getSecretsSharedWithAccount(
-            Long accountId) {
+    public List<AccountWithPublicKeyDto> getSharedSecretReceiverAccounts(
+            Long ownerAccountId,
+            Long secretId) {
 
-        Map<Long, AccountWithSecretsDto> accountsWithSecrets = new LinkedHashMap<>();
-        List<SharedSecretEntity> sharedSecrets = sharedSecretEntitiesRepository.findByAccountAccountIdOrderByAccountEmailAscSecretNameAsc(accountId);
+        SecretEntity secret = secretsService.findAndCheckSecret(secretId, ownerAccountId);
+        List<SharedSecretEntity> sharedSecrets = secret.getSharedSecrets();
 
-        for (SharedSecretEntity sharedSecret : sharedSecrets) {
+        List<AccountWithPublicKeyDto> receiverAccounts = new ArrayList<>(sharedSecrets.size());
+        for (SharedSecretEntity sharedSecret : sharedSecrets)
+            receiverAccounts.add(accountsMapper.toDtoWithPublicKey(sharedSecret.getReceiverAccount()));
 
-            AccountEntity account = sharedSecret.getSecret().getAccount();
-            AccountWithSecretsDto accountWithSecrets = accountsWithSecrets.get(account.getAccountId());
-            if (accountWithSecrets == null) {
-                accountWithSecrets = accountsMapper.toDtoWithSecrets(account);
-                accountsWithSecrets.put(account.getAccountId(), accountWithSecrets);
-            }
-
-            SecretDto secret = secretsMapper.toDto(sharedSecret.getSecret());
-            secret.setValue(sharedSecret.getValue());
-
-            accountWithSecrets.getSecrets().add(secret);
-
-        }
-
-        return new ArrayList<>(accountsWithSecrets.values());
+        return receiverAccounts;
 
     }
 
     /**
      * Shares a secret.
-     * 
-     * @param accountId Account.accountId of the secret owner.
+     *
+     * @param ownerAccountId Account.accountId of the secret owner.
+     * @param secretId Secret.secretId of the secret to be shared.
      * @param shareSecretDto DTO with the secret to be shared data.
      */
     public void shareSecret(
-            Long accountId,
+            Long ownerAccountId,
+            Long secretId,
             ShareSecretDto shareSecretDto) {
 
-        SecretEntity secret = secretsService.findAndCheckSecret(shareSecretDto.getSecretId(), accountId);
-        AccountWithPublicKeyEntity account = accountsService.findAndCheckAccountWithPublicKey(shareSecretDto.getEmail(), accountId);
+        SecretWithOwnerAccountPublicKeyEntity secret =
+                secretsService.findAndCheckSecret(secretId, ownerAccountId);
 
-        SharedSecretEntity alreadySharedSecret = sharedSecretEntitiesRepository.findBySecretSecretIdAndAccountAccountId(
-                secret.getSecretId(), account.getAccountId());
+        AccountWithPublicKeyEntity receiverAccount =
+                accountsService.findAndCheckAccountWithPublicKeyByEmail(shareSecretDto.getReceiverEmail());
+        if (receiverAccount.getAccountId().equals(ownerAccountId)) {
+            throw new ServiceException(String.format(
+                    "Secret %s belongs to email %s", secretId, shareSecretDto.getReceiverEmail()))
+                            .setErrorCode("shared-secrets.do-not-self-share");
+        }
+
+        SharedSecretEntity alreadySharedSecret =
+                sharedSecretEntitiesRepository.findBySecretSecretIdAndReceiverAccountAccountId(secret.getSecretId(), receiverAccount.getAccountId());
         if (alreadySharedSecret != null) {
             throw new ServiceException(String.format(
-                    "Secret %s is already shared with email %s", shareSecretDto.getSecretId(), shareSecretDto.getEmail()))
-                            .setErrorCode("shared-secrets.secret-already-shared-with-email");
+                    "Secret %s is already shared with email %s", secretId, shareSecretDto.getReceiverEmail()))
+                            .setErrorCode("shared-secrets.secret-already-shared-with-email")
+                            .addAdditionalData("email", shareSecretDto.getReceiverEmail());
         }
 
         SharedSecretEntity sharedSecret = new SharedSecretEntity();
         sharedSecret.setSecret(secret);
-        sharedSecret.setAccount(account);
+        sharedSecret.setReceiverAccount(receiverAccount);
         sharedSecret.setValue(shareSecretDto.getValue());
 
         sharedSecretEntitiesRepository.save(sharedSecret);
@@ -154,23 +164,27 @@ public class SharedSecretsService {
 
     /**
      * Unshares a secret.
-     * 
-     * @param accountId Account.accountId of the secret owner.
-     * @param unshareSecretDto DTO with the secret to be unshared data.
+     *
+     * @param ownerAccountId Account.accountId of the secret owner.
+     * @param secretId Secret.secretId of the secret to be unshared.
+     * @param receiverEmail Account.email of the account from which the secret will be unshared.
      */
     public void unshareSecret(
-            Long accountId,
-            UnshareSecretDto unshareSecretDto) {
+            Long ownerAccountId,
+            Long secretId,
+            String receiverEmail) {
 
-        SecretEntity secret = secretsService.findAndCheckSecret(unshareSecretDto.getSecretId(), accountId);
-        AccountWithPublicKeyEntity account = accountsService.findAndCheckAccountWithPublicKey(unshareSecretDto.getEmail(), accountId);
+        secretsService.findAndCheckSecret(secretId, ownerAccountId);
 
-        SharedSecretEntity sharedSecret = sharedSecretEntitiesRepository.findBySecretSecretIdAndAccountAccountId(
-                secret.getSecretId(), account.getAccountId());
+        AccountWithPublicKeyEntity reveiverAccount =
+                accountsService.findAndCheckAccountWithPublicKeyByEmail(receiverEmail);
+
+        SharedSecretEntity sharedSecret =
+                sharedSecretEntitiesRepository.findBySecretSecretIdAndReceiverAccountAccountId(secretId, reveiverAccount.getAccountId());
         if (sharedSecret == null) {
             throw new ServiceException(String.format(
-                    "Secret %s is not shared with account %s", unshareSecretDto.getSecretId(), account.getAccountId()))
-                            .setErrorCode("shared-secrets.secret-not-shared-with-email");
+                    "Secret %s is not shared with account %s", secretId, reveiverAccount.getAccountId()))
+                            .setErrorCode("shared-secrets.secret-not-shared-with-email").addAdditionalData("email", receiverEmail);
         }
 
         sharedSecretEntitiesRepository.delete(sharedSecret);
@@ -178,20 +192,20 @@ public class SharedSecretsService {
     }
 
     /**
-     * Unshares a secret currently shared to an account.
-     * 
-     * @param accountId Account.accountId of the shared secret receiver.
-     * @param rejectSharedSecretDto DTO with the secret to be unshared data.
+     * Unshares a secret.
+     *
+     * @param secretId Secret.secretId of the secret to be unshared.
+     * @param receiverAccountId Account.accountId of the account from which the secret will be unshared.
      */
     public void rejectSharedSecret(
-            Long accountId,
-            RejectSharedSecretDto rejectSharedSecretDto) {
+            Long secretId,
+            Long receiverAccountId) {
 
-        SharedSecretEntity sharedSecret = sharedSecretEntitiesRepository.findBySecretSecretIdAndAccountAccountId(
-                rejectSharedSecretDto.getSecretId(), accountId);
+        SharedSecretEntity sharedSecret =
+                sharedSecretEntitiesRepository.findBySecretSecretIdAndReceiverAccountAccountId(secretId, receiverAccountId);
         if (sharedSecret == null) {
             throw new ServiceException(String.format(
-                    "Secret %s is not shared with account %s", rejectSharedSecretDto.getSecretId(), accountId))
+                    "Secret %s is not shared with account %s", secretId, receiverAccountId))
                             .setErrorCode("shared-secrets.secret-not-shared-with-you");
         }
 

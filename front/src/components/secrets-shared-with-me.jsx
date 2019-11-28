@@ -58,7 +58,7 @@ class SecretsSharedWithMe extends Component {
 
     clipboardSecretValue = (accountRowIndex, account, secretRowIndex, secret) => {
 
-        var clearValue = decrypt(secret.value, account.publicKey);
+        var clearValue = decrypt(secret.value, account.encryptionPublicKey);
         if (clearValue == '') return;
 
         copyToClipboard(clearValue);
@@ -74,7 +74,7 @@ class SecretsSharedWithMe extends Component {
 
     showSecretValue = (accountRowIndex, account, secretRowIndex, secret) => {
 
-        var clearValue = decrypt(secret.value, account.publicKey);
+        var clearValue = decrypt(secret.value, account.encryptionPublicKey);
         if (clearValue == '') return;
 
         secret.clearValue = clearValue;

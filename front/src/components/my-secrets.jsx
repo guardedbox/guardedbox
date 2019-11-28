@@ -246,7 +246,7 @@ class MySecrets extends Component {
                 for (var account of accounts) {
                     sharings.push({
                         receiverEmail: account.email,
-                        value: encrypt(this.state.editSecretValue, account.publicKey)
+                        value: encrypt(this.state.editSecretValue, account.encryptionPublicKey)
                     });
                 }
 
@@ -397,7 +397,7 @@ class MySecrets extends Component {
 
                 var account = response;
 
-                var shareSecretValue = encrypt(this.state.shareSecretValue, account.publicKey);
+                var shareSecretValue = encrypt(this.state.shareSecretValue, account.encryptionPublicKey);
                 if (shareSecretValue == '') return;
 
                 rest({

@@ -1,10 +1,5 @@
 CREATE DATABASE  IF NOT EXISTS `guardedbox` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
 USE `guardedbox`;
--- MySQL dump 10.13  Distrib 5.7.26
---
--- Host: localhost    Database: guardedbox
--- ------------------------------------------------------
--- Server version	5.7.26-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,26 +22,27 @@ DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
   `account_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `salt` varchar(344) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `public_key` varchar(392) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `salt` varchar(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `encryption_public_key` varchar(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `signing_public_key` varchar(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`account_id`),
   KEY `EMAIL` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `registration_token`
+-- Table structure for table `registration`
 --
 
-DROP TABLE IF EXISTS `registration_token`;
+DROP TABLE IF EXISTS `registration`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `registration_token` (
-  `registration_token_id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `registration` (
+  `registration_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `token` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `token` varchar(86) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `expedition_time` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`registration_token_id`),
+  PRIMARY KEY (`registration_id`),
   KEY `EMAIL` (`email`),
   KEY `TOKEN` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -62,8 +58,8 @@ DROP TABLE IF EXISTS `secret`;
 CREATE TABLE `secret` (
   `secret_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `owner_account_id` bigint(20) DEFAULT NULL,
-  `name` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `value` varchar(8192) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `value` varchar(16016) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`secret_id`),
   KEY `OWNER_ACCOUNT_ID` (`owner_account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -80,7 +76,7 @@ CREATE TABLE `shared_secret` (
   `shared_secret_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `secret_id` bigint(20) DEFAULT NULL,
   `receiver_account_id` bigint(20) DEFAULT NULL,
-  `value` varchar(8192) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `value` varchar(16016) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`shared_secret_id`),
   KEY `SECRET_ID` (`secret_id`),
   KEY `RECEIVER_ACCOUNT_ID` (`receiver_account_id`)
@@ -132,5 +128,3 @@ CREATE TABLE `spring_session_attributes` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2019-07-06 20:34:11

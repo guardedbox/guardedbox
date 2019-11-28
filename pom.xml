@@ -47,6 +47,9 @@
 		<!-- Built By -->
 		<builtBy>s3curitybug@gmail.com</builtBy>
 
+		<!-- Dependencies Versions -->
+		<bouncycastle.version>1.64</bouncycastle.version>
+
 	</properties>
 
 	<!-- Parent -->
@@ -159,6 +162,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!-- ECC Provider -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>${bouncycastle.version}</version>
 		</dependency>
 
 	</dependencies>

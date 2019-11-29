@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -45,12 +46,14 @@ public class SharedSecretEntity
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "secret_id")
     @NotNull
+    @Valid
     private SecretWithOwnerAccountEncryptionPublicKeyEntity secret;
 
     /** Receiver Account. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "receiver_account_id")
     @NotNull
+    @Valid
     private AccountWithEncryptionPublicKeyEntity receiverAccount;
 
     /** Value. */

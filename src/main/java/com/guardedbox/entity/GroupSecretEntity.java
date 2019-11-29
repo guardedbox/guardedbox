@@ -41,7 +41,7 @@ public class GroupSecretEntity
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_secret_id")
     @Positive
-    private Long groupSecret;
+    private Long groupSecretId;
 
     /** Group. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -64,18 +64,18 @@ public class GroupSecretEntity
     private String value;
 
     /**
-     * @return The groupSecret.
+     * @return The groupSecretId.
      */
-    public Long getGroupSecret() {
-        return groupSecret;
+    public Long getGroupSecretId() {
+        return groupSecretId;
     }
 
     /**
-     * @param groupSecret The groupSecret to set.
+     * @param groupSecretId The groupSecretId to set.
      */
-    public void setGroupSecret(
-            Long groupSecret) {
-        this.groupSecret = groupSecret;
+    public void setGroupSecretId(
+            Long groupSecretId) {
+        this.groupSecretId = groupSecretId;
     }
 
     /**

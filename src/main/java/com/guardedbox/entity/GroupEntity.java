@@ -1,5 +1,7 @@
 package com.guardedbox.entity;
 
+import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
+import static com.guardedbox.constants.Constraints.ENCRYPTED_KEY_LENGTH;
 import static com.guardedbox.constants.Constraints.GROUP_NAME_MAX_LENGTH;
 
 import java.io.Serializable;
@@ -19,6 +21,7 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
@@ -55,6 +58,13 @@ public class GroupEntity
     @NotBlank
     @Size(max = GROUP_NAME_MAX_LENGTH)
     private String name;
+
+    /** Encrypted Group Key. */
+    @Column(name = "encrypted_group_key")
+    @NotBlank
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(max = ENCRYPTED_KEY_LENGTH)
+    private String encryptedGroupKey;
 
     /** Participants. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -107,6 +117,21 @@ public class GroupEntity
     public void setName(
             String name) {
         this.name = name;
+    }
+
+    /**
+     * @return The encryptedGroupKey.
+     */
+    public String getEncryptedGroupKey() {
+        return encryptedGroupKey;
+    }
+
+    /**
+     * @param encryptedGroupKey The encryptedGroupKey to set.
+     */
+    public void setEncryptedGroupKey(
+            String encryptedGroupKey) {
+        this.encryptedGroupKey = encryptedGroupKey;
     }
 
     /**

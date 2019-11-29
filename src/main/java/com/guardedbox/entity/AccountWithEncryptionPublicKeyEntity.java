@@ -57,6 +57,21 @@ public class AccountWithEncryptionPublicKeyEntity
     private String encryptionPublicKey;
 
     /**
+     * Default Constructor.
+     */
+    public AccountWithEncryptionPublicKeyEntity() {}
+
+    /**
+     * Constructor with Attributes.
+     *
+     * @param accountId AccountId.
+     */
+    public AccountWithEncryptionPublicKeyEntity(
+            Long accountId) {
+        this.accountId = accountId;
+    }
+
+    /**
      * @return The accountId.
      */
     public Long getAccountId() {

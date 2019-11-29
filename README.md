@@ -36,10 +36,10 @@ The project is built with the following command at its root directory:
 mvn clean install
 ```
 
-A jar will be generated in the folder target. Run it with the following command:
+A jar will be generated in the folder target. Run it with the following command at the project root directory:
 
 ```shell
-java -jar guardedbox.jar --spring.config.location=file:application.properties
+java -jar target/guardedbox-1.0.0.jar --spring.config.location=file:./properties-example/application.properties
 ```
 
 It requires a MySQL instance with the schema described in the file sql/guardedbox.sql.

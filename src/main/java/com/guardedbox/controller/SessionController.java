@@ -52,6 +52,9 @@ public class SessionController {
     /** Indicates if environment is dev, based on property environment. */
     private final boolean dev;
 
+    /** Property: security-parameters.challenge.execution-time. */
+    private final long challengeExecutionTime;
+
     /** Property: security-parameters.otp.execution-time. */
     private final long otpExecutionTime;
 
@@ -83,6 +86,7 @@ public class SessionController {
      * Constructor with Attributes.
      *
      * @param dev Indicates if environment is dev, based on property environment.
+     * @param challengeExecutionTime Property: security-parameters.challenge.execution-time.
      * @param otpExecutionTime Property: security-parameters.otp.execution-time.
      * @param loginExecutionTime Property: security-parameters.login.execution-time.
      * @param accountsService AccountsService.
@@ -95,6 +99,7 @@ public class SessionController {
      */
     public SessionController(
             @Value("#{'${environment}' == 'dev'}") boolean dev,
+            @Value("${security-parameters.challenge.execution-time}") long challengeExecutionTime,
             @Value("${security-parameters.otp.execution-time}") long otpExecutionTime,
             @Value("${security-parameters.login.execution-time}") long loginExecutionTime,
             @Autowired AccountsService accountsService,
@@ -105,6 +110,7 @@ public class SessionController {
             @Autowired HttpServletRequest request,
             @Autowired HttpSession session) {
         this.dev = dev;
+        this.challengeExecutionTime = challengeExecutionTime;
         this.otpExecutionTime = otpExecutionTime;
         this.loginExecutionTime = loginExecutionTime;
         this.accountsService = accountsService;
@@ -140,6 +146,8 @@ public class SessionController {
     @PostMapping("/challenge")
     public ChallengeDto getChallenge() {
 
+        long startTime = System.currentTimeMillis();
+
         // Remove the challenge and the one time password from the current session.
         session.removeAttribute(SessionAttributes.CHALLENGE);
         session.removeAttribute(SessionAttributes.OTP);
@@ -149,6 +157,9 @@ public class SessionController {
 
         // Store it in the current session.
         session.setAttribute(SessionAttributes.CHALLENGE, challengeDto);
+
+        // Fix execution time.
+        executionTimeService.fix(startTime, challengeExecutionTime);
 
         // Return it.
         return challengeDto;

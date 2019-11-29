@@ -244,9 +244,13 @@ class MySecrets extends Component {
                 var sharings = [];
 
                 for (var account of accounts) {
+
+                    var sharingValue = encrypt(this.state.editSecretValue, account.encryptionPublicKey, account.email);
+                    if (sharingValue == '') return;
+
                     sharings.push({
                         receiverEmail: account.email,
-                        value: encrypt(this.state.editSecretValue, account.encryptionPublicKey)
+                        value: sharingValue
                     });
                 }
 
@@ -397,7 +401,7 @@ class MySecrets extends Component {
 
                 var account = response;
 
-                var shareSecretValue = encrypt(this.state.shareSecretValue, account.encryptionPublicKey);
+                var shareSecretValue = encrypt(this.state.shareSecretValue, account.encryptionPublicKey, shareSecretReceiverEmail);
                 if (shareSecretValue == '') return;
 
                 rest({
@@ -498,7 +502,8 @@ class MySecrets extends Component {
                                                     <span className="space-between-text-and-icons"></span>
                                                     <span
                                                         id={"my-secrets_icon-copy-secret-name-" + i}
-                                                        onClick={() => { this.clipboardSecretName(i, secret) }} style={{ cursor: 'pointer' }}>
+                                                        onClick={() => { this.clipboardSecretName(i, secret) }}
+                                                        style={{ cursor: 'pointer' }}>
                                                         <Octicon icon={File} />
                                                     </span>
                                                     <UncontrolledTooltip placement="top" target={"my-secrets_icon-copy-secret-name-" + i}>

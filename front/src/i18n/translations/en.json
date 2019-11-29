@@ -54,6 +54,7 @@
 		"brand": "GuardedBox",
 		"my-secrets": "My Secrets",
 		"secrets-shared-with-me": "Secrets Shared With Me",
+		"trusted-keys": "Trusted Keys",
 		"logout": "Logout"
 	},
 	"my-secrets": {
@@ -113,5 +114,19 @@
 		"secrets-table-value": "Value",
 		"reject-shared-secret-modal-title": "Confirmation",
 		"reject-shared-secret-modal-body": "Are you sure you want to reject this secret shared with you?"
+	},
+	"trusted-keys": {
+		"my-public-encryption-key": "My Public Encryption Key",
+		"copy": "Copy",
+		"trusted-keys": "Trusted Keys",
+		"trusted-keys-info": "Add here the public keys of the people you trust. This way, when you share a secret to them, you make sure that you are using their public key so that only they can decrypt the secret.",
+		"email": "Email",
+		"key": "Key",
+		"edit": "Edit",
+		"remove": "Remove",
+		"btn-set": "Set",
+		"delete-key-modal-title": "Confirmation",
+		"delete-key-modal-body": "The trusted key will be removed! Are you sure?",
+		"trusted-key-missmatch": "The public key received from the server does not match the stored trusted key. Operation aborted."
 	}
 }

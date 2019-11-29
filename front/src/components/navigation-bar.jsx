@@ -35,14 +35,23 @@ class NavigationBar extends Component {
             <div>
                 <Navbar color="light" light expand="md" style={{ marginBottom: "3rem" }}>
 
-                    <NavbarBrand><img src={logo} height="25" width="25" style={{ verticalAlign: "bottom", margin: "0 1rem 0 0.5rem" }} />{t('navigation-bar.brand')}</NavbarBrand>
+                    <NavbarBrand><img src={logo} height="25" width="25" style={{ verticalAlign: "bottom", margin: "0 1rem 0 0.5rem" }} />
+                        {t('navigation-bar.brand')}
+                    </NavbarBrand>
                     <NavbarToggler onClick={this.toggleNavbarToggler} />
 
                     <Collapse isOpen={this.state.navbarTogglerActive} navbar>
 
                         <Nav className="mr-auto" navbar>
-                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.mySecrets} activeClassName="active">{t('navigation-bar.my-secrets')}</NavLink></NavItem>
-                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.secretsSharedWithMe} activeClassName="active">{t('navigation-bar.secrets-shared-with-me')}</NavLink></NavItem>
+                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.mySecrets} activeClassName="active">
+                                {t('navigation-bar.my-secrets')}
+                            </NavLink></NavItem>
+                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.secretsSharedWithMe} activeClassName="active">
+                                {t('navigation-bar.secrets-shared-with-me')}
+                            </NavLink></NavItem>
+                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.trustedKeys} activeClassName="active">
+                                {t('navigation-bar.trusted-keys')}
+                            </NavLink></NavItem>
                         </Nav>
 
                         <Nav className="ml-auto" navbar>

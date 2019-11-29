@@ -3,6 +3,8 @@ import { pbkdf2, hmac } from 'services/crypto/hash.jsx';
 import { generateEcdhKeyPair, generateEddsaKeyPair } from 'services/crypto/ecc.jsx';
 import { aesEncrypt, aesDecrypt } from 'services/crypto/aes.jsx';
 import { randomBytes } from 'services/crypto/random.jsx';
+import { checkTrustedKey } from 'services/trusted-keys.jsx';
+import { notLoading } from 'services/loading.jsx';
 import { t } from 'services/translation.jsx';
 import { modalMessage } from 'services/modal.jsx';
 
@@ -138,12 +140,19 @@ export function getSigningPublicKey(outputFormat = 'base64') {
  * 
  * @param {(Uint8Array|string)} plainText The message to encrypt.
  * @param {string} [publicKey] If not introduced, the current session master secret is used to encrypt. If introduced, a secret is computed using the current session ECDH private key.
+ * @param {string} [publicKeyEmail] The email associated to the publicKey, in case it is introduced, to check the trusted key.
  * @param {string} [plainTextFormat] The format of the message to encrypt, in case it is a string. Default: utf8.
  * @param {string} [publicKeyFormat] The format of the public key, in case it is a string. Default: base64.
  * @param {string} [outputFormat] The format of the output encrypted message. Default: base64.
  * @returns {string} The encrypted message.
  */
-export function encrypt(plainText, publicKey, plainTextFormat = 'utf8', publicKeyFormat = 'base64', outputFormat = 'base64') {
+export function encrypt(plainText, publicKey, publicKeyEmail, plainTextFormat = 'utf8', publicKeyFormat = 'base64', outputFormat = 'base64') {
+
+    if (publicKey && publicKeyEmail && !checkTrustedKey(publicKeyEmail, publicKey)) {
+        notLoading();
+        modalMessage(t('global.error'), t('trusted-keys.trusted-key-missmatch'));
+        return '';
+    }
 
     try {
 
@@ -171,12 +180,19 @@ export function encrypt(plainText, publicKey, plainTextFormat = 'utf8', publicKe
  * 
  * @param {string} cipherText The encrypted message to decrypt.
  * @param {string} [publicKey] If not introduced, the current session master secret is used to decrypt. If introduced, a secret is computed using the current session ECDH private key.
+ * @param {string} [publicKeyEmail] The email associated to the publicKey, in case it is introduced, to check the trusted key.
  * @param {string} [cipherTextFormat] The format of the encrypted message to decrypt, in case it is a string. Default: base64.
  * @param {string} [publicKeyFormat] The format of the public key, in case it is a string. Default: base64.
  * @param {string} [outputFormat] The format of the output decrypted message. Default: utf8.
  * @returns {(Uint8Array|string)} The decrypted message.
  */
-export function decrypt(cipherText, publicKey, cipherTextFormat = 'base64', publicKeyFormat = 'base64', outputFormat = 'utf8') {
+export function decrypt(cipherText, publicKey, publicKeyEmail, cipherTextFormat = 'base64', publicKeyFormat = 'base64', outputFormat = 'utf8') {
+
+    if (publicKey && publicKeyEmail && !checkTrustedKey(publicKeyEmail, publicKey)) {
+        notLoading();
+        modalMessage(t('global.error'), t('trusted-keys.trusted-key-missmatch'));
+        return '';
+    }
 
     try {
 

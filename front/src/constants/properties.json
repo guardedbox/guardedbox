@@ -19,5 +19,9 @@
 		"secretStrengthMaxLength": 40,
 		"randomSecretCharset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
 		"showSecretTime": 2500
+	},
+	"keys": {
+		"encryptionPublicKeyMaxLength": 44,
+		"encryptionPublicKeyPattern": "[a-zA-Z0-9+\/=]{44}"
 	}
 }

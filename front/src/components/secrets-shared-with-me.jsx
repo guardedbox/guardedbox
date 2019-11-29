@@ -58,7 +58,7 @@ class SecretsSharedWithMe extends Component {
 
     clipboardSecretValue = (accountRowIndex, account, secretRowIndex, secret) => {
 
-        var clearValue = decrypt(secret.value, account.encryptionPublicKey);
+        var clearValue = decrypt(secret.value, account.encryptionPublicKey, account.email);
         if (clearValue == '') return;
 
         copyToClipboard(clearValue);
@@ -74,7 +74,7 @@ class SecretsSharedWithMe extends Component {
 
     showSecretValue = (accountRowIndex, account, secretRowIndex, secret) => {
 
-        var clearValue = decrypt(secret.value, account.encryptionPublicKey);
+        var clearValue = decrypt(secret.value, account.encryptionPublicKey, account.email);
         if (clearValue == '') return;
 
         secret.clearValue = clearValue;
@@ -169,7 +169,8 @@ class SecretsSharedWithMe extends Component {
                                                             <span className="space-between-text-and-icons"></span>
                                                             <span
                                                                 id={"secrets-shared-with-me_icon-copy-secret-name-" + i}
-                                                                onClick={() => { this.clipboardSecretName(j, account, i, secret) }} style={{ cursor: 'pointer' }}>
+                                                                onClick={() => { this.clipboardSecretName(j, account, i, secret) }}
+                                                                style={{ cursor: 'pointer' }}>
                                                                 <Octicon icon={File} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-copy-secret-name-" + i}>

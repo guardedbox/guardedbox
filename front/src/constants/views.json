@@ -3,9 +3,10 @@
 		"login": "/login",
 		"registration": "/registration",
 		"mySecrets": "/my-secrets",
-		"secretsSharedWithMe": "/secrets-shared-with-me"
+		"secretsSharedWithMe": "/secrets-shared-with-me",
+		"trustedKeys": "/trusted-keys"
 	},
-	"navbarPaths": "/(my-secrets|secrets-shared-with-me)",
+	"navbarPaths": "/(my-secrets|secrets-shared-with-me|trusted-keys)",
 	"defaultPath": "/my-secrets",
 	"publicPaths": [
 		"/",

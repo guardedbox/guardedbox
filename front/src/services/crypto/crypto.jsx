@@ -148,10 +148,13 @@ export function getSigningPublicKey(outputFormat = 'base64') {
  */
 export function encrypt(plainText, publicKey, publicKeyEmail, plainTextFormat = 'utf8', publicKeyFormat = 'base64', outputFormat = 'base64') {
 
-    if (publicKey && publicKeyEmail && !checkTrustedKey(publicKeyEmail, publicKey)) {
-        notLoading();
-        modalMessage(t('global.error'), t('trusted-keys.trusted-key-missmatch'));
-        return '';
+    if (publicKey && publicKeyEmail) {
+        var check = checkTrustedKey(publicKeyEmail, publicKey);
+        if (!check || check === 'key-not-trusted') {
+            notLoading();
+            modalMessage(t('global.error'), t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
+            return '';
+        }
     }
 
     try {
@@ -188,10 +191,13 @@ export function encrypt(plainText, publicKey, publicKeyEmail, plainTextFormat = 
  */
 export function decrypt(cipherText, publicKey, publicKeyEmail, cipherTextFormat = 'base64', publicKeyFormat = 'base64', outputFormat = 'utf8') {
 
-    if (publicKey && publicKeyEmail && !checkTrustedKey(publicKeyEmail, publicKey)) {
-        notLoading();
-        modalMessage(t('global.error'), t('trusted-keys.trusted-key-missmatch'));
-        return '';
+    if (publicKey && publicKeyEmail) {
+        var check = checkTrustedKey(publicKeyEmail, publicKey);
+        if (!check || check === 'key-not-trusted') {
+            notLoading();
+            modalMessage(t('global.error'), t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
+            return '';
+        }
     }
 
     try {

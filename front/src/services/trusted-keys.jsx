@@ -83,19 +83,28 @@ export function removeTrustedKey(email) {
 
 }
 
-window.checkTrustedKey = checkTrustedKey;
-
+/**
+ * Checks if a public key matches an email trusted key.
+ * 
+ * @param {string} email The email corresponding to the trusted key.
+ * @param {string} encryptionPublicKey The public key to be checked.
+ */
 export function checkTrustedKey(email, encryptionPublicKey) {
 
     if (!trustedKeys) loadFromLocalStorage();
 
+    var trustedKey = null;
     for (var trustedKey of trustedKeys) {
         if (trustedKey.email === email) {
             break;
         }
     }
 
-    return trustedKey.encryptionPublicKey === encryptionPublicKey;
+    if (!trustedKey) {
+        return 'key-not-trusted';
+    }
+
+    return trustedKey && trustedKey.encryptionPublicKey === encryptionPublicKey;
 
 }
 

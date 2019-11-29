@@ -127,6 +127,7 @@
 		"btn-set": "Set",
 		"delete-key-modal-title": "Confirmation",
 		"delete-key-modal-body": "The trusted key will be removed! Are you sure?",
+		"key-not-trusted": "Please, introduce the public key of {email} in trusted keys before sharing secrets with him.",
 		"trusted-key-missmatch": "The public key received from the server does not match the stored trusted key. Operation aborted."
 	}
 }

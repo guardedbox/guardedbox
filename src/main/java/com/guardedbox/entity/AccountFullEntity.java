@@ -84,6 +84,14 @@ public class AccountFullEntity
     @OneToMany(mappedBy = "receiverAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedSecretEntity> receivedSharedSecrets;
 
+    /** Owned Groups. */
+    @OneToMany(mappedBy = "ownerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupEntity> ownedGroups;
+
+    /** Group Participations. */
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupParticipantEntity> groupParticipations;
+
     /**
      * @return The accountId.
      */
@@ -187,6 +195,36 @@ public class AccountFullEntity
     public void setReceivedSharedSecrets(
             List<SharedSecretEntity> receivedSharedSecrets) {
         this.receivedSharedSecrets = receivedSharedSecrets;
+    }
+
+    /**
+     * @return The ownedGroups.
+     */
+    public List<GroupEntity> getOwnedGroups() {
+        return ownedGroups;
+    }
+
+    /**
+     * @param ownedGroups The ownedGroups to set.
+     */
+    public void setOwnedGroups(
+            List<GroupEntity> ownedGroups) {
+        this.ownedGroups = ownedGroups;
+    }
+
+    /**
+     * @return The groupParticipations.
+     */
+    public List<GroupParticipantEntity> getGroupParticipations() {
+        return groupParticipations;
+    }
+
+    /**
+     * @param groupParticipations The groupParticipations to set.
+     */
+    public void setGroupParticipations(
+            List<GroupParticipantEntity> groupParticipations) {
+        this.groupParticipations = groupParticipations;
     }
 
 }

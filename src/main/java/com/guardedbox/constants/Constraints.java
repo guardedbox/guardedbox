@@ -44,4 +44,10 @@ public final class Constraints {
     /** Secret Value Maximum Length. */
     public static final int SECRET_VALUE_MAX_LENGTH = 16016;
 
+    /** Group name Maximum Length. */
+    public static final int GROUP_NAME_MAX_LENGTH = 100;
+
+    /** Encrypted Key Length (number of base64 characters). */
+    public static final int ENCRYPTED_KEY_LENGTH = 60;
+
 }

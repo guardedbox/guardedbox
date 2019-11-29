@@ -152,7 +152,9 @@ export function encrypt(plainText, publicKey, publicKeyEmail, plainTextFormat = 
         var check = checkTrustedKey(publicKeyEmail, publicKey);
         if (!check || check === 'key-not-trusted') {
             notLoading();
-            modalMessage(t('global.error'), t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
+            modalMessage(
+                t('global.error'),
+                t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted-send' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
             return '';
         }
     }
@@ -195,7 +197,9 @@ export function decrypt(cipherText, publicKey, publicKeyEmail, cipherTextFormat 
         var check = checkTrustedKey(publicKeyEmail, publicKey);
         if (!check || check === 'key-not-trusted') {
             notLoading();
-            modalMessage(t('global.error'), t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
+            modalMessage(
+                t('global.error'),
+                t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted-receive' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
             return '';
         }
     }

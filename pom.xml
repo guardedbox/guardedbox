@@ -49,6 +49,7 @@
 
 		<!-- Dependencies Versions -->
 		<bouncycastle.version>1.64</bouncycastle.version>
+		<hibernate-validator.version>6.1.0.Final</hibernate-validator.version>
 
 	</properties>
 

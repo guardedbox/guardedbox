@@ -42,7 +42,7 @@ public class MiningVerificationService {
             byte[] proof = mac.doFinal(originalMessage);
 
             boolean valid = true;
-            for (var i = 0; i < MINING_PROOF_THRESHOLD.length; i++) {
+            for (int i = 0; i < MINING_PROOF_THRESHOLD.length; i++) {
                 valid &= (proof[i] & SIGNED_TO_UNSIGNED_BYTE) <= MINING_PROOF_THRESHOLD[i];
             }
 

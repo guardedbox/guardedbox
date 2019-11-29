@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -52,7 +51,7 @@ public class AccountWithSaltEntity
 
     /** Salt. */
     @Column(name = "salt")
-    @NotNull
+    @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = SALT_LENGTH, max = SALT_LENGTH)
     private String salt;

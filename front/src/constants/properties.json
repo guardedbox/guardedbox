@@ -20,7 +20,11 @@
 		"randomSecretCharset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
 		"showSecretTime": 2500
 	},
+	"groups": {
+		"groupNameMaxLength": 100
+	},
 	"keys": {
+		"generatedKeysBytes": 32,
 		"encryptionPublicKeyMaxLength": 44,
 		"encryptionPublicKeyPattern": "[a-zA-Z0-9+\/=]{44}"
 	}

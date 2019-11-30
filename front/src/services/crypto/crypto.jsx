@@ -154,7 +154,7 @@ export function encrypt(plainText, publicKey, publicKeyEmail, plainTextFormat = 
             notLoading();
             modalMessage(
                 t('global.error'),
-                t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted-send' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
+                t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
             return '';
         }
     }
@@ -193,17 +193,6 @@ export function encrypt(plainText, publicKey, publicKeyEmail, plainTextFormat = 
  */
 export function decrypt(cipherText, publicKey, publicKeyEmail, cipherTextFormat = 'base64', publicKeyFormat = 'base64', outputFormat = 'utf8') {
 
-    if (publicKey && publicKeyEmail) {
-        var check = checkTrustedKey(publicKeyEmail, publicKey);
-        if (!check || check === 'key-not-trusted') {
-            notLoading();
-            modalMessage(
-                t('global.error'),
-                t(check === 'key-not-trusted' ? 'trusted-keys.key-not-trusted-receive' : 'trusted-keys.trusted-key-missmatch', { email: publicKeyEmail }));
-            return '';
-        }
-    }
-
     try {
 
         if (publicKey == null) {
@@ -214,6 +203,39 @@ export function decrypt(cipherText, publicKey, publicKeyEmail, cipherTextFormat 
 
         var [iv, encryptedMessage] = split(Uint8Array(cipherText, cipherTextFormat), AES.ivLength);
         var plainText = aesDecrypt({ mode: AES.mode, input: encryptedMessage, key: key, iv: iv });
+
+        return outputFormat ? plainText.toString(outputFormat) : plainText;
+
+    } catch (err) {
+        modalMessage(t('global.error'), t('global.error-occurred'));
+        return '';
+    }
+
+}
+
+export function encryptSymmetric(plainText, symmetricKey, plainTextFormat = 'utf8', symmetricKeyFormat = 'base64', outputFormat = 'base64') {
+
+    try {
+
+        var iv = randomBytes(AES.ivLength);
+        var encryptedMessage = aesEncrypt({ mode: AES.mode, input: plainText, inputFormat: plainTextFormat, key: symmetricKey, keyFormat: symmetricKeyFormat, iv: iv });
+        var cipherText = concatenate(iv, encryptedMessage);
+
+        return outputFormat ? cipherText.toString(outputFormat) : cipherText;
+
+    } catch (err) {
+        modalMessage(t('global.error'), t('global.error-occurred'));
+        return '';
+    }
+
+}
+
+export function decryptSymmetric(cipherText, symmetricKey, cipherTextFormat = 'base64', symmetricKeyFormat = 'base64', outputFormat = 'utf8') {
+
+    try {
+
+        var [iv, encryptedMessage] = split(Uint8Array(cipherText, cipherTextFormat), AES.ivLength);
+        var plainText = aesDecrypt({ mode: AES.mode, input: encryptedMessage, key: symmetricKey, keyFormat: symmetricKeyFormat, iv: iv });
 
         return outputFormat ? plainText.toString(outputFormat) : plainText;
 

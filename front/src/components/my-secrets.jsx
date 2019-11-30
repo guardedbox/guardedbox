@@ -112,11 +112,11 @@ class MySecrets extends Component {
                 var newSecret = response;
 
                 this.setState({
-                    newSecretModalActive: false,
                     newSecretName: '',
                     newSecretValue: '',
                     newSecretValueLength: 0,
-                    newSecretValueStrength: 0
+                    newSecretValueStrength: 0,
+                    newSecretModalActive: false
                 }, () => {
                     addElementToStateArray(this, 'mySecrets', newSecret);
                 });
@@ -274,11 +274,11 @@ class MySecrets extends Component {
                         this.setState({
                             editSecret: null,
                             editSecretRowIndex: -1,
-                            editSecretModalActive: false,
                             editSecretName: '',
                             editSecretValue: '',
                             editSecretValueLength: 0,
-                            editSecretValueStrength: 0
+                            editSecretValueStrength: 0,
+                            editSecretModalActive: false
                         }, () => {
                             setStateArrayElement(this, 'mySecrets', rowIndex, editedSecret);
                         });

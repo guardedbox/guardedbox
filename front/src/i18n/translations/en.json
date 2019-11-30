@@ -54,6 +54,7 @@
 		"brand": "GuardedBox",
 		"my-secrets": "My Secrets",
 		"secrets-shared-with-me": "Secrets Shared With Me",
+		"groups": "Groups",
 		"trusted-keys": "Trusted Keys",
 		"logout": "Logout"
 	},
@@ -115,6 +116,39 @@
 		"reject-shared-secret-modal-title": "Confirmation",
 		"reject-shared-secret-modal-body": "Are you sure you want to reject this secret shared with you?"
 	},
+	"groups": {
+		"owned-groups": "Owned Groups",
+		"btn-new-group": "New Group",
+		"btn-reload": "Reload",
+		"no-owned-groups": "You do not have any groups. Such a loneliness.",
+		"owned-groups-table-name": "Name",
+		"participants": "Participants",
+		"secrets": "Secrets",
+		"edit": "Edit",
+		"delete": "Delete",
+		"new-group-modal-title": "New Group",
+		"new-group-modal-txt-name": "Name",
+		"new-group-modal-btn-create": "Create",
+		"new-group-modal-btn-cancel": "Cancel",
+		"owned-group-participants-modal-title": "Participants",
+		"owned-group-participants-modal-txt-email": "Email",
+		"owned-group-participants-modal-btn-add": "Add",
+		"owned-group-secrets-modal-title": "Secrets",
+		"owned-group-secrets-modal-table-name": "Name",
+		"owned-group-secrets-modal-table-value": "Value",
+		"owned-group-secrets-modal-txt-name": "Name",
+		"owned-group-secrets-modal-txt-value": "Value",
+		"owned-group-secrets-modal-btn-add": "Add",
+		"participant-groups": "Groups To Which I Am Invited",
+		"no-participant-groups": "Nobody invited you to any group. You must be very mean.",
+		"participant-groups-table-name": "Name",
+		"participant-groups-table-owner": "Owner",
+		"group-does-not-exist": "The group does not exist.",
+		"participant-group-participants-modal-title": "Participants",
+		"participant-group-secrets-modal-title": "Secrets",
+		"participant-group-secrets-modal-table-name": "Name",
+		"participant-group-secrets-modal-table-value": "Value"
+	},
 	"trusted-keys": {
 		"my-public-encryption-key": "My Public Encryption Key",
 		"copy": "Copy",
@@ -127,8 +161,7 @@
 		"btn-set": "Set",
 		"delete-key-modal-title": "Confirmation",
 		"delete-key-modal-body": "The trusted key will be removed! Are you sure?",
-		"key-not-trusted-send": "Please, introduce the public key of {email} in trusted keys before sharing secrets with him.",
-		"key-not-trusted-receive": "Please, introduce the public key of {email} in trusted keys before receiving secrets from him.",
+		"key-not-trusted": "Please, first introduce the public key of {email} in trusted keys.",
 		"trusted-key-missmatch": "The public key received from the server does not match the stored trusted key. Operation aborted."
 	}
 }

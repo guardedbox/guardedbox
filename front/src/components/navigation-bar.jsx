@@ -49,6 +49,9 @@ class NavigationBar extends Component {
                             <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.secretsSharedWithMe} activeClassName="active">
                                 {t('navigation-bar.secrets-shared-with-me')}
                             </NavLink></NavItem>
+                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.groups} activeClassName="active">
+                                {t('navigation-bar.groups')}
+                            </NavLink></NavItem>
                             <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.trustedKeys} activeClassName="active">
                                 {t('navigation-bar.trusted-keys')}
                             </NavLink></NavItem>

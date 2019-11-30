@@ -141,7 +141,7 @@ class TrustedKeys extends Component {
                         )}
                     </tbody>
                 </Table>
-                <Form inline className="group-spaced" onSubmit={(e) => { e.preventDefault(); this.setTrustedKey(); }}>
+                <Form inline className="group-spaced" style={{ marginBottom: '3rem' }} onSubmit={(e) => { e.preventDefault(); this.setTrustedKey(); }}>
                     <Input
                         innerRef={this.txtSetTrustedKeyEmail}
                         type="email"

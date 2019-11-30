@@ -267,7 +267,7 @@ class Login extends Component {
                                 <Popover
                                     target="login_txt-email"
                                     trigger="legacy"
-                                    placement="right"
+                                    placement="left-end"
                                     isOpen={this.state.loginFailedPopoverActive}
                                     toggle={() => { this.setState({ loginFailedPopoverActive: false }) }}
                                 >
@@ -316,7 +316,7 @@ class Login extends Component {
                                 <Popover
                                     target="login_txt-code"
                                     trigger="legacy"
-                                    placement="right"
+                                    placement="left-end"
                                     isOpen={this.state.getCodePopoverActive}
                                     toggle={() => { this.setState({ getCodePopoverActive: false }) }}
                                 >

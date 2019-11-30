@@ -30,8 +30,8 @@ public class CreateGroupDto
     /** Encrypted Key. */
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(max = ENCRYPTED_KEY_LENGTH)
-    private String encryptedKey;
+    @Size(min = ENCRYPTED_KEY_LENGTH, max = ENCRYPTED_KEY_LENGTH)
+    private String encryptedGroupKey;
 
     /**
      * @return The name.
@@ -49,18 +49,18 @@ public class CreateGroupDto
     }
 
     /**
-     * @return The encryptedKey.
+     * @return The encryptedGroupKey.
      */
-    public String getEncryptedKey() {
-        return encryptedKey;
+    public String getEncryptedGroupKey() {
+        return encryptedGroupKey;
     }
 
     /**
-     * @param encryptedKey The encryptedKey to set.
+     * @param encryptedGroupKey The encryptedGroupKey to set.
      */
-    public void setEncryptedKey(
-            String encryptedKey) {
-        this.encryptedKey = encryptedKey;
+    public void setEncryptedGroupKey(
+            String encryptedGroupKey) {
+        this.encryptedGroupKey = encryptedGroupKey;
     }
 
 }

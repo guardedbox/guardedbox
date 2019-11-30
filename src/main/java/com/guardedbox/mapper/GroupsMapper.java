@@ -49,6 +49,7 @@ public class GroupsMapper {
         groupDto.setGroupId(groupEntity.getGroupId());
         groupDto.setName(groupEntity.getName());
         groupDto.setOwnerAccount(accountsMapper.toDtoWithEncryptionPublicKey(groupEntity.getOwnerAccount()));
+        groupDto.setEncryptedGroupKey(groupEntity.getEncryptedGroupKey());
 
         return groupDto;
 
@@ -90,7 +91,7 @@ public class GroupsMapper {
         GroupEntity groupEntity = new GroupEntity();
 
         groupEntity.setName(groupDto.getName());
-        groupEntity.setEncryptedGroupKey(groupDto.getEncryptedKey());
+        groupEntity.setEncryptedGroupKey(groupDto.getEncryptedGroupKey());
 
         return groupEntity;
 

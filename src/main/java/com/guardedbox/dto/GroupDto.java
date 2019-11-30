@@ -23,6 +23,9 @@ public class GroupDto
     /** Name. */
     private String name;
 
+    /** Encrypted Group Key. */
+    private String encryptedGroupKey;
+
     /**
      * @return The groupId.
      */
@@ -66,6 +69,21 @@ public class GroupDto
     public void setName(
             String name) {
         this.name = name;
+    }
+
+    /**
+     * @return The encryptedGroupKey.
+     */
+    public String getEncryptedGroupKey() {
+        return encryptedGroupKey;
+    }
+
+    /**
+     * @param encryptedGroupKey The encryptedGroupKey to set.
+     */
+    public void setEncryptedGroupKey(
+            String encryptedGroupKey) {
+        this.encryptedGroupKey = encryptedGroupKey;
     }
 
 }

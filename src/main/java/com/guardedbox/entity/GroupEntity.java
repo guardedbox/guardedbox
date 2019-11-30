@@ -32,7 +32,7 @@ import javax.validation.constraints.Size;
  *
  */
 @Entity
-@Table(name = "group")
+@Table(name = "group_")
 public class GroupEntity
         implements Serializable {
 
@@ -63,7 +63,7 @@ public class GroupEntity
     @Column(name = "encrypted_group_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(max = ENCRYPTED_KEY_LENGTH)
+    @Size(min = ENCRYPTED_KEY_LENGTH, max = ENCRYPTED_KEY_LENGTH)
     private String encryptedGroupKey;
 
     /** Participants. */

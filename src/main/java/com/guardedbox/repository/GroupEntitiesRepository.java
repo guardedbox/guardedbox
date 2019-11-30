@@ -24,4 +24,11 @@ public interface GroupEntitiesRepository
     List<GroupEntity> findByOwnerAccountAccountIdOrderByNameAsc(
             Long ownerAccountId);
 
+    /**
+     * @param accountId Account.accountId.
+     * @return The List of GroupEntities in which the introduced accountId is participant, ordered by Group.name.
+     */
+    List<GroupEntity> findByParticipantsAccountAccountIdOrderByNameAsc(
+            Long accountId);
+
 }

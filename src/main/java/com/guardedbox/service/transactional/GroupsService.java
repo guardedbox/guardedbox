@@ -98,7 +98,21 @@ public class GroupsService {
     public List<GroupDto> getGroupsByInvitedAccountId(
             Long accountId) {
 
-        return groupsMapper.toDto(groupEntitiesRepository.findByParticipantsAccountAccountIdOrderByNameAsc(accountId));
+        List<GroupEntity> groupEntities = groupEntitiesRepository.findByParticipantsAccountAccountIdOrderByNameAsc(accountId);
+        List<GroupDto> groupDtos = new ArrayList<>(groupEntities.size());
+
+        for (GroupEntity groupEntity : groupEntities) {
+            for (GroupParticipantEntity groupParticipant : groupEntity.getParticipants()) {
+                if (accountId.equals(groupParticipant.getAccount().getAccountId())) {
+                    GroupDto groupDto = groupsMapper.toDto(groupEntity);
+                    groupDto.setEncryptedGroupKey(groupParticipant.getEncryptedGroupKey());
+                    groupDtos.add(groupDto);
+                    break;
+                }
+            }
+        }
+
+        return groupDtos;
 
     }
 

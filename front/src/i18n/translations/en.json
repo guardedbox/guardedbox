@@ -147,7 +147,9 @@
 		"participant-group-participants-modal-title": "Participants",
 		"participant-group-secrets-modal-title": "Secrets",
 		"participant-group-secrets-modal-table-name": "Name",
-		"participant-group-secrets-modal-table-value": "Value"
+		"participant-group-secrets-modal-table-value": "Value",
+		"delete-group-modal-title": "Confirmation",
+		"delete-group-modal-body": "The secret will be deleted! Are you sure?"
 	},
 	"trusted-keys": {
 		"my-public-encryption-key": "My Public Encryption Key",

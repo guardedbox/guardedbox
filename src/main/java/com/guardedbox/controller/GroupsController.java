@@ -1,18 +1,27 @@
 package com.guardedbox.controller;
 
+import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
+import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
+import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
+
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
@@ -154,6 +163,55 @@ public class GroupsController {
 
         addSecretToGroupDto.setGroupId(groupId);
         return groupsService.addSecretToGroup(sessionAccount.getAccountId(), addSecretToGroupDto);
+
+    }
+
+    /**
+     * Deletes a group belonging to the current session account.
+     *
+     * @param groupId The group ID.
+     * @return Object indicating if the execution was successful.
+     */
+    @DeleteMapping("/{group-id}")
+    public SuccessDto deleteGroup(
+            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId) {
+
+        groupsService.deleteGroup(sessionAccount.getAccountId(), groupId);
+        return new SuccessDto(true);
+
+    }
+
+    /**
+     * Removes a participant from a group belonging to the current session account.
+     *
+     * @param groupId The group ID.
+     * @param email Email of the participant to be removed from the group.
+     * @return Object indicating if the execution was successful.
+     */
+    @DeleteMapping("/{group-id}/participants")
+    public SuccessDto removeParticipantFromGroup(
+            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId,
+            @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
+
+        groupsService.removeParticipantFromGroup(sessionAccount.getAccountId(), groupId, email);
+        return new SuccessDto(true);
+
+    }
+
+    /**
+     * Deletes a secret from a group belonging to the current session account.
+     *
+     * @param groupId The group ID.
+     * @param secretId The secret ID.
+     * @return Object indicating if the execution was successful.
+     */
+    @DeleteMapping("/{group-id}/secrets/{secret-id}")
+    public SuccessDto deleteSecretFromGroup(
+            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId,
+            @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId) {
+
+        groupsService.deleteSecretFromGroup(sessionAccount.getAccountId(), groupId, secretId);
+        return new SuccessDto(true);
 
     }
 

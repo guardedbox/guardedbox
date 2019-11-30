@@ -228,6 +228,69 @@ public class GroupsService {
     }
 
     /**
+     * Deletes a group.
+     *
+     * @param ownerAccountId Account.accountId of the group owner.
+     * @param groupId Group.groupId of the group.
+     * @return GroupDto with the deleted group data.
+     */
+    public GroupDto deleteGroup(
+            Long ownerAccountId,
+            Long groupId) {
+
+        GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
+        groupEntitiesRepository.delete(group);
+        return groupsMapper.toDto(group);
+
+    }
+
+    /**
+     * Removes a participant from a group.
+     *
+     * @param ownerAccountId Account.accountId of the group owner.
+     * @param groupId Group.groupId of the group.
+     * @param email Email of the participant to be removed from the group.
+     */
+    public void removeParticipantFromGroup(
+            Long ownerAccountId,
+            Long groupId,
+            String email) {
+
+        GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
+
+        for (int i = 0; i < group.getParticipants().size(); i++) {
+            GroupParticipantEntity participant = group.getParticipants().get(i);
+            if (email.equals(participant.getAccount().getEmail())) {
+                group.getParticipants().remove(i);
+            }
+        }
+
+    }
+
+    /**
+     * Deletes a secret from a group.
+     *
+     * @param ownerAccountId Account.accountId of the group owner.
+     * @param groupId Group.groupId of the group.
+     * @param groupSecretId GroupSecret.groupSecretId.
+     */
+    public void deleteSecretFromGroup(
+            Long ownerAccountId,
+            Long groupId,
+            Long groupSecretId) {
+
+        GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
+
+        for (int i = 0; i < group.getSecrets().size(); i++) {
+            GroupSecretEntity secret = group.getSecrets().get(i);
+            if (groupSecretId.equals(secret.getGroupSecretId())) {
+                group.getSecrets().remove(i);
+            }
+        }
+
+    }
+
+    /**
      * Finds a Group by groupId and checks if it exists and belongs to an accountId.
      *
      * @param groupId The groupId.

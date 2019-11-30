@@ -239,6 +239,27 @@ class Groups extends Component {
 
     removeParticipantFromGroup = (rowIndex, participant) => {
 
+        var groupId = this.state.ownedGroup.groupId;
+        var email = participant.email;
+
+        rest({
+            method: 'delete',
+            url: '/api/groups/{group-id}/participants',
+            pathVariables: {
+                'group-id': groupId
+            },
+            params: {
+                'email': email
+            },
+            callback: (response) => {
+
+                removeStateArrayElement(this, 'ownedGroupParticipants', rowIndex, () => {
+                    this.ownedGroupParticipantsModalTxtEmail.current.focus();
+                });
+
+            }
+        });
+
     }
 
     closeOwnedGroupParticipantsModal = () => {
@@ -370,6 +391,29 @@ class Groups extends Component {
 
     }
 
+    deleteSecretFromGroup = (rowIndex, secret) => {
+
+        var groupId = this.state.ownedGroup.groupId;
+        var secretId = secret.secretId;
+
+        rest({
+            method: 'delete',
+            url: '/api/groups/{group-id}/secrets/{secret-id}',
+            pathVariables: {
+                'group-id': groupId,
+                'secret-id': secretId
+            },
+            callback: (response) => {
+
+                removeStateArrayElement(this, 'ownedGroupSecrets', rowIndex, () => {
+                    this.ownedGroupSecretsModalTxtName.current.focus();
+                });
+
+            }
+        });
+
+    }
+
     closeOwnedGroupSecretsModal = () => {
 
         this.setState({
@@ -385,11 +429,30 @@ class Groups extends Component {
 
     }
 
-    editOwnedGroup = (rowIndex, group) => {
-
-    }
-
     deleteOwnedGroup = (rowIndex, group) => {
+
+        var groupId = group.groupId;
+
+        modalConfirmation(
+            t('groups.delete-group-modal-title'),
+            t('groups.delete-group-modal-body'),
+            () => {
+
+                rest({
+                    method: 'delete',
+                    url: '/api/groups/{group-id}',
+                    pathVariables: {
+                        'group-id': groupId
+                    },
+                    callback: (response) => {
+
+                        removeStateArrayElement(this, 'ownedGroups', rowIndex);
+
+                    }
+                });
+
+            }
+        );
 
     }
 
@@ -577,15 +640,6 @@ class Groups extends Component {
                                                 </UncontrolledTooltip>
                                             </td>
                                             <td style={{ width: '4rem' }}>
-                                                <span
-                                                    id={"groups_icon-edit-owned-group-" + i}
-                                                    onClick={() => { this.editOwnedGroup(i, group) }}
-                                                    style={{ cursor: 'pointer' }}>
-                                                    <Octicon icon={Pencil} />
-                                                </span>
-                                                <UncontrolledTooltip placement="top" target={"groups_icon-edit-owned-group-" + i}>
-                                                    {t('groups.edit')}
-                                                </UncontrolledTooltip>
                                                 <span className="space-between-icons"></span>
                                                 <span
                                                     id={"groups_icon-delete-owned-group-" + i}
@@ -754,6 +808,9 @@ class Groups extends Component {
                                                     }
                                                 </td>
                                                 <td style={{ width: '5rem' }} align="center">
+                                                    <span onClick={() => { this.deleteSecretFromGroup(i, secret) }} style={{ cursor: 'pointer' }}>
+                                                        <Octicon icon={X} />
+                                                    </span>
                                                 </td>
                                             </tr>
                                         )}

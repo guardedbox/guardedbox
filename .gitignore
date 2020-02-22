@@ -1,7 +1,22 @@
-/.project
-/.classpath
-/.checkstyle
-/.settings/
-/config/
-/target/
-/front/node_modules/
+#====================
+# Maven
+#====================
+target/**
+
+#====================
+# NPM
+#====================
+node_modules/**
+
+#====================
+# Configuration
+#====================
+config/**
+
+#====================
+# Eclipse
+#====================
+.settings/**
+.project
+.classpath
+.checkstyle

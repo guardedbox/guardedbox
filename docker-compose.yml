@@ -14,6 +14,6 @@ services:
 
 secrets:
   application.properties:
-    file: ../config/local-docker/application.properties
+    file: config/local-docker/application.properties
   myserver.p12:
-    file: ../config/local-docker/myserver.p12
+    file: config/local-docker/myserver.p12

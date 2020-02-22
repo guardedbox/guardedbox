@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = (env, argv) => ({
-    entry: './src/index.jsx',
+    entry: './src/main/front/index.jsx',
     output: {
         path: Path.resolve('../src/main/resources/static/'),
         filename: 'js/bundle.js'
@@ -14,7 +14,7 @@ module.exports = (env, argv) => ({
     resolve: {
         modules: [
             Path.resolve('./node_modules'),
-            Path.resolve('./src')
+            Path.resolve('./src/main/front')
         ]
     },
     module: {
@@ -89,7 +89,7 @@ module.exports = (env, argv) => ({
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            template: "./src/index.html",
+            template: "./src/main/front/index.html",
             filename: "index.html",
             inject: false,
             minify: argv.mode !== 'production' ? false: {

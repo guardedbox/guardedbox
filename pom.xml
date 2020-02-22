@@ -72,27 +72,11 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<!-- Maven War Plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Built-By>${builtBy}</Built-By>
-							<Implementation-Vendor>${builtBy}</Implementation-Vendor>
-							<Implementation-URL></Implementation-URL>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-
 			<!-- Exec Maven Plugin -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<configuration>
-					<workingDirectory>front</workingDirectory>
 					<executable>npm</executable>
 					<arguments>
 						<argument>run</argument>

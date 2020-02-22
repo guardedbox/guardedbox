@@ -58,7 +58,7 @@ class NavigationBar extends Component {
                         </Nav>
 
                         <Nav className="ml-auto" navbar>
-                            <NavItem><NavLink tag={RRNavLink} to='/' activeClassName="active">{this.state.email}</NavLink></NavItem>
+                            <span style={{ margin: '8px' }}>{this.state.email}</span>
                             <div className="form-inline"><Button color="secondary" size="sm" onClick={logout}>{t('navigation-bar.logout')}</Button></div>
                         </Nav>
 

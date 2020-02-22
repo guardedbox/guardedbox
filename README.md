@@ -39,13 +39,13 @@ mvn clean install
 A jar will be generated in the folder target. Run it with the following command at the project root directory:
 
 ```shell
-java -jar target/guardedbox-1.0.0.jar --spring.config.location=file:./properties-example/application.properties
+java -jar target/guardedbox-1.0.0.jar --spring.config.location=file:./config-example/application.properties
 ```
 
 It requires a MySQL instance with the schema described in the file sql/guardedbox.sql.
 
 It also requires an external properties file (the application.properties in the previous command). An
-example of properties file can be found at the folder properties-example.
+example of properties file can be found at the folder config-example.
 
 The project is also dockerized. The image is built with the following command at the project root directory:
 

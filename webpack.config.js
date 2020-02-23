@@ -1,15 +1,16 @@
 const Path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const SriPlugin = require('webpack-subresource-integrity');
 const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = (env, argv) => ({
     entry: './src/main/front/index.jsx',
     output: {
         path: Path.resolve('./src/main/resources/static/'),
-        filename: 'js/bundle.js'
+        filename: argv.mode === 'production' ? 'js/bundle.[contenthash].js' : 'js/bundle.js'
     },
     resolve: {
         modules: [
@@ -77,8 +78,8 @@ module.exports = (env, argv) => ({
                     preset: [
                         'default',
                         {
-                            discardComments: { 
-                                removeAll: true 
+                            discardComments: {
+                                removeAll: true
                             }
                         }
                     ]
@@ -89,17 +90,20 @@ module.exports = (env, argv) => ({
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            template: "./src/main/front/index.html",
-            filename: "index.html",
-            inject: false,
-            minify: argv.mode !== 'production' ? false: {
+            template: './src/main/front/index.html',
+            filename: 'index.html',
+            minify: argv.mode === 'production' ? {
                 collapseWhitespace: true,
                 removeAttributeQuotes: true,
-                removeComments : true
-            }
+                removeComments: true
+            } : false
+        }),
+        new SriPlugin({
+            hashFuncNames: ['sha384'],
+            enabled: argv.mode === 'production'
         }),
         new MiniCssExtractPlugin({
-            filename: "css/bundle.css"
+            filename: argv.mode === 'production' ? 'css/bundle.[contenthash].css' : 'css/bundle.css'
         })
     ]
 });

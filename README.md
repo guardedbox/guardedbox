@@ -47,16 +47,11 @@ It requires a MySQL instance with the schema described in the file sql/guardedbo
 It also requires an external properties file (the application.properties in the previous command). An
 example of properties file can be found at the folder config-example.
 
-The project is also dockerized. The image is built with the following command at the project root directory:
+The project is also dockerized. The image is built during the maven lifecycle. The container can be run locally
+with the following command at the project root directory:
 
 ```shell
-docker image build -t s3curitybug/guardedbox -f docker/guardedbox/Dockerfile .
-```
-
-The container can be run locally with the following command at the project root directory:
-
-```shell
-docker-compose -f docker/docker-compose.yml up
+docker-compose up
 ```
 
 Make sure the secrets paths (which point to the properties file) are right in the docker-compose.yml file.

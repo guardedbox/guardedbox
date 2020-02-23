@@ -44,12 +44,12 @@
 		<!-- Source Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<!-- Built By -->
-		<builtBy>s3curitybug@gmail.com</builtBy>
-
 		<!-- Dependencies Versions -->
 		<bouncycastle.version>1.64</bouncycastle.version>
 		<hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
+		
+		<!-- Docker -->
+		<docker.repository>s3curitybug</docker.repository>
 
 	</properties>
 
@@ -76,20 +76,39 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<configuration>
-					<executable>npm</executable>
-					<arguments>
-						<argument>run</argument>
-						<argument>pro</argument>
-					</arguments>
-				</configuration>
 				<executions>
 					<execution>
-						<id>npm</id>
+						<id>npm-run-pro</id>
 						<phase>generate-resources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>pro</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>docker-image-build</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>docker</executable>
+							<arguments>
+								<argument>image</argument>
+								<argument>build</argument>
+								<argument>-t</argument>
+								<argument>${docker.repository}/${project.name}</argument>
+								<argument>-t</argument>
+								<argument>${docker.repository}/${project.name}:${project.version}</argument>
+								<argument>.</argument>
+							</arguments>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

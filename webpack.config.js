@@ -8,7 +8,7 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 module.exports = (env, argv) => ({
     entry: './src/main/front/index.jsx',
     output: {
-        path: Path.resolve('../src/main/resources/static/'),
+        path: Path.resolve('./src/main/resources/static/'),
         filename: 'js/bundle.js'
     },
     resolve: {

@@ -20,6 +20,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Entity: Account.
  * Contains the following fields: accountId, email, publicKey.
@@ -29,6 +32,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "account")
+@Getter
+@Setter
 public class AccountWithSaltEntity
         implements Serializable {
 
@@ -55,50 +60,5 @@ public class AccountWithSaltEntity
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = SALT_LENGTH, max = SALT_LENGTH)
     private String salt;
-
-    /**
-     * @return The accountId.
-     */
-    public Long getAccountId() {
-        return accountId;
-    }
-
-    /**
-     * @param accountId The accountId to set.
-     */
-    public void setAccountId(
-            Long accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return The salt.
-     */
-    public String getSalt() {
-        return salt;
-    }
-
-    /**
-     * @param salt The salt to set.
-     */
-    public void setSalt(
-            String salt) {
-        this.salt = salt;
-    }
 
 }

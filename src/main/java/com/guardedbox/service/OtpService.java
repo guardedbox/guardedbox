@@ -2,7 +2,6 @@ package com.guardedbox.service;
 
 import static com.guardedbox.constants.SecurityParameters.OTP_LENGTH;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.OtpDto;
 import com.guardedbox.dto.OtpResponseDto;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * One Time Password Service.
@@ -19,15 +20,19 @@ import com.guardedbox.dto.OtpResponseDto;
  */
 @Service
 @PropertySource("classpath:email/email_en.properties")
+@RequiredArgsConstructor
 public class OtpService {
 
     /** Property: security-parameters.otp.ttl. */
+    @Value("${security-parameters.otp.ttl}")
     private final long otpTtl;
 
     /** Property: otp.email.subject. */
+    @Value("${otp.email.subject}")
     private final String otpEmailSubject;
 
     /** Property: otp.email.body. */
+    @Value("${otp.email.body}")
     private final String otpEmailBody;
 
     /** RandomService. */
@@ -38,31 +43,6 @@ public class OtpService {
 
     /** PasswordEncoder. */
     private final PasswordEncoder passwordEncoder;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param otpTtl Property: security-parameters.otp.execution-time.
-     * @param otpEmailSubject Property: otp.email.subject.
-     * @param otpEmailBody Property: otp.email.body.
-     * @param randomService RandomService.
-     * @param emailService EmailService.
-     * @param passwordEncoder PasswordEncoder.
-     */
-    public OtpService(
-            @Value("${security-parameters.otp.ttl}") long otpTtl,
-            @Value("${otp.email.subject}") String otpEmailSubject,
-            @Value("${otp.email.body}") String otpEmailBody,
-            @Autowired RandomService randomService,
-            @Autowired EmailService emailService,
-            @Autowired PasswordEncoder passwordEncoder) {
-        this.otpTtl = otpTtl;
-        this.otpEmailSubject = otpEmailSubject;
-        this.otpEmailBody = otpEmailBody;
-        this.randomService = randomService;
-        this.emailService = emailService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     /**
      * Generates a one time password for an email and sends it.

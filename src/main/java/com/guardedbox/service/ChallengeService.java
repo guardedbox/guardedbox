@@ -4,13 +4,14 @@ import static com.guardedbox.constants.SecurityParameters.CHALLENGE_LENGTH;
 
 import java.util.Base64;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.ChallengeDto;
 import com.guardedbox.dto.MinedChallengeResponseDto;
 import com.guardedbox.dto.SignedChallengeResponseDto;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Challenge Service.
@@ -19,9 +20,11 @@ import com.guardedbox.dto.SignedChallengeResponseDto;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class ChallengeService {
 
     /** Property: security-parameters.challenge.ttl. */
+    @Value("${security-parameters.challenge.ttl}")
     private final long challengeTtl;
 
     /** RandomService. */
@@ -32,25 +35,6 @@ public class ChallengeService {
 
     /** MiningVerificationService. */
     private final MiningVerificationService miningVerificationService;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param challengeTtl Property: security-parameters.challenge.ttl.
-     * @param randomService RandomService.
-     * @param signatureVerificationService SignatureVerificationService.
-     * @param miningVerificationService MiningVerificationService.
-     */
-    public ChallengeService(
-            @Value("${security-parameters.challenge.ttl}") long challengeTtl,
-            @Autowired RandomService randomService,
-            @Autowired SignatureVerificationService signatureVerificationService,
-            @Autowired MiningVerificationService miningVerificationService) {
-        this.challengeTtl = challengeTtl;
-        this.randomService = randomService;
-        this.signatureVerificationService = signatureVerificationService;
-        this.miningVerificationService = miningVerificationService;
-    }
 
     /**
      * @return A challenge object with the challenge in base64 format and its expiration time.

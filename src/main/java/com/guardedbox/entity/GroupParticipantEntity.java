@@ -21,6 +21,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Entity: GroupParticipant.
  *
@@ -29,6 +32,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "group_participant")
+@Getter
+@Setter
 public class GroupParticipantEntity
         implements Serializable {
 
@@ -62,65 +67,5 @@ public class GroupParticipantEntity
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = ENCRYPTED_KEY_LENGTH, max = ENCRYPTED_KEY_LENGTH)
     private String encryptedGroupKey;
-
-    /**
-     * @return The groupParticipantId.
-     */
-    public Long getGroupParticipantId() {
-        return groupParticipantId;
-    }
-
-    /**
-     * @param groupParticipantId The groupParticipantId to set.
-     */
-    public void setGroupParticipantId(
-            Long groupParticipantId) {
-        this.groupParticipantId = groupParticipantId;
-    }
-
-    /**
-     * @return The group.
-     */
-    public GroupEntity getGroup() {
-        return group;
-    }
-
-    /**
-     * @param group The group to set.
-     */
-    public void setGroup(
-            GroupEntity group) {
-        this.group = group;
-    }
-
-    /**
-     * @return The account.
-     */
-    public AccountWithEncryptionPublicKeyEntity getAccount() {
-        return account;
-    }
-
-    /**
-     * @param account The account to set.
-     */
-    public void setAccount(
-            AccountWithEncryptionPublicKeyEntity account) {
-        this.account = account;
-    }
-
-    /**
-     * @return The encryptedGroupKey.
-     */
-    public String getEncryptedGroupKey() {
-        return encryptedGroupKey;
-    }
-
-    /**
-     * @param encryptedGroupKey The encryptedGroupKey to set.
-     */
-    public void setEncryptedGroupKey(
-            String encryptedGroupKey) {
-        this.encryptedGroupKey = encryptedGroupKey;
-    }
 
 }

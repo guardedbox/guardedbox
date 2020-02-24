@@ -2,13 +2,14 @@ package com.guardedbox.service;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.constants.SessionAttributes;
 import com.guardedbox.dto.ChallengeDto;
 import com.guardedbox.dto.MinedChallengeResponseDto;
 import com.guardedbox.exception.ServiceException;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Captcha verification service based on challenge mining.
@@ -17,6 +18,7 @@ import com.guardedbox.exception.ServiceException;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class CryptoCaptchaService {
 
     /** ChallengeService. */
@@ -24,19 +26,6 @@ public class CryptoCaptchaService {
 
     /** Current Session. */
     private final HttpSession session;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param challengeService ChallengeService.
-     * @param session Current Session.
-     */
-    public CryptoCaptchaService(
-            @Autowired ChallengeService challengeService,
-            @Autowired HttpSession session) {
-        this.challengeService = challengeService;
-        this.session = session;
-    }
 
     /**
      * Verifies a mined challenge response to the challenge stored in the current session.

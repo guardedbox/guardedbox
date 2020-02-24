@@ -6,7 +6,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +21,8 @@ import com.guardedbox.dto.SecretDto;
 import com.guardedbox.service.SessionAccountService;
 import com.guardedbox.service.transactional.SecretsService;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Controller: Secrets.
  *
@@ -31,6 +32,7 @@ import com.guardedbox.service.transactional.SecretsService;
 @RestController
 @RequestMapping("/api/secrets")
 @Validated
+@RequiredArgsConstructor
 public class SecretsController {
 
     /** SecretsService. */
@@ -38,19 +40,6 @@ public class SecretsController {
 
     /** SessionAccountService. */
     private final SessionAccountService sessionAccount;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param secretsService SecretsService.
-     * @param sessionAccount SessionAccountService.
-     */
-    public SecretsController(
-            @Autowired SecretsService secretsService,
-            @Autowired SessionAccountService sessionAccount) {
-        this.secretsService = secretsService;
-        this.sessionAccount = sessionAccount;
-    }
 
     /**
      * @return All the secrets belonging to the current session account.

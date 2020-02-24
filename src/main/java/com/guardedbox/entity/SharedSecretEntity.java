@@ -21,6 +21,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Entity: SharedSecret.
  *
@@ -29,6 +32,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "shared_secret")
+@Getter
+@Setter
 public class SharedSecretEntity
         implements Serializable {
 
@@ -62,65 +67,5 @@ public class SharedSecretEntity
     @Pattern(regexp = BASE64_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
-
-    /**
-     * @return The sharedSecretId.
-     */
-    public Long getSharedSecretId() {
-        return sharedSecretId;
-    }
-
-    /**
-     * @param sharedSecretId The sharedSecretId to set.
-     */
-    public void setSharedSecretId(
-            Long sharedSecretId) {
-        this.sharedSecretId = sharedSecretId;
-    }
-
-    /**
-     * @return The secret.
-     */
-    public SecretWithOwnerAccountEncryptionPublicKeyEntity getSecret() {
-        return secret;
-    }
-
-    /**
-     * @param secret The secret to set.
-     */
-    public void setSecret(
-            SecretWithOwnerAccountEncryptionPublicKeyEntity secret) {
-        this.secret = secret;
-    }
-
-    /**
-     * @return The receiverAccount.
-     */
-    public AccountWithEncryptionPublicKeyEntity getReceiverAccount() {
-        return receiverAccount;
-    }
-
-    /**
-     * @param receiverAccount The receiverAccount to set.
-     */
-    public void setReceiverAccount(
-            AccountWithEncryptionPublicKeyEntity receiverAccount) {
-        this.receiverAccount = receiverAccount;
-    }
-
-    /**
-     * @return The value.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value The value to set.
-     */
-    public void setValue(
-            String value) {
-        this.value = value;
-    }
 
 }

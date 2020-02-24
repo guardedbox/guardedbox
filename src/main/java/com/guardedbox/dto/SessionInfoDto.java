@@ -2,12 +2,17 @@ package com.guardedbox.dto;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Response to the session info request.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class SessionInfoDto
         implements Serializable {
 
@@ -19,35 +24,5 @@ public class SessionInfoDto
 
     /** Indicates the current session email, in case it is authenticated, or null otherwise. */
     private String email;
-
-    /**
-     * @return The authenticated.
-     */
-    public boolean isAuthenticated() {
-        return authenticated;
-    }
-
-    /**
-     * @param authenticated The authenticated to set.
-     */
-    public void setAuthenticated(
-            boolean authenticated) {
-        this.authenticated = authenticated;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
 
 }

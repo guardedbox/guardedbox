@@ -3,12 +3,13 @@ package com.guardedbox.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.CreateGroupDto;
 import com.guardedbox.dto.GroupDto;
 import com.guardedbox.entity.GroupEntity;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Mapper: Group.
@@ -17,20 +18,11 @@ import com.guardedbox.entity.GroupEntity;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class GroupsMapper {
 
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param accountsMapper AccountsMapper.
-     */
-    public GroupsMapper(
-            @Autowired AccountsMapper accountsMapper) {
-        this.accountsMapper = accountsMapper;
-    }
 
     /**
      * Maps a Group Entity to DTO.

@@ -19,14 +19,7 @@ public class RandomService {
     private static final char[] ALPHANUMERIC_CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
 
     /** Random generator. */
-    private final SecureRandom secureRandom;
-
-    /**
-     * Default Constructor.
-     */
-    public RandomService() {
-        this.secureRandom = new SecureRandom();
-    }
+    private final SecureRandom secureRandom = new SecureRandom();
 
     /**
      * Generates a random boolean.

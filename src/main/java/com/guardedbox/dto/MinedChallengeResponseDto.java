@@ -9,12 +9,21 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * DTO: Mined Challenge Response.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MinedChallengeResponseDto
         implements Serializable {
 
@@ -26,35 +35,5 @@ public class MinedChallengeResponseDto
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = MINING_NONCE_LENGTH, max = MINING_NONCE_LENGTH)
     private String minedChallengeResponse;
-
-    /**
-     * Default Constructor.
-     */
-    public MinedChallengeResponseDto() {}
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param minedChallengeResponse Mined Challenge Response.
-     */
-    public MinedChallengeResponseDto(
-            String minedChallengeResponse) {
-        this.minedChallengeResponse = minedChallengeResponse;
-    }
-
-    /**
-     * @return The minedChallengeResponse.
-     */
-    public String getMinedChallengeResponse() {
-        return minedChallengeResponse;
-    }
-
-    /**
-     * @param minedChallengeResponse The minedChallengeResponse to set.
-     */
-    public void setMinedChallengeResponse(
-            String minedChallengeResponse) {
-        this.minedChallengeResponse = minedChallengeResponse;
-    }
 
 }

@@ -10,12 +10,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Body of the create secret request.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class CreateSecretDto
         implements Serializable {
 
@@ -32,35 +37,5 @@ public class CreateSecretDto
     @Pattern(regexp = BASE64_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
-
-    /**
-     * @return The name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The name to set.
-     */
-    public void setName(
-            String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The value.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value The value to set.
-     */
-    public void setValue(
-            String value) {
-        this.value = value;
-    }
 
 }

@@ -3,11 +3,12 @@ package com.guardedbox.service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Email Utils Service.
@@ -16,20 +17,11 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
     /** JavaMailSender. */
     private final JavaMailSender javaMailSender;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param javaMailSender JavaMailSender.
-     */
-    public EmailService(
-            @Autowired JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
 
     /**
      * Sends an email.

@@ -26,6 +26,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Entity: Account.
  * Contains all the fields.
@@ -35,6 +38,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "account")
+@Getter
+@Setter
 public class AccountFullEntity
         implements Serializable {
 
@@ -91,140 +96,5 @@ public class AccountFullEntity
     /** Group Participations. */
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupParticipantEntity> groupParticipations;
-
-    /**
-     * @return The accountId.
-     */
-    public Long getAccountId() {
-        return accountId;
-    }
-
-    /**
-     * @param accountId The accountId to set.
-     */
-    public void setAccountId(
-            Long accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return The salt.
-     */
-    public String getSalt() {
-        return salt;
-    }
-
-    /**
-     * @param salt The salt to set.
-     */
-    public void setSalt(
-            String salt) {
-        this.salt = salt;
-    }
-
-    /**
-     * @return The encryptionPublicKey.
-     */
-    public String getEncryptionPublicKey() {
-        return encryptionPublicKey;
-    }
-
-    /**
-     * @param encryptionPublicKey The encryptionPublicKey to set.
-     */
-    public void setEncryptionPublicKey(
-            String encryptionPublicKey) {
-        this.encryptionPublicKey = encryptionPublicKey;
-    }
-
-    /**
-     * @return The signingPublicKey.
-     */
-    public String getSigningPublicKey() {
-        return signingPublicKey;
-    }
-
-    /**
-     * @param signingPublicKey The signingPublicKey to set.
-     */
-    public void setSigningPublicKey(
-            String signingPublicKey) {
-        this.signingPublicKey = signingPublicKey;
-    }
-
-    /**
-     * @return The ownedSecrets.
-     */
-    public List<SecretEntity> getOwnedSecrets() {
-        return ownedSecrets;
-    }
-
-    /**
-     * @param ownedSecrets The ownedSecrets to set.
-     */
-    public void setOwnedSecrets(
-            List<SecretEntity> ownedSecrets) {
-        this.ownedSecrets = ownedSecrets;
-    }
-
-    /**
-     * @return The receivedSharedSecrets.
-     */
-    public List<SharedSecretEntity> getReceivedSharedSecrets() {
-        return receivedSharedSecrets;
-    }
-
-    /**
-     * @param receivedSharedSecrets The receivedSharedSecrets to set.
-     */
-    public void setReceivedSharedSecrets(
-            List<SharedSecretEntity> receivedSharedSecrets) {
-        this.receivedSharedSecrets = receivedSharedSecrets;
-    }
-
-    /**
-     * @return The ownedGroups.
-     */
-    public List<GroupEntity> getOwnedGroups() {
-        return ownedGroups;
-    }
-
-    /**
-     * @param ownedGroups The ownedGroups to set.
-     */
-    public void setOwnedGroups(
-            List<GroupEntity> ownedGroups) {
-        this.ownedGroups = ownedGroups;
-    }
-
-    /**
-     * @return The groupParticipations.
-     */
-    public List<GroupParticipantEntity> getGroupParticipations() {
-        return groupParticipations;
-    }
-
-    /**
-     * @param groupParticipations The groupParticipations to set.
-     */
-    public void setGroupParticipations(
-            List<GroupParticipantEntity> groupParticipations) {
-        this.groupParticipations = groupParticipations;
-    }
 
 }

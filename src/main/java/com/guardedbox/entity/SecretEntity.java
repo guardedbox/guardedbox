@@ -25,6 +25,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Entity: Secret.
  *
@@ -33,6 +36,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "secret")
+@Getter
+@Setter
 public class SecretEntity
         implements Serializable {
 
@@ -69,80 +74,5 @@ public class SecretEntity
     /** Shared Secrets Based on this Secret. */
     @OneToMany(mappedBy = "secret", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedSecretEntity> sharedSecrets;
-
-    /**
-     * @return The secretId.
-     */
-    public Long getSecretId() {
-        return secretId;
-    }
-
-    /**
-     * @param secretId The secretId to set.
-     */
-    public void setSecretId(
-            Long secretId) {
-        this.secretId = secretId;
-    }
-
-    /**
-     * @return The ownerAccount.
-     */
-    public AccountEntity getOwnerAccount() {
-        return ownerAccount;
-    }
-
-    /**
-     * @param ownerAccount The ownerAccount to set.
-     */
-    public void setOwnerAccount(
-            AccountEntity ownerAccount) {
-        this.ownerAccount = ownerAccount;
-    }
-
-    /**
-     * @return The name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The name to set.
-     */
-    public void setName(
-            String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The value.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value The value to set.
-     */
-    public void setValue(
-            String value) {
-        this.value = value;
-    }
-
-    /**
-     * @return The sharedSecrets.
-     */
-    public List<SharedSecretEntity> getSharedSecrets() {
-        return sharedSecrets;
-    }
-
-    /**
-     * @param sharedSecrets The sharedSecrets to set.
-     */
-    public void setSharedSecrets(
-            List<SharedSecretEntity> sharedSecrets) {
-        this.sharedSecrets = sharedSecrets;
-    }
 
 }

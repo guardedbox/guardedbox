@@ -2,12 +2,21 @@ package com.guardedbox.dto;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * DTO: Response to successful or unsuccessful requests.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SuccessDto
         implements Serializable {
 
@@ -16,28 +25,5 @@ public class SuccessDto
 
     /** Success. */
     private boolean success;
-
-    /**
-     * @param success The success.
-     */
-    public SuccessDto(
-            boolean success) {
-        this.success = success;
-    }
-
-    /**
-     * @return The success.
-     */
-    public boolean isSuccess() {
-        return success;
-    }
-
-    /**
-     * @param success The success to set.
-     */
-    public void setSuccess(
-            boolean success) {
-        this.success = success;
-    }
 
 }

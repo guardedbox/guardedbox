@@ -5,12 +5,17 @@ import java.sql.Timestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Registration.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class RegistrationDto
         implements Serializable {
 
@@ -30,65 +35,5 @@ public class RegistrationDto
     /** Expedition Time. */
     @JsonIgnore
     private Timestamp expeditionTime;
-
-    /**
-     * @return The registrationId.
-     */
-    public Long getRegistrationId() {
-        return registrationId;
-    }
-
-    /**
-     * @param registrationId The registrationId to set.
-     */
-    public void setRegistrationId(
-            Long registrationId) {
-        this.registrationId = registrationId;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return The token.
-     */
-    public String getToken() {
-        return token;
-    }
-
-    /**
-     * @param token The token to set.
-     */
-    public void setToken(
-            String token) {
-        this.token = token;
-    }
-
-    /**
-     * @return The expeditionTime.
-     */
-    public Timestamp getExpeditionTime() {
-        return expeditionTime;
-    }
-
-    /**
-     * @param expeditionTime The expeditionTime to set.
-     */
-    public void setExpeditionTime(
-            Timestamp expeditionTime) {
-        this.expeditionTime = expeditionTime;
-    }
 
 }

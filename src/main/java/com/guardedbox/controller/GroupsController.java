@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +34,8 @@ import com.guardedbox.service.SessionAccountService;
 import com.guardedbox.service.transactional.AccountsService;
 import com.guardedbox.service.transactional.GroupsService;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Controller: Groups.
  *
@@ -44,6 +45,7 @@ import com.guardedbox.service.transactional.GroupsService;
 @RestController
 @RequestMapping("/api/groups")
 @Validated
+@RequiredArgsConstructor
 public class GroupsController {
 
     /** GroupsService. */
@@ -54,22 +56,6 @@ public class GroupsController {
 
     /** SessionAccountService. */
     private final SessionAccountService sessionAccount;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param groupsService GroupsService.
-     * @param accountsService AccountsService
-     * @param sessionAccount SessionAccountService.
-     */
-    public GroupsController(
-            @Autowired GroupsService groupsService,
-            @Autowired AccountsService accountsService,
-            @Autowired SessionAccountService sessionAccount) {
-        this.groupsService = groupsService;
-        this.accountsService = accountsService;
-        this.sessionAccount = sessionAccount;
-    }
 
     /**
      * @return All the groups belonging to the current session account.

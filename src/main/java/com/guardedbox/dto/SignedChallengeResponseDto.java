@@ -13,12 +13,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Signed Challenge Response.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class SignedChallengeResponseDto
         implements Serializable {
 
@@ -36,35 +41,5 @@ public class SignedChallengeResponseDto
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = SIGNATURE_LENGTH, max = SIGNATURE_LENGTH)
     private String signedChallengeResponse;
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return The signedChallengeResponse.
-     */
-    public String getSignedChallengeResponse() {
-        return signedChallengeResponse;
-    }
-
-    /**
-     * @param signedChallengeResponse The signedChallengeResponse to set.
-     */
-    public void setSignedChallengeResponse(
-            String signedChallengeResponse) {
-        this.signedChallengeResponse = signedChallengeResponse;
-    }
 
 }

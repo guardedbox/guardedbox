@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +18,8 @@ import com.guardedbox.repository.RegistrationEntitiesRepository;
 import com.guardedbox.service.RandomService;
 import com.guardedbox.service.RegistrationMessageService;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service: Registration.
  *
@@ -27,12 +28,15 @@ import com.guardedbox.service.RegistrationMessageService;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class RegistrationsService {
 
     /** Property: security-parameters.registration.ttl. */
+    @Value("${security-parameters.registration.ttl}")
     private final long registrationTtl;
 
     /** Property: security-parameters.registration.min-ttl. */
+    @Value("${security-parameters.registration.min-ttl}")
     private final long registrationMinTtl;
 
     /** RegistrationEntitiesRepository. */
@@ -49,34 +53,6 @@ public class RegistrationsService {
 
     /** RandomService. */
     private final RandomService randomService;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param registrationTtl Property: security-parameters.registration.ttl.
-     * @param registrationMinTtl Property: security-parameters.registration.min-ttl.
-     * @param registrationEntitiesRepository RegistrationEntitiesRepository.
-     * @param registrationsMapper RegistrationsMapper.
-     * @param accountsService AccountsService.
-     * @param registrationTokenService RegistrationTokenService.
-     * @param randomService RandomService.
-     */
-    public RegistrationsService(
-            @Value("${security-parameters.registration.ttl}") long registrationTtl,
-            @Value("${security-parameters.registration.min-ttl}") long registrationMinTtl,
-            @Autowired RegistrationEntitiesRepository registrationEntitiesRepository,
-            @Autowired RegistrationsMapper registrationsMapper,
-            @Autowired AccountsService accountsService,
-            @Autowired RegistrationMessageService registrationTokenService,
-            @Autowired RandomService randomService) {
-        this.registrationTtl = registrationTtl;
-        this.registrationMinTtl = registrationMinTtl;
-        this.registrationEntitiesRepository = registrationEntitiesRepository;
-        this.registrationsMapper = registrationsMapper;
-        this.accountsService = accountsService;
-        this.registrationMessageService = registrationTokenService;
-        this.randomService = randomService;
-    }
 
     /**
      * @param token Registration.token.

@@ -13,12 +13,17 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Body of the edit secret request.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class EditSecretDto
         implements Serializable {
 
@@ -39,50 +44,5 @@ public class EditSecretDto
     /** Sharings. */
     @NotNull
     private List<@NotNull @Valid EditSecretSharingDto> sharings;
-
-    /**
-     * @return The name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The name to set.
-     */
-    public void setName(
-            String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The value.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value The value to set.
-     */
-    public void setValue(
-            String value) {
-        this.value = value;
-    }
-
-    /**
-     * @return The sharings.
-     */
-    public List<EditSecretSharingDto> getSharings() {
-        return sharings;
-    }
-
-    /**
-     * @param sharings The sharings to set.
-     */
-    public void setSharings(
-            List<EditSecretSharingDto> sharings) {
-        this.sharings = sharings;
-    }
 
 }

@@ -15,12 +15,17 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Body of the create account request.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class CreateAccountDto
         extends MinedChallengeResponseDto
         implements Serializable {
@@ -55,80 +60,5 @@ public class CreateAccountDto
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = SIGNING_PUBLIC_KEY_LENGTH, max = SIGNING_PUBLIC_KEY_LENGTH)
     private String signingPublicKey;
-
-    /**
-     * @return The registrationToken.
-     */
-    public String getRegistrationToken() {
-        return registrationToken;
-    }
-
-    /**
-     * @param registrationToken The registrationToken to set.
-     */
-    public void setRegistrationToken(
-            String registrationToken) {
-        this.registrationToken = registrationToken;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return The salt.
-     */
-    public String getSalt() {
-        return salt;
-    }
-
-    /**
-     * @param salt The salt to set.
-     */
-    public void setSalt(
-            String salt) {
-        this.salt = salt;
-    }
-
-    /**
-     * @return The encryptionPublicKey.
-     */
-    public String getEncryptionPublicKey() {
-        return encryptionPublicKey;
-    }
-
-    /**
-     * @param encryptionPublicKey The encryptionPublicKey to set.
-     */
-    public void setEncryptionPublicKey(
-            String encryptionPublicKey) {
-        this.encryptionPublicKey = encryptionPublicKey;
-    }
-
-    /**
-     * @return The signingPublicKey.
-     */
-    public String getSigningPublicKey() {
-        return signingPublicKey;
-    }
-
-    /**
-     * @param signingPublicKey The signingPublicKey to set.
-     */
-    public void setSigningPublicKey(
-            String signingPublicKey) {
-        this.signingPublicKey = signingPublicKey;
-    }
 
 }

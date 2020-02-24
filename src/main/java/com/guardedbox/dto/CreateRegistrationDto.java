@@ -10,12 +10,17 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Body of the create registration request.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class CreateRegistrationDto
         extends MinedChallengeResponseDto
         implements Serializable {
@@ -28,20 +33,5 @@ public class CreateRegistrationDto
     @Email(regexp = EMAIL_PATTERN)
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
     private String email;
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
 
 }

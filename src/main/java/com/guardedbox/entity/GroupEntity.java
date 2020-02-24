@@ -25,6 +25,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Entity: Group.
  *
@@ -33,6 +36,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "group_")
+@Getter
+@Setter
 public class GroupEntity
         implements Serializable {
 
@@ -73,95 +78,5 @@ public class GroupEntity
     /** Secrets. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupSecretEntity> secrets;
-
-    /**
-     * @return The groupId.
-     */
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    /**
-     * @param groupId The groupId to set.
-     */
-    public void setGroupId(
-            Long groupId) {
-        this.groupId = groupId;
-    }
-
-    /**
-     * @return The ownerAccount.
-     */
-    public AccountWithEncryptionPublicKeyEntity getOwnerAccount() {
-        return ownerAccount;
-    }
-
-    /**
-     * @param ownerAccount The ownerAccount to set.
-     */
-    public void setOwnerAccount(
-            AccountWithEncryptionPublicKeyEntity ownerAccount) {
-        this.ownerAccount = ownerAccount;
-    }
-
-    /**
-     * @return The name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The name to set.
-     */
-    public void setName(
-            String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The encryptedGroupKey.
-     */
-    public String getEncryptedGroupKey() {
-        return encryptedGroupKey;
-    }
-
-    /**
-     * @param encryptedGroupKey The encryptedGroupKey to set.
-     */
-    public void setEncryptedGroupKey(
-            String encryptedGroupKey) {
-        this.encryptedGroupKey = encryptedGroupKey;
-    }
-
-    /**
-     * @return The participants.
-     */
-    public List<GroupParticipantEntity> getParticipants() {
-        return participants;
-    }
-
-    /**
-     * @param participants The participants to set.
-     */
-    public void setParticipants(
-            List<GroupParticipantEntity> participants) {
-        this.participants = participants;
-    }
-
-    /**
-     * @return The secrets.
-     */
-    public List<GroupSecretEntity> getSecrets() {
-        return secrets;
-    }
-
-    /**
-     * @param secrets The secrets to set.
-     */
-    public void setSecrets(
-            List<GroupSecretEntity> secrets) {
-        this.secrets = secrets;
-    }
 
 }

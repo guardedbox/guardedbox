@@ -10,12 +10,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Body of the create secret request.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class CreateGroupDto
         implements Serializable {
 
@@ -32,35 +37,5 @@ public class CreateGroupDto
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = ENCRYPTED_KEY_LENGTH, max = ENCRYPTED_KEY_LENGTH)
     private String encryptedGroupKey;
-
-    /**
-     * @return The name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The name to set.
-     */
-    public void setName(
-            String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The encryptedGroupKey.
-     */
-    public String getEncryptedGroupKey() {
-        return encryptedGroupKey;
-    }
-
-    /**
-     * @param encryptedGroupKey The encryptedGroupKey to set.
-     */
-    public void setEncryptedGroupKey(
-            String encryptedGroupKey) {
-        this.encryptedGroupKey = encryptedGroupKey;
-    }
 
 }

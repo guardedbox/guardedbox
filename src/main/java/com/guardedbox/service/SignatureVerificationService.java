@@ -18,11 +18,12 @@ import java.util.Base64;
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.AccountWithSigningPublicKeyDto;
 import com.guardedbox.service.transactional.AccountsService;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Signature Verification Service.
@@ -31,20 +32,11 @@ import com.guardedbox.service.transactional.AccountsService;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class SignatureVerificationService {
 
     /** AccountsService. */
     private final AccountsService accountsService;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param accountsService AccountsService.
-     */
-    public SignatureVerificationService(
-            @Autowired AccountsService accountsService) {
-        this.accountsService = accountsService;
-    }
 
     /**
      * Verifies a signature.

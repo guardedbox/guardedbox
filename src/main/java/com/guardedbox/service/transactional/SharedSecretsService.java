@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
@@ -23,6 +22,8 @@ import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.mapper.SecretsMapper;
 import com.guardedbox.repository.SharedSecretEntitiesRepository;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service: SharedSecret.
  *
@@ -31,6 +32,7 @@ import com.guardedbox.repository.SharedSecretEntitiesRepository;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class SharedSecretsService {
 
     /** SharedSecretEntitiesRepository. */
@@ -47,28 +49,6 @@ public class SharedSecretsService {
 
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param sharedSecretEntitiesRepository SharedSecretEntitiesRepository.
-     * @param secretsService SecretsService.
-     * @param accountsService AccountsService.
-     * @param secretsMapper SecretsMapper.
-     * @param accountsMapper AccountsMapper.
-     */
-    public SharedSecretsService(
-            @Autowired SharedSecretEntitiesRepository sharedSecretEntitiesRepository,
-            @Autowired SecretsService secretsService,
-            @Autowired AccountsService accountsService,
-            @Autowired SecretsMapper secretsMapper,
-            @Autowired AccountsMapper accountsMapper) {
-        this.sharedSecretEntitiesRepository = sharedSecretEntitiesRepository;
-        this.secretsService = secretsService;
-        this.accountsService = accountsService;
-        this.secretsMapper = secretsMapper;
-        this.accountsMapper = accountsMapper;
-    }
 
     /**
      * @param receiverAccountId Account.accountId of the shared secrets receiver.

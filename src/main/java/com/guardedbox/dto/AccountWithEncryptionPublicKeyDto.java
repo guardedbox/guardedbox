@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Account.
  * Contains the following fields: accountId, email, encryptionPublicKey.
@@ -11,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class AccountWithEncryptionPublicKeyDto
         implements Serializable {
 
@@ -26,50 +31,5 @@ public class AccountWithEncryptionPublicKeyDto
 
     /** Encryption Public Key. */
     private String encryptionPublicKey;
-
-    /**
-     * @return The accountId.
-     */
-    public Long getAccountId() {
-        return accountId;
-    }
-
-    /**
-     * @param accountId The accountId to set.
-     */
-    public void setAccountId(
-            Long accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return The encryptionPublicKey.
-     */
-    public String getEncryptionPublicKey() {
-        return encryptionPublicKey;
-    }
-
-    /**
-     * @param encryptionPublicKey The encryptionPublicKey to set.
-     */
-    public void setEncryptionPublicKey(
-            String encryptionPublicKey) {
-        this.encryptionPublicKey = encryptionPublicKey;
-    }
 
 }

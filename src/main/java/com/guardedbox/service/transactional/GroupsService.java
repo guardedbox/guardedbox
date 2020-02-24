@@ -6,7 +6,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +26,8 @@ import com.guardedbox.repository.GroupEntitiesRepository;
 import com.guardedbox.repository.GroupParticipantEntitiesRepository;
 import com.guardedbox.repository.GroupSecretEntitiesRepository;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service: Group.
  *
@@ -35,6 +36,7 @@ import com.guardedbox.repository.GroupSecretEntitiesRepository;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class GroupsService {
 
     /** GroupEntitiesRepository. */
@@ -54,31 +56,6 @@ public class GroupsService {
 
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param groupEntitiesRepository GroupEntitiesRepository.
-     * @param groupParticipantEntitiesRepository GroupParticipantEntitiesRepository.
-     * @param groupSecretEntitiesRepository GroupSecretEntitiesRepository.
-     * @param groupsMapper GroupsMapper.
-     * @param accountsService AccountsService.
-     * @param accountsMapper AccountsMapper.
-     */
-    public GroupsService(
-            @Autowired GroupEntitiesRepository groupEntitiesRepository,
-            @Autowired GroupParticipantEntitiesRepository groupParticipantEntitiesRepository,
-            @Autowired GroupSecretEntitiesRepository groupSecretEntitiesRepository,
-            @Autowired GroupsMapper groupsMapper,
-            @Autowired AccountsService accountsService,
-            @Autowired AccountsMapper accountsMapper) {
-        this.groupEntitiesRepository = groupEntitiesRepository;
-        this.groupParticipantEntitiesRepository = groupParticipantEntitiesRepository;
-        this.groupSecretEntitiesRepository = groupSecretEntitiesRepository;
-        this.groupsMapper = groupsMapper;
-        this.accountsService = accountsService;
-        this.accountsMapper = accountsMapper;
-    }
 
     /**
      * @param ownerAccountId Account.accountId.

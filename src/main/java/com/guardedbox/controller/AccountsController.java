@@ -9,7 +9,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +26,8 @@ import com.guardedbox.service.CryptoCaptchaService;
 import com.guardedbox.service.transactional.AccountsService;
 import com.guardedbox.service.transactional.RegistrationsService;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Controller: Accounts.
  *
@@ -36,6 +37,7 @@ import com.guardedbox.service.transactional.RegistrationsService;
 @RestController
 @RequestMapping("/api/accounts")
 @Validated
+@RequiredArgsConstructor
 public class AccountsController {
 
     /** AccountsService. */
@@ -46,22 +48,6 @@ public class AccountsController {
 
     /** CryptoCaptchaService. */
     private final CryptoCaptchaService cryptoCaptchaService;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param accountsService AccountsService.
-     * @param registrationsService RegistrationsService.
-     * @param cryptoCaptchaService CryptoCaptchaService.
-     */
-    public AccountsController(
-            @Autowired AccountsService accountsService,
-            @Autowired RegistrationsService registrationsService,
-            @Autowired CryptoCaptchaService cryptoCaptchaService) {
-        this.accountsService = accountsService;
-        this.registrationsService = registrationsService;
-        this.cryptoCaptchaService = cryptoCaptchaService;
-    }
 
     /**
      * @param email An email.

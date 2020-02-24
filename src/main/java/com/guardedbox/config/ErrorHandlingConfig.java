@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Global Configuration for Error Handling.
  *
@@ -22,6 +23,7 @@ import org.springframework.web.context.request.ServletWebRequest;
  *
  */
 @Controller
+@RequiredArgsConstructor
 public class ErrorHandlingConfig
         implements ErrorController {
 
@@ -33,22 +35,6 @@ public class ErrorHandlingConfig
 
     /** Current Session. */
     private final HttpSession session;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param errorAttributes Used to retrieve request error attributes.
-     * @param request Current Request.
-     * @param session Current Session.
-     */
-    public ErrorHandlingConfig(
-            @Autowired ErrorAttributes errorAttributes,
-            @Autowired HttpServletRequest request,
-            @Autowired HttpSession session) {
-        this.errorAttributes = errorAttributes;
-        this.request = request;
-        this.session = session;
-    }
 
     /**
      * Error handler.

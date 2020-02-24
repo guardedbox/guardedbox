@@ -15,12 +15,17 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Body of the add participant to group request.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class AddParticipantToGroupDto
         implements Serializable {
 
@@ -42,50 +47,5 @@ public class AddParticipantToGroupDto
     @Pattern(regexp = BASE64_PATTERN)
     @Size(max = ENCRYPTED_KEY_LENGTH)
     private String encryptedGroupKey;
-
-    /**
-     * @return The groupId.
-     */
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    /**
-     * @param groupId The groupId to set.
-     */
-    public void setGroupId(
-            Long groupId) {
-        this.groupId = groupId;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return The encryptedGroupKey.
-     */
-    public String getEncryptedGroupKey() {
-        return encryptedGroupKey;
-    }
-
-    /**
-     * @param encryptedGroupKey The encryptedGroupKey to set.
-     */
-    public void setEncryptedGroupKey(
-            String encryptedGroupKey) {
-        this.encryptedGroupKey = encryptedGroupKey;
-    }
 
 }

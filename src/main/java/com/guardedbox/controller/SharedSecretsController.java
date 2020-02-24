@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +30,8 @@ import com.guardedbox.dto.SuccessDto;
 import com.guardedbox.service.SessionAccountService;
 import com.guardedbox.service.transactional.SharedSecretsService;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Controller: Shared Secrets.
  *
@@ -40,6 +41,7 @@ import com.guardedbox.service.transactional.SharedSecretsService;
 @RestController
 @RequestMapping("/api/shared-secrets")
 @Validated
+@RequiredArgsConstructor
 public class SharedSecretsController {
 
     /** SharedSecretsService. */
@@ -47,19 +49,6 @@ public class SharedSecretsController {
 
     /** SessionAccountService. */
     private final SessionAccountService sessionAccount;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param sharedSecretsService SharedSecretsService.
-     * @param sessionAccount SessionAccountService.
-     */
-    public SharedSecretsController(
-            @Autowired SharedSecretsService sharedSecretsService,
-            @Autowired SessionAccountService sessionAccount) {
-        this.sharedSecretsService = sharedSecretsService;
-        this.sessionAccount = sessionAccount;
-    }
 
     /**
      * @return All the secrets shared with the current session account, grouped by owner email.

@@ -47,7 +47,7 @@
 		<!-- Dependencies Versions -->
 		<bouncycastle.version>1.64</bouncycastle.version>
 		<hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
-		
+
 		<!-- Docker -->
 		<docker.repository>s3curitybug</docker.repository>
 
@@ -173,6 +173,13 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
 			<version>${bouncycastle.version}</version>
+		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>

@@ -2,10 +2,11 @@ package com.guardedbox.service;
 
 import static com.guardedbox.constants.FrontParameters.FRONT_REGISTRATION_COMPONENT_URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Registration Token Service.
@@ -15,50 +16,31 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @PropertySource("classpath:email/email_en.properties")
+@RequiredArgsConstructor
 public class RegistrationMessageService {
 
     /** Property: internet.url. */
+    @Value("${internet.url}")
     private final String internetUrl;
 
     /** Property: registration.email.subject. */
+    @Value("${registration.email.subject}")
     private final String registrationEmailSubject;
 
     /** Property: registration.email.body. */
+    @Value("${registration.email.body}")
     private final String registrationEmailBody;
 
     /** Property: registration.alreadyRegistered.email.subject. */
+    @Value("${registration.already-registered.email.subject}")
     private final String alreadyRegisteredEmailSubject;
 
     /** Property: registration.alreadyRegistered.email.body. */
+    @Value("${registration.already-registered.email.body}")
     private final String alreadyRegisteredEmailBody;
 
     /** EmailService. */
     private final EmailService emailService;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param internetUrl Property: internet.url.
-     * @param registrationEmailSubject Property: registration.email.subject.
-     * @param registrationEmailBody Property: registration.email.body.
-     * @param alreadyRegisteredEmailSubject Property: registration.alreadyRegistered.email.subject.
-     * @param alreadyRegisteredEmailBody Property: registration.alreadyRegistered.email.body.
-     * @param emailService EmailService.
-     */
-    public RegistrationMessageService(
-            @Value("${internet.url}") String internetUrl,
-            @Value("${registration.email.subject}") String registrationEmailSubject,
-            @Value("${registration.email.body}") String registrationEmailBody,
-            @Value("${registration.already-registered.email.subject}") String alreadyRegisteredEmailSubject,
-            @Value("${registration.already-registered.email.body}") String alreadyRegisteredEmailBody,
-            @Autowired EmailService emailService) {
-        this.internetUrl = internetUrl;
-        this.registrationEmailSubject = registrationEmailSubject;
-        this.registrationEmailBody = registrationEmailBody;
-        this.alreadyRegisteredEmailSubject = alreadyRegisteredEmailSubject;
-        this.alreadyRegisteredEmailBody = alreadyRegisteredEmailBody;
-        this.emailService = emailService;
-    }
 
     /**
      * Sends a message to an email indicating that it is already registered.

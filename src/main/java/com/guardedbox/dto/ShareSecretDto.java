@@ -13,12 +13,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * DTO: Body of the share secret request.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
 public class ShareSecretDto
         implements Serializable {
 
@@ -36,35 +41,5 @@ public class ShareSecretDto
     @Pattern(regexp = BASE64_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
-
-    /**
-     * @return The receiverEmail.
-     */
-    public String getReceiverEmail() {
-        return receiverEmail;
-    }
-
-    /**
-     * @param receiverEmail The receiverEmail to set.
-     */
-    public void setReceiverEmail(
-            String receiverEmail) {
-        this.receiverEmail = receiverEmail;
-    }
-
-    /**
-     * @return The value.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value The value to set.
-     */
-    public void setValue(
-            String value) {
-        this.value = value;
-    }
 
 }

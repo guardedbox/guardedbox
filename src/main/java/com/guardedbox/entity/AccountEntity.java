@@ -17,6 +17,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * Entity: Account.
  * Contains the following fields: accountId, email.
@@ -26,6 +30,9 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "account")
+@Getter
+@Setter
+@NoArgsConstructor
 public class AccountEntity
         implements Serializable {
 
@@ -47,48 +54,13 @@ public class AccountEntity
     private String email;
 
     /**
-     * Default Constructor.
-     */
-    public AccountEntity() {}
-
-    /**
-     * Constructor with Attributes.
+     * Constructor with accountId.
      *
-     * @param accountId AccountId.
+     * @param accountId Account ID.
      */
     public AccountEntity(
             Long accountId) {
         this.accountId = accountId;
-    }
-
-    /**
-     * @return The accountId.
-     */
-    public Long getAccountId() {
-        return accountId;
-    }
-
-    /**
-     * @param accountId The accountId to set.
-     */
-    public void setAccountId(
-            Long accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
     }
 
 }

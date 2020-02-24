@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +22,8 @@ import com.guardedbox.mapper.SecretsMapper;
 import com.guardedbox.repository.SecretEntitiesRepository;
 import com.guardedbox.repository.SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service: Secret.
  *
@@ -31,6 +32,7 @@ import com.guardedbox.repository.SecretWithOwnerAccountEncryptionPublicKeyEntiti
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class SecretsService {
 
     /** SecretEntitiesRepository. */
@@ -41,22 +43,6 @@ public class SecretsService {
 
     /** SecretsMapper. */
     private final SecretsMapper secretsMapper;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param secretEntitiesRepository SecretEntitiesRepository.
-     * @param secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository.
-     * @param secretsMapper SecretsMapper.
-     */
-    public SecretsService(
-            @Autowired SecretEntitiesRepository secretEntitiesRepository,
-            @Autowired SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository,
-            @Autowired SecretsMapper secretsMapper) {
-        this.secretEntitiesRepository = secretEntitiesRepository;
-        this.secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository = secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository;
-        this.secretsMapper = secretsMapper;
-    }
 
     /**
      * @param ownerAccountId Account.accountId.

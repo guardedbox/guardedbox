@@ -22,6 +22,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Entity: Registration.
  *
@@ -30,6 +33,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "registration")
+@Getter
+@Setter
 public class RegistrationEntity
         implements Serializable {
 
@@ -61,65 +66,5 @@ public class RegistrationEntity
     @Column(name = "expedition_time")
     @NotNull
     private Timestamp expeditionTime;
-
-    /**
-     * @return The registrationId.
-     */
-    public Long getRegistrationId() {
-        return registrationId;
-    }
-
-    /**
-     * @param registrationId The registrationId to set.
-     */
-    public void setRegistrationId(
-            Long registrationId) {
-        this.registrationId = registrationId;
-    }
-
-    /**
-     * @return The email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email The email to set.
-     */
-    public void setEmail(
-            String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return The token.
-     */
-    public String getToken() {
-        return token;
-    }
-
-    /**
-     * @param token The token to set.
-     */
-    public void setToken(
-            String token) {
-        this.token = token;
-    }
-
-    /**
-     * @return The expeditionTime.
-     */
-    public Timestamp getExpeditionTime() {
-        return expeditionTime;
-    }
-
-    /**
-     * @param expeditionTime The expeditionTime to set.
-     */
-    public void setExpeditionTime(
-            Timestamp expeditionTime) {
-        this.expeditionTime = expeditionTime;
-    }
 
 }

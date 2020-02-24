@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,6 +37,8 @@ import com.guardedbox.service.OtpService;
 import com.guardedbox.service.SessionAccountService;
 import com.guardedbox.service.transactional.AccountsService;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Controller: Session Handling.
  *
@@ -47,18 +48,23 @@ import com.guardedbox.service.transactional.AccountsService;
 @RestController
 @RequestMapping("/api/session")
 @Validated
+@RequiredArgsConstructor
 public class SessionController {
 
     /** Indicates if environment is dev, based on property environment. */
+    @Value("#{'${environment}' == 'dev'}")
     private final boolean dev;
 
     /** Property: security-parameters.challenge.execution-time. */
+    @Value("${security-parameters.challenge.execution-time}")
     private final long challengeExecutionTime;
 
     /** Property: security-parameters.otp.execution-time. */
+    @Value("${security-parameters.otp.execution-time}")
     private final long otpExecutionTime;
 
     /** Property: security-parameters.login.execution-time. */
+    @Value("${security-parameters.login.execution-time}")
     private final long loginExecutionTime;
 
     /** AccountsService. */
@@ -81,46 +87,6 @@ public class SessionController {
 
     /** Current Session. */
     private final HttpSession session;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param dev Indicates if environment is dev, based on property environment.
-     * @param challengeExecutionTime Property: security-parameters.challenge.execution-time.
-     * @param otpExecutionTime Property: security-parameters.otp.execution-time.
-     * @param loginExecutionTime Property: security-parameters.login.execution-time.
-     * @param accountsService AccountsService.
-     * @param sessionAccount SessionAccountService.
-     * @param executionTimeService ExecutionTimeService.
-     * @param challengeService ChallengeService.
-     * @param otpService OtpService.
-     * @param request Current Request.
-     * @param session Current Session.
-     */
-    public SessionController(
-            @Value("#{'${environment}' == 'dev'}") boolean dev,
-            @Value("${security-parameters.challenge.execution-time}") long challengeExecutionTime,
-            @Value("${security-parameters.otp.execution-time}") long otpExecutionTime,
-            @Value("${security-parameters.login.execution-time}") long loginExecutionTime,
-            @Autowired AccountsService accountsService,
-            @Autowired SessionAccountService sessionAccount,
-            @Autowired ExecutionTimeService executionTimeService,
-            @Autowired ChallengeService challengeService,
-            @Autowired OtpService otpService,
-            @Autowired HttpServletRequest request,
-            @Autowired HttpSession session) {
-        this.dev = dev;
-        this.challengeExecutionTime = challengeExecutionTime;
-        this.otpExecutionTime = otpExecutionTime;
-        this.loginExecutionTime = loginExecutionTime;
-        this.accountsService = accountsService;
-        this.sessionAccount = sessionAccount;
-        this.executionTimeService = executionTimeService;
-        this.challengeService = challengeService;
-        this.otpService = otpService;
-        this.request = request;
-        this.session = session;
-    }
 
     /**
      * @return The current session information.

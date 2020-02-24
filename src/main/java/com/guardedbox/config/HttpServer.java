@@ -10,6 +10,8 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * HTTP Server.
  *
@@ -17,38 +19,24 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@RequiredArgsConstructor
 public class HttpServer {
 
     /** Property: server.port. */
+    @Value("${server.port}")
     private final Integer serverPort;
 
     /** Property: server.internal.http.port. */
+    @Value("${server.internal.http.port:}")
     private final Integer internalHttpPort;
 
     /** Property: server.internal.https.port. */
+    @Value("${server.internal.https.port:}")
     private final Integer internalHttpsPort;
 
     /** Property: server.external.https.port. */
+    @Value("${server.external.https.port:}")
     private final Integer externalHttpsPort;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param serverPort Property: server.port.
-     * @param internalHttpPort Property: server.internal.http.port
-     * @param internalHttpsPort Property: server.internal.https.port.
-     * @param externalHttpsPort Property: server.external.https.port.
-     */
-    public HttpServer(
-            @Value("${server.port}") Integer serverPort,
-            @Value("${server.internal.http.port:}") Integer internalHttpPort,
-            @Value("${server.internal.https.port:}") Integer internalHttpsPort,
-            @Value("${server.external.https.port:}") Integer externalHttpsPort) {
-        this.serverPort = serverPort;
-        this.internalHttpPort = internalHttpPort;
-        this.internalHttpsPort = internalHttpsPort;
-        this.externalHttpsPort = externalHttpsPort;
-    }
 
     /**
      * Bean: ServletWebServerFactory.

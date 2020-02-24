@@ -2,7 +2,6 @@ package com.guardedbox.service.transactional;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.AccountDto;
@@ -23,6 +22,8 @@ import com.guardedbox.repository.AccountWithEncryptionPublicKeyEntitiesRepositor
 import com.guardedbox.repository.AccountWithSaltEntitiesRepository;
 import com.guardedbox.repository.AccountWithSigningPublicKeyEntitiesRepository;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service: Account.
  *
@@ -31,6 +32,7 @@ import com.guardedbox.repository.AccountWithSigningPublicKeyEntitiesRepository;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AccountsService {
 
     /** AccountEntitiesRepository. */
@@ -50,31 +52,6 @@ public class AccountsService {
 
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param accountEntitiesRepository AccountEntitiesRepository.
-     * @param accountWithSaltEntitiesRepository AccountWithSaltEntitiesRepository.
-     * @param accountWithEncryptionPublicKeyEntitiesRepository AccountWithEncryptionPublicKeyEntitiesRepository.
-     * @param accountWithPublicKeyEntitiesRepository AccountWithPublicKeyEntitiesRepository.
-     * @param accountFullEntitiesRepository AccountFullEntitiesRepository.
-     * @param accountsMapper AccountsMapper.
-     */
-    public AccountsService(
-            @Autowired AccountEntitiesRepository accountEntitiesRepository,
-            @Autowired AccountWithSaltEntitiesRepository accountWithSaltEntitiesRepository,
-            @Autowired AccountWithEncryptionPublicKeyEntitiesRepository accountWithEncryptionPublicKeyEntitiesRepository,
-            @Autowired AccountWithSigningPublicKeyEntitiesRepository accountWithPublicKeyEntitiesRepository,
-            @Autowired AccountFullEntitiesRepository accountFullEntitiesRepository,
-            @Autowired AccountsMapper accountsMapper) {
-        this.accountEntitiesRepository = accountEntitiesRepository;
-        this.accountWithSaltEntitiesRepository = accountWithSaltEntitiesRepository;
-        this.accountWithEncryptionPublicKeyEntitiesRepository = accountWithEncryptionPublicKeyEntitiesRepository;
-        this.accountWithSigningPublicKeyEntitiesRepository = accountWithPublicKeyEntitiesRepository;
-        this.accountFullEntitiesRepository = accountFullEntitiesRepository;
-        this.accountsMapper = accountsMapper;
-    }
 
     /**
      * @param email Account.email.

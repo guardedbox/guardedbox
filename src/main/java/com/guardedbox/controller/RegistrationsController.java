@@ -10,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +27,8 @@ import com.guardedbox.service.CryptoCaptchaService;
 import com.guardedbox.service.ExecutionTimeService;
 import com.guardedbox.service.transactional.RegistrationsService;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Controller: Registrations.
  *
@@ -37,9 +38,11 @@ import com.guardedbox.service.transactional.RegistrationsService;
 @RestController
 @RequestMapping("/api/registrations")
 @Validated
+@RequiredArgsConstructor
 public class RegistrationsController {
 
     /** Property: security-parameters.registration.execution-time. */
+    @Value("${security-parameters.registration.execution-time}")
     private final long createRegistrationExecutionTime;
 
     /** RegistrationsService. */
@@ -50,25 +53,6 @@ public class RegistrationsController {
 
     /** ExecutionTimeService. */
     private final ExecutionTimeService executionTimeService;
-
-    /**
-     * Constructor with Attributes.
-     *
-     * @param createRegistrationExecutionTime Property: security-parameters.registration.execution-time.
-     * @param registrationsService RegistrationsService.
-     * @param cryptoCaptchaService CryptoCaptchaService.
-     * @param executionTimeService ExecutionTimeService.
-     */
-    public RegistrationsController(
-            @Value("${security-parameters.registration.execution-time}") long createRegistrationExecutionTime,
-            @Autowired RegistrationsService registrationsService,
-            @Autowired CryptoCaptchaService cryptoCaptchaService,
-            @Autowired ExecutionTimeService executionTimeService) {
-        this.createRegistrationExecutionTime = createRegistrationExecutionTime;
-        this.registrationsService = registrationsService;
-        this.cryptoCaptchaService = cryptoCaptchaService;
-        this.executionTimeService = executionTimeService;
-    }
 
     /**
      * @param token A registration token.

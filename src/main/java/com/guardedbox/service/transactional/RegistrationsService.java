@@ -94,7 +94,8 @@ public class RegistrationsService {
             throw new ServiceException(String.format(
                     "Registration token was not generated for email %s since it is already registered",
                     createRegistrationDto.getEmail()))
-                            .setErrorCode("accounts.email-already-registered").addAdditionalData("email", createRegistrationDto.getEmail());
+                            .setErrorCode("accounts.email-already-registered").addAdditionalData("email", createRegistrationDto.getEmail())
+                            .setResponseAsSuccess(true);
 
         } else {
 

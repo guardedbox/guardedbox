@@ -298,8 +298,6 @@ class Login extends Component {
                                             type={this.state.passwordVisible ? "text" : "password"}
                                             autoComplete="section-login one-time-code"
                                             placeholder={t('login.txt-code')}
-                                            pattern={properties.login.loginCodePattern}
-                                            maxLength={properties.login.loginCodeMaxLength}
                                             required
                                             onChange={(e) => { this.setState({ code: e.target.value }) }}
                                         />

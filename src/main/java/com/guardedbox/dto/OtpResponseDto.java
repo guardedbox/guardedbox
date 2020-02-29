@@ -1,13 +1,8 @@
 package com.guardedbox.dto;
 
-import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
-import static com.guardedbox.constants.SecurityParameters.OTP_LENGTH;
-
 import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,8 +23,6 @@ public class OtpResponseDto
 
     /** One time password. */
     @NotBlank
-    @Pattern(regexp = ALPHANUMERIC_PATTERN)
-    @Size(min = 1, max = OTP_LENGTH)
     private String otp;
 
 }

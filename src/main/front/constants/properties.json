@@ -3,10 +3,6 @@
 		"emailMaxLength": 254,
 		"emailPattern": ".+@.+\\..{2,}"
 	},
-	"login": {
-		"loginCodeMaxLength": 10,
-		"loginCodePattern": "[a-zA-Z0-9]+"
-	},
 	"registration": {
 		"registrationTokenPattern": "^[a-zA-Z0-9]{86}$",
 		"passwordMinLength": 20,

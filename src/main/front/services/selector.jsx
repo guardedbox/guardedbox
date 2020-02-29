@@ -46,6 +46,8 @@ export function copyToClipboard(str) {
     var el = document.createElement('textarea');
     el.value = str;
     el.setAttribute('readonly', '');
+    el.style.height = '0px';
+    el.style.width = '0px';
     el.style.position = 'absolute';
     el.style.left = '-9999px';
     document.body.appendChild(el);

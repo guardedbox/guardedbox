@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Runtime exception thrown by services.
- * 
+ *
  * @author s3curitybug@gmail.com
  *
  */
@@ -21,6 +21,9 @@ public class ServiceException
     /** Additional Data. */
     private Map<String, Object> additionalData;
 
+    /** Response As Success. */
+    private Boolean responseAsSuccess;
+
     /**
      * Default constructor.
      */
@@ -30,7 +33,7 @@ public class ServiceException
 
     /**
      * Constructor with message.
-     * 
+     *
      * @param message The message.
      */
     public ServiceException(
@@ -40,7 +43,7 @@ public class ServiceException
 
     /**
      * Constructor with cause.
-     * 
+     *
      * @param cause The cause.
      */
     public ServiceException(
@@ -50,7 +53,7 @@ public class ServiceException
 
     /**
      * Constructor with message and cause.
-     * 
+     *
      * @param message The message.
      * @param cause The cause.
      */
@@ -96,7 +99,7 @@ public class ServiceException
 
     /**
      * Adds a name-value pair to the additional data.
-     * 
+     *
      * @param name The name.
      * @param value The value.
      * @return This ServiceException.
@@ -112,7 +115,7 @@ public class ServiceException
 
     /**
      * Adds a name-value pairs collection to the additional data.
-     * 
+     *
      * @param additionalData The name-value pairs collection.
      * @return This ServiceException.
      */
@@ -121,6 +124,23 @@ public class ServiceException
         if (this.additionalData == null)
             this.additionalData = new LinkedHashMap<String, Object>();
         this.additionalData.putAll(additionalData);
+        return this;
+    }
+
+    /**
+     * @return The responseAsSuccess.
+     */
+    public Boolean getResponseAsSuccess() {
+        return responseAsSuccess;
+    }
+
+    /**
+     * @param responseAsSuccess the responseAsSuccess to set.
+     * @return This ServiceException.
+     */
+    public ServiceException setResponseAsSuccess(
+            Boolean responseAsSuccess) {
+        this.responseAsSuccess = responseAsSuccess;
         return this;
     }
 

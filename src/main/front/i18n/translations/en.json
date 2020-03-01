@@ -33,7 +33,7 @@
 		"h-title": "GuardedBox",
 		"h-registration": "Registration",
 		"txt-email": "Email",
-		"info-password": "Please, choose a strong password. It must have at least {passwordMinlength} characters. Try to use a sentence you can remember. Your password will be used to encrypt your secrets. If you forget this password, you will lose all your secrets!",
+		"info-password": "Please, choose a strong password. It must have at least {passwordMinlength} characters. Try to use a phrase you can remember. Your password will be used to encrypt your secrets. If you forget this password, you will lose all your secrets!",
 		"txt-password": "Password",
 		"txt-repeat-password": "Repeat Password",
 		"password-length": "Length ",

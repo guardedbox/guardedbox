@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.ChallengeDto;
-import com.guardedbox.dto.MinedChallengeResponseDto;
 import com.guardedbox.dto.SignedChallengeResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -32,9 +31,6 @@ public class ChallengeService {
 
     /** SignatureVerificationService. */
     private final SignatureVerificationService signatureVerificationService;
-
-    /** MiningVerificationService. */
-    private final MiningVerificationService miningVerificationService;
 
     /**
      * @return A challenge object with the challenge in base64 format and its expiration time.
@@ -74,35 +70,6 @@ public class ChallengeService {
                 Base64.getDecoder().decode(challengeDto.getChallenge()),
                 Base64.getDecoder().decode(signedChallengeResponseDto.getSignedChallengeResponse()),
                 signedChallengeResponseDto.getEmail())) {
-            return false;
-        }
-
-        return true;
-
-    }
-
-    /**
-     * Verifies a mined challenge response.
-     *
-     * @param minedChallengeResponseDto Mined challenge response object.
-     * @param challengeDto Challenge object, as it is returned by the method generateChallenge.
-     * @return Boolean indicating if the mined challenge response is valid.
-     */
-    public boolean verifyMinedChallengeResponse(
-            MinedChallengeResponseDto minedChallengeResponseDto,
-            ChallengeDto challengeDto) {
-
-        // Verify expiration time.
-        long currentTime = System.currentTimeMillis();
-
-        if (challengeDto.getExpirationTime() <= currentTime) {
-            return false;
-        }
-
-        // Verify mining.
-        if (!miningVerificationService.verifyMining(
-                Base64.getDecoder().decode(challengeDto.getChallenge()),
-                Base64.getDecoder().decode(minedChallengeResponseDto.getMinedChallengeResponse()))) {
             return false;
         }
 

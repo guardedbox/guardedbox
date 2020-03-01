@@ -35,9 +35,6 @@ public final class Constraints {
     /** Signature Length (number of base64 characters). */
     public static final int SIGNATURE_LENGTH = 88;
 
-    /** Mining Nonce Length (number of base64 characters). */
-    public static final int MINING_NONCE_LENGTH = 88;
-
     /** Secret Name Maximum Length. */
     public static final int SECRET_NAME_MAX_LENGTH = 100;
 

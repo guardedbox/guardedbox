@@ -9,7 +9,7 @@ import { notLoading } from 'services/loading.jsx';
 import { updateSessionInfo } from 'services/session.jsx';
 import { changeLocation } from 'services/location.jsx';
 import { modalMessage } from 'services/modal.jsx';
-import { generateSessionKeys, sign, mine } from 'services/crypto/crypto.jsx';
+import { generateSessionKeys, sign } from 'services/crypto/crypto.jsx';
 import properties from 'constants/properties.json';
 import views from 'constants/views.json';
 
@@ -190,27 +190,13 @@ class Login extends Component {
 
         rest({
             method: 'post',
-            url: '/api/session/challenge',
-            loadingChain: true,
+            url: '/api/registrations',
+            body: {
+                email: registerEmail
+            },
             callback: (response) => {
 
-                var challenge = response.challenge;
-                var minedChallengeResponse = mine(challenge, 'base64');
-
-                rest({
-                    method: 'post',
-                    url: '/api/registrations',
-                    loadingChained: true,
-                    body: {
-                        email: registerEmail,
-                        minedChallengeResponse: minedChallengeResponse
-                    },
-                    callback: (response) => {
-
-                        modalMessage(t('login.register-success-modal-title'), t('login.register-success-modal-body'));
-
-                    }
-                });
+                modalMessage(t('login.register-success-modal-title'), t('login.register-success-modal-body'));
 
             }
         });

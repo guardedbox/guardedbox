@@ -22,7 +22,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateRegistrationDto
-        extends MinedChallengeResponseDto
         implements Serializable {
 
     /** Serial Version UID. */

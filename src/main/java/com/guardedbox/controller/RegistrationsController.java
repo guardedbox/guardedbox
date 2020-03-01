@@ -1,8 +1,6 @@
 package com.guardedbox.controller;
 
 import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
-import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
-import static com.guardedbox.constants.Constraints.MINING_NONCE_LENGTH;
 import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
 
 import javax.validation.Valid;
@@ -20,10 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guardedbox.dto.CreateRegistrationDto;
-import com.guardedbox.dto.MinedChallengeResponseDto;
 import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.dto.SuccessDto;
-import com.guardedbox.service.CryptoCaptchaService;
 import com.guardedbox.service.ExecutionTimeService;
 import com.guardedbox.service.transactional.RegistrationsService;
 
@@ -48,24 +44,16 @@ public class RegistrationsController {
     /** RegistrationsService. */
     private final RegistrationsService registrationsService;
 
-    /** CryptoCaptchaService. */
-    private final CryptoCaptchaService cryptoCaptchaService;
-
     /** ExecutionTimeService. */
     private final ExecutionTimeService executionTimeService;
 
     /**
      * @param token A registration token.
-     * @param minedChallengeResponse Mined challenge response.
      * @return The Registration corresponding to the introduced token.
      */
     @GetMapping()
     public RegistrationDto getRegistration(
-            @RequestParam(name = "token", required = true) @NotBlank @Pattern(regexp = ALPHANUMERIC_PATTERN) @Size(min = REGISTRATION_TOKEN_LENGTH, max = REGISTRATION_TOKEN_LENGTH) String token,
-            @RequestParam(name = "mined-challenge-response", required = true) @NotBlank @Pattern(regexp = BASE64_PATTERN) @Size(min = MINING_NONCE_LENGTH, max = MINING_NONCE_LENGTH) String minedChallengeResponse) {
-
-        // Verify the crypto-captcha.
-        cryptoCaptchaService.verify(new MinedChallengeResponseDto(minedChallengeResponse));
+            @RequestParam(name = "token", required = true) @NotBlank @Pattern(regexp = ALPHANUMERIC_PATTERN) @Size(min = REGISTRATION_TOKEN_LENGTH, max = REGISTRATION_TOKEN_LENGTH) String token) {
 
         // Return the Registration.
         return registrationsService.getAndCheckRegistrationByToken(token);
@@ -83,9 +71,6 @@ public class RegistrationsController {
             @RequestBody(required = true) @Valid CreateRegistrationDto createRegistrationDto) {
 
         long startTime = System.currentTimeMillis();
-
-        // Verify the crypto-captcha.
-        cryptoCaptchaService.verify(createRegistrationDto);
 
         // Create Registration.
         registrationsService.createRegistration(createRegistrationDto);

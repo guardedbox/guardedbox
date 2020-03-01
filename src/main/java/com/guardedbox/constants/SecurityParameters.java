@@ -17,12 +17,6 @@ public final class SecurityParameters {
     /** Signature Algorithm Identifier. */
     public static final AlgorithmIdentifier SIGNATURE_ALGORITHM_ID = new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519);
 
-    /** Mining Algorithm. */
-    public static final String MINING_ALGORITHM = "HmacSHA512";
-
-    /** Mining Proof Threshold. */
-    public static final byte[] MINING_PROOF_THRESHOLD = {0, 63};
-
     /** Bcrypt Rounds. */
     public static final int BCRYPT_ROUNDS = 10;
 

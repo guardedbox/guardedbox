@@ -5,8 +5,9 @@ import logo from 'images/logo.png';
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
+import { loading } from 'services/loading.jsx';
 import { currentLocationParams } from 'services/location.jsx';
-import { generateSessionKeys, deleteSessionKeys, getEncryptionPublicKey, getSigningPublicKey, mine } from 'services/crypto/crypto.jsx';
+import { generateSessionKeys, deleteSessionKeys, getEncryptionPublicKey, getSigningPublicKey } from 'services/crypto/crypto.jsx';
 import { randomBytes } from 'services/crypto/random.jsx';
 import { reset } from 'services/session.jsx';
 import { modalMessage } from 'services/modal.jsx';
@@ -52,40 +53,26 @@ class Registration extends Component {
         }
 
         rest({
-            method: 'post',
-            url: '/api/session/challenge',
-            loadingChain: true,
+            method: 'get',
+            url: '/api/registrations',
+            params: {
+                'token': token
+            },
             callback: (response) => {
 
-                var challenge = response.challenge;
-                var minedChallengeResponse = mine(challenge, 'base64');
+                var email = response.email;
 
-                rest({
-                    method: 'get',
-                    url: '/api/registrations',
-                    params: {
-                        'token': token,
-                        'mined-challenge-response': minedChallengeResponse
-                    },
-                    loadingChained: true,
-                    callback: (response) => {
-
-                        var email = response.email;
-
-                        this.setState({
-                            token: token,
-                            email: email
-                        }, () => {
-                            this.txtPassword.current.focus();
-                        });
-
-                    },
-                    serviceExceptionCallback: (response) => {
-
-                        modalMessage(t('global.error'), t(response.errorCode || 'global.error-occurred', response.additionalData), reset);
-
-                    }
+                this.setState({
+                    token: token,
+                    email: email
+                }, () => {
+                    this.txtPassword.current.focus();
                 });
+
+            },
+            serviceExceptionCallback: (response) => {
+
+                modalMessage(t('global.error'), t(response.errorCode || 'global.error-occurred', response.additionalData), reset);
 
             }
         });
@@ -189,49 +176,40 @@ class Registration extends Component {
 
         this.checkPasswordErrors(true, () => {
 
-            rest({
-                method: 'post',
-                url: '/api/session/challenge',
-                loadingChain: true,
-                callback: (response) => {
+            loading(() => {
 
-                    var challenge = response.challenge;
-                    var minedChallengeResponse = mine(challenge, 'base64');
+                var token = this.state.token;
+                var password = this.state.password;
+                var salt = randomBytes(properties.registration.saltBytes, 'base64');
 
-                    var token = this.state.token;
-                    var password = this.state.password;
-                    var salt = randomBytes(properties.registration.saltBytes, 'base64');
+                generateSessionKeys(password, salt);
+                var encryptionPublicKey = getEncryptionPublicKey();
+                var signingPublicKey = getSigningPublicKey();
 
-                    generateSessionKeys(password, salt);
-                    var encryptionPublicKey = getEncryptionPublicKey();
-                    var signingPublicKey = getSigningPublicKey();
+                rest({
+                    method: 'post',
+                    url: '/api/accounts',
+                    body: {
+                        registrationToken: token,
+                        salt: salt,
+                        encryptionPublicKey: encryptionPublicKey,
+                        signingPublicKey: signingPublicKey
+                    },
+                    loadingChained: true,
+                    callback: (response) => {
 
-                    rest({
-                        method: 'post',
-                        url: '/api/accounts',
-                        body: {
-                            registrationToken: token,
-                            salt: salt,
-                            encryptionPublicKey: encryptionPublicKey,
-                            signingPublicKey: signingPublicKey,
-                            minedChallengeResponse: minedChallengeResponse
-                        },
-                        loadingChained: true,
-                        callback: (response) => {
+                        modalMessage(t('global.success'), t('registration.registration-completed'), reset);
 
-                            modalMessage(t('global.success'), t('registration.registration-completed'), reset);
+                    },
+                    serviceExceptionCallback: (response) => {
 
-                        },
-                        serviceExceptionCallback: (response) => {
+                        modalMessage(t('global.error'), t(response.errorCode || 'global.error-occurred', response.additionalData), reset);
 
-                            modalMessage(t('global.error'), t(response.errorCode || 'global.error-occurred', response.additionalData), reset);
+                    }
+                });
 
-                        }
-                    });
+                deleteSessionKeys();
 
-                    deleteSessionKeys();
-
-                }
             });
 
         });
@@ -269,6 +247,14 @@ class Registration extends Component {
                                 <Alert color="secondary" className="small">
                                     {t('registration.info-password', { passwordMinlength: properties.registration.passwordMinLength })}
                                 </Alert>
+                                <div>
+                                    <Progress color="primary" value={this.state.passwordLength * 100 / properties.registration.passwordMinLength}>
+                                        {t('registration.password-length') + this.state.passwordLength + ' / ' + properties.registration.passwordMinLength}
+                                    </Progress>
+                                    <Progress color="primary" style={{ marginTop: '5px', marginBottom: '14px' }} value={this.state.passwordStrength}>
+                                        {t('registration.password-strength') + this.state.passwordStrength + '%'}
+                                    </Progress>
+                                </div>
                                 <FormGroup>
                                     <Input
                                         id="registration_txt-password"
@@ -297,15 +283,7 @@ class Registration extends Component {
                                         onBlur={(e) => { this.checkPasswordErrors() }}
                                     />
                                 </FormGroup>
-                                <div>
-                                    <Progress color="primary" style={{ marginTop: '10px' }} value={this.state.passwordLength * 100 / properties.registration.passwordMinLength}>
-                                        {t('registration.password-length') + this.state.passwordLength + ' / ' + properties.registration.passwordMinLength}
-                                    </Progress>
-                                    <Progress color="primary" style={{ marginTop: '5px' }} value={this.state.passwordStrength}>
-                                        {t('registration.password-strength') + this.state.passwordStrength + '%'}
-                                    </Progress>
-                                </div>
-                                <FormGroup style={{ marginTop: '1.8rem' }}>
+                                <FormGroup>
                                     <span className="icon-inline float-left"></span>
                                     <Button type="submit" color="primary">{t('registration.btn-register')}</Button>
                                     <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>

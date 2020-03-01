@@ -22,7 +22,6 @@ import com.guardedbox.dto.AccountWithSaltDto;
 import com.guardedbox.dto.CreateAccountDto;
 import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.dto.SuccessDto;
-import com.guardedbox.service.CryptoCaptchaService;
 import com.guardedbox.service.transactional.AccountsService;
 import com.guardedbox.service.transactional.RegistrationsService;
 
@@ -45,9 +44,6 @@ public class AccountsController {
 
     /** RegistrationsService. */
     private final RegistrationsService registrationsService;
-
-    /** CryptoCaptchaService. */
-    private final CryptoCaptchaService cryptoCaptchaService;
 
     /**
      * @param email An email.
@@ -82,9 +78,6 @@ public class AccountsController {
     @PostMapping()
     public SuccessDto createAccount(
             @RequestBody(required = true) @Valid CreateAccountDto createAccountDto) {
-
-        // Verify the crypto-captcha.
-        cryptoCaptchaService.verify(createAccountDto);
 
         // Get the registration, checking if it exists and is not expired.
         RegistrationDto registrationDto = registrationsService.getAndCheckRegistrationByToken(createAccountDto.getRegistrationToken());

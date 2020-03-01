@@ -27,7 +27,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateAccountDto
-        extends MinedChallengeResponseDto
         implements Serializable {
 
     /** Serial Version UID. */

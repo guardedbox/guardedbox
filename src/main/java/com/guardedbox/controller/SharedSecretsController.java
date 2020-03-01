@@ -5,12 +5,12 @@ import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -66,7 +66,7 @@ public class SharedSecretsController {
      */
     @GetMapping("/sent/{secret-id}/receiver-accounts")
     public List<AccountWithEncryptionPublicKeyDto> getSharedSecretReceiverAccounts(
-            @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId) {
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId) {
 
         return sharedSecretsService.getSharedSecretReceiverAccounts(sessionAccount.getAccountId(), secretId);
 
@@ -81,7 +81,7 @@ public class SharedSecretsController {
      */
     @PostMapping("/sent/{secret-id}")
     public SuccessDto shareSecret(
-            @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId,
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId,
             @RequestBody(required = true) @Valid ShareSecretDto shareSecretDto) {
 
         sharedSecretsService.shareSecret(sessionAccount.getAccountId(), secretId, shareSecretDto);
@@ -98,7 +98,7 @@ public class SharedSecretsController {
      */
     @DeleteMapping("/sent/{secret-id}")
     public SuccessDto unshareSecret(
-            @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId,
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId,
             @RequestParam(name = "receiver-email") @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String receiverEmail) {
 
         sharedSecretsService.unshareSecret(sessionAccount.getAccountId(), secretId, receiverEmail);
@@ -114,7 +114,7 @@ public class SharedSecretsController {
      */
     @DeleteMapping("/received/{secret-id}")
     public SuccessDto rejectSharedSecret(
-            @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId) {
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId) {
 
         sharedSecretsService.rejectSharedSecret(secretId, sessionAccount.getAccountId());
         return new SuccessDto(true);

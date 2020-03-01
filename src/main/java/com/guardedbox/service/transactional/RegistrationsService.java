@@ -3,6 +3,7 @@ package com.guardedbox.service.transactional;
 import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -128,7 +129,7 @@ public class RegistrationsService {
      * @param registrationId ID of the Registration to be deleted.
      */
     public void deleteRegistration(
-            Long registrationId) {
+            UUID registrationId) {
 
         registrationEntitiesRepository.deleteById(registrationId);
 

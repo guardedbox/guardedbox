@@ -1,5 +1,7 @@
 package com.guardedbox.repository;
 
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,7 +15,7 @@ import com.guardedbox.entity.AccountFullEntity;
  *
  */
 public interface AccountFullEntitiesRepository
-        extends JpaRepository<AccountFullEntity, Long>,
+        extends JpaRepository<AccountFullEntity, UUID>,
         JpaSpecificationExecutor<AccountFullEntity> {
 
     /**

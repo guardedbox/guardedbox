@@ -2,9 +2,9 @@ package com.guardedbox.service.transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class GroupsService {
      * @return The List of GroupDtos corresponding to the introduced owner accountId.
      */
     public List<GroupDto> getGroupsByOwnerAccountId(
-            Long ownerAccountId) {
+            UUID ownerAccountId) {
 
         return groupsMapper.toDto(groupEntitiesRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
 
@@ -73,7 +73,7 @@ public class GroupsService {
      * @return The List of GroupDtos in which the introduced accountId is participant.
      */
     public List<GroupDto> getGroupsByInvitedAccountId(
-            Long accountId) {
+            UUID accountId) {
 
         List<GroupEntity> groupEntities = groupEntitiesRepository.findByParticipantsAccountAccountIdOrderByNameAsc(accountId);
         List<GroupDto> groupDtos = new ArrayList<>(groupEntities.size());
@@ -99,8 +99,8 @@ public class GroupsService {
      * @return The list of participants in the group. Checks that the account is the owner or a participant of the group.
      */
     public List<AccountWithEncryptionPublicKeyDto> getGroupParticipants(
-            Long ownerOrParticipantAccountId,
-            Long groupId) {
+            UUID ownerOrParticipantAccountId,
+            UUID groupId) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerOrParticipantAccountId, true);
 
@@ -119,8 +119,8 @@ public class GroupsService {
      * @return The list of secrets in the group. Checks that the account is the owner or a participant of the group.
      */
     public List<SecretDto> getGroupSecrets(
-            Long ownerOrParticipantAccountId,
-            Long groupId) {
+            UUID ownerOrParticipantAccountId,
+            UUID groupId) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerOrParticipantAccountId, true);
 
@@ -145,11 +145,11 @@ public class GroupsService {
      * @return GroupDto with the created Group data.
      */
     public GroupDto createGroup(
-            Long ownerAccountId,
-            @Valid CreateGroupDto createGroupDto) {
+            UUID ownerAccountId,
+            CreateGroupDto createGroupDto) {
 
         GroupEntity group = groupsMapper.fromDto(createGroupDto);
-        group.setOwnerAccount(new AccountWithEncryptionPublicKeyEntity(ownerAccountId));
+        group.setOwnerAccount(new AccountWithEncryptionPublicKeyEntity().setAccountId(ownerAccountId));
         return groupsMapper.toDto(groupEntitiesRepository.save(group));
 
     }
@@ -161,7 +161,7 @@ public class GroupsService {
      * @param addParticipantToGroupDto Object with the necessary data to add a participant to a group.
      */
     public void addParticipantToGroup(
-            Long ownerAccountId,
+            UUID ownerAccountId,
             AddParticipantToGroupDto addParticipantToGroupDto) {
 
         GroupEntity group = findAndCheckGroup(addParticipantToGroupDto.getGroupId(), ownerAccountId, false);
@@ -185,7 +185,7 @@ public class GroupsService {
      * @return SecretDto with the stored secret data.
      */
     public SecretDto addSecretToGroup(
-            Long ownerAccountId,
+            UUID ownerAccountId,
             AddSecretToGroupDto addSecretToGroupDto) {
 
         GroupEntity group = findAndCheckGroup(addSecretToGroupDto.getGroupId(), ownerAccountId, false);
@@ -212,8 +212,8 @@ public class GroupsService {
      * @return GroupDto with the deleted group data.
      */
     public GroupDto deleteGroup(
-            Long ownerAccountId,
-            Long groupId) {
+            UUID ownerAccountId,
+            UUID groupId) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
         groupEntitiesRepository.delete(group);
@@ -229,8 +229,8 @@ public class GroupsService {
      * @param email Email of the participant to be removed from the group.
      */
     public void removeParticipantFromGroup(
-            Long ownerAccountId,
-            Long groupId,
+            UUID ownerAccountId,
+            UUID groupId,
             String email) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
@@ -252,9 +252,9 @@ public class GroupsService {
      * @param groupSecretId GroupSecret.groupSecretId.
      */
     public void deleteSecretFromGroup(
-            Long ownerAccountId,
-            Long groupId,
-            Long groupSecretId) {
+            UUID ownerAccountId,
+            UUID groupId,
+            UUID groupSecretId) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
 
@@ -276,8 +276,8 @@ public class GroupsService {
      * @return The Group.
      */
     protected GroupEntity findAndCheckGroup(
-            Long groupId,
-            Long accountId,
+            UUID groupId,
+            UUID accountId,
             boolean participantAllowed) {
 
         GroupEntity group = groupEntitiesRepository.findById(groupId).orElse(null);

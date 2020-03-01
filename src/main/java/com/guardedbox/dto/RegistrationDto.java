@@ -2,6 +2,7 @@ package com.guardedbox.dto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,7 +25,7 @@ public class RegistrationDto
 
     /** Registration ID. */
     @JsonIgnore
-    private Long registrationId;
+    private UUID registrationId;
 
     /** Email. */
     private String email;

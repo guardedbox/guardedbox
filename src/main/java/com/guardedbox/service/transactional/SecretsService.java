@@ -3,6 +3,7 @@ package com.guardedbox.service.transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -49,7 +50,7 @@ public class SecretsService {
      * @return The List of SecretDtos corresponding to the introduced owner accountId.
      */
     public List<SecretDto> getSecretsByOwnerAccountId(
-            Long ownerAccountId) {
+            UUID ownerAccountId) {
 
         return secretsMapper.toDto(secretEntitiesRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
 
@@ -63,11 +64,11 @@ public class SecretsService {
      * @return SecretDto with the created Secret data.
      */
     public SecretDto createSecret(
-            Long ownerAccountId,
+            UUID ownerAccountId,
             CreateSecretDto createSecretDto) {
 
         SecretEntity secret = secretsMapper.fromDto(createSecretDto);
-        secret.setOwnerAccount(new AccountEntity(ownerAccountId));
+        secret.setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId));
         return secretsMapper.toDto(secretEntitiesRepository.save(secret));
 
     }
@@ -81,8 +82,8 @@ public class SecretsService {
      * @return SecretDto with the edited Secret data.
      */
     public SecretDto editSecret(
-            Long ownerAccountId,
-            Long secretId,
+            UUID ownerAccountId,
+            UUID secretId,
             EditSecretDto editSecretDto) {
 
         SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId)
@@ -118,8 +119,8 @@ public class SecretsService {
      * @return SecretDto with the deleted Secret data.
      */
     public SecretDto deleteSecret(
-            Long ownerAccountId,
-            Long secretId) {
+            UUID ownerAccountId,
+            UUID secretId) {
 
         SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId);
         secretEntitiesRepository.delete(secret);
@@ -135,8 +136,8 @@ public class SecretsService {
      * @return The Secret.
      */
     protected SecretEntity findAndCheckSecret(
-            Long secretId,
-            Long ownerAccountId) {
+            UUID secretId,
+            UUID ownerAccountId) {
 
         SecretEntity secret = secretEntitiesRepository.findById(secretId).orElse(null);
 
@@ -163,8 +164,8 @@ public class SecretsService {
      * @return The Secret.
      */
     protected SecretWithOwnerAccountEncryptionPublicKeyEntity findAndCheckSecretWithOwnerAccountEncryptionPublicKey(
-            Long secretId,
-            Long ownerAccountId) {
+            UUID secretId,
+            UUID ownerAccountId) {
 
         SecretWithOwnerAccountEncryptionPublicKeyEntity secret =
                 secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository.findById(secretId).orElse(null);

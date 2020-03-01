@@ -1,10 +1,10 @@
 package com.guardedbox.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -74,7 +74,7 @@ public class SecretsController {
      */
     @PostMapping("/{secret-id}")
     public SecretDto editSecret(
-            @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId,
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId,
             @RequestBody(required = true) @Valid EditSecretDto editSecretDto) {
 
         return secretsService.editSecret(sessionAccount.getAccountId(), secretId, editSecretDto);
@@ -89,7 +89,7 @@ public class SecretsController {
      */
     @DeleteMapping("/{secret-id}")
     public SecretDto deleteSecret(
-            @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId) {
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId) {
 
         return secretsService.deleteSecret(sessionAccount.getAccountId(), secretId);
 

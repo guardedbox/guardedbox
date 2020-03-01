@@ -10,20 +10,19 @@ import static com.guardedbox.constants.Constraints.SIGNING_PUBLIC_KEY_LENGTH;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
@@ -48,10 +47,9 @@ public class AccountFullEntity
 
     /** Account ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
     @Column(name = "account_id")
-    @Positive
-    private Long accountId;
+    private UUID accountId;
 
     /** Email. */
     @Column(name = "email")

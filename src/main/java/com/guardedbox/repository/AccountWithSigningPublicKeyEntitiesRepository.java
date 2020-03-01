@@ -1,5 +1,7 @@
 package com.guardedbox.repository;
 
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,7 +15,7 @@ import com.guardedbox.entity.AccountWithSigningPublicKeyEntity;
  *
  */
 public interface AccountWithSigningPublicKeyEntitiesRepository
-        extends JpaRepository<AccountWithSigningPublicKeyEntity, Long>,
+        extends JpaRepository<AccountWithSigningPublicKeyEntity, UUID>,
         JpaSpecificationExecutor<AccountWithSigningPublicKeyEntity> {
 
     /**

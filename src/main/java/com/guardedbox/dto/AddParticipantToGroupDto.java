@@ -7,6 +7,7 @@ import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
 import static com.guardedbox.constants.Constraints.ENCRYPTED_KEY_LENGTH;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -34,7 +35,7 @@ public class AddParticipantToGroupDto
 
     /** Group Id. */
     @JsonIgnore
-    private Long groupId;
+    private UUID groupId;
 
     /** Email. */
     @NotBlank

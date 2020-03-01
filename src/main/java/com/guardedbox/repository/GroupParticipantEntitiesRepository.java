@@ -1,5 +1,7 @@
 package com.guardedbox.repository;
 
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -12,7 +14,7 @@ import com.guardedbox.entity.GroupParticipantEntity;
  *
  */
 public interface GroupParticipantEntitiesRepository
-        extends JpaRepository<GroupParticipantEntity, Long>,
+        extends JpaRepository<GroupParticipantEntity, UUID>,
         JpaSpecificationExecutor<GroupParticipantEntity> {
 
 }

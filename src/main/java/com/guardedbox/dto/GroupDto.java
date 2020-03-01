@@ -1,6 +1,7 @@
 package com.guardedbox.dto;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +21,7 @@ public class GroupDto
     private static final long serialVersionUID = -3630417901231355279L;
 
     /** Group ID. */
-    private Long groupId;
+    private UUID groupId;
 
     /** Owner Account. */
     private AccountWithEncryptionPublicKeyDto ownerAccount;

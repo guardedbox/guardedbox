@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -55,9 +56,9 @@ public class SharedSecretsService {
      * @return The List of secrets shared with the introduced accountId, grouped by owner account.
      */
     public List<AccountWithSecretsDto> getSecretsSharedWithAccount(
-            Long receiverAccountId) {
+            UUID receiverAccountId) {
 
-        Map<Long, AccountWithSecretsDto> ownerAccountsWithSecrets = new LinkedHashMap<>();
+        Map<UUID, AccountWithSecretsDto> ownerAccountsWithSecrets = new LinkedHashMap<>();
         List<SharedSecretEntity> receivedSharedSecrets = sharedSecretEntitiesRepository
                 .findByReceiverAccountAccountIdOrderBySecretOwnerAccountEmailAscSecretNameAsc(receiverAccountId);
 
@@ -87,8 +88,8 @@ public class SharedSecretsService {
      * @return The List of accounts with which the introduced secretId is shared.
      */
     public List<AccountWithEncryptionPublicKeyDto> getSharedSecretReceiverAccounts(
-            Long ownerAccountId,
-            Long secretId) {
+            UUID ownerAccountId,
+            UUID secretId) {
 
         SecretEntity secret = secretsService.findAndCheckSecret(secretId, ownerAccountId);
         List<SharedSecretEntity> sharedSecrets = secret.getSharedSecrets();
@@ -109,8 +110,8 @@ public class SharedSecretsService {
      * @param shareSecretDto DTO with the secret to be shared data.
      */
     public void shareSecret(
-            Long ownerAccountId,
-            Long secretId,
+            UUID ownerAccountId,
+            UUID secretId,
             ShareSecretDto shareSecretDto) {
 
         SecretWithOwnerAccountEncryptionPublicKeyEntity secret =
@@ -150,8 +151,8 @@ public class SharedSecretsService {
      * @param receiverEmail Account.email of the account from which the secret will be unshared.
      */
     public void unshareSecret(
-            Long ownerAccountId,
-            Long secretId,
+            UUID ownerAccountId,
+            UUID secretId,
             String receiverEmail) {
 
         secretsService.findAndCheckSecret(secretId, ownerAccountId);
@@ -178,8 +179,8 @@ public class SharedSecretsService {
      * @param receiverAccountId Account.accountId of the account from which the secret will be unshared.
      */
     public void rejectSharedSecret(
-            Long secretId,
-            Long receiverAccountId) {
+            UUID secretId,
+            UUID receiverAccountId) {
 
         SharedSecretEntity sharedSecret =
                 sharedSecretEntitiesRepository.findBySecretSecretIdAndReceiverAccountAccountId(secretId, receiverAccountId);

@@ -1,6 +1,7 @@
 package com.guardedbox.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,7 +16,7 @@ import com.guardedbox.entity.SecretEntity;
  *
  */
 public interface SecretEntitiesRepository
-        extends JpaRepository<SecretEntity, Long>,
+        extends JpaRepository<SecretEntity, UUID>,
         JpaSpecificationExecutor<SecretEntity> {
 
     /**
@@ -23,6 +24,6 @@ public interface SecretEntitiesRepository
      * @return The List of SecretEntities corresponding to the introduced owner accountId, ordered by Secret.name.
      */
     List<SecretEntity> findByOwnerAccountAccountIdOrderByNameAsc(
-            Long ownerAccountId);
+            UUID ownerAccountId);
 
 }

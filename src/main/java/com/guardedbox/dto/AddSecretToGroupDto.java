@@ -5,6 +5,7 @@ import static com.guardedbox.constants.Constraints.SECRET_NAME_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.SECRET_VALUE_MAX_LENGTH;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -31,7 +32,7 @@ public class AddSecretToGroupDto
 
     /** Group Id. */
     @JsonIgnore
-    private Long groupId;
+    private UUID groupId;
 
     /** Name. */
     @NotBlank

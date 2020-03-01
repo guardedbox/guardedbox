@@ -6,13 +6,13 @@ import static com.guardedbox.constants.Constraints.SECRET_VALUE_MAX_LENGTH;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,7 +22,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
@@ -46,10 +45,9 @@ public class SecretEntity
 
     /** Secret ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
     @Column(name = "secret_id")
-    @Positive
-    private Long secretId;
+    private UUID secretId;
 
     /** Owner Account. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

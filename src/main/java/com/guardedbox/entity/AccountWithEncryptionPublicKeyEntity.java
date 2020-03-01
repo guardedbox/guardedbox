@@ -7,21 +7,19 @@ import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
 import static com.guardedbox.constants.Constraints.ENCRYPTION_PUBLIC_KEY_LENGTH;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -35,7 +33,6 @@ import lombok.Setter;
 @Table(name = "account")
 @Getter
 @Setter
-@NoArgsConstructor
 public class AccountWithEncryptionPublicKeyEntity
         implements Serializable {
 
@@ -44,10 +41,9 @@ public class AccountWithEncryptionPublicKeyEntity
 
     /** Account ID. */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
     @Column(name = "account_id")
-    @Positive
-    private Long accountId;
+    private UUID accountId;
 
     /** Email. */
     @Column(name = "email")
@@ -62,15 +58,5 @@ public class AccountWithEncryptionPublicKeyEntity
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = ENCRYPTION_PUBLIC_KEY_LENGTH, max = ENCRYPTION_PUBLIC_KEY_LENGTH)
     private String encryptionPublicKey;
-
-    /**
-     * Constructor with accountId.
-     *
-     * @param accountId Account ID.
-     */
-    public AccountWithEncryptionPublicKeyEntity(
-            Long accountId) {
-        this.accountId = accountId;
-    }
 
 }

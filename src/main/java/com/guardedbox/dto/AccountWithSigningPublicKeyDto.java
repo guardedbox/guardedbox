@@ -1,6 +1,7 @@
 package com.guardedbox.dto;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,7 +25,7 @@ public class AccountWithSigningPublicKeyDto
 
     /** Account ID. */
     @JsonIgnore
-    private Long accountId;
+    private UUID accountId;
 
     /** Email. */
     private String email;

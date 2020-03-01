@@ -2,6 +2,7 @@ package com.guardedbox.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,7 +25,7 @@ public class AccountWithSecretsDto
 
     /** Account ID. */
     @JsonIgnore
-    private Long accountId;
+    private UUID accountId;
 
     /** Email. */
     private String email;

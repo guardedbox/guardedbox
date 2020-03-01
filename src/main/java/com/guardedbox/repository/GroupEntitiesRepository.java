@@ -1,6 +1,7 @@
 package com.guardedbox.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -14,7 +15,7 @@ import com.guardedbox.entity.GroupEntity;
  *
  */
 public interface GroupEntitiesRepository
-        extends JpaRepository<GroupEntity, Long>,
+        extends JpaRepository<GroupEntity, UUID>,
         JpaSpecificationExecutor<GroupEntity> {
 
     /**
@@ -22,13 +23,13 @@ public interface GroupEntitiesRepository
      * @return The List of GroupEntities corresponding to the introduced owner accountId, ordered by Group.name.
      */
     List<GroupEntity> findByOwnerAccountAccountIdOrderByNameAsc(
-            Long ownerAccountId);
+            UUID ownerAccountId);
 
     /**
      * @param accountId Account.accountId.
      * @return The List of GroupEntities in which the introduced accountId is participant, ordered by Group.name.
      */
     List<GroupEntity> findByParticipantsAccountAccountIdOrderByNameAsc(
-            Long accountId);
+            UUID accountId);
 
 }

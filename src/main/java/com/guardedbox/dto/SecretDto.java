@@ -1,6 +1,7 @@
 package com.guardedbox.dto;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +21,7 @@ public class SecretDto
     private static final long serialVersionUID = -3608188899441682632L;
 
     /** Secret ID. */
-    private Long secretId;
+    private UUID secretId;
 
     /** Name. */
     private String name;

@@ -1,5 +1,7 @@
 package com.guardedbox.service;
 
+import java.util.UUID;
+
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +41,7 @@ public class SessionAccountService {
     /**
      * @return The current session account ID.
      */
-    public Long getAccountId() {
+    public UUID getAccountId() {
 
         AccountDto sessionAccount = getAccount();
 

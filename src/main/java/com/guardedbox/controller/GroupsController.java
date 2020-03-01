@@ -5,12 +5,12 @@ import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -83,7 +83,7 @@ public class GroupsController {
      */
     @GetMapping("/{group-id}/participants")
     public List<AccountWithEncryptionPublicKeyDto> getGroupParticipants(
-            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId) {
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
 
         return groupsService.getGroupParticipants(sessionAccount.getAccountId(), groupId);
 
@@ -95,7 +95,7 @@ public class GroupsController {
      */
     @GetMapping("/{group-id}/secrets")
     public List<SecretDto> getGroupSecrets(
-            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId) {
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
 
         return groupsService.getGroupSecrets(sessionAccount.getAccountId(), groupId);
 
@@ -126,7 +126,7 @@ public class GroupsController {
      */
     @PostMapping("/{group-id}/participants")
     public SuccessDto addParticipantToGroup(
-            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId,
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId,
             @RequestBody(required = true) AddParticipantToGroupDto addParticipantToGroupDto) {
 
         addParticipantToGroupDto.setGroupId(groupId);
@@ -144,7 +144,7 @@ public class GroupsController {
      */
     @PostMapping("/{group-id}/secrets")
     public SecretDto addSecretToGroup(
-            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId,
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId,
             @RequestBody(required = true) AddSecretToGroupDto addSecretToGroupDto) {
 
         addSecretToGroupDto.setGroupId(groupId);
@@ -160,7 +160,7 @@ public class GroupsController {
      */
     @DeleteMapping("/{group-id}")
     public SuccessDto deleteGroup(
-            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId) {
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
 
         groupsService.deleteGroup(sessionAccount.getAccountId(), groupId);
         return new SuccessDto(true);
@@ -176,7 +176,7 @@ public class GroupsController {
      */
     @DeleteMapping("/{group-id}/participants")
     public SuccessDto removeParticipantFromGroup(
-            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId,
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId,
             @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
 
         groupsService.removeParticipantFromGroup(sessionAccount.getAccountId(), groupId, email);
@@ -193,8 +193,8 @@ public class GroupsController {
      */
     @DeleteMapping("/{group-id}/secrets/{secret-id}")
     public SuccessDto deleteSecretFromGroup(
-            @PathVariable(name = "group-id", required = true) @NotNull @Positive Long groupId,
-            @PathVariable(name = "secret-id", required = true) @NotNull @Positive Long secretId) {
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId,
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId) {
 
         groupsService.deleteSecretFromGroup(sessionAccount.getAccountId(), groupId, secretId);
         return new SuccessDto(true);

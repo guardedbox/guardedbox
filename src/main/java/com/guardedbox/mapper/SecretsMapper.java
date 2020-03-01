@@ -28,16 +28,10 @@ public class SecretsMapper {
     public SecretDto toDto(
             SecretEntity secretEntity) {
 
-        if (secretEntity == null)
-            return null;
-
-        SecretDto secretDto = new SecretDto();
-
-        secretDto.setSecretId(secretEntity.getSecretId());
-        secretDto.setName(secretEntity.getName());
-        secretDto.setValue(secretEntity.getValue());
-
-        return secretDto;
+        return secretEntity == null ? null : new SecretDto()
+                .setSecretId(secretEntity.getSecretId())
+                .setName(secretEntity.getName())
+                .setValue(secretEntity.getValue());
 
     }
 
@@ -50,16 +44,10 @@ public class SecretsMapper {
     public SecretDto toDto(
             SecretWithOwnerAccountEncryptionPublicKeyEntity secretEntity) {
 
-        if (secretEntity == null)
-            return null;
-
-        SecretDto secretDto = new SecretDto();
-
-        secretDto.setSecretId(secretEntity.getSecretId());
-        secretDto.setName(secretEntity.getName());
-        secretDto.setValue(secretEntity.getValue());
-
-        return secretDto;
+        return secretEntity == null ? null : new SecretDto()
+                .setSecretId(secretEntity.getSecretId())
+                .setName(secretEntity.getName())
+                .setValue(secretEntity.getValue());
 
     }
 
@@ -93,15 +81,9 @@ public class SecretsMapper {
     public SecretEntity fromDto(
             CreateSecretDto secretDto) {
 
-        if (secretDto == null)
-            return null;
-
-        SecretEntity secretEntity = new SecretEntity();
-
-        secretEntity.setName(secretDto.getName());
-        secretEntity.setValue(secretDto.getValue());
-
-        return secretEntity;
+        return secretDto == null ? null : new SecretEntity()
+                .setName(secretDto.getName())
+                .setValue(secretDto.getValue());
 
     }
 

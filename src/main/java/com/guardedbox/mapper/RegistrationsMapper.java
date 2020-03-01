@@ -23,17 +23,11 @@ public class RegistrationsMapper {
     public RegistrationDto toDto(
             RegistrationEntity registrationEntity) {
 
-        if (registrationEntity == null)
-            return null;
-
-        RegistrationDto registrationDto = new RegistrationDto();
-
-        registrationDto.setRegistrationId(registrationEntity.getRegistrationId());
-        registrationDto.setEmail(registrationEntity.getEmail());
-        registrationDto.setToken(registrationEntity.getToken());
-        registrationDto.setExpeditionTime(registrationEntity.getExpeditionTime());
-
-        return registrationDto;
+        return registrationEntity == null ? null : new RegistrationDto()
+                .setRegistrationId(registrationEntity.getRegistrationId())
+                .setEmail(registrationEntity.getEmail())
+                .setToken(registrationEntity.getToken())
+                .setExpeditionTime(registrationEntity.getExpeditionTime());
 
     }
 
@@ -46,17 +40,11 @@ public class RegistrationsMapper {
     public RegistrationEntity fromDto(
             RegistrationDto registrationDto) {
 
-        if (registrationDto == null)
-            return null;
-
-        RegistrationEntity registrationEntity = new RegistrationEntity();
-
-        registrationEntity.setRegistrationId(registrationDto.getRegistrationId());
-        registrationEntity.setEmail(registrationDto.getEmail());
-        registrationEntity.setToken(registrationDto.getToken());
-        registrationEntity.setExpeditionTime(registrationDto.getExpeditionTime());
-
-        return registrationEntity;
+        return registrationDto == null ? null : new RegistrationEntity()
+                .setRegistrationId(registrationDto.getRegistrationId())
+                .setEmail(registrationDto.getEmail())
+                .setToken(registrationDto.getToken())
+                .setExpeditionTime(registrationDto.getExpeditionTime());
 
     }
 

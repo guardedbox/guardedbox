@@ -126,10 +126,10 @@ public class GroupsService {
 
         List<SecretDto> secrets = new ArrayList<>(group.getSecrets().size());
         for (GroupSecretEntity groupSecret : group.getSecrets()) {
-            SecretDto secret = new SecretDto();
-            secret.setSecretId(groupSecret.getGroupSecretId());
-            secret.setName(groupSecret.getName());
-            secret.setValue(groupSecret.getValue());
+            SecretDto secret = new SecretDto()
+                    .setSecretId(groupSecret.getGroupSecretId())
+                    .setName(groupSecret.getName())
+                    .setValue(groupSecret.getValue());
             secrets.add(secret);
         }
 
@@ -169,10 +169,10 @@ public class GroupsService {
         AccountWithEncryptionPublicKeyEntity account =
                 accountsService.findAndCheckAccountWithEncryptionPublicKeyByEmail(addParticipantToGroupDto.getEmail());
 
-        GroupParticipantEntity groupParticipant = new GroupParticipantEntity();
-        groupParticipant.setGroup(group);
-        groupParticipant.setAccount(account);
-        groupParticipant.setEncryptedGroupKey(addParticipantToGroupDto.getEncryptedGroupKey());
+        GroupParticipantEntity groupParticipant = new GroupParticipantEntity()
+                .setGroup(group)
+                .setAccount(account)
+                .setEncryptedGroupKey(addParticipantToGroupDto.getEncryptedGroupKey());
         groupParticipantEntitiesRepository.save(groupParticipant);
 
     }
@@ -190,16 +190,16 @@ public class GroupsService {
 
         GroupEntity group = findAndCheckGroup(addSecretToGroupDto.getGroupId(), ownerAccountId, false);
 
-        GroupSecretEntity groupSecret = new GroupSecretEntity();
-        groupSecret.setGroup(group);
-        groupSecret.setName(addSecretToGroupDto.getName());
-        groupSecret.setValue(addSecretToGroupDto.getValue());
+        GroupSecretEntity groupSecret = new GroupSecretEntity()
+                .setGroup(group)
+                .setName(addSecretToGroupDto.getName())
+                .setValue(addSecretToGroupDto.getValue());
         groupSecret = groupSecretEntitiesRepository.save(groupSecret);
 
-        SecretDto secret = new SecretDto();
-        secret.setSecretId(groupSecret.getGroupSecretId());
-        secret.setName(groupSecret.getName());
-        secret.setValue(groupSecret.getValue());
+        SecretDto secret = new SecretDto()
+                .setSecretId(groupSecret.getGroupSecretId())
+                .setName(groupSecret.getName())
+                .setValue(groupSecret.getValue());
         return secret;
 
     }

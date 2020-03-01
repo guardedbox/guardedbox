@@ -62,12 +62,10 @@ public class OtpService {
                 otpEmailSubject,
                 String.format(otpEmailBody, otp));
 
-        OtpDto otpDto = new OtpDto();
-        otpDto.setEmail(email);
-        otpDto.setOtp(passwordEncoder.encode(otp));
-        otpDto.setExpirationTime(currentTime + otpTtl);
-
-        return otpDto;
+        return new OtpDto()
+                .setEmail(email)
+                .setOtp(passwordEncoder.encode(otp))
+                .setExpirationTime(currentTime + otpTtl);
 
     }
 

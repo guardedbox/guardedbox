@@ -33,17 +33,11 @@ public class GroupsMapper {
     public GroupDto toDto(
             GroupEntity groupEntity) {
 
-        if (groupEntity == null)
-            return null;
-
-        GroupDto groupDto = new GroupDto();
-
-        groupDto.setGroupId(groupEntity.getGroupId());
-        groupDto.setName(groupEntity.getName());
-        groupDto.setOwnerAccount(accountsMapper.toDtoWithEncryptionPublicKey(groupEntity.getOwnerAccount()));
-        groupDto.setEncryptedGroupKey(groupEntity.getEncryptedGroupKey());
-
-        return groupDto;
+        return groupEntity == null ? null : new GroupDto()
+                .setGroupId(groupEntity.getGroupId())
+                .setName(groupEntity.getName())
+                .setOwnerAccount(accountsMapper.toDtoWithEncryptionPublicKey(groupEntity.getOwnerAccount()))
+                .setEncryptedGroupKey(groupEntity.getEncryptedGroupKey());
 
     }
 
@@ -77,15 +71,9 @@ public class GroupsMapper {
     public GroupEntity fromDto(
             CreateGroupDto groupDto) {
 
-        if (groupDto == null)
-            return null;
-
-        GroupEntity groupEntity = new GroupEntity();
-
-        groupEntity.setName(groupDto.getName());
-        groupEntity.setEncryptedGroupKey(groupDto.getEncryptedGroupKey());
-
-        return groupEntity;
+        return groupDto == null ? null : new GroupEntity()
+                .setName(groupDto.getName())
+                .setEncryptedGroupKey(groupDto.getEncryptedGroupKey());
 
     }
 

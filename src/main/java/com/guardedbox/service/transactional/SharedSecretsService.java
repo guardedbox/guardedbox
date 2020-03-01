@@ -70,8 +70,8 @@ public class SharedSecretsService {
                 ownerAccountsWithSecrets.put(ownerAccount.getAccountId(), ownerAccountWithSecrets);
             }
 
-            SecretDto receivedSecret = secretsMapper.toDto(receivedSharedSecret.getSecret());
-            receivedSecret.setValue(receivedSharedSecret.getValue());
+            SecretDto receivedSecret = secretsMapper.toDto(receivedSharedSecret.getSecret())
+                    .setValue(receivedSharedSecret.getValue());
 
             ownerAccountWithSecrets.getSecrets().add(receivedSecret);
 
@@ -133,10 +133,10 @@ public class SharedSecretsService {
                             .addAdditionalData("email", shareSecretDto.getReceiverEmail());
         }
 
-        SharedSecretEntity sharedSecret = new SharedSecretEntity();
-        sharedSecret.setSecret(secret);
-        sharedSecret.setReceiverAccount(receiverAccount);
-        sharedSecret.setValue(shareSecretDto.getValue());
+        SharedSecretEntity sharedSecret = new SharedSecretEntity()
+                .setSecret(secret)
+                .setReceiverAccount(receiverAccount)
+                .setValue(shareSecretDto.getValue());
 
         sharedSecretEntitiesRepository.save(sharedSecret);
 

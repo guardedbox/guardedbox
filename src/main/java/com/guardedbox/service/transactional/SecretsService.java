@@ -85,10 +85,9 @@ public class SecretsService {
             Long secretId,
             EditSecretDto editSecretDto) {
 
-        SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId);
-
-        secret.setName(editSecretDto.getName());
-        secret.setValue(editSecretDto.getValue());
+        SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId)
+                .setName(editSecretDto.getName())
+                .setValue(editSecretDto.getValue());
 
         if (editSecretDto.getSharings().size() != secret.getSharedSecrets().size()) {
             throw new ServiceException(String.format(

@@ -39,11 +39,9 @@ public class ChallengeService {
 
         long currentTime = System.currentTimeMillis();
 
-        ChallengeDto challengeDto = new ChallengeDto();
-        challengeDto.setChallenge(randomService.randomBytesBase64(CHALLENGE_LENGTH));
-        challengeDto.setExpirationTime(currentTime + challengeTtl);
-
-        return challengeDto;
+        return new ChallengeDto()
+                .setChallenge(randomService.randomBytesBase64(CHALLENGE_LENGTH))
+                .setExpirationTime(currentTime + challengeTtl);
 
     }
 

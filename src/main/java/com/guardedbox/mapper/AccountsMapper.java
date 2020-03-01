@@ -34,15 +34,9 @@ public class AccountsMapper {
     public AccountDto toDto(
             AccountEntity accountEntity) {
 
-        if (accountEntity == null)
-            return null;
-
-        AccountDto accountDto = new AccountDto();
-
-        accountDto.setAccountId(accountEntity.getAccountId());
-        accountDto.setEmail(accountEntity.getEmail());
-
-        return accountDto;
+        return accountEntity == null ? null : new AccountDto()
+                .setAccountId(accountEntity.getAccountId())
+                .setEmail(accountEntity.getEmail());
 
     }
 
@@ -55,15 +49,9 @@ public class AccountsMapper {
     public AccountDto toDto(
             AccountFullEntity accountEntity) {
 
-        if (accountEntity == null)
-            return null;
-
-        AccountDto accountDto = new AccountDto();
-
-        accountDto.setAccountId(accountEntity.getAccountId());
-        accountDto.setEmail(accountEntity.getEmail());
-
-        return accountDto;
+        return accountEntity == null ? null : new AccountDto()
+                .setAccountId(accountEntity.getAccountId())
+                .setEmail(accountEntity.getEmail());
 
     }
 
@@ -76,16 +64,10 @@ public class AccountsMapper {
     public AccountWithSaltDto toDtoWithSalt(
             AccountWithSaltEntity accountEntity) {
 
-        if (accountEntity == null)
-            return null;
-
-        AccountWithSaltDto accountDto = new AccountWithSaltDto();
-
-        accountDto.setAccountId(accountEntity.getAccountId());
-        accountDto.setEmail(accountEntity.getEmail());
-        accountDto.setSalt(accountEntity.getSalt());
-
-        return accountDto;
+        return accountEntity == null ? null : new AccountWithSaltDto()
+                .setAccountId(accountEntity.getAccountId())
+                .setEmail(accountEntity.getEmail())
+                .setSalt(accountEntity.getSalt());
 
     }
 
@@ -98,16 +80,10 @@ public class AccountsMapper {
     public AccountWithEncryptionPublicKeyDto toDtoWithEncryptionPublicKey(
             AccountWithEncryptionPublicKeyEntity accountEntity) {
 
-        if (accountEntity == null)
-            return null;
-
-        AccountWithEncryptionPublicKeyDto accountDto = new AccountWithEncryptionPublicKeyDto();
-
-        accountDto.setAccountId(accountEntity.getAccountId());
-        accountDto.setEmail(accountEntity.getEmail());
-        accountDto.setEncryptionPublicKey(accountEntity.getEncryptionPublicKey());
-
-        return accountDto;
+        return accountEntity == null ? null : new AccountWithEncryptionPublicKeyDto()
+                .setAccountId(accountEntity.getAccountId())
+                .setEmail(accountEntity.getEmail())
+                .setEncryptionPublicKey(accountEntity.getEncryptionPublicKey());
 
     }
 
@@ -120,16 +96,10 @@ public class AccountsMapper {
     public AccountWithSigningPublicKeyDto toDtoWithSigningPublicKey(
             AccountWithSigningPublicKeyEntity accountEntity) {
 
-        if (accountEntity == null)
-            return null;
-
-        AccountWithSigningPublicKeyDto accountDto = new AccountWithSigningPublicKeyDto();
-
-        accountDto.setAccountId(accountEntity.getAccountId());
-        accountDto.setEmail(accountEntity.getEmail());
-        accountDto.setSigningPublicKey(accountEntity.getSigningPublicKey());
-
-        return accountDto;
+        return accountEntity == null ? null : new AccountWithSigningPublicKeyDto()
+                .setAccountId(accountEntity.getAccountId())
+                .setEmail(accountEntity.getEmail())
+                .setSigningPublicKey(accountEntity.getSigningPublicKey());
 
     }
 
@@ -142,17 +112,11 @@ public class AccountsMapper {
     public AccountWithSecretsDto toDtoWithSecrets(
             AccountWithEncryptionPublicKeyEntity accountEntity) {
 
-        if (accountEntity == null)
-            return null;
-
-        AccountWithSecretsDto accountDto = new AccountWithSecretsDto();
-
-        accountDto.setAccountId(accountEntity.getAccountId());
-        accountDto.setEmail(accountEntity.getEmail());
-        accountDto.setEncryptionPublicKey(accountEntity.getEncryptionPublicKey());
-        accountDto.setSecrets(new LinkedList<>());
-
-        return accountDto;
+        return accountEntity == null ? null : new AccountWithSecretsDto()
+                .setAccountId(accountEntity.getAccountId())
+                .setEmail(accountEntity.getEmail())
+                .setEncryptionPublicKey(accountEntity.getEncryptionPublicKey())
+                .setSecrets(new LinkedList<>());
 
     }
 
@@ -165,17 +129,11 @@ public class AccountsMapper {
     public AccountFullEntity fromDto(
             CreateAccountDto accountDto) {
 
-        if (accountDto == null)
-            return null;
-
-        AccountFullEntity accountEntity = new AccountFullEntity();
-
-        accountEntity.setEmail(accountDto.getEmail());
-        accountEntity.setSalt(accountDto.getSalt());
-        accountEntity.setEncryptionPublicKey(accountDto.getEncryptionPublicKey());
-        accountEntity.setSigningPublicKey(accountDto.getSigningPublicKey());
-
-        return accountEntity;
+        return accountDto == null ? null : new AccountFullEntity()
+                .setEmail(accountDto.getEmail())
+                .setSalt(accountDto.getSalt())
+                .setEncryptionPublicKey(accountDto.getEncryptionPublicKey())
+                .setSigningPublicKey(accountDto.getSigningPublicKey());
 
     }
 

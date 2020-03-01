@@ -226,16 +226,12 @@ public class SessionController {
             request.changeSessionId();
 
             // Successful result.
-            SessionInfoDto sessionInfoDto = getSessionInfo();
-            sessionInfoDto.setSuccess(true);
-            return sessionInfoDto;
+            return getSessionInfo().setSuccess(true);
 
         } catch (Exception e) {
 
             // Unsuccessful result.
-            SessionInfoDto sessionInfoDto = new SessionInfoDto();
-            sessionInfoDto.setSuccess(false);
-            return sessionInfoDto;
+            return new SessionInfoDto().setSuccess(false);
 
         } finally {
 

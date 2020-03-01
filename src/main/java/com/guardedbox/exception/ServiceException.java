@@ -3,12 +3,19 @@ package com.guardedbox.exception;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * Runtime exception thrown by services.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class ServiceException
         extends RuntimeException {
 
@@ -23,13 +30,6 @@ public class ServiceException
 
     /** Response As Success. */
     private Boolean responseAsSuccess;
-
-    /**
-     * Default constructor.
-     */
-    public ServiceException() {
-        super();
-    }
 
     /**
      * Constructor with message.
@@ -64,40 +64,6 @@ public class ServiceException
     }
 
     /**
-     * @return The errorCode.
-     */
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    /**
-     * @param errorCode The errorCode to set.
-     * @return This ServiceException.
-     */
-    public ServiceException setErrorCode(
-            String errorCode) {
-        this.errorCode = errorCode;
-        return this;
-    }
-
-    /**
-     * @return The additionalData.
-     */
-    public Map<String, Object> getAdditionalData() {
-        return additionalData;
-    }
-
-    /**
-     * @param additionalData The additionalData to set.
-     * @return This ServiceException.
-     */
-    public ServiceException setAdditionalData(
-            Map<String, Object> additionalData) {
-        this.additionalData = additionalData;
-        return this;
-    }
-
-    /**
      * Adds a name-value pair to the additional data.
      *
      * @param name The name.
@@ -124,23 +90,6 @@ public class ServiceException
         if (this.additionalData == null)
             this.additionalData = new LinkedHashMap<String, Object>();
         this.additionalData.putAll(additionalData);
-        return this;
-    }
-
-    /**
-     * @return The responseAsSuccess.
-     */
-    public Boolean getResponseAsSuccess() {
-        return responseAsSuccess;
-    }
-
-    /**
-     * @param responseAsSuccess the responseAsSuccess to set.
-     * @return This ServiceException.
-     */
-    public ServiceException setResponseAsSuccess(
-            Boolean responseAsSuccess) {
-        this.responseAsSuccess = responseAsSuccess;
         return this;
     }
 

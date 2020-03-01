@@ -109,10 +109,10 @@ public class RegistrationsService {
             registrationMessageService.sendRegistrationMessage(createRegistrationDto.getEmail(), token);
 
             // Store the registration in the database, overwriting the previous one in case it exists.
-            RegistrationEntity registration = prevRegistration == null ? new RegistrationEntity() : prevRegistration;
-            registration.setEmail(createRegistrationDto.getEmail());
-            registration.setToken(token);
-            registration.setExpeditionTime(new Timestamp(currentTime));
+            RegistrationEntity registration = (prevRegistration == null ? new RegistrationEntity() : prevRegistration)
+                    .setEmail(createRegistrationDto.getEmail())
+                    .setToken(token)
+                    .setExpeditionTime(new Timestamp(currentTime));
             registrationEntitiesRepository.save(registration);
 
             // Return the registration.

@@ -51,20 +51,18 @@ public class ControllerAdviceConfig {
                 request.getRequestURI()),
                 e);
 
-        ServiceExceptionDto serviceExceptionDto = new ServiceExceptionDto();
-
         if (e.getResponseAsSuccess() == null) {
 
-            serviceExceptionDto.setErrorCode(e.getErrorCode());
-            serviceExceptionDto.setAdditionalData(e.getAdditionalData());
-
-            return new ResponseEntity<>(serviceExceptionDto, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ServiceExceptionDto()
+                    .setErrorCode(e.getErrorCode())
+                    .setAdditionalData(e.getAdditionalData()),
+                    HttpStatus.BAD_REQUEST);
 
         } else {
 
-            serviceExceptionDto.setSuccess(e.getResponseAsSuccess());
-
-            return new ResponseEntity<>(serviceExceptionDto, HttpStatus.OK);
+            return new ResponseEntity<>(new ServiceExceptionDto()
+                    .setSuccess(e.getResponseAsSuccess()),
+                    HttpStatus.OK);
 
         }
 

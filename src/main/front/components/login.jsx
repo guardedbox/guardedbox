@@ -5,8 +5,7 @@ import logo from 'images/logo.png';
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
-import { notLoading } from 'services/loading.jsx';
-import { updateSessionInfo } from 'services/session.jsx';
+import { setSessionInfo } from 'services/session.jsx';
 import { changeLocation } from 'services/location.jsx';
 import { modalMessage } from 'services/modal.jsx';
 import { generateSessionKeys, sign } from 'services/crypto/crypto.jsx';
@@ -131,33 +130,23 @@ class Login extends Component {
                 body: {
                     otp: code
                 },
-                loadingChain: true,
                 callback: (response) => {
 
                     if (response.success) {
 
-                        updateSessionInfo({
-                            loading: true,
-                            loadingChained: true,
-                            callback: () => {
-                                changeLocation(views.defaultPath);
-                            }
-                        });
+                        setSessionInfo(response);
+                        changeLocation(views.defaultPath);
 
                     } else {
 
-                        notLoading(() => {
+                        this.txtCode.current.value = '';
 
-                            this.txtCode.current.value = '';
-
-                            this.setState({
-                                getCodeEnabled: true,
-                                loginEnabled: false,
-                                loginFailedPopoverActive: true
-                            }, () => {
-                                this.txtEmail.current.focus();
-                            });
-
+                        this.setState({
+                            getCodeEnabled: true,
+                            loginEnabled: false,
+                            loginFailedPopoverActive: true
+                        }, () => {
+                            this.txtEmail.current.focus();
                         });
 
                     }

@@ -32,7 +32,7 @@ export function updateSessionInfo({
         callback: (response) => {
 
             var previousSession = currentSession || {};
-            currentSession = response;
+            setSessionInfo(response);
 
             if (!isLocationPublic(currentLocationPath())
                 && (!isAuthenticated() || (currentSession.email !== previousSession.email))) {
@@ -44,6 +44,28 @@ export function updateSessionInfo({
 
         }
     });
+
+}
+
+/**
+ * Sets the current session info.
+ * 
+ * @param {object} sessionInfo The session info to set.
+ */
+export function setSessionInfo(sessionInfo) {
+
+    if (sessionInfo) {
+
+        currentSession = {
+            authenticated: sessionInfo.authenticated,
+            email: sessionInfo.email
+        };
+
+    } else {
+
+        currentSession = null;
+
+    }
 
 }
 

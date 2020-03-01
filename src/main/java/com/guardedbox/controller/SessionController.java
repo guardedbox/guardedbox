@@ -97,7 +97,9 @@ public class SessionController {
         SessionInfoDto sessionInfoDto = new SessionInfoDto();
         AccountDto sessionAccountDto = sessionAccount.getAccount();
 
-        if (sessionAccountDto != null) {
+        if (sessionAccountDto == null) {
+            sessionInfoDto.setAuthenticated(false);
+        } else {
             sessionInfoDto.setAuthenticated(true);
             sessionInfoDto.setEmail(sessionAccountDto.getEmail());
         }
@@ -191,7 +193,7 @@ public class SessionController {
      * @return Object indicating if the login was successful.
      */
     @PostMapping("/login")
-    public SuccessDto login(
+    public SessionInfoDto login(
             @RequestBody(required = true) @Valid OtpResponseDto otpResponseDto) {
 
         long startTime = System.currentTimeMillis();
@@ -224,11 +226,16 @@ public class SessionController {
             request.changeSessionId();
 
             // Successful result.
-            return new SuccessDto(true);
+            SessionInfoDto sessionInfoDto = getSessionInfo();
+            sessionInfoDto.setSuccess(true);
+            return sessionInfoDto;
 
         } catch (Exception e) {
 
-            return new SuccessDto(false);
+            // Unsuccessful result.
+            SessionInfoDto sessionInfoDto = new SessionInfoDto();
+            sessionInfoDto.setSuccess(false);
+            return sessionInfoDto;
 
         } finally {
 

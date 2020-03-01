@@ -2,6 +2,7 @@ package com.guardedbox.config;
 
 import static com.guardedbox.constants.SecurityParameters.BCRYPT_ROUNDS;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,6 +15,8 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Security Configuration.
  *
@@ -21,8 +24,17 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
  *
  */
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig
         extends WebSecurityConfigurerAdapter {
+
+    /** Property: server.servlet.session.cookie.value-base64. */
+    @Value("${server.servlet.session.cookie.value-base64:true}")
+    private final boolean cookieValueBase64;
+
+    /** Property: server.servlet.session.cookie.same-site. */
+    @Value("${server.servlet.session.cookie.same-site:Lax}")
+    private final String cookieSameSite;
 
     /**
      * Bean: PasswordEncoder.
@@ -42,7 +54,8 @@ public class SecurityConfig
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
-        cookieSerializer.setSameSite("strict");
+        cookieSerializer.setUseBase64Encoding(cookieValueBase64);
+        cookieSerializer.setSameSite(cookieSameSite);
         return cookieSerializer;
     }
 

@@ -37,6 +37,9 @@ public class SecurityConfig
     @Value("${server.servlet.session.cookie.same-site:Lax}")
     private final String cookieSameSite;
 
+    /** CustomHeaderWriter. */
+    private final CustomHeaderWriter customHeaderWriter;
+
     /**
      * Bean: PasswordEncoder.
      *
@@ -107,8 +110,11 @@ public class SecurityConfig
                 // Headers.
                 .and().headers()
                 .cacheControl().disable()
+                .frameOptions().disable()
+                .xssProtection().disable()
+                .contentTypeOptions().disable()
                 .httpStrictTransportSecurity().disable()
-                .addHeaderWriter(new CustomHeaderWriter())
+                .addHeaderWriter(customHeaderWriter)
 
                 // CSRF.
                 .and().csrf().disable(); // CSRF token is not used. Cookie samesite attribute is used to prevent CSRF attacks instead.

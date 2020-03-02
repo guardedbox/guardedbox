@@ -31,6 +31,56 @@
 			"description": "External (public IP) https port, typically 443."
 		},
 		{
+			"name": "server.strict-transport-security-header",
+			"type": "java.lang.String",
+			"description": "Value for the Strict-Transport-Security header."
+		},
+		{
+			"name": "server.expect-ct-header",
+			"type": "java.lang.String",
+			"description": "Value for the Expect-CT header."
+		},
+		{
+			"name": "server.content-security-policy-header",
+			"type": "java.lang.String",
+			"description": "Value for the Content-Security-Policy header."
+		},
+		{
+			"name": "server.cache-control-cacheable-header",
+			"type": "java.lang.String",
+			"description": "Value for the Cache-Control header for cacheable responses."
+		},
+		{
+			"name": "server.cache-control-non-cacheable-header",
+			"type": "java.lang.String",
+			"description": "Value for the Cache-Control header for non-cacheable responses."
+		},
+		{
+			"name": "server.frame-options-header",
+			"type": "java.lang.String",
+			"description": "Value for the X-Frame-Options header."
+		},
+		{
+			"name": "server.xss-protection-header",
+			"type": "java.lang.String",
+			"description": "Value for the X-XSS-Protection header."
+		},
+		{
+			"name": "server.content-type-options-header",
+			"type": "java.lang.String",
+			"description": "Value for the X-Content-Type-Options header."
+		},
+		{
+			"name": "server.referrer-policy-header",
+			"type": "java.lang.String",
+			"description": "Value for the Referrer-Policy header."
+		},
+		{
+			"name": "server.feature-policy-header",
+			"type": "java.lang.String",
+			"description": "Value for the Feature-Policy header."
+		},
+		{
 			"name": "spring.mvc.favicon.enabled",
 			"type": "java.lang.String",
 			"description": "Enable spring default favicon."

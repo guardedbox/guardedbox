@@ -1,5 +1,6 @@
 package com.guardedbox.config;
 
+import static com.guardedbox.constants.Api.API_BASE_PATH;
 import static com.guardedbox.constants.SecurityParameters.BCRYPT_ROUNDS;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -64,10 +65,10 @@ public class SecurityConfig
      */
     @Override
     protected void configure(
-            HttpSecurity http)
+            HttpSecurity httpSecurity)
             throws Exception {
 
-        http
+        httpSecurity
 
                 // Login.
                 .formLogin().disable()
@@ -88,25 +89,26 @@ public class SecurityConfig
                 .regexMatchers(HttpMethod.GET, "/img/.*\\.(gif|png|jpe?g|ico|svg)").permitAll()
                 .regexMatchers(HttpMethod.GET, "/font/.*\\.(woff2?|eot|ttf)").permitAll()
 
-                // Allow Public Endpoints.
-                .antMatchers(HttpMethod.GET, "/api/session").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/session/challenge").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/session/otp").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/session/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/session/logout").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/registrations").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/registrations").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/accounts").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/accounts/salt").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/accounts/encryption-public-key").permitAll()
+                // Allow API Public Endpoints.
+                .antMatchers(HttpMethod.GET, API_BASE_PATH + "session").permitAll()
+                .antMatchers(HttpMethod.POST, API_BASE_PATH + "session/challenge").permitAll()
+                .antMatchers(HttpMethod.POST, API_BASE_PATH + "session/otp").permitAll()
+                .antMatchers(HttpMethod.POST, API_BASE_PATH + "session/login").permitAll()
+                .antMatchers(HttpMethod.POST, API_BASE_PATH + "session/logout").permitAll()
+                .antMatchers(HttpMethod.GET, API_BASE_PATH + "registrations").permitAll()
+                .antMatchers(HttpMethod.POST, API_BASE_PATH + "registrations").permitAll()
+                .antMatchers(HttpMethod.POST, API_BASE_PATH + "accounts").permitAll()
+                .antMatchers(HttpMethod.GET, API_BASE_PATH + "accounts/salt").permitAll()
+                .antMatchers(HttpMethod.GET, API_BASE_PATH + "accounts/encryption-public-key").permitAll()
 
                 // Require Authentication for any other Endpoint.
                 .anyRequest().fullyAuthenticated()
 
                 // Headers.
                 .and().headers()
+                .cacheControl().disable()
                 .httpStrictTransportSecurity().disable()
-                .addHeaderWriter(new HstsHeaderWriter())
+                .addHeaderWriter(new CustomHeaderWriter())
 
                 // CSRF.
                 .and().csrf().disable(); // CSRF token is not used. Cookie samesite attribute is used to prevent CSRF attacks instead.

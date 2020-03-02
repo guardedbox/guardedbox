@@ -1,5 +1,7 @@
 package com.guardedbox.controller;
 
+import static com.guardedbox.constants.Api.API_BASE_PATH;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +32,7 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @RestController
-@RequestMapping("/api/secrets")
+@RequestMapping(API_BASE_PATH + "secrets")
 @Validated
 @RequiredArgsConstructor
 public class SecretsController {

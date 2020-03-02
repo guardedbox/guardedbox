@@ -1,5 +1,6 @@
 package com.guardedbox.controller;
 
+import static com.guardedbox.constants.Api.API_BASE_PATH;
 import static com.guardedbox.constants.Roles.ROLE_ACCOUNT;
 
 import java.util.Arrays;
@@ -46,7 +47,7 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @RestController
-@RequestMapping("/api/session")
+@RequestMapping(API_BASE_PATH + "session")
 @Validated
 @RequiredArgsConstructor
 public class SessionController {

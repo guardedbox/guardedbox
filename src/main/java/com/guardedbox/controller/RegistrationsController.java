@@ -1,5 +1,6 @@
 package com.guardedbox.controller;
 
+import static com.guardedbox.constants.Api.API_BASE_PATH;
 import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
 import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
 
@@ -32,7 +33,7 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @RestController
-@RequestMapping("/api/registrations")
+@RequestMapping(API_BASE_PATH + "registrations")
 @Validated
 @RequiredArgsConstructor
 public class RegistrationsController {

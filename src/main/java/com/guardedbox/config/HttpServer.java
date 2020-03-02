@@ -2,9 +2,11 @@ package com.guardedbox.config;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
+import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -73,6 +75,20 @@ public class HttpServer {
             }
 
         };
+
+        // Customize the https connector.
+        tomcat.addConnectorCustomizers(new TomcatConnectorCustomizer() {
+
+            @Override
+            public void customize(
+                    Connector connector) {
+
+                AbstractHttp11Protocol<?> protocol = (AbstractHttp11Protocol<?>) connector.getProtocolHandler();
+                protocol.setUseServerCipherSuitesOrder(true);
+
+            }
+
+        });
 
         // Add the http connector with a redirection to the https port.
         Connector httpConnector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);

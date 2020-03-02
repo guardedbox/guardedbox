@@ -1,27 +1,27 @@
 {
-	"general": {
-		"emailMaxLength": 254,
-		"emailPattern": ".+@.+\\..{2,}"
-	},
-	"registration": {
-		"registrationTokenPattern": "^[a-zA-Z0-9]{86}$",
-		"passwordMinLength": 20,
-		"passwordMinStrength": 100,
-		"saltBytes": 32
-	},
-	"secrets": {
-		"secretNameMaxLength": 100,
-		"secretValueMaxLength": 4000,
-		"secretStrengthMaxLength": 40,
-		"randomSecretCharset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
-		"showSecretTime": 2500
-	},
-	"groups": {
-		"groupNameMaxLength": 100
-	},
-	"keys": {
-		"generatedKeysBytes": 32,
-		"encryptionPublicKeyMaxLength": 44,
-		"encryptionPublicKeyPattern": "[a-zA-Z0-9+\/=]{44}"
-	}
+    "general": {
+        "emailMaxLength": 254,
+        "emailPattern": ".+@.+\\..{2,}"
+    },
+    "registration": {
+        "registrationTokenPattern": "^[a-zA-Z0-9]{86}$",
+        "passwordMinLength": 20,
+        "passwordMinStrength": 100,
+        "saltBytes": 32
+    },
+    "secrets": {
+        "secretNameMaxLength": 100,
+        "secretValueMaxLength": 4000,
+        "secretStrengthMaxLength": 40,
+        "randomSecretCharset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+        "showSecretTime": 2500
+    },
+    "groups": {
+        "groupNameMaxLength": 100
+    },
+    "keys": {
+        "generatedKeysBytes": 32,
+        "encryptionPublicKeyMaxLength": 44,
+        "encryptionPublicKeyPattern": "[a-zA-Z0-9+\/=]{44}"
+    }
 }

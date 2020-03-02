@@ -1,187 +1,187 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<!-- Project -->
-	<groupId>com.guardedbox</groupId>
-	<artifactId>guardedbox</artifactId>
-	<version>1.0.0</version>
-	<packaging>jar</packaging>
-	<name>${project.artifactId}</name>
-	<description>
-		GuardedBox is an OpenSource online secret manager. It allows users to upload secrets to a
-		centralized server and retrieve them at anytime and anywhere. It also allows users to share
-		their secrets with other users.
-	</description>
-	<url>https://github.com/s3curitybug/guardedbox</url>
+    <!-- Project -->
+    <groupId>com.guardedbox</groupId>
+    <artifactId>guardedbox</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>
+        GuardedBox is an OpenSource online secret manager. It allows users to upload secrets to a
+        centralized server and retrieve them at anytime and anywhere. It also allows users to share
+        their secrets with other users.
+    </description>
+    <url>https://github.com/s3curitybug/guardedbox</url>
 
-	<!-- License -->
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+    <!-- License -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-	<!-- Developers -->
-	<developers>
-		<developer>
-			<id>s3curitybug</id>
-			<name>Juan Jose Torres Garcia</name>
-			<email>s3curitybug@gmail.com</email>
-			<url>https://github.com/s3curitybug/</url>
-		</developer>
-	</developers>
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <id>s3curitybug</id>
+            <name>Juan Jose Torres Garcia</name>
+            <email>s3curitybug@gmail.com</email>
+            <url>https://github.com/s3curitybug/</url>
+        </developer>
+    </developers>
 
-	<!-- Properties -->
-	<properties>
+    <!-- Properties -->
+    <properties>
 
-		<!-- Java Version -->
-		<java.version>11</java.version>
+        <!-- Java Version -->
+        <java.version>11</java.version>
 
-		<!-- Source Encoding -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Source Encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<!-- Dependencies Versions -->
-		<bouncycastle.version>1.64</bouncycastle.version>
-		<hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
+        <!-- Dependencies Versions -->
+        <bouncycastle.version>1.64</bouncycastle.version>
+        <hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
 
-		<!-- Docker -->
-		<docker.repository>s3curitybug</docker.repository>
+        <!-- Docker -->
+        <docker.repository>s3curitybug</docker.repository>
 
-	</properties>
+    </properties>
 
-	<!-- Parent -->
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.5.RELEASE</version>
-	</parent>
+    <!-- Parent -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.5.RELEASE</version>
+    </parent>
 
-	<!-- Build -->
-	<build>
+    <!-- Build -->
+    <build>
 
-		<!-- Plugins -->
-		<plugins>
+        <!-- Plugins -->
+        <plugins>
 
-			<!-- Spring Boot Maven Plugin -->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+            <!-- Spring Boot Maven Plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
 
-			<!-- Exec Maven Plugin -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>npm-run-pro</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>run</argument>
-								<argument>pro</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>docker-image-build</id>
-						<phase>install</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>docker</executable>
-							<arguments>
-								<argument>image</argument>
-								<argument>build</argument>
-								<argument>-t</argument>
-								<argument>${docker.repository}/${project.name}</argument>
-								<argument>-t</argument>
-								<argument>${docker.repository}/${project.name}:${project.version}</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- Exec Maven Plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>npm-run-pro</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>pro</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>docker-image-build</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>image</argument>
+                                <argument>build</argument>
+                                <argument>-t</argument>
+                                <argument>${docker.repository}/${project.name}</argument>
+                                <argument>-t</argument>
+                                <argument>${docker.repository}/${project.name}:${project.version}</argument>
+                                <argument>.</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-		</plugins>
+        </plugins>
 
-	</build>
+    </build>
 
-	<!-- Dependencies -->
-	<dependencies>
+    <!-- Dependencies -->
+    <dependencies>
 
-		<!-- Spring Boot Starter -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+        <!-- Spring Boot Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
-		<!-- Spring Security -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+        <!-- Spring Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
 
-		<!-- Spring Session JDBC -->
-		<dependency>
-			<groupId>org.springframework.session</groupId>
-			<artifactId>spring-session-jdbc</artifactId>
-		</dependency>
+        <!-- Spring Session JDBC -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-jdbc</artifactId>
+        </dependency>
 
-		<!-- MySQL -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
+        <!-- MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
 
-		<!-- Spring Boot Data JPA -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
+        <!-- Spring Boot Data JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
 
-		<!-- Spring Transaction -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-		</dependency>
+        <!-- Spring Transaction -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
 
-		<!-- Spring Object Relational Mapping -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-		</dependency>
+        <!-- Spring Object Relational Mapping -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
 
-		<!-- Spring Boot Mail -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
-		</dependency>
+        <!-- Spring Boot Mail -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
 
-		<!-- ECC Provider -->
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<version>${bouncycastle.version}</version>
-		</dependency>
+        <!-- ECC Provider -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
+        </dependency>
 
-		<!-- Lombok -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
 </project>

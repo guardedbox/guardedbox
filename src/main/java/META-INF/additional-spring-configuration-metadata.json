@@ -1,139 +1,139 @@
 {
-	"properties": [
-		{
-			"name": "environment",
-			"type": "java.lang.String",
-			"description": "Indicates if environment is 'dev' or 'pro'. For instance, in 'dev' environment, OTP is not checked."
-		},
-		{
-			"name": "internet.url",
-			"type": "java.lang.String",
-			"description": "The internet URL. Used to build registration links."
-		},
-		{
-			"name": "server.internal.http.port",
-			"type": "java.lang.String",
-			"description": "Internal (behind balancer) http port, typically 8080."
-		},
-		{
-			"name": "server.internal.https.port",
-			"type": "java.lang.String",
-			"description": "Internal (behind balancer) https port, typically 8443."
-		},
-		{
-			"name": "server.external.http.port",
-			"type": "java.lang.String",
-			"description": "External (public IP) http port, typically 80."
-		},
-		{
-			"name": "server.external.https.port",
-			"type": "java.lang.String",
-			"description": "External (public IP) https port, typically 443."
-		},
-		{
-			"name": "server.strict-transport-security-header",
-			"type": "java.lang.String",
-			"description": "Value for the Strict-Transport-Security header."
-		},
-		{
-			"name": "server.expect-ct-header",
-			"type": "java.lang.String",
-			"description": "Value for the Expect-CT header."
-		},
-		{
-			"name": "server.content-security-policy-header",
-			"type": "java.lang.String",
-			"description": "Value for the Content-Security-Policy header."
-		},
-		{
-			"name": "server.cache-control-cacheable-header",
-			"type": "java.lang.String",
-			"description": "Value for the Cache-Control header for cacheable responses."
-		},
-		{
-			"name": "server.cache-control-non-cacheable-header",
-			"type": "java.lang.String",
-			"description": "Value for the Cache-Control header for non-cacheable responses."
-		},
-		{
-			"name": "server.frame-options-header",
-			"type": "java.lang.String",
-			"description": "Value for the X-Frame-Options header."
-		},
-		{
-			"name": "server.xss-protection-header",
-			"type": "java.lang.String",
-			"description": "Value for the X-XSS-Protection header."
-		},
-		{
-			"name": "server.content-type-options-header",
-			"type": "java.lang.String",
-			"description": "Value for the X-Content-Type-Options header."
-		},
-		{
-			"name": "server.referrer-policy-header",
-			"type": "java.lang.String",
-			"description": "Value for the Referrer-Policy header."
-		},
-		{
-			"name": "server.feature-policy-header",
-			"type": "java.lang.String",
-			"description": "Value for the Feature-Policy header."
-		},
-		{
-			"name": "spring.mvc.favicon.enabled",
-			"type": "java.lang.String",
-			"description": "Enable spring default favicon."
-		},
-		{
-			"name": "server.servlet.session.cookie.value-base64",
-			"type": "java.lang.String",
-			"description": "Set if the Base64 encoding of session cookie value should be used. This is valuable inorder to support RFC 6265 whichrecommends using Base 64 encoding to the cookie value."
-		},
-		{
-			"name": "server.servlet.session.cookie.same-site",
-			"type": "java.lang.String",
-			"description": "Set the value for the SameSite session cookie directive. The default value is Lax."
-		},
-		{
-			"name": "security-parameters.registration.ttl",
-			"type": "java.lang.String",
-			"description": "Security Parameter: Time to live of a registration before it expires."
-		},
-		{
-			"name": "security-parameters.registration.min-ttl",
-			"type": "java.lang.String",
-			"description": "Security Parameter: Minimum time to live of a registration before another one can be requested for the same email."
-		},
-		{
-			"name": "security-parameters.registration.execution-time",
-			"type": "java.lang.String",
-			"description": "Security Parameter: RegistrationsController.createRegistration method execution time."
-		},
-		{
-			"name": "security-parameters.challenge.ttl",
-			"type": "java.lang.String",
-			"description": "Security Parameter: Time to live of a challenge before it expires."
-		},
-		{
-			"name": "security-parameters.challenge.execution-time",
-			"type": "java.lang.String",
-			"description": "Security Parameter: SessionController.getChallenge method execution time."
-		},
-		{
-			"name": "security-parameters.otp.ttl",
-			"type": "java.lang.String",
-			"description": "Security Parameter: Time to live of a One Time Password (OTP) before it expires."
-		},
-		{
-			"name": "security-parameters.otp.execution-time",
-			"type": "java.lang.String",
-			"description": "Security Parameter: SessionController.obtainOtp method execution time."
-		},
-		{
-			"name": "security-parameters.login.execution-time",
-			"type": "java.lang.String",
-			"description": "Security Parameter: SessionController.login method execution time."
-		}
-	]
+    "properties": [
+        {
+            "name": "environment",
+            "type": "java.lang.String",
+            "description": "Indicates if environment is 'dev' or 'pro'. For instance, in 'dev' environment, OTP is not checked."
+        },
+        {
+            "name": "internet.url",
+            "type": "java.lang.String",
+            "description": "The internet URL. Used to build registration links."
+        },
+        {
+            "name": "server.internal.http.port",
+            "type": "java.lang.String",
+            "description": "Internal (behind balancer) http port, typically 8080."
+        },
+        {
+            "name": "server.internal.https.port",
+            "type": "java.lang.String",
+            "description": "Internal (behind balancer) https port, typically 8443."
+        },
+        {
+            "name": "server.external.http.port",
+            "type": "java.lang.String",
+            "description": "External (public IP) http port, typically 80."
+        },
+        {
+            "name": "server.external.https.port",
+            "type": "java.lang.String",
+            "description": "External (public IP) https port, typically 443."
+        },
+        {
+            "name": "server.strict-transport-security-header",
+            "type": "java.lang.String",
+            "description": "Value for the Strict-Transport-Security header."
+        },
+        {
+            "name": "server.expect-ct-header",
+            "type": "java.lang.String",
+            "description": "Value for the Expect-CT header."
+        },
+        {
+            "name": "server.content-security-policy-header",
+            "type": "java.lang.String",
+            "description": "Value for the Content-Security-Policy header."
+        },
+        {
+            "name": "server.cache-control-cacheable-header",
+            "type": "java.lang.String",
+            "description": "Value for the Cache-Control header for cacheable responses."
+        },
+        {
+            "name": "server.cache-control-non-cacheable-header",
+            "type": "java.lang.String",
+            "description": "Value for the Cache-Control header for non-cacheable responses."
+        },
+        {
+            "name": "server.frame-options-header",
+            "type": "java.lang.String",
+            "description": "Value for the X-Frame-Options header."
+        },
+        {
+            "name": "server.xss-protection-header",
+            "type": "java.lang.String",
+            "description": "Value for the X-XSS-Protection header."
+        },
+        {
+            "name": "server.content-type-options-header",
+            "type": "java.lang.String",
+            "description": "Value for the X-Content-Type-Options header."
+        },
+        {
+            "name": "server.referrer-policy-header",
+            "type": "java.lang.String",
+            "description": "Value for the Referrer-Policy header."
+        },
+        {
+            "name": "server.feature-policy-header",
+            "type": "java.lang.String",
+            "description": "Value for the Feature-Policy header."
+        },
+        {
+            "name": "spring.mvc.favicon.enabled",
+            "type": "java.lang.String",
+            "description": "Enable spring default favicon."
+        },
+        {
+            "name": "server.servlet.session.cookie.value-base64",
+            "type": "java.lang.String",
+            "description": "Set if the Base64 encoding of session cookie value should be used. This is valuable inorder to support RFC 6265 whichrecommends using Base 64 encoding to the cookie value."
+        },
+        {
+            "name": "server.servlet.session.cookie.same-site",
+            "type": "java.lang.String",
+            "description": "Set the value for the SameSite session cookie directive. The default value is Lax."
+        },
+        {
+            "name": "security-parameters.registration.ttl",
+            "type": "java.lang.String",
+            "description": "Security Parameter: Time to live of a registration before it expires."
+        },
+        {
+            "name": "security-parameters.registration.min-ttl",
+            "type": "java.lang.String",
+            "description": "Security Parameter: Minimum time to live of a registration before another one can be requested for the same email."
+        },
+        {
+            "name": "security-parameters.registration.execution-time",
+            "type": "java.lang.String",
+            "description": "Security Parameter: RegistrationsController.createRegistration method execution time."
+        },
+        {
+            "name": "security-parameters.challenge.ttl",
+            "type": "java.lang.String",
+            "description": "Security Parameter: Time to live of a challenge before it expires."
+        },
+        {
+            "name": "security-parameters.challenge.execution-time",
+            "type": "java.lang.String",
+            "description": "Security Parameter: SessionController.getChallenge method execution time."
+        },
+        {
+            "name": "security-parameters.otp.ttl",
+            "type": "java.lang.String",
+            "description": "Security Parameter: Time to live of a One Time Password (OTP) before it expires."
+        },
+        {
+            "name": "security-parameters.otp.execution-time",
+            "type": "java.lang.String",
+            "description": "Security Parameter: SessionController.obtainOtp method execution time."
+        },
+        {
+            "name": "security-parameters.login.execution-time",
+            "type": "java.lang.String",
+            "description": "Security Parameter: SessionController.login method execution time."
+        }
+    ]
 }

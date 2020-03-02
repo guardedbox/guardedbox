@@ -2,84 +2,84 @@
  * Overrides.
  */
 .react-overlay-loader-spinner:before {
-	border-color: #8eadc3;
-	border-top-color: #125c8e;
+    border-color: #8eadc3;
+    border-top-color: #125c8e;
 }
 
 .progress {
-	height: 0.95rem;
+    height: 0.95rem;
 }
 
 .jumbotron {
-	padding: 3.5rem 2rem 2rem 1.75rem;
+    padding: 3.5rem 2rem 2rem 1.75rem;
 }
 
 .tooltip {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 /*
  * Custom Defaults.
  */
 table {
-	table-layout: fixed;
+    table-layout: fixed;
 }
 
 td {
-	word-wrap: break-word;
-	white-space: pre-wrap;
+    word-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 input[type='number'] {
-	-moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /*
  * Custom Classes.
  */
 .logo-col {
-	margin-top: 15%;
+    margin-top: 15%;
 }
 
 .main-col {
-	margin-top: 4%;
+    margin-top: 4%;
 }
 
 .spaced {
-	margin: .2rem;
+    margin: .2rem;
 }
 
 .group-spaced>* {
-	margin: .2rem;
+    margin: .2rem;
 }
 
 .space-between-icons {
-	width: .35rem;
-	display: inline-block;
+    width: .35rem;
+    display: inline-block;
 }
 
 .space-between-text-and-icons {
-	width: 1rem;
-	display: inline-block;
+    width: 1rem;
+    display: inline-block;
 }
 
 .button-icon {
-	margin-right: .25rem;
+    margin-right: .25rem;
 }
 
 .icon-inline {
-	margin: 6px 4px;
-	width: 20px;
-	text-align: center;
+    margin: 6px 4px;
+    width: 20px;
+    text-align: center;
 }
 
 .badge-progress {
-	height: 0.95rem;
-	font-size: 0.625rem;
-	font-weight: 100;
+    height: 0.95rem;
+    font-size: 0.625rem;
+    font-weight: 100;
 }

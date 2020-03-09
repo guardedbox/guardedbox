@@ -2,9 +2,9 @@ package com.guardedbox.config;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
-import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.apache.tomcat.util.net.SSLHostConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -83,8 +83,8 @@ public class HttpServer {
             public void customize(
                     Connector connector) {
 
-                AbstractHttp11Protocol<?> protocol = (AbstractHttp11Protocol<?>) connector.getProtocolHandler();
-                protocol.setUseServerCipherSuitesOrder(true);
+                SSLHostConfig sslHostConfig = connector.findSslHostConfigs()[0];
+                sslHostConfig.setHonorCipherOrder(true);
 
             }
 

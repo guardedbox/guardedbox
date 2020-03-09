@@ -1,19 +1,17 @@
-version: "3.7"
-
+version: '3.7'
 services:
-  guardedbox:
-    container_name: guardedbox
-    image: s3curitybug/guardedbox
-    command: --spring.config.location=file:/run/secrets/application.properties
-    ports:
-      - "8080:8080"
-      - "8443:8443"
-    secrets:
-      - application.properties
-      - myserver.p12
-
+    guardedbox:
+        container_name: guardedbox
+        image: s3curitybug/guardedbox
+        command: --spring.config.location=file:/run/secrets/application.properties
+        ports:
+        - 8080:8080
+        - 8443:8443
+        secrets:
+        - application.properties
+        - myserver.p12
 secrets:
-  application.properties:
-    file: config/local-docker/application.properties
-  myserver.p12:
-    file: config/local-docker/myserver.p12
+    application.properties:
+        file: config/local-docker/application.properties
+    myserver.p12:
+        file: config/local-docker/myserver.p12

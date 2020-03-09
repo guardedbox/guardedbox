@@ -39,7 +39,7 @@
     <properties>
 
         <!-- Java Version -->
-        <java.version>11</java.version>
+        <java.version>13</java.version>
 
         <!-- Source Encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

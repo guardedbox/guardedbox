@@ -1,14 +1,15 @@
 package com.guardedbox.service;
 
+import static com.guardedbox.constants.LanguageParameters.DEFAULT_LANG;
 import static com.guardedbox.constants.SecurityParameters.OTP_LENGTH;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.OtpDto;
 import com.guardedbox.dto.OtpResponseDto;
+import com.guardedbox.properties.EmailsProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +20,6 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @Service
-@PropertySource("classpath:email/email_en.properties")
 @RequiredArgsConstructor
 public class OtpService {
 
@@ -27,19 +27,14 @@ public class OtpService {
     @Value("${security-parameters.otp.ttl}")
     private final long otpTtl;
 
-    /** Property: otp.email.subject. */
-    @Value("${otp.email.subject}")
-    private final String otpEmailSubject;
-
-    /** Property: otp.email.body. */
-    @Value("${otp.email.body}")
-    private final String otpEmailBody;
-
     /** RandomService. */
     private final RandomService randomService;
 
     /** EmailService. */
     private final EmailService emailService;
+
+    /** EmailsProperties. */
+    private final EmailsProperties emailsProperties;
 
     /** PasswordEncoder. */
     private final PasswordEncoder passwordEncoder;
@@ -59,8 +54,8 @@ public class OtpService {
 
         emailService.sendAsync(
                 email,
-                otpEmailSubject,
-                String.format(otpEmailBody, otp));
+                emailsProperties.getOtpSubject().get(DEFAULT_LANG),
+                String.format(emailsProperties.getOtpBody().get(DEFAULT_LANG), otp));
 
         return new OtpDto()
                 .setEmail(email)

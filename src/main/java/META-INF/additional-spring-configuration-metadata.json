@@ -144,6 +144,36 @@
             "name": "security-parameters.login.execution-time",
             "type": "long",
             "description": "Security Parameter: SessionController.login method execution time."
+        },
+        {
+            "name": "emails.otp-subject",
+            "type": "java.util.HashMap",
+            "description": "Map of subjects of the OTP email by language."
+        },
+        {
+            "name": "emails.otp-body",
+            "type": "java.util.HashMap",
+            "description": "Map of bodies of the OTP email by language."
+        },
+        {
+            "name": "emails.registration-subject",
+            "type": "java.util.HashMap",
+            "description": "Map of subjects of the registration email by language."
+        },
+        {
+            "name": "emails.registration-body",
+            "type": "java.util.HashMap",
+            "description": "Map of bodies of the registration email by language."
+        },
+        {
+            "name": "emails.already-registered-subject",
+            "type": "java.util.HashMap",
+            "description": "Map of subjects of the already registered email by language."
+        },
+        {
+            "name": "emails.already-registered-body",
+            "type": "java.util.HashMap",
+            "description": "Map of bodies of the already registered email by language."
         }
     ]
 }

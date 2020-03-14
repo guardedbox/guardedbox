@@ -17,6 +17,8 @@ config/**
 # Eclipse
 #====================
 .settings/**
+.sts4-cache/**
 .project
 .classpath
 .checkstyle
+

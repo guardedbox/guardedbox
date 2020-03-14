@@ -1,10 +1,12 @@
 package com.guardedbox.service;
 
 import static com.guardedbox.constants.FrontParameters.FRONT_REGISTRATION_COMPONENT_URI;
+import static com.guardedbox.constants.LanguageParameters.DEFAULT_LANG;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+
+import com.guardedbox.properties.EmailsProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +17,6 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @Service
-@PropertySource("classpath:email/email_en.properties")
 @RequiredArgsConstructor
 public class RegistrationMessageService {
 
@@ -23,24 +24,11 @@ public class RegistrationMessageService {
     @Value("${internet.url}")
     private final String internetUrl;
 
-    /** Property: registration.email.subject. */
-    @Value("${registration.email.subject}")
-    private final String registrationEmailSubject;
-
-    /** Property: registration.email.body. */
-    @Value("${registration.email.body}")
-    private final String registrationEmailBody;
-
-    /** Property: registration.alreadyRegistered.email.subject. */
-    @Value("${registration.already-registered.email.subject}")
-    private final String alreadyRegisteredEmailSubject;
-
-    /** Property: registration.alreadyRegistered.email.body. */
-    @Value("${registration.already-registered.email.body}")
-    private final String alreadyRegisteredEmailBody;
-
     /** EmailService. */
     private final EmailService emailService;
+
+    /** EmailsProperties. */
+    private final EmailsProperties emailsProperties;
 
     /**
      * Sends a message to an email indicating that it is already registered.
@@ -52,8 +40,8 @@ public class RegistrationMessageService {
 
         emailService.sendAsync(
                 email,
-                alreadyRegisteredEmailSubject,
-                alreadyRegisteredEmailBody);
+                emailsProperties.getAlreadyRegisteredSubject().get(DEFAULT_LANG),
+                emailsProperties.getAlreadyRegisteredBody().get(DEFAULT_LANG));
 
     }
 
@@ -69,8 +57,9 @@ public class RegistrationMessageService {
 
         emailService.sendAsync(
                 email,
-                registrationEmailSubject,
-                String.format(registrationEmailBody, internetUrl + String.format(FRONT_REGISTRATION_COMPONENT_URI, token)));
+                emailsProperties.getAlreadyRegisteredSubject().get(DEFAULT_LANG),
+                String.format(emailsProperties.getAlreadyRegisteredBody().get(DEFAULT_LANG),
+                        internetUrl + String.format(FRONT_REGISTRATION_COMPONENT_URI, token)));
 
     }
 

@@ -11,6 +11,7 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,12 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class HttpServer {
+
+    /** JDK property which sets TLS ECDH curves. */
+    private static final String TLS_ECDH_CURVES_JDK_PROPERTY = "jdk.tls.namedGroups";
+
+    /** JDK property which enables TLS OCSP stapling. */
+    private static final String TLS_ENABLE_OCSP_STAPLING_JDK_PROPERTY = "jdk.tls.server.enableStatusRequestExtension";
 
     /** Property: server.port. */
     @Value("${server.port}")
@@ -40,6 +47,14 @@ public class HttpServer {
     @Value("${server.external.https.port:}")
     private final Integer externalHttpsPort;
 
+    /** Property: server.ssl.ecdh-curves. */
+    @Value("${server.ssl.ecdh-curves:}")
+    private final String sslEcdhCurves;
+
+    /** Property: server.enable-ocsp-stapling. */
+    @Value("${server.ssl.enable-ocsp-stapling:}")
+    private final Boolean sslEnableOcspStapling;
+
     /**
      * Bean: ServletWebServerFactory.
      * Creates a dual port Tomcat, listening both in an http port and an https port. The http port simply redirects to the https one.
@@ -55,8 +70,13 @@ public class HttpServer {
             return new TomcatServletWebServerFactory();
         }
 
-        // Enable OCSP stapling.
-        System.setProperty("jdk.tls.server.enableStatusRequestExtension", "true");
+        // Set TLS ECDH offered curves.
+        if (!StringUtils.isEmpty(sslEcdhCurves))
+            System.setProperty(TLS_ECDH_CURVES_JDK_PROPERTY, sslEcdhCurves);
+
+        // Enable TLS OCSP stapling.
+        if (sslEnableOcspStapling != null)
+            System.setProperty(TLS_ENABLE_OCSP_STAPLING_JDK_PROPERTY, sslEnableOcspStapling.toString());
 
         // Create the https Tomcat.
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {

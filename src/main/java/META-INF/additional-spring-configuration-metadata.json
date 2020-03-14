@@ -81,6 +81,16 @@
             "description": "Value for the Feature-Policy header."
         },
         {
+            "name": "server.ssl.ecdh-curves",
+            "type": "java.lang.String",
+            "description": "TLS ECDH offered curves."
+        },
+        {
+            "name": "server.ssl.enable-ocsp-stapling",
+            "type": "boolean",
+            "description": "Enable TLS OCSP stapling."
+        },
+        {
             "name": "spring.mvc.favicon.enabled",
             "type": "boolean",
             "description": "Enable spring default favicon."

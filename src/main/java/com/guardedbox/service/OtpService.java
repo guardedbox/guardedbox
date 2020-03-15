@@ -1,15 +1,13 @@
 package com.guardedbox.service;
 
-import static com.guardedbox.constants.LanguageParameters.DEFAULT_LANG;
-import static com.guardedbox.constants.SecurityParameters.OTP_LENGTH;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.OtpDto;
 import com.guardedbox.dto.OtpResponseDto;
 import com.guardedbox.properties.EmailsProperties;
+import com.guardedbox.properties.LanguageProperties;
+import com.guardedbox.properties.SecurityParametersProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,18 +21,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OtpService {
 
-    /** Property: security-parameters.otp.ttl. */
-    @Value("${security-parameters.otp.ttl}")
-    private final long otpTtl;
+    /** SecurityParametersProperties. */
+    private final SecurityParametersProperties securityParameters;
+
+    /** EmailsProperties. */
+    private final EmailsProperties emailsProperties;
+
+    /** LanguageProperties. */
+    private final LanguageProperties languageProperties;
 
     /** RandomService. */
     private final RandomService randomService;
 
     /** EmailService. */
     private final EmailService emailService;
-
-    /** EmailsProperties. */
-    private final EmailsProperties emailsProperties;
 
     /** PasswordEncoder. */
     private final PasswordEncoder passwordEncoder;
@@ -50,17 +50,17 @@ public class OtpService {
 
         long currentTime = System.currentTimeMillis();
 
-        String otp = randomService.randomAlphanumericString(OTP_LENGTH);
+        String otp = randomService.randomAlphanumericString(securityParameters.getOtpLength());
 
         emailService.sendAsync(
                 email,
-                emailsProperties.getOtpSubject().get(DEFAULT_LANG),
-                String.format(emailsProperties.getOtpBody().get(DEFAULT_LANG), otp));
+                emailsProperties.getOtpSubject().get(languageProperties.getDefaultLanguage()),
+                String.format(emailsProperties.getOtpBody().get(languageProperties.getDefaultLanguage()), otp));
 
         return new OtpDto()
                 .setEmail(email)
                 .setOtp(passwordEncoder.encode(otp))
-                .setExpirationTime(currentTime + otpTtl);
+                .setExpirationTime(currentTime + securityParameters.getOtpTtl());
 
     }
 

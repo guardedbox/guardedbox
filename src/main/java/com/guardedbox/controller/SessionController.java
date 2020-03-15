@@ -1,7 +1,6 @@
 package com.guardedbox.controller;
 
 import static com.guardedbox.constants.Api.API_BASE_PATH;
-import static com.guardedbox.constants.Roles.ROLE_ACCOUNT;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guardedbox.config.AuthenticationPrincipal;
-import com.guardedbox.constants.SessionAttributes;
+import com.guardedbox.constants.Role;
+import com.guardedbox.constants.SessionAttribute;
 import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.ChallengeDto;
 import com.guardedbox.dto.OtpDto;
@@ -32,6 +32,7 @@ import com.guardedbox.dto.SessionInfoDto;
 import com.guardedbox.dto.SignedChallengeResponseDto;
 import com.guardedbox.dto.SuccessDto;
 import com.guardedbox.exception.ServiceException;
+import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.service.ChallengeService;
 import com.guardedbox.service.ExecutionTimeService;
 import com.guardedbox.service.OtpService;
@@ -56,17 +57,8 @@ public class SessionController {
     @Value("#{'${environment}' == 'dev'}")
     private final boolean dev;
 
-    /** Property: security-parameters.challenge.execution-time. */
-    @Value("${security-parameters.challenge.execution-time}")
-    private final long challengeExecutionTime;
-
-    /** Property: security-parameters.otp.execution-time. */
-    @Value("${security-parameters.otp.execution-time}")
-    private final long otpExecutionTime;
-
-    /** Property: security-parameters.login.execution-time. */
-    @Value("${security-parameters.login.execution-time}")
-    private final long loginExecutionTime;
+    /** SecurityParametersProperties. */
+    private final SecurityParametersProperties securityParameters;
 
     /** AccountsService. */
     private final AccountsService accountsService;
@@ -118,17 +110,17 @@ public class SessionController {
         long startTime = System.currentTimeMillis();
 
         // Remove the challenge and the one time password from the current session.
-        session.removeAttribute(SessionAttributes.CHALLENGE);
-        session.removeAttribute(SessionAttributes.OTP);
+        session.removeAttribute(SessionAttribute.CHALLENGE.getAttributeName());
+        session.removeAttribute(SessionAttribute.OTP.getAttributeName());
 
         // Generate the challenge.
         ChallengeDto challengeDto = challengeService.generateChallenge();
 
         // Store it in the current session.
-        session.setAttribute(SessionAttributes.CHALLENGE, challengeDto);
+        session.setAttribute(SessionAttribute.CHALLENGE.getAttributeName(), challengeDto);
 
         // Fix execution time.
-        executionTimeService.fix(startTime, challengeExecutionTime);
+        executionTimeService.fix(startTime, securityParameters.getChallengeExecutionTime());
 
         // Return it.
         return challengeDto;
@@ -150,14 +142,14 @@ public class SessionController {
         try {
 
             // Check if a challenge was previously requested.
-            ChallengeDto challengeDto = (ChallengeDto) session.getAttribute(SessionAttributes.CHALLENGE);
+            ChallengeDto challengeDto = (ChallengeDto) session.getAttribute(SessionAttribute.CHALLENGE.getAttributeName());
             if (challengeDto == null) {
                 throw new ServiceException("Challenge is not stored in session");
             }
 
             // Remove the challenge and the one time password from the current session.
-            session.removeAttribute(SessionAttributes.CHALLENGE);
-            session.removeAttribute(SessionAttributes.OTP);
+            session.removeAttribute(SessionAttribute.CHALLENGE.getAttributeName());
+            session.removeAttribute(SessionAttribute.OTP.getAttributeName());
 
             // Verify the signed challenge response.
             if (!challengeService.verifySignedChallengeResponse(signedChallengeResponseDto, challengeDto)) {
@@ -174,13 +166,13 @@ public class SessionController {
             }
 
             // Store it in the current session.
-            session.setAttribute(SessionAttributes.OTP, otpDto);
+            session.setAttribute(SessionAttribute.OTP.getAttributeName(), otpDto);
 
         } catch (Exception e) {
         }
 
         // Fix execution time.
-        executionTimeService.fix(startTime, otpExecutionTime);
+        executionTimeService.fix(startTime, securityParameters.getOtpExecutionTime());
 
         // Successful result.
         return new SuccessDto(true);
@@ -202,14 +194,14 @@ public class SessionController {
         try {
 
             // Check if a one time password was previously generated.
-            OtpDto otpDto = (OtpDto) session.getAttribute(SessionAttributes.OTP);
+            OtpDto otpDto = (OtpDto) session.getAttribute(SessionAttribute.OTP.getAttributeName());
             if (otpDto == null) {
                 throw new ServiceException("One time password is not stored in session");
             }
 
             // Remove the challenge and the one time password from the current session.
-            session.removeAttribute(SessionAttributes.CHALLENGE);
-            session.removeAttribute(SessionAttributes.OTP);
+            session.removeAttribute(SessionAttribute.CHALLENGE.getAttributeName());
+            session.removeAttribute(SessionAttribute.OTP.getAttributeName());
 
             // Verify the one time password response.
             if (!dev && !otpService.verifyOtp(otpResponseDto, otpDto)) {
@@ -219,7 +211,7 @@ public class SessionController {
             // Set the authentication.
             AccountDto accountDto = accountsService.getAndCheckAccountByEmail(otpDto.getEmail());
             AuthenticationPrincipal authenticationPrincipal = new AuthenticationPrincipal(accountDto);
-            List<GrantedAuthority> roles = Arrays.asList(ROLE_ACCOUNT);
+            List<GrantedAuthority> roles = Arrays.asList(Role.ACCOUNT.getAuthority());
             Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationPrincipal, null, roles);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -237,7 +229,7 @@ public class SessionController {
         } finally {
 
             // Fix execution time.
-            executionTimeService.fix(startTime, loginExecutionTime);
+            executionTimeService.fix(startTime, securityParameters.getLoginExecutionTime());
 
         }
 

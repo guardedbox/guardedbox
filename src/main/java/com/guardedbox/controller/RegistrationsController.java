@@ -2,14 +2,13 @@ package com.guardedbox.controller;
 
 import static com.guardedbox.constants.Api.API_BASE_PATH;
 import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
-import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
+import static com.guardedbox.constants.Constraints.REGISTRATION_TOKEN_LENGTH;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guardedbox.dto.CreateRegistrationDto;
 import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.dto.SuccessDto;
+import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.service.ExecutionTimeService;
 import com.guardedbox.service.transactional.RegistrationsService;
 
@@ -38,9 +38,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RegistrationsController {
 
-    /** Property: security-parameters.registration.execution-time. */
-    @Value("${security-parameters.registration.execution-time}")
-    private final long createRegistrationExecutionTime;
+    /** SecurityParametersProperties. */
+    private final SecurityParametersProperties securityParameters;
 
     /** RegistrationsService. */
     private final RegistrationsService registrationsService;
@@ -77,7 +76,7 @@ public class RegistrationsController {
         registrationsService.createRegistration(createRegistrationDto);
 
         // Fix execution time.
-        executionTimeService.fix(startTime, createRegistrationExecutionTime);
+        executionTimeService.fix(startTime, securityParameters.getRegistrationExecutionTime());
 
         // Successful result.
         return new SuccessDto(true);

@@ -1,12 +1,12 @@
 package com.guardedbox.service;
 
 import static com.guardedbox.constants.FrontParameters.FRONT_REGISTRATION_COMPONENT_URI;
-import static com.guardedbox.constants.LanguageParameters.DEFAULT_LANG;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.properties.EmailsProperties;
+import com.guardedbox.properties.LanguageProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,11 +24,14 @@ public class RegistrationMessageService {
     @Value("${internet.url}")
     private final String internetUrl;
 
-    /** EmailService. */
-    private final EmailService emailService;
-
     /** EmailsProperties. */
     private final EmailsProperties emailsProperties;
+
+    /** LanguageProperties. */
+    private final LanguageProperties languageProperties;
+
+    /** EmailService. */
+    private final EmailService emailService;
 
     /**
      * Sends a message to an email indicating that it is already registered.
@@ -40,8 +43,8 @@ public class RegistrationMessageService {
 
         emailService.sendAsync(
                 email,
-                emailsProperties.getAlreadyRegisteredSubject().get(DEFAULT_LANG),
-                emailsProperties.getAlreadyRegisteredBody().get(DEFAULT_LANG));
+                emailsProperties.getAlreadyRegisteredSubject().get(languageProperties.getDefaultLanguage()),
+                emailsProperties.getAlreadyRegisteredBody().get(languageProperties.getDefaultLanguage()));
 
     }
 
@@ -57,8 +60,8 @@ public class RegistrationMessageService {
 
         emailService.sendAsync(
                 email,
-                emailsProperties.getAlreadyRegisteredSubject().get(DEFAULT_LANG),
-                String.format(emailsProperties.getAlreadyRegisteredBody().get(DEFAULT_LANG),
+                emailsProperties.getAlreadyRegisteredSubject().get(languageProperties.getDefaultLanguage()),
+                String.format(emailsProperties.getAlreadyRegisteredBody().get(languageProperties.getDefaultLanguage()),
                         internetUrl + String.format(FRONT_REGISTRATION_COMPONENT_URI, token)));
 
     }

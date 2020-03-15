@@ -11,22 +11,22 @@
             "description": "The internet URL. Used to build registration links."
         },
         {
-            "name": "server.internal.http.port",
+            "name": "server.internal-http-port",
             "type": "int",
             "description": "Internal (behind balancer) http port, typically 8080."
         },
         {
-            "name": "server.internal.https.port",
+            "name": "server.internal-https-port",
             "type": "int",
             "description": "Internal (behind balancer) https port, typically 8443."
         },
         {
-            "name": "server.external.http.port",
+            "name": "server.external-http-port",
             "type": "int",
             "description": "External (public IP) http port, typically 80."
         },
         {
-            "name": "server.external.https.port",
+            "name": "server.external-https-port",
             "type": "int",
             "description": "External (public IP) https port, typically 443."
         },
@@ -106,44 +106,69 @@
             "description": "Set the value for the SameSite session cookie directive. The default value is Lax."
         },
         {
-            "name": "security-parameters.registration.ttl",
+            "name": "security-parameters.registration-ttl",
             "type": "long",
             "description": "Security Parameter: Time to live of a registration before it expires."
         },
         {
-            "name": "security-parameters.registration.min-ttl",
+            "name": "security-parameters.registration-min-ttl",
             "type": "long",
             "description": "Security Parameter: Minimum time to live of a registration before another one can be requested for the same email."
         },
         {
-            "name": "security-parameters.registration.execution-time",
+            "name": "security-parameters.registration-execution-time",
             "type": "long",
             "description": "Security Parameter: RegistrationsController.createRegistration method execution time."
         },
         {
-            "name": "security-parameters.challenge.ttl",
+            "name": "security-parameters.challenge-length",
+            "type": "int",
+            "description": "Security Parameter: Challenge length (number of bytes)."
+        },
+        {
+            "name": "security-parameters.challenge-ttl",
             "type": "long",
             "description": "Security Parameter: Time to live of a challenge before it expires."
         },
         {
-            "name": "security-parameters.challenge.execution-time",
+            "name": "security-parameters.challenge-execution-time",
             "type": "long",
             "description": "Security Parameter: SessionController.getChallenge method execution time."
         },
         {
-            "name": "security-parameters.otp.ttl",
+            "name": "security-parameters.otp-length",
+            "type": "int",
+            "description": "Security Parameter: One time password length (number of alphanumeric characters)."
+        },
+        {
+            "name": "security-parameters.otp-ttl",
             "type": "long",
             "description": "Security Parameter: Time to live of a One Time Password (OTP) before it expires."
         },
         {
-            "name": "security-parameters.otp.execution-time",
+            "name": "security-parameters.otp-execution-time",
             "type": "long",
             "description": "Security Parameter: SessionController.obtainOtp method execution time."
         },
         {
-            "name": "security-parameters.login.execution-time",
+            "name": "security-parameters.login-execution-time",
             "type": "long",
             "description": "Security Parameter: SessionController.login method execution time."
+        },
+        {
+            "name": "security-parameters.signature-algorithm",
+            "type": "java.lang.String",
+            "description": "Security Parameter: Signature algorithm."
+        },
+        {
+            "name": "security-parameters.bcrypt-rounds",
+            "type": "int",
+            "description": "Security Parameter: Bcrypt rounds."
+        },
+        {
+            "name": "i18n.default-language",
+            "type": "java.lang.String",
+            "description": "Default language."
         },
         {
             "name": "emails.otp-subject",
@@ -174,6 +199,11 @@
             "name": "emails.already-registered-body",
             "type": "java.util.HashMap",
             "description": "Map of bodies of the already registered email by language."
+        },
+        {
+            "name": "language.defaultLang",
+            "type": "java.lang.String",
+            "description": "A description for 'language.defaultLang'"
         }
     ]
 }

@@ -5,13 +5,16 @@ import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomcat.util.net.SSLHostConfig;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import com.guardedbox.constants.JdkProperty;
+import com.guardedbox.properties.ServerProperties;
+import com.guardedbox.properties.SslProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,35 +28,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HttpServer {
 
-    /** JDK property which sets TLS ECDH curves. */
-    private static final String TLS_ECDH_CURVES_JDK_PROPERTY = "jdk.tls.namedGroups";
+    /** ServerProperties. */
+    private final ServerProperties serverProperties;
 
-    /** JDK property which enables TLS OCSP stapling. */
-    private static final String TLS_ENABLE_OCSP_STAPLING_JDK_PROPERTY = "jdk.tls.server.enableStatusRequestExtension";
-
-    /** Property: server.port. */
-    @Value("${server.port}")
-    private final Integer serverPort;
-
-    /** Property: server.internal.http.port. */
-    @Value("${server.internal.http.port:}")
-    private final Integer internalHttpPort;
-
-    /** Property: server.internal.https.port. */
-    @Value("${server.internal.https.port:}")
-    private final Integer internalHttpsPort;
-
-    /** Property: server.external.https.port. */
-    @Value("${server.external.https.port:}")
-    private final Integer externalHttpsPort;
-
-    /** Property: server.ssl.ecdh-curves. */
-    @Value("${server.ssl.ecdh-curves:}")
-    private final String sslEcdhCurves;
-
-    /** Property: server.enable-ocsp-stapling. */
-    @Value("${server.ssl.enable-ocsp-stapling:}")
-    private final Boolean sslEnableOcspStapling;
+    /** SslProperties. */
+    private final SslProperties sslProperties;
 
     /**
      * Bean: ServletWebServerFactory.
@@ -65,18 +44,21 @@ public class HttpServer {
     public ServletWebServerFactory servletWebServerFactory() {
 
         // Check if there is dual port configuration.
-        if (internalHttpPort == null || internalHttpsPort == null || externalHttpsPort == null
-                || serverPort.equals(internalHttpPort) || !serverPort.equals(internalHttpsPort)) {
+        if (serverProperties.getInternalHttpPort() == null
+                || serverProperties.getInternalHttpsPort() == null
+                || serverProperties.getExternalHttpsPort() == null
+                || serverProperties.getPort().equals(serverProperties.getInternalHttpPort())
+                || !serverProperties.getPort().equals(serverProperties.getInternalHttpsPort())) {
             return new TomcatServletWebServerFactory();
         }
 
         // Set TLS ECDH offered curves.
-        if (!StringUtils.isEmpty(sslEcdhCurves))
-            System.setProperty(TLS_ECDH_CURVES_JDK_PROPERTY, sslEcdhCurves);
+        if (!StringUtils.isEmpty(sslProperties.getEcdhCurves()))
+            System.setProperty(JdkProperty.TLS_ECDH_CURVES.getPropertyName(), sslProperties.getEcdhCurves());
 
         // Enable TLS OCSP stapling.
-        if (sslEnableOcspStapling != null)
-            System.setProperty(TLS_ENABLE_OCSP_STAPLING_JDK_PROPERTY, sslEnableOcspStapling.toString());
+        if (sslProperties.getEnableOcspStapling() != null)
+            System.setProperty(JdkProperty.TLS_ENABLE_OCSP_STAPLING.getPropertyName(), sslProperties.getEnableOcspStapling().toString());
 
         // Create the https Tomcat.
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
@@ -113,9 +95,9 @@ public class HttpServer {
         // Add the http connector with a redirection to the https port.
         Connector httpConnector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
         httpConnector.setScheme("http");
-        httpConnector.setPort(internalHttpPort);
+        httpConnector.setPort(serverProperties.getInternalHttpPort());
         httpConnector.setSecure(false);
-        httpConnector.setRedirectPort(externalHttpsPort);
+        httpConnector.setRedirectPort(serverProperties.getExternalHttpsPort());
         tomcat.addAdditionalTomcatConnectors(httpConnector);
 
         return tomcat;

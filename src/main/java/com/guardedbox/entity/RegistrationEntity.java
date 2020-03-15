@@ -4,7 +4,7 @@ import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
+import static com.guardedbox.constants.Constraints.REGISTRATION_TOKEN_LENGTH;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

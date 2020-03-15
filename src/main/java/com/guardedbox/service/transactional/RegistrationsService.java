@@ -1,13 +1,12 @@
 package com.guardedbox.service.transactional;
 
-import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
+import static com.guardedbox.constants.Constraints.REGISTRATION_TOKEN_LENGTH;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.CreateRegistrationDto;
@@ -15,6 +14,7 @@ import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.entity.RegistrationEntity;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.RegistrationsMapper;
+import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.repository.RegistrationEntitiesRepository;
 import com.guardedbox.service.RandomService;
 import com.guardedbox.service.RegistrationMessageService;
@@ -32,13 +32,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RegistrationsService {
 
-    /** Property: security-parameters.registration.ttl. */
-    @Value("${security-parameters.registration.ttl}")
-    private final long registrationTtl;
-
-    /** Property: security-parameters.registration.min-ttl. */
-    @Value("${security-parameters.registration.min-ttl}")
-    private final long registrationMinTtl;
+    /** SecurityParametersProperties. */
+    private final SecurityParametersProperties securityParameters;
 
     /** RegistrationEntitiesRepository. */
     private final RegistrationEntitiesRepository registrationEntitiesRepository;
@@ -79,7 +74,7 @@ public class RegistrationsService {
 
         // Check if a registration was created for the email a short time ago.
         RegistrationEntity prevRegistration = registrationEntitiesRepository.findByEmail(createRegistrationDto.getEmail());
-        if (prevRegistration != null && currentTime < prevRegistration.getExpeditionTime().getTime() + registrationMinTtl) {
+        if (prevRegistration != null && currentTime < prevRegistration.getExpeditionTime().getTime() + securityParameters.getRegistrationMinTtl()) {
             throw new ServiceException(String.format(
                     "Registration token was not generated for email %s since another one was generated a short time ago",
                     createRegistrationDto.getEmail()))
@@ -153,7 +148,7 @@ public class RegistrationsService {
                     .setErrorCode("registration.registration-token-not-found");
         }
 
-        if (currentTime > registration.getExpeditionTime().getTime() + registrationTtl) {
+        if (currentTime > registration.getExpeditionTime().getTime() + securityParameters.getRegistrationTtl()) {
             throw new ServiceException(String.format("Registration token %s is expired", token))
                     .setErrorCode("registration.registration-token-expired");
         }

@@ -1,12 +1,15 @@
 package com.guardedbox.constants;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Constraints.
  *
  * @author s3curitybug@gmail.com
  *
  */
-public final class Constraints {
+@UtilityClass
+public class Constraints {
 
     /** Alphanumeric Pattern. */
     public static final String ALPHANUMERIC_PATTERN = "[a-zA-Z0-9]*";
@@ -22,6 +25,9 @@ public final class Constraints {
 
     /** Email Maximum Length. */
     public static final int EMAIL_MAX_LENGTH = 254;
+
+    /** Registration Token Length (number of alphanumeric characters). */
+    public static final int REGISTRATION_TOKEN_LENGTH = 86;
 
     /** Salt Length (number of base64 characters). */
     public static final int SALT_LENGTH = 44;

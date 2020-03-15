@@ -1,14 +1,12 @@
 package com.guardedbox.service;
 
-import static com.guardedbox.constants.SecurityParameters.CHALLENGE_LENGTH;
-
 import java.util.Base64;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.ChallengeDto;
 import com.guardedbox.dto.SignedChallengeResponseDto;
+import com.guardedbox.properties.SecurityParametersProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,9 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChallengeService {
 
-    /** Property: security-parameters.challenge.ttl. */
-    @Value("${security-parameters.challenge.ttl}")
-    private final long challengeTtl;
+    /** SecurityParametersProperties. */
+    private final SecurityParametersProperties securityParameters;
 
     /** RandomService. */
     private final RandomService randomService;
@@ -40,8 +37,8 @@ public class ChallengeService {
         long currentTime = System.currentTimeMillis();
 
         return new ChallengeDto()
-                .setChallenge(randomService.randomBytesBase64(CHALLENGE_LENGTH))
-                .setExpirationTime(currentTime + challengeTtl);
+                .setChallenge(randomService.randomBytesBase64(securityParameters.getChallengeLength()))
+                .setExpirationTime(currentTime + securityParameters.getChallengeTtl());
 
     }
 

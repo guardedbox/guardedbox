@@ -1,8 +1,5 @@
 package com.guardedbox.service;
 
-import static com.guardedbox.constants.SecurityParameters.SIGNATURE_ALGORITHM;
-import static com.guardedbox.constants.SecurityParameters.SIGNATURE_ALGORITHM_ID;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -16,11 +13,17 @@ import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
+import javax.annotation.PostConstruct;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.AccountWithSigningPublicKeyDto;
+import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.service.transactional.AccountsService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,8 +38,34 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SignatureVerificationService {
 
+    /** SecurityParametersProperties. */
+    private final SecurityParametersProperties securityParameters;
+
     /** AccountsService. */
     private final AccountsService accountsService;
+
+    /** Signature Algorithm Identifier. */
+    private AlgorithmIdentifier signatureAlgorithmId;
+
+    /**
+     * This method gets called after the bean is created.
+     */
+    @PostConstruct
+    private void postConstruct() {
+
+        // Set signatureAlgorithmId.
+        try {
+
+            signatureAlgorithmId = new AlgorithmIdentifier((ASN1ObjectIdentifier) EdECObjectIdentifiers.class
+                    .getDeclaredField("id_" + securityParameters.getSignatureAlgorithm()).get(null));
+
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            throw new RuntimeException(String.format(
+                    "Error creating the AlgorithmIdentifier corresponding to the signature algorithm %s",
+                    securityParameters.getSignatureAlgorithm()));
+        }
+
+    }
 
     /**
      * Verifies a signature.
@@ -71,10 +100,10 @@ public class SignatureVerificationService {
 
         try {
 
-            KeyFactory keyFactory = KeyFactory.getInstance(SIGNATURE_ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
-            KeySpec keySpec = new X509EncodedKeySpec(new SubjectPublicKeyInfo(SIGNATURE_ALGORITHM_ID, signingPublicKey).getEncoded());
+            KeyFactory keyFactory = KeyFactory.getInstance(securityParameters.getSignatureAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
+            KeySpec keySpec = new X509EncodedKeySpec(new SubjectPublicKeyInfo(signatureAlgorithmId, signingPublicKey).getEncoded());
             PublicKey pubKey = keyFactory.generatePublic(keySpec);
-            Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
+            Signature signature = Signature.getInstance(securityParameters.getSignatureAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
             signature.initVerify(pubKey);
             signature.update(originalMessage);
 

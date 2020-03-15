@@ -1,11 +1,14 @@
 package com.guardedbox.constants;
 
+import lombok.experimental.UtilityClass;
+
 /**
- * Front-end Parameters.
+ * Front Parameters.
  *
  * @author s3curitybug@gmail.com
  *
  */
+@UtilityClass
 public class FrontParameters {
 
     /** URI of the front-end registration component, including the registration token parameter. */

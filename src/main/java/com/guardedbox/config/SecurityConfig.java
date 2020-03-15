@@ -1,9 +1,7 @@
 package com.guardedbox.config;
 
 import static com.guardedbox.constants.Api.API_BASE_PATH;
-import static com.guardedbox.constants.SecurityParameters.BCRYPT_ROUNDS;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
+
+import com.guardedbox.properties.CookiesProperties;
+import com.guardedbox.properties.SecurityParametersProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,13 +30,11 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig
         extends WebSecurityConfigurerAdapter {
 
-    /** Property: server.servlet.session.cookie.value-base64. */
-    @Value("${server.servlet.session.cookie.value-base64:true}")
-    private final boolean cookieValueBase64;
+    /** SecurityParametersProperties. */
+    private final SecurityParametersProperties securityParameters;
 
-    /** Property: server.servlet.session.cookie.same-site. */
-    @Value("${server.servlet.session.cookie.same-site:Lax}")
-    private final String cookieSameSite;
+    /** CookiesProperties. */
+    private final CookiesProperties cookiesProperties;
 
     /** CustomHeaderWriter. */
     private final CustomHeaderWriter customHeaderWriter;
@@ -47,7 +46,7 @@ public class SecurityConfig
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(BCRYPT_ROUNDS);
+        return new BCryptPasswordEncoder(securityParameters.getBcryptRounds());
     }
 
     /**
@@ -58,8 +57,8 @@ public class SecurityConfig
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
-        cookieSerializer.setUseBase64Encoding(cookieValueBase64);
-        cookieSerializer.setSameSite(cookieSameSite);
+        cookieSerializer.setUseBase64Encoding(cookiesProperties.getValueBase64());
+        cookieSerializer.setSameSite(cookiesProperties.getSameSite());
         return cookieSerializer;
     }
 

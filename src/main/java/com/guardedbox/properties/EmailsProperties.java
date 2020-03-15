@@ -3,19 +3,19 @@ package com.guardedbox.properties;
 import java.util.HashMap;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Properties starting my emails.
+ * Properties starting by emails.
  *
  * @author s3curitybug@gmail.com
  *
  */
-@Component
 @ConfigurationProperties(prefix = "emails")
+@ConstructorBinding
 @RequiredArgsConstructor
 @Getter
 public class EmailsProperties {

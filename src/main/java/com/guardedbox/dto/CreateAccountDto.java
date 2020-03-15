@@ -3,9 +3,9 @@ package com.guardedbox.dto;
 import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.ENCRYPTION_PUBLIC_KEY_LENGTH;
+import static com.guardedbox.constants.Constraints.REGISTRATION_TOKEN_LENGTH;
 import static com.guardedbox.constants.Constraints.SALT_LENGTH;
 import static com.guardedbox.constants.Constraints.SIGNING_PUBLIC_KEY_LENGTH;
-import static com.guardedbox.constants.SecurityParameters.REGISTRATION_TOKEN_LENGTH;
 
 import java.io.Serializable;
 

@@ -3,4 +3,5 @@ LABEL maintainer="s3curitybug@gmail.com"
 COPY target/guardedbox*.jar /opt/guardedbox/guardedbox.jar
 RUN chmod 444 /opt/guardedbox/guardedbox.jar
 USER nobody
-ENTRYPOINT ["java", "-jar", "/opt/guardedbox/guardedbox.jar"]
+ENTRYPOINT ["java"]
+CMD ["-jar", "/opt/guardedbox/guardedbox.jar", "--spring.config.location=file:/etc/guardedbox/application.properties"]

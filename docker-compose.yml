@@ -3,15 +3,17 @@ services:
     guardedbox:
         container_name: guardedbox
         image: s3curitybug/guardedbox
-        command: --spring.config.location=file:/run/secrets/application.properties
+        # command: ["-Xms1024m", "-Xmx1024m", "-jar", "/opt/guardedbox/guardedbox.jar", "--spring.config.location=file:/etc/guardedbox/application.properties"]
         ports:
         - 8080:8080
         - 8443:8443
         secrets:
-        - application.properties
-        - myserver.p12
+        - source: application.properties
+          target: /etc/guardedbox/application.properties
+        - source: server.p12
+          target: /etc/guardedbox/server.p12
 secrets:
     application.properties:
         file: config/local-docker/application.properties
-    myserver.p12:
-        file: config/local-docker/myserver.p12
+    server.p12:
+        file: config/local-docker/server.p12

@@ -65,7 +65,7 @@ public final class CustomHeaderWriter
         }
 
         // Content Security Policy.
-        if (!StringUtils.isEmpty(headersProperties.getContentSecurityPolicyHeader()))
+        if (!dev && !StringUtils.isEmpty(headersProperties.getContentSecurityPolicyHeader()))
             response.setHeader(CONTENT_SECURITY_POLICY.getHeaderName(), headersProperties.getContentSecurityPolicyHeader());
 
         // Cache Control.

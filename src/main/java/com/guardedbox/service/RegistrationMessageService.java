@@ -60,8 +60,8 @@ public class RegistrationMessageService {
 
         emailService.sendAsync(
                 email,
-                emailsProperties.getAlreadyRegisteredSubject().get(languageProperties.getDefaultLanguage()),
-                String.format(emailsProperties.getAlreadyRegisteredBody().get(languageProperties.getDefaultLanguage()),
+                emailsProperties.getRegistrationSubject().get(languageProperties.getDefaultLanguage()),
+                String.format(emailsProperties.getRegistrationBody().get(languageProperties.getDefaultLanguage()),
                         internetUrl + String.format(FRONT_REGISTRATION_COMPONENT_URI, token)));
 
     }

@@ -9,22 +9,24 @@ import javax.transaction.Transactional;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
-import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
+import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.AddParticipantToGroupDto;
 import com.guardedbox.dto.AddSecretToGroupDto;
 import com.guardedbox.dto.CreateGroupDto;
 import com.guardedbox.dto.GroupDto;
 import com.guardedbox.dto.SecretDto;
-import com.guardedbox.entity.AccountWithEncryptionPublicKeyEntity;
+import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.GroupEntity;
 import com.guardedbox.entity.GroupParticipantEntity;
 import com.guardedbox.entity.GroupSecretEntity;
+import com.guardedbox.entity.projection.AccountBaseProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.mapper.GroupsMapper;
-import com.guardedbox.repository.GroupEntitiesRepository;
-import com.guardedbox.repository.GroupParticipantEntitiesRepository;
-import com.guardedbox.repository.GroupSecretEntitiesRepository;
+import com.guardedbox.repository.AccountsRepository;
+import com.guardedbox.repository.GroupParticipantsRepository;
+import com.guardedbox.repository.GroupSecretsRepository;
+import com.guardedbox.repository.GroupsRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,20 +41,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GroupsService {
 
-    /** GroupEntitiesRepository. */
-    private final GroupEntitiesRepository groupEntitiesRepository;
+    /** GroupsRepository. */
+    private final GroupsRepository groupsRepository;
 
-    /** GroupParticipantEntitiesRepository. */
-    private final GroupParticipantEntitiesRepository groupParticipantEntitiesRepository;
+    /** GroupParticipantsRepository. */
+    private final GroupParticipantsRepository groupParticipantsRepository;
 
-    /** GroupSecretEntitiesRepository. */
-    private final GroupSecretEntitiesRepository groupSecretEntitiesRepository;
+    /** GroupSecretsRepository. */
+    private final GroupSecretsRepository groupSecretsRepository;
 
-    /** GroupsMapper. */
-    private final GroupsMapper groupsMapper;
+    /** AccountsRepository. */
+    private final AccountsRepository accountsRepository;
 
     /** AccountsService. */
     private final AccountsService accountsService;
+
+    /** GroupsMapper. */
+    private final GroupsMapper groupsMapper;
 
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
@@ -64,7 +69,7 @@ public class GroupsService {
     public List<GroupDto> getGroupsByOwnerAccountId(
             UUID ownerAccountId) {
 
-        return groupsMapper.toDto(groupEntitiesRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
+        return groupsMapper.toDto(groupsRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
 
     }
 
@@ -75,14 +80,17 @@ public class GroupsService {
     public List<GroupDto> getGroupsByInvitedAccountId(
             UUID accountId) {
 
-        List<GroupEntity> groupEntities = groupEntitiesRepository.findByParticipantsAccountAccountIdOrderByNameAsc(accountId);
+        List<GroupEntity> groupEntities = groupsRepository.findByParticipantsAccountAccountIdOrderByNameAsc(accountId);
         List<GroupDto> groupDtos = new ArrayList<>(groupEntities.size());
 
         for (GroupEntity groupEntity : groupEntities) {
             for (GroupParticipantEntity groupParticipant : groupEntity.getParticipants()) {
                 if (accountId.equals(groupParticipant.getAccount().getAccountId())) {
-                    GroupDto groupDto = groupsMapper.toDto(groupEntity);
-                    groupDto.setEncryptedGroupKey(groupParticipant.getEncryptedGroupKey());
+                    AccountDto ownerAccountDto = accountsMapper.toDto(accountsRepository.findPublicKeysByAccountId(
+                            groupEntity.getOwnerAccount().getAccountId()));
+                    GroupDto groupDto = groupsMapper.toDto(groupEntity)
+                            .setOwnerAccount(ownerAccountDto)
+                            .setEncryptedGroupKey(groupParticipant.getEncryptedGroupKey());
                     groupDtos.add(groupDto);
                     break;
                 }
@@ -98,15 +106,17 @@ public class GroupsService {
      * @param groupId An ID representing a group.
      * @return The list of participants in the group. Checks that the account is the owner or a participant of the group.
      */
-    public List<AccountWithEncryptionPublicKeyDto> getGroupParticipants(
+    public List<AccountDto> getGroupParticipants(
             UUID ownerOrParticipantAccountId,
             UUID groupId) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerOrParticipantAccountId, true);
 
-        List<AccountWithEncryptionPublicKeyDto> participants = new ArrayList<>(group.getParticipants().size());
+        List<AccountDto> participants = new ArrayList<>(group.getParticipants().size());
         for (GroupParticipantEntity groupParticipant : group.getParticipants()) {
-            participants.add(accountsMapper.toDtoWithEncryptionPublicKey(groupParticipant.getAccount()));
+            AccountDto participant = accountsMapper.toDto(accountsRepository.findPublicKeysByAccountId(
+                    groupParticipant.getAccount().getAccountId()));
+            participants.add(participant);
         }
 
         return participants;
@@ -149,8 +159,8 @@ public class GroupsService {
             CreateGroupDto createGroupDto) {
 
         GroupEntity group = groupsMapper.fromDto(createGroupDto);
-        group.setOwnerAccount(new AccountWithEncryptionPublicKeyEntity().setAccountId(ownerAccountId));
-        return groupsMapper.toDto(groupEntitiesRepository.save(group));
+        group.setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId));
+        return groupsMapper.toDto(groupsRepository.save(group));
 
     }
 
@@ -166,14 +176,13 @@ public class GroupsService {
 
         GroupEntity group = findAndCheckGroup(addParticipantToGroupDto.getGroupId(), ownerAccountId, false);
 
-        AccountWithEncryptionPublicKeyEntity account =
-                accountsService.findAndCheckAccountWithEncryptionPublicKeyByEmail(addParticipantToGroupDto.getEmail());
+        AccountBaseProjection account = accountsService.findAndCheckAccountBaseByEmail(addParticipantToGroupDto.getEmail());
 
         GroupParticipantEntity groupParticipant = new GroupParticipantEntity()
                 .setGroup(group)
-                .setAccount(account)
+                .setAccount(new AccountEntity().setAccountId(account.getAccountId()))
                 .setEncryptedGroupKey(addParticipantToGroupDto.getEncryptedGroupKey());
-        groupParticipantEntitiesRepository.save(groupParticipant);
+        groupParticipantsRepository.save(groupParticipant);
 
     }
 
@@ -194,7 +203,7 @@ public class GroupsService {
                 .setGroup(group)
                 .setName(addSecretToGroupDto.getName())
                 .setValue(addSecretToGroupDto.getValue());
-        groupSecret = groupSecretEntitiesRepository.save(groupSecret);
+        groupSecret = groupSecretsRepository.save(groupSecret);
 
         SecretDto secret = new SecretDto()
                 .setSecretId(groupSecret.getGroupSecretId())
@@ -216,7 +225,7 @@ public class GroupsService {
             UUID groupId) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
-        groupEntitiesRepository.delete(group);
+        groupsRepository.delete(group);
         return groupsMapper.toDto(group);
 
     }
@@ -237,7 +246,8 @@ public class GroupsService {
 
         for (int i = 0; i < group.getParticipants().size(); i++) {
             GroupParticipantEntity participant = group.getParticipants().get(i);
-            if (email.equals(participant.getAccount().getEmail())) {
+            AccountBaseProjection participantAccount = accountsRepository.findBaseByAccountId(participant.getAccount().getAccountId());
+            if (email.equals(participantAccount.getEmail())) {
                 group.getParticipants().remove(i);
             }
         }
@@ -280,7 +290,7 @@ public class GroupsService {
             UUID accountId,
             boolean participantAllowed) {
 
-        GroupEntity group = groupEntitiesRepository.findById(groupId).orElse(null);
+        GroupEntity group = groupsRepository.findById(groupId).orElse(null);
 
         if (group == null) {
             throw new ServiceException(String.format("Group %s does not exist", groupId))

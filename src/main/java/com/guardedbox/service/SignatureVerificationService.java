@@ -22,7 +22,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Service;
 
-import com.guardedbox.dto.AccountWithSigningPublicKeyDto;
+import com.guardedbox.dto.AccountDto;
 import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.service.transactional.AccountsService;
 
@@ -80,8 +80,8 @@ public class SignatureVerificationService {
             byte[] signedMessage,
             String email) {
 
-        AccountWithSigningPublicKeyDto accountWithSigningPublicKeyDto = accountsService.getAndCheckAccountWithSigningPublicKeyByEmail(email);
-        return verifySignature(originalMessage, signedMessage, Base64.getDecoder().decode(accountWithSigningPublicKeyDto.getSigningPublicKey()));
+        AccountDto account = accountsService.getAndCheckAccountPublicKeysByEmail(email);
+        return verifySignature(originalMessage, signedMessage, Base64.getDecoder().decode(account.getSigningPublicKey()));
 
     }
 

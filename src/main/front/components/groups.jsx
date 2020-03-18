@@ -200,7 +200,7 @@ class Groups extends Component {
 
         rest({
             method: 'get',
-            url: '/api/accounts/encryption-public-key',
+            url: '/api/accounts/public-keys',
             params: {
                 'email': participantEmail
             },

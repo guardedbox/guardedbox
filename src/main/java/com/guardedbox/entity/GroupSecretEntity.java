@@ -38,7 +38,7 @@ public class GroupSecretEntity
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = -3662560674824178640L;
+    private static final long serialVersionUID = -2027578270422404842L;
 
     /** Group ID. */
     @Id

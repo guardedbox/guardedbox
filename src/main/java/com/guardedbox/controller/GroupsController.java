@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
+import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.AddParticipantToGroupDto;
 import com.guardedbox.dto.AddSecretToGroupDto;
 import com.guardedbox.dto.CreateGroupDto;
@@ -32,7 +32,6 @@ import com.guardedbox.dto.GroupDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.dto.SuccessDto;
 import com.guardedbox.service.SessionAccountService;
-import com.guardedbox.service.transactional.AccountsService;
 import com.guardedbox.service.transactional.GroupsService;
 
 import lombok.RequiredArgsConstructor;
@@ -51,9 +50,6 @@ public class GroupsController {
 
     /** GroupsService. */
     private final GroupsService groupsService;
-
-    /** AccountsService. */
-    private final AccountsService accountsService;
 
     /** SessionAccountService. */
     private final SessionAccountService sessionAccount;
@@ -83,7 +79,7 @@ public class GroupsController {
      * @return The participants of the group corresponding to the introduced ID.
      */
     @GetMapping("/{group-id}/participants")
-    public List<AccountWithEncryptionPublicKeyDto> getGroupParticipants(
+    public List<AccountDto> getGroupParticipants(
             @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
 
         return groupsService.getGroupParticipants(sessionAccount.getAccountId(), groupId);
@@ -112,9 +108,7 @@ public class GroupsController {
     public GroupDto createGroup(
             @RequestBody(required = true) @Valid CreateGroupDto createGroupDto) {
 
-        GroupDto group = groupsService.createGroup(sessionAccount.getAccountId(), createGroupDto);
-        group.setOwnerAccount(accountsService.getAndCheckAccountWithEncryptionPublicKeyByEmail(sessionAccount.getEmail()));
-        return group;
+        return groupsService.createGroup(sessionAccount.getAccountId(), createGroupDto);
 
     }
 

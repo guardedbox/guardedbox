@@ -16,12 +16,12 @@ import com.guardedbox.dto.EditSecretSharingDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.SecretEntity;
-import com.guardedbox.entity.SecretWithOwnerAccountEncryptionPublicKeyEntity;
 import com.guardedbox.entity.SharedSecretEntity;
+import com.guardedbox.entity.projection.AccountBaseProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.SecretsMapper;
-import com.guardedbox.repository.SecretEntitiesRepository;
-import com.guardedbox.repository.SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository;
+import com.guardedbox.repository.AccountsRepository;
+import com.guardedbox.repository.SecretsRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,11 +36,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecretsService {
 
-    /** SecretEntitiesRepository. */
-    private final SecretEntitiesRepository secretEntitiesRepository;
+    /** SecretsRepository. */
+    private final SecretsRepository secretsRepository;
 
-    /** SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository. */
-    private final SecretWithOwnerAccountEncryptionPublicKeyEntitiesRepository secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository;
+    /** AccountsRepository. */
+    private final AccountsRepository accountsRepository;
 
     /** SecretsMapper. */
     private final SecretsMapper secretsMapper;
@@ -52,7 +52,7 @@ public class SecretsService {
     public List<SecretDto> getSecretsByOwnerAccountId(
             UUID ownerAccountId) {
 
-        return secretsMapper.toDto(secretEntitiesRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
+        return secretsMapper.toDto(secretsRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
 
     }
 
@@ -69,7 +69,7 @@ public class SecretsService {
 
         SecretEntity secret = secretsMapper.fromDto(createSecretDto);
         secret.setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId));
-        return secretsMapper.toDto(secretEntitiesRepository.save(secret));
+        return secretsMapper.toDto(secretsRepository.save(secret));
 
     }
 
@@ -99,7 +99,9 @@ public class SecretsService {
             editSecretSharings.put(editSecretSharing.getReceiverEmail(), editSecretSharing);
         }
         for (SharedSecretEntity sharedSecret : secret.getSharedSecrets()) {
-            EditSecretSharingDto editSecretSharing = editSecretSharings.get(sharedSecret.getReceiverAccount().getEmail());
+            AccountBaseProjection sharedSecretReceiverAccount = accountsRepository.findBaseByAccountId(
+                    sharedSecret.getReceiverAccount().getAccountId());
+            EditSecretSharingDto editSecretSharing = editSecretSharings.get(sharedSecretReceiverAccount.getEmail());
             if (editSecretSharing == null) {
                 throw new ServiceException(String.format(
                         "Edit secret sharings do not match secret %s current sharings", secretId));
@@ -107,7 +109,7 @@ public class SecretsService {
             sharedSecret.setValue(editSecretSharing.getValue());
         }
 
-        return secretsMapper.toDto(secretEntitiesRepository.save(secret));
+        return secretsMapper.toDto(secretsRepository.save(secret));
 
     }
 
@@ -123,7 +125,7 @@ public class SecretsService {
             UUID secretId) {
 
         SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId);
-        secretEntitiesRepository.delete(secret);
+        secretsRepository.delete(secret);
         return secretsMapper.toDto(secret);
 
     }
@@ -139,36 +141,7 @@ public class SecretsService {
             UUID secretId,
             UUID ownerAccountId) {
 
-        SecretEntity secret = secretEntitiesRepository.findById(secretId).orElse(null);
-
-        if (secret == null) {
-            throw new ServiceException(String.format("Secret %s does not exist", secretId))
-                    .setErrorCode("my-secrets.secret-does-not-exist");
-        }
-
-        if (ownerAccountId != null && !ownerAccountId.equals(secret.getOwnerAccount().getAccountId())) {
-            throw new AuthorizationServiceException(String.format(
-                    "Secret %s cannot be managed by account %s since it belongs to account %s",
-                    secretId, ownerAccountId, secret.getOwnerAccount().getAccountId()));
-        }
-
-        return secret;
-
-    }
-
-    /**
-     * Finds a Secret by secretId and checks if it exists and belongs to an ownerAccountId.
-     *
-     * @param secretId The secretId.
-     * @param ownerAccountId The accountId.
-     * @return The Secret.
-     */
-    protected SecretWithOwnerAccountEncryptionPublicKeyEntity findAndCheckSecretWithOwnerAccountEncryptionPublicKey(
-            UUID secretId,
-            UUID ownerAccountId) {
-
-        SecretWithOwnerAccountEncryptionPublicKeyEntity secret =
-                secretWithOwnerAccountEncryptionPublicKeyEntitiesRepository.findById(secretId).orElse(null);
+        SecretEntity secret = secretsRepository.findById(secretId).orElse(null);
 
         if (secret == null) {
             throw new ServiceException(String.format("Secret %s does not exist", secretId))

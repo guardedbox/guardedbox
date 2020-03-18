@@ -1,9 +1,12 @@
 package com.guardedbox.dto;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,13 +17,14 @@ import lombok.Setter;
  * @author s3curitybug@gmail.com
  *
  */
+@JsonInclude(Include.NON_NULL)
 @Getter
 @Setter
 public class AccountDto
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = -5507706737709209311L;
+    private static final long serialVersionUID = 8700265010013018958L;
 
     /** Account ID. */
     @JsonIgnore
@@ -28,5 +32,17 @@ public class AccountDto
 
     /** Email. */
     private String email;
+
+    /** Salt. */
+    private String salt;
+
+    /** Encryption Public Key. */
+    private String encryptionPublicKey;
+
+    /** Signing Public Key. */
+    private String signingPublicKey;
+
+    /** Secrets. */
+    private List<SecretDto> secrets;
 
 }

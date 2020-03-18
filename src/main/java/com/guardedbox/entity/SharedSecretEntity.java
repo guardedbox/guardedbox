@@ -37,7 +37,7 @@ public class SharedSecretEntity
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = -6078359974796510571L;
+    private static final long serialVersionUID = -8876705191538373433L;
 
     /** Shared Secret ID. */
     @Id
@@ -50,14 +50,14 @@ public class SharedSecretEntity
     @JoinColumn(name = "secret_id")
     @NotNull
     @Valid
-    private SecretWithOwnerAccountEncryptionPublicKeyEntity secret;
+    private SecretEntity secret;
 
     /** Receiver Account. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "receiver_account_id")
     @NotNull
     @Valid
-    private AccountWithEncryptionPublicKeyEntity receiverAccount;
+    private AccountEntity receiverAccount;
 
     /** Value. */
     @Column(name = "value")

@@ -17,7 +17,7 @@ export function getTrustedKeys() {
 
 /**
  * Adds a trusted key to the local storage.
- * 
+ *
  * @param {string} email The email associated to the new trusted key.
  * @param {string} encryptionPublicKey The encryption public key of the new trusted key.
  */
@@ -29,7 +29,7 @@ export function addTrustedKey(email, encryptionPublicKey, callback) {
 
     rest({
         method: 'get',
-        url: '/api/accounts/encryption-public-key',
+        url: '/api/accounts/public-keys',
         params: {
             'email': email
         },
@@ -62,7 +62,7 @@ export function addTrustedKey(email, encryptionPublicKey, callback) {
 
 /**
  * Removes a trusted key from the local storage.
- * 
+ *
  * @param {string} email The email associated to the trusted key to be removed.
  */
 export function removeTrustedKey(email) {
@@ -85,7 +85,7 @@ export function removeTrustedKey(email) {
 
 /**
  * Checks if a public key matches an email trusted key.
- * 
+ *
  * @param {string} email The email corresponding to the trusted key.
  * @param {string} encryptionPublicKey The public key to be checked.
  */

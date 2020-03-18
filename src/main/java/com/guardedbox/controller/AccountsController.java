@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
-import com.guardedbox.dto.AccountWithSaltDto;
+import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.CreateAccountDto;
 import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.dto.SuccessDto;
@@ -51,22 +50,22 @@ public class AccountsController {
      * @return The salt of the account corresponding to the introduced email.
      */
     @GetMapping("/salt")
-    public AccountWithSaltDto getAccountSalt(
+    public AccountDto getAccountSalt(
             @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
 
-        return accountsService.getAndCheckAccountWithSaltByEmail(email);
+        return accountsService.getAndCheckAccountSaltByEmail(email);
 
     }
 
     /**
      * @param email An email.
-     * @return The encryption public key of the account corresponding to the introduced email.
+     * @return The public keys of the account corresponding to the introduced email.
      */
-    @GetMapping("/encryption-public-key")
-    public AccountWithEncryptionPublicKeyDto getAccountEncryptionPublicKey(
+    @GetMapping("/public-keys")
+    public AccountDto getAccountEncryptionPublicKey(
             @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
 
-        return accountsService.getAndCheckAccountWithEncryptionPublicKeyByEmail(email);
+        return accountsService.getAndCheckAccountPublicKeysByEmail(email);
 
     }
 

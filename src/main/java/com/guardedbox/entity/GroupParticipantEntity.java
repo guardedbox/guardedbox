@@ -37,7 +37,7 @@ public class GroupParticipantEntity
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = -3662560674824178640L;
+    private static final long serialVersionUID = 5870175707049929022L;
 
     /** Group ID. */
     @Id
@@ -57,7 +57,7 @@ public class GroupParticipantEntity
     @JoinColumn(name = "account_id")
     @NotNull
     @Valid
-    private AccountWithEncryptionPublicKeyEntity account;
+    private AccountEntity account;
 
     /** Encrypted Group Key. */
     @Column(name = "encrypted_group_key")

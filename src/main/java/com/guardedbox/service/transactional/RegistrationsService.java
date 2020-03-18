@@ -15,7 +15,8 @@ import com.guardedbox.entity.RegistrationEntity;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.RegistrationsMapper;
 import com.guardedbox.properties.SecurityParametersProperties;
-import com.guardedbox.repository.RegistrationEntitiesRepository;
+import com.guardedbox.repository.AccountsRepository;
+import com.guardedbox.repository.RegistrationsRepository;
 import com.guardedbox.service.RandomService;
 import com.guardedbox.service.RegistrationMessageService;
 
@@ -35,14 +36,14 @@ public class RegistrationsService {
     /** SecurityParametersProperties. */
     private final SecurityParametersProperties securityParameters;
 
-    /** RegistrationEntitiesRepository. */
-    private final RegistrationEntitiesRepository registrationEntitiesRepository;
+    /** RegistrationsRepository. */
+    private final RegistrationsRepository registrationsRepository;
+
+    /** AccountsRepository. */
+    private final AccountsRepository accountsRepository;
 
     /** RegistrationsMapper. */
     private final RegistrationsMapper registrationsMapper;
-
-    /** AccountsService. */
-    private final AccountsService accountsService;
 
     /** RegistrationMessageService. */
     private final RegistrationMessageService registrationMessageService;
@@ -73,7 +74,7 @@ public class RegistrationsService {
         long currentTime = System.currentTimeMillis();
 
         // Check if a registration was created for the email a short time ago.
-        RegistrationEntity prevRegistration = registrationEntitiesRepository.findByEmail(createRegistrationDto.getEmail());
+        RegistrationEntity prevRegistration = registrationsRepository.findByEmail(createRegistrationDto.getEmail());
         if (prevRegistration != null && currentTime < prevRegistration.getExpeditionTime().getTime() + securityParameters.getRegistrationMinTtl()) {
             throw new ServiceException(String.format(
                     "Registration token was not generated for email %s since another one was generated a short time ago",
@@ -82,7 +83,7 @@ public class RegistrationsService {
         }
 
         // Check if the email is already registered.
-        if (accountsService.existsAccountByEmail(createRegistrationDto.getEmail())) {
+        if (accountsRepository.existsByEmail(createRegistrationDto.getEmail())) {
 
             // Send a message indicating that the email is already registered.
             registrationMessageService.sendAlreadyRegisteredMessage(createRegistrationDto.getEmail());
@@ -99,7 +100,7 @@ public class RegistrationsService {
             String token = null;
             do {
                 token = randomService.randomAlphanumericString(REGISTRATION_TOKEN_LENGTH);
-            } while (registrationEntitiesRepository.existsByToken(token));
+            } while (registrationsRepository.existsByToken(token));
 
             // Send the registration message.
             registrationMessageService.sendRegistrationMessage(createRegistrationDto.getEmail(), token);
@@ -109,7 +110,7 @@ public class RegistrationsService {
                     .setEmail(createRegistrationDto.getEmail())
                     .setToken(token)
                     .setExpeditionTime(new Timestamp(currentTime));
-            registrationEntitiesRepository.save(registration);
+            registrationsRepository.save(registration);
 
             // Return the registration.
             return registrationsMapper.toDto(registration);
@@ -126,7 +127,7 @@ public class RegistrationsService {
     public void deleteRegistration(
             UUID registrationId) {
 
-        registrationEntitiesRepository.deleteById(registrationId);
+        registrationsRepository.deleteById(registrationId);
 
     }
 
@@ -141,7 +142,7 @@ public class RegistrationsService {
 
         long currentTime = System.currentTimeMillis();
 
-        RegistrationEntity registration = registrationEntitiesRepository.findByToken(token);
+        RegistrationEntity registration = registrationsRepository.findByToken(token);
 
         if (registration == null) {
             throw new ServiceException(String.format("Registration token %s does not exist", token))

@@ -21,9 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GroupsMapper {
 
-    /** AccountsMapper. */
-    private final AccountsMapper accountsMapper;
-
     /**
      * Maps a Group Entity to DTO.
      *
@@ -36,7 +33,6 @@ public class GroupsMapper {
         return groupEntity == null ? null : new GroupDto()
                 .setGroupId(groupEntity.getGroupId())
                 .setName(groupEntity.getName())
-                .setOwnerAccount(accountsMapper.toDtoWithEncryptionPublicKey(groupEntity.getOwnerAccount()))
                 .setEncryptedGroupKey(groupEntity.getEncryptedGroupKey());
 
     }
@@ -54,7 +50,6 @@ public class GroupsMapper {
             return null;
 
         List<GroupDto> groupDtos = new ArrayList<>(groupEntities.size());
-
         for (GroupEntity groupEntity : groupEntities)
             groupDtos.add(toDto(groupEntity));
 

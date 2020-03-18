@@ -41,7 +41,7 @@ public class SecretEntity
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = 6161942842947773439L;
+    private static final long serialVersionUID = -2315693930078299277L;
 
     /** Secret ID. */
     @Id

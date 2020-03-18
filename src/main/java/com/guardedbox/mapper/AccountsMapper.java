@@ -1,20 +1,13 @@
 package com.guardedbox.mapper;
 
-import java.util.LinkedList;
-
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.AccountDto;
-import com.guardedbox.dto.AccountWithEncryptionPublicKeyDto;
-import com.guardedbox.dto.AccountWithSaltDto;
-import com.guardedbox.dto.AccountWithSecretsDto;
-import com.guardedbox.dto.AccountWithSigningPublicKeyDto;
 import com.guardedbox.dto.CreateAccountDto;
 import com.guardedbox.entity.AccountEntity;
-import com.guardedbox.entity.AccountFullEntity;
-import com.guardedbox.entity.AccountWithEncryptionPublicKeyEntity;
-import com.guardedbox.entity.AccountWithSaltEntity;
-import com.guardedbox.entity.AccountWithSigningPublicKeyEntity;
+import com.guardedbox.entity.projection.AccountBaseProjection;
+import com.guardedbox.entity.projection.AccountPublicKeysProjection;
+import com.guardedbox.entity.projection.AccountSaltProjection;
 
 /**
  * Mapper: Account.
@@ -36,7 +29,10 @@ public class AccountsMapper {
 
         return accountEntity == null ? null : new AccountDto()
                 .setAccountId(accountEntity.getAccountId())
-                .setEmail(accountEntity.getEmail());
+                .setEmail(accountEntity.getEmail())
+                .setSalt(accountEntity.getSalt())
+                .setEncryptionPublicKey(accountEntity.getEncryptionPublicKey())
+                .setSigningPublicKey(accountEntity.getSigningPublicKey());
 
     }
 
@@ -47,7 +43,7 @@ public class AccountsMapper {
      * @return The Account DTO.
      */
     public AccountDto toDto(
-            AccountFullEntity accountEntity) {
+            AccountBaseProjection accountEntity) {
 
         return accountEntity == null ? null : new AccountDto()
                 .setAccountId(accountEntity.getAccountId())
@@ -61,12 +57,10 @@ public class AccountsMapper {
      * @param accountEntity The Account Entity.
      * @return The Account DTO.
      */
-    public AccountWithSaltDto toDtoWithSalt(
-            AccountWithSaltEntity accountEntity) {
+    public AccountDto toDto(
+            AccountSaltProjection accountEntity) {
 
-        return accountEntity == null ? null : new AccountWithSaltDto()
-                .setAccountId(accountEntity.getAccountId())
-                .setEmail(accountEntity.getEmail())
+        return accountEntity == null ? null : toDto((AccountBaseProjection) accountEntity)
                 .setSalt(accountEntity.getSalt());
 
     }
@@ -77,46 +71,12 @@ public class AccountsMapper {
      * @param accountEntity The Account Entity.
      * @return The Account DTO.
      */
-    public AccountWithEncryptionPublicKeyDto toDtoWithEncryptionPublicKey(
-            AccountWithEncryptionPublicKeyEntity accountEntity) {
+    public AccountDto toDto(
+            AccountPublicKeysProjection accountEntity) {
 
-        return accountEntity == null ? null : new AccountWithEncryptionPublicKeyDto()
-                .setAccountId(accountEntity.getAccountId())
-                .setEmail(accountEntity.getEmail())
-                .setEncryptionPublicKey(accountEntity.getEncryptionPublicKey());
-
-    }
-
-    /**
-     * Maps an Account Entity to DTO.
-     *
-     * @param accountEntity The Account Entity.
-     * @return The Account DTO.
-     */
-    public AccountWithSigningPublicKeyDto toDtoWithSigningPublicKey(
-            AccountWithSigningPublicKeyEntity accountEntity) {
-
-        return accountEntity == null ? null : new AccountWithSigningPublicKeyDto()
-                .setAccountId(accountEntity.getAccountId())
-                .setEmail(accountEntity.getEmail())
-                .setSigningPublicKey(accountEntity.getSigningPublicKey());
-
-    }
-
-    /**
-     * Maps an Account Entity to DTO.
-     *
-     * @param accountEntity The Account Entity.
-     * @return The Account DTO.
-     */
-    public AccountWithSecretsDto toDtoWithSecrets(
-            AccountWithEncryptionPublicKeyEntity accountEntity) {
-
-        return accountEntity == null ? null : new AccountWithSecretsDto()
-                .setAccountId(accountEntity.getAccountId())
-                .setEmail(accountEntity.getEmail())
+        return accountEntity == null ? null : toDto((AccountBaseProjection) accountEntity)
                 .setEncryptionPublicKey(accountEntity.getEncryptionPublicKey())
-                .setSecrets(new LinkedList<>());
+                .setSigningPublicKey(accountEntity.getSigningPublicKey());
 
     }
 
@@ -126,14 +86,14 @@ public class AccountsMapper {
      * @param accountDto The Account DTO.
      * @return The Account Entity.
      */
-    public AccountFullEntity fromDto(
+    public AccountEntity fromDto(
             CreateAccountDto accountDto) {
 
-        return accountDto == null ? null : new AccountFullEntity()
-                .setEmail(accountDto.getEmail())
+        return accountDto == null ? null : new AccountEntity()
                 .setSalt(accountDto.getSalt())
                 .setEncryptionPublicKey(accountDto.getEncryptionPublicKey())
-                .setSigningPublicKey(accountDto.getSigningPublicKey());
+                .setSigningPublicKey(accountDto.getSigningPublicKey())
+                .setEmail(accountDto.getEmail());
 
     }
 

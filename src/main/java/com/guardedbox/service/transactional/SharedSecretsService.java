@@ -22,7 +22,6 @@ import com.guardedbox.entity.projection.AccountPublicKeysProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.mapper.SecretsMapper;
-import com.guardedbox.repository.AccountsRepository;
 import com.guardedbox.repository.SharedSecretsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -40,9 +39,6 @@ public class SharedSecretsService {
 
     /** SharedSecretsRepository. */
     private final SharedSecretsRepository sharedSecretsRepository;
-
-    /** AccountsRepository. */
-    private final AccountsRepository accountsRepository;
 
     /** SecretsService. */
     private final SecretsService secretsService;
@@ -69,8 +65,7 @@ public class SharedSecretsService {
 
         for (SharedSecretEntity receivedSharedSecret : receivedSharedSecrets) {
 
-            AccountPublicKeysProjection ownerAccount = accountsRepository.findPublicKeysByAccountId(
-                    receivedSharedSecret.getSecret().getOwnerAccount().getAccountId());
+            AccountPublicKeysProjection ownerAccount = receivedSharedSecret.getSecret().getOwnerAccount(AccountPublicKeysProjection.class);
             AccountDto ownerAccountWithSecrets = ownerAccountsWithSecrets.get(ownerAccount.getAccountId());
             if (ownerAccountWithSecrets == null) {
                 ownerAccountWithSecrets = accountsMapper.toDto(ownerAccount).setSecrets(new LinkedList<>());
@@ -102,9 +97,8 @@ public class SharedSecretsService {
 
         List<AccountDto> receiverAccounts = new ArrayList<>(sharedSecrets.size());
         for (SharedSecretEntity sharedSecret : sharedSecrets) {
-            AccountPublicKeysProjection receiverAccount = accountsRepository.findPublicKeysByAccountId(
-                    sharedSecret.getReceiverAccount().getAccountId());
-            receiverAccounts.add(accountsMapper.toDto(receiverAccount));
+            AccountDto receiverAccount = accountsMapper.toDto(sharedSecret.getReceiverAccount(AccountPublicKeysProjection.class));
+            receiverAccounts.add(receiverAccount);
         }
 
         return receiverAccounts;

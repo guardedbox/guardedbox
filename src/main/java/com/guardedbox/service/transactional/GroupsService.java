@@ -20,10 +20,10 @@ import com.guardedbox.entity.GroupEntity;
 import com.guardedbox.entity.GroupParticipantEntity;
 import com.guardedbox.entity.GroupSecretEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
+import com.guardedbox.entity.projection.AccountPublicKeysProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.mapper.GroupsMapper;
-import com.guardedbox.repository.AccountsRepository;
 import com.guardedbox.repository.GroupParticipantsRepository;
 import com.guardedbox.repository.GroupSecretsRepository;
 import com.guardedbox.repository.GroupsRepository;
@@ -49,9 +49,6 @@ public class GroupsService {
 
     /** GroupSecretsRepository. */
     private final GroupSecretsRepository groupSecretsRepository;
-
-    /** AccountsRepository. */
-    private final AccountsRepository accountsRepository;
 
     /** AccountsService. */
     private final AccountsService accountsService;
@@ -86,8 +83,7 @@ public class GroupsService {
         for (GroupEntity groupEntity : groupEntities) {
             for (GroupParticipantEntity groupParticipant : groupEntity.getParticipants()) {
                 if (accountId.equals(groupParticipant.getAccount().getAccountId())) {
-                    AccountDto ownerAccountDto = accountsMapper.toDto(accountsRepository.findPublicKeysByAccountId(
-                            groupEntity.getOwnerAccount().getAccountId()));
+                    AccountDto ownerAccountDto = accountsMapper.toDto(groupEntity.getOwnerAccount(AccountPublicKeysProjection.class));
                     GroupDto groupDto = groupsMapper.toDto(groupEntity)
                             .setOwnerAccount(ownerAccountDto)
                             .setEncryptedGroupKey(groupParticipant.getEncryptedGroupKey());
@@ -114,8 +110,7 @@ public class GroupsService {
 
         List<AccountDto> participants = new ArrayList<>(group.getParticipants().size());
         for (GroupParticipantEntity groupParticipant : group.getParticipants()) {
-            AccountDto participant = accountsMapper.toDto(accountsRepository.findPublicKeysByAccountId(
-                    groupParticipant.getAccount().getAccountId()));
+            AccountDto participant = accountsMapper.toDto(groupParticipant.getAccount(AccountPublicKeysProjection.class));
             participants.add(participant);
         }
 
@@ -246,8 +241,7 @@ public class GroupsService {
 
         for (int i = 0; i < group.getParticipants().size(); i++) {
             GroupParticipantEntity participant = group.getParticipants().get(i);
-            AccountBaseProjection participantAccount = accountsRepository.findBaseByAccountId(participant.getAccount().getAccountId());
-            if (email.equals(participantAccount.getEmail())) {
+            if (email.equals(participant.getAccount(AccountBaseProjection.class).getEmail())) {
                 group.getParticipants().remove(i);
             }
         }

@@ -20,7 +20,6 @@ import com.guardedbox.entity.SharedSecretEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.SecretsMapper;
-import com.guardedbox.repository.AccountsRepository;
 import com.guardedbox.repository.SecretsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -38,9 +37,6 @@ public class SecretsService {
 
     /** SecretsRepository. */
     private final SecretsRepository secretsRepository;
-
-    /** AccountsRepository. */
-    private final AccountsRepository accountsRepository;
 
     /** SecretsMapper. */
     private final SecretsMapper secretsMapper;
@@ -99,9 +95,7 @@ public class SecretsService {
             editSecretSharings.put(editSecretSharing.getReceiverEmail(), editSecretSharing);
         }
         for (SharedSecretEntity sharedSecret : secret.getSharedSecrets()) {
-            AccountBaseProjection sharedSecretReceiverAccount = accountsRepository.findBaseByAccountId(
-                    sharedSecret.getReceiverAccount().getAccountId());
-            EditSecretSharingDto editSecretSharing = editSecretSharings.get(sharedSecretReceiverAccount.getEmail());
+            EditSecretSharingDto editSecretSharing = editSecretSharings.get(sharedSecret.getReceiverAccount(AccountBaseProjection.class).getEmail());
             if (editSecretSharing == null) {
                 throw new ServiceException(String.format(
                         "Edit secret sharings do not match secret %s current sharings", secretId));

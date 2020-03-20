@@ -18,11 +18,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import com.guardedbox.entity.projection.AccountBaseProjection;
+import com.guardedbox.repository.AccountsRepository;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -72,5 +76,18 @@ public class SecretEntity
     /** Shared Secrets Based on this Secret. */
     @OneToMany(mappedBy = "secret", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedSecretEntity> sharedSecrets;
+
+    /**
+     * @param <T> A projection type.
+     * @param type The class of the projection.
+     * @return The ownerAccount corresponding to the introduced projection class.
+     */
+    @Transient
+    public <T extends AccountBaseProjection> T getOwnerAccount(
+            Class<T> type) {
+
+        return AccountsRepository.getProjection(this.getOwnerAccount(), type);
+
+    }
 
 }

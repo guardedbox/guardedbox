@@ -14,11 +14,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import com.guardedbox.entity.projection.AccountBaseProjection;
+import com.guardedbox.repository.AccountsRepository;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -65,5 +69,18 @@ public class SharedSecretEntity
     @Pattern(regexp = BASE64_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
+
+    /**
+     * @param <T> A projection type.
+     * @param type The class of the projection.
+     * @return The receiverAccount corresponding to the introduced projection class.
+     */
+    @Transient
+    public <T extends AccountBaseProjection> T getReceiverAccount(
+            Class<T> type) {
+
+        return AccountsRepository.getProjection(this.getReceiverAccount(), type);
+
+    }
 
 }

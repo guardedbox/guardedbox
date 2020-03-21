@@ -1,12 +1,12 @@
 package com.guardedbox.service;
 
-import static com.guardedbox.constants.FrontParameters.FRONT_REGISTRATION_COMPONENT_URI;
+import static com.guardedbox.constants.PathParameters.FRONT_REGISTRATION_COMPONENT_PATH;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.properties.EmailsProperties;
 import com.guardedbox.properties.LanguageProperties;
+import com.guardedbox.properties.ServerProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,12 +20,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RegistrationMessageService {
 
-    /** Property: internet.url. */
-    @Value("${internet.url}")
-    private final String internetUrl;
-
     /** EmailsProperties. */
     private final EmailsProperties emailsProperties;
+
+    /** ServerProperties. */
+    private final ServerProperties serverProperties;
 
     /** LanguageProperties. */
     private final LanguageProperties languageProperties;
@@ -62,7 +61,7 @@ public class RegistrationMessageService {
                 email,
                 emailsProperties.getRegistrationSubject().get(languageProperties.getDefaultLanguage()),
                 String.format(emailsProperties.getRegistrationBody().get(languageProperties.getDefaultLanguage()),
-                        internetUrl + String.format(FRONT_REGISTRATION_COMPONENT_URI, token)));
+                        serverProperties.getExternalUrl() + String.format(FRONT_REGISTRATION_COMPONENT_PATH, token)));
 
     }
 

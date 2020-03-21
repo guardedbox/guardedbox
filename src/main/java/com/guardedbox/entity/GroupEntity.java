@@ -1,7 +1,7 @@
 package com.guardedbox.entity;
 
+import static com.guardedbox.constants.Constraints.BASE64_44BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
-import static com.guardedbox.constants.Constraints.ENCRYPTED_KEY_LENGTH;
 import static com.guardedbox.constants.Constraints.GROUP_NAME_MAX_LENGTH;
 
 import java.io.Serializable;
@@ -45,7 +45,7 @@ public class GroupEntity
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = 3542993674260199490L;
+    private static final long serialVersionUID = 7637058456804709812L;
 
     /** Group ID. */
     @Id
@@ -70,7 +70,7 @@ public class GroupEntity
     @Column(name = "encrypted_group_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = ENCRYPTED_KEY_LENGTH, max = ENCRYPTED_KEY_LENGTH)
+    @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
     private String encryptedGroupKey;
 
     /** Participants. */

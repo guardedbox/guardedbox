@@ -1,12 +1,10 @@
 package com.guardedbox.entity;
 
+import static com.guardedbox.constants.Constraints.BASE64_32BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.Constraints.ENCRYPTION_PUBLIC_KEY_LENGTH;
-import static com.guardedbox.constants.Constraints.SALT_LENGTH;
-import static com.guardedbox.constants.Constraints.SIGNING_PUBLIC_KEY_LENGTH;
 
 import java.io.Serializable;
 import java.util.List;
@@ -61,21 +59,21 @@ public class AccountEntity
     @Column(name = "salt")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = SALT_LENGTH, max = SALT_LENGTH)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String salt;
 
     /** Encryption Public Key. */
     @Column(name = "encryption_public_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = ENCRYPTION_PUBLIC_KEY_LENGTH, max = ENCRYPTION_PUBLIC_KEY_LENGTH)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String encryptionPublicKey;
 
     /** Signing Public Key. */
     @Column(name = "signing_public_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = SIGNING_PUBLIC_KEY_LENGTH, max = SIGNING_PUBLIC_KEY_LENGTH)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String signingPublicKey;
 
     /** Secrets. */

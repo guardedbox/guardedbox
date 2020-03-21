@@ -45,6 +45,7 @@ public class HttpServer {
 
         // Check if there is dual port configuration.
         if (serverProperties.getInternalHttpPort() == null
+                || serverProperties.getExternalHttpPort() == null
                 || serverProperties.getInternalHttpsPort() == null
                 || serverProperties.getExternalHttpsPort() == null
                 || serverProperties.getPort().equals(serverProperties.getInternalHttpPort())

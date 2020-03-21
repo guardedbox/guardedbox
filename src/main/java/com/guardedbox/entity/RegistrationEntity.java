@@ -1,10 +1,10 @@
 package com.guardedbox.entity;
 
+import static com.guardedbox.constants.Constraints.ALPHANUMERIC_64BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.Constraints.REGISTRATION_TOKEN_LENGTH;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -57,7 +57,7 @@ public class RegistrationEntity
     @Column(name = "token")
     @NotBlank
     @Pattern(regexp = ALPHANUMERIC_PATTERN)
-    @Size(min = REGISTRATION_TOKEN_LENGTH, max = REGISTRATION_TOKEN_LENGTH)
+    @Size(min = ALPHANUMERIC_64BYTES_LENGTH, max = ALPHANUMERIC_64BYTES_LENGTH)
     private String token;
 
     /** Expedition Time. */

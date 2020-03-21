@@ -1,10 +1,10 @@
 package com.guardedbox.dto;
 
+import static com.guardedbox.constants.Constraints.BASE64_64BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.Constraints.SIGNATURE_LENGTH;
 
 import java.io.Serializable;
 
@@ -28,7 +28,7 @@ public class SignedChallengeResponseDto
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = 6978267390045860431L;
+    private static final long serialVersionUID = -1634157359106978079L;
 
     /** Email. */
     @NotBlank
@@ -39,7 +39,7 @@ public class SignedChallengeResponseDto
     /** Signed Challenge Response. */
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = SIGNATURE_LENGTH, max = SIGNATURE_LENGTH)
+    @Size(min = BASE64_64BYTES_LENGTH, max = BASE64_64BYTES_LENGTH)
     private String signedChallengeResponse;
 
 }

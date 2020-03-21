@@ -1,6 +1,5 @@
 package com.guardedbox.config;
 
-import static com.guardedbox.constants.Api.API_BASE_PATH;
 import static com.guardedbox.constants.Header.CACHE_CONTROL;
 import static com.guardedbox.constants.Header.CONTENT_SECURITY_POLICY;
 import static com.guardedbox.constants.Header.CONTENT_TYPE_OPTIONS;
@@ -10,6 +9,7 @@ import static com.guardedbox.constants.Header.FRAME_OPTIONS;
 import static com.guardedbox.constants.Header.REFERRER_POLICY;
 import static com.guardedbox.constants.Header.STRICT_TRANSPORT_SECURITY;
 import static com.guardedbox.constants.Header.XSS_PROTECTION;
+import static com.guardedbox.constants.PathParameters.API_BASE_PATH;
 
 import java.util.Arrays;
 import java.util.List;

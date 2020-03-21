@@ -18,19 +18,22 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class ServerProperties {
 
+    /** Property: server.port. */
+    private final Integer port;
+
     /** Property: server.internal-http-port. */
     private final Integer internalHttpPort;
-
-    /** Property: server.internal-https-port. */
-    private final Integer internalHttpsPort;
 
     /** Property: server.external-http-port. */
     private final Integer externalHttpPort;
 
+    /** Property: server.internal-https-port. */
+    private final Integer internalHttpsPort;
+
     /** Property: server.external-https-port. */
     private final Integer externalHttpsPort;
 
-    /** Property: server.port. */
-    private final Integer port;
+    /** Property: server.external-url. */
+    private final String externalUrl;
 
 }

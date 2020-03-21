@@ -14,8 +14,20 @@ public class Constraints {
     /** Alphanumeric Pattern. */
     public static final String ALPHANUMERIC_PATTERN = "[a-zA-Z0-9]*";
 
+    /** Alphanumeric 64 Bytes Length. */
+    public static final int ALPHANUMERIC_64BYTES_LENGTH = 86;
+
     /** Base64 Pattern. */
     public static final String BASE64_PATTERN = "[a-zA-Z0-9+\\/=]*";
+
+    /** Base64 32 Bytes Length. */
+    public static final int BASE64_32BYTES_LENGTH = 44;
+
+    /** Base64 44 Bytes Length. */
+    public static final int BASE64_44BYTES_LENGTH = 60;
+
+    /** Base64 64 Bytes Length. */
+    public static final int BASE64_64BYTES_LENGTH = 88;
 
     /** Email Pattern. */
     public static final String EMAIL_PATTERN = ".+@.+\\..{2,}";
@@ -26,21 +38,6 @@ public class Constraints {
     /** Email Maximum Length. */
     public static final int EMAIL_MAX_LENGTH = 254;
 
-    /** Registration Token Length (number of alphanumeric characters). */
-    public static final int REGISTRATION_TOKEN_LENGTH = 86;
-
-    /** Salt Length (number of base64 characters). */
-    public static final int SALT_LENGTH = 44;
-
-    /** Encryption Public Key Length (number of base64 characters). */
-    public static final int ENCRYPTION_PUBLIC_KEY_LENGTH = 44;
-
-    /** Signing Public Key Length (number of base64 characters). */
-    public static final int SIGNING_PUBLIC_KEY_LENGTH = 44;
-
-    /** Signature Length (number of base64 characters). */
-    public static final int SIGNATURE_LENGTH = 88;
-
     /** Secret Name Maximum Length. */
     public static final int SECRET_NAME_MAX_LENGTH = 100;
 
@@ -49,8 +46,5 @@ public class Constraints {
 
     /** Group name Maximum Length. */
     public static final int GROUP_NAME_MAX_LENGTH = 100;
-
-    /** Encrypted Key Length (number of base64 characters). */
-    public static final int ENCRYPTED_KEY_LENGTH = 60;
 
 }

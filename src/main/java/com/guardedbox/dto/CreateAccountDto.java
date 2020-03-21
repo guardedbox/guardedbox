@@ -1,11 +1,9 @@
 package com.guardedbox.dto;
 
+import static com.guardedbox.constants.Constraints.ALPHANUMERIC_64BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
+import static com.guardedbox.constants.Constraints.BASE64_32BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
-import static com.guardedbox.constants.Constraints.ENCRYPTION_PUBLIC_KEY_LENGTH;
-import static com.guardedbox.constants.Constraints.REGISTRATION_TOKEN_LENGTH;
-import static com.guardedbox.constants.Constraints.SALT_LENGTH;
-import static com.guardedbox.constants.Constraints.SIGNING_PUBLIC_KEY_LENGTH;
 
 import java.io.Serializable;
 
@@ -30,12 +28,12 @@ public class CreateAccountDto
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = -2716784112428481474L;
+    private static final long serialVersionUID = 6664037383974293428L;
 
     /** Registration Token. */
     @NotBlank
     @Pattern(regexp = ALPHANUMERIC_PATTERN)
-    @Size(min = REGISTRATION_TOKEN_LENGTH, max = REGISTRATION_TOKEN_LENGTH)
+    @Size(min = ALPHANUMERIC_64BYTES_LENGTH, max = ALPHANUMERIC_64BYTES_LENGTH)
     private String registrationToken;
 
     /** Email. */
@@ -45,19 +43,19 @@ public class CreateAccountDto
     /** Salt. */
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = SALT_LENGTH, max = SALT_LENGTH)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String salt;
 
     /** Encryption Public Key. */
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = ENCRYPTION_PUBLIC_KEY_LENGTH, max = ENCRYPTION_PUBLIC_KEY_LENGTH)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String encryptionPublicKey;
 
     /** Signing Public Key. */
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(min = SIGNING_PUBLIC_KEY_LENGTH, max = SIGNING_PUBLIC_KEY_LENGTH)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String signingPublicKey;
 
 }

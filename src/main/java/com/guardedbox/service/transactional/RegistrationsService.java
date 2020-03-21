@@ -1,6 +1,6 @@
 package com.guardedbox.service.transactional;
 
-import static com.guardedbox.constants.Constraints.REGISTRATION_TOKEN_LENGTH;
+import static com.guardedbox.constants.Constraints.ALPHANUMERIC_64BYTES_LENGTH;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -99,7 +99,7 @@ public class RegistrationsService {
             // Generate the registration token.
             String token = null;
             do {
-                token = randomService.randomAlphanumericString(REGISTRATION_TOKEN_LENGTH);
+                token = randomService.randomAlphanumericString(ALPHANUMERIC_64BYTES_LENGTH);
             } while (registrationsRepository.existsByToken(token));
 
             // Send the registration message.

@@ -1,8 +1,8 @@
 package com.guardedbox.controller;
 
-import static com.guardedbox.constants.Api.API_BASE_PATH;
+import static com.guardedbox.constants.Constraints.ALPHANUMERIC_64BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.ALPHANUMERIC_PATTERN;
-import static com.guardedbox.constants.Constraints.REGISTRATION_TOKEN_LENGTH;
+import static com.guardedbox.constants.PathParameters.API_BASE_PATH;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -53,7 +53,7 @@ public class RegistrationsController {
      */
     @GetMapping()
     public RegistrationDto getRegistration(
-            @RequestParam(name = "token", required = true) @NotBlank @Pattern(regexp = ALPHANUMERIC_PATTERN) @Size(min = REGISTRATION_TOKEN_LENGTH, max = REGISTRATION_TOKEN_LENGTH) String token) {
+            @RequestParam(name = "token", required = true) @NotBlank @Pattern(regexp = ALPHANUMERIC_PATTERN) @Size(min = ALPHANUMERIC_64BYTES_LENGTH, max = ALPHANUMERIC_64BYTES_LENGTH) String token) {
 
         // Return the Registration.
         return registrationsService.getAndCheckRegistrationByToken(token);

@@ -1,9 +1,9 @@
 package com.guardedbox.controller;
 
-import static com.guardedbox.constants.Api.API_BASE_PATH;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
+import static com.guardedbox.constants.PathParameters.API_BASE_PATH;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;

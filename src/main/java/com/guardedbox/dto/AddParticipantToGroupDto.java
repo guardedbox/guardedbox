@@ -1,10 +1,10 @@
 package com.guardedbox.dto;
 
+import static com.guardedbox.constants.Constraints.BASE64_44BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.EMAIL_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
-import static com.guardedbox.constants.Constraints.ENCRYPTED_KEY_LENGTH;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -31,7 +31,7 @@ public class AddParticipantToGroupDto
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = -5859332858555187140L;
+    private static final long serialVersionUID = 5604329445758908714L;
 
     /** Group Id. */
     @JsonIgnore
@@ -46,7 +46,7 @@ public class AddParticipantToGroupDto
     /** Encrypted Group Key. */
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(max = ENCRYPTED_KEY_LENGTH)
+    @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
     private String encryptedGroupKey;
 
 }

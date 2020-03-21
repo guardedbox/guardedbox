@@ -1,6 +1,6 @@
 package com.guardedbox.controller;
 
-import static com.guardedbox.constants.Api.API_BASE_PATH;
+import static com.guardedbox.constants.PathParameters.API_BASE_PATH;
 
 import java.util.Arrays;
 import java.util.List;

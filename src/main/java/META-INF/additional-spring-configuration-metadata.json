@@ -6,11 +6,6 @@
             "description": "Indicates if environment is 'dev' or 'pro'. For instance, in 'dev' environment, OTP is not checked."
         },
         {
-            "name": "internet.url",
-            "type": "java.lang.String",
-            "description": "The internet URL. Used to build registration links."
-        },
-        {
             "name": "server.internal-http-port",
             "type": "int",
             "description": "Internal (behind balancer) http port, typically 8080."
@@ -29,6 +24,11 @@
             "name": "server.external-https-port",
             "type": "int",
             "description": "External (public IP) https port, typically 443."
+        },
+        {
+            "name": "server.external-url",
+            "type": "java.lang.String",
+            "description": "External (public IP) URL."
         },
         {
             "name": "server.strict-transport-security-header",
@@ -89,11 +89,6 @@
             "name": "server.ssl.enable-ocsp-stapling",
             "type": "boolean",
             "description": "Enable TLS OCSP stapling."
-        },
-        {
-            "name": "spring.mvc.favicon.enabled",
-            "type": "boolean",
-            "description": "Enable spring default favicon."
         },
         {
             "name": "server.servlet.session.cookie.value-base64",

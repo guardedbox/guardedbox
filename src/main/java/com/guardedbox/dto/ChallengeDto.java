@@ -2,6 +2,8 @@ package com.guardedbox.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +23,7 @@ public class ChallengeDto
     private String challenge;
 
     /** Expiration Time. */
+    @JsonIgnore
     private Long expirationTime;
 
 }

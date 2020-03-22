@@ -24,11 +24,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class AddSecretToGroupDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = 1179365531624191477L;
 
     /** Group Id. */
     @JsonIgnore

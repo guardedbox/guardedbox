@@ -21,11 +21,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class CreateRegistrationDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -5104883037954008785L;
 
     /** Email. */
     @NotBlank

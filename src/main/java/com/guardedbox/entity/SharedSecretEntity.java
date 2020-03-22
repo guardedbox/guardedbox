@@ -37,11 +37,9 @@ import lombok.Setter;
 @Table(name = "shared_secret")
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class SharedSecretEntity
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -8876705191538373433L;
 
     /** Shared Secret ID. */
     @Id

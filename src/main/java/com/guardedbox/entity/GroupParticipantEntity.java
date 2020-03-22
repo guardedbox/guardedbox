@@ -37,11 +37,9 @@ import lombok.Setter;
 @Table(name = "group_participant")
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class GroupParticipantEntity
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -6973407356747450807L;
 
     /** Group ID. */
     @Id

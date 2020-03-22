@@ -18,11 +18,9 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class GroupDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -5684218439247544348L;
 
     /** Group ID. */
     private UUID groupId;

@@ -24,11 +24,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class ShareSecretDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -6157239653303950240L;
 
     /** Receiver Email. */
     @NotBlank

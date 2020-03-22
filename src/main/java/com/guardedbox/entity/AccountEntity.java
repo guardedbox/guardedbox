@@ -36,11 +36,9 @@ import lombok.Setter;
 @Table(name = "account")
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class AccountEntity
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -619161199837846513L;
 
     /** Account ID. */
     @Id

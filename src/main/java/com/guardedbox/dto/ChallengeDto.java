@@ -13,11 +13,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class ChallengeDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -347763538667651558L;
 
     /** Challenge. */
     private String challenge;

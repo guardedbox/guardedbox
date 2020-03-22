@@ -14,11 +14,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class SecretDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -3608188899441682632L;
 
     /** Secret ID. */
     private UUID secretId;

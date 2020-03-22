@@ -15,11 +15,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class OtpResponseDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = 7137762692695404652L;
 
     /** One time password. */
     @NotBlank

@@ -24,11 +24,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class SignedChallengeResponseDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -1634157359106978079L;
 
     /** Email. */
     @NotBlank

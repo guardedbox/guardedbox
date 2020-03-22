@@ -17,11 +17,9 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class SessionInfoDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = 7948660755765688188L;
 
     /** Indicates if the current session is authenticated. */
     private Boolean authenticated;

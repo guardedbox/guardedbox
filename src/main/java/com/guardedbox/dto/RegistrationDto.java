@@ -17,11 +17,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class RegistrationDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = 998073884156272898L;
 
     /** Registration ID. */
     @JsonIgnore

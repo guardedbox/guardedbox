@@ -20,11 +20,9 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class AccountDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -568415178350373739L;
 
     /** Account ID. */
     @JsonIgnore

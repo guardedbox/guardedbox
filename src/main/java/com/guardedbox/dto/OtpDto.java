@@ -13,11 +13,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class OtpDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -2657701526237333062L;
 
     /** Email. */
     private String email;

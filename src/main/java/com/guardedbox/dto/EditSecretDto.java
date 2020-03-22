@@ -24,11 +24,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class EditSecretDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -3327969144838571389L;
 
     /** Name. */
     @NotBlank

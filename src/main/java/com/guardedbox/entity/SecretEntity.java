@@ -41,11 +41,9 @@ import lombok.Setter;
 @Table(name = "secret")
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class SecretEntity
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -2315693930078299277L;
 
     /** Secret ID. */
     @Id

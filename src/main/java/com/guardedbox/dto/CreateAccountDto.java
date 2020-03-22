@@ -24,11 +24,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class CreateAccountDto
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -4007403640170238288L;
 
     /** Registration Token. */
     @NotBlank

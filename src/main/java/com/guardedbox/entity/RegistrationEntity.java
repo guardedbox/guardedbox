@@ -34,11 +34,9 @@ import lombok.Setter;
 @Table(name = "registration")
 @Getter
 @Setter
+@SuppressWarnings("serial")
 public class RegistrationEntity
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -1158908310621653564L;
 
     /** Registration ID. */
     @Id

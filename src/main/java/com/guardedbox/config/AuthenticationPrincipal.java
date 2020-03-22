@@ -14,11 +14,9 @@ import lombok.Getter;
  *
  */
 @AllArgsConstructor
+@SuppressWarnings("serial")
 public class AuthenticationPrincipal
         implements Serializable {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -5762749620314203068L;
 
     /** The Account associated to this Authentication Principal. */
     @Getter

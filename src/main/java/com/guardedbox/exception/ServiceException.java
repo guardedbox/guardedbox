@@ -16,11 +16,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuppressWarnings("serial")
 public class ServiceException
         extends RuntimeException {
-
-    /** Serial Version UID. */
-    private static final long serialVersionUID = -1983998422755009837L;
 
     /** Error Code. */
     private String errorCode;

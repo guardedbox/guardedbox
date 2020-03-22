@@ -1,6 +1,7 @@
 package com.guardedbox.service.transactional;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -132,8 +133,11 @@ public class AccountsService {
                             .setErrorCode("accounts.email-already-registered").addAdditionalData("email", createAccountDto.getEmail());
         }
 
-        // Check if the any of the salts exist.
+        // Check if the any of the salts is repeated or already exist.
         List<String> salts = Arrays.asList(createAccountDto.getLoginSalt(), createAccountDto.getEncryptionSalt(), createAccountDto.getSigningSalt());
+        if (new HashSet<>(salts).size() != salts.size()) {
+            throw new ServiceException("Account was not created since one of the received salts is repeated");
+        }
         if (accountsRepository.existsByLoginSaltInOrEncryptionSaltInOrSigningSaltIn(salts, salts, salts)) {
             throw new ServiceException("Account was not created since one of the received salts already exists");
         }

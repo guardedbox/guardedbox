@@ -171,7 +171,7 @@ public class GroupsService {
 
         GroupEntity group = findAndCheckGroup(addParticipantToGroupDto.getGroupId(), ownerAccountId, false);
 
-        AccountBaseProjection account = accountsService.findAndCheckAccountBaseByEmail(addParticipantToGroupDto.getEmail());
+        AccountBaseProjection account = accountsService.findAndCheckAccountByEmail(addParticipantToGroupDto.getEmail(), AccountBaseProjection.class);
 
         GroupParticipantEntity groupParticipant = new GroupParticipantEntity()
                 .setGroup(group)

@@ -22,8 +22,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Service;
 
-import com.guardedbox.dto.AccountDto;
-import com.guardedbox.properties.SecurityParametersProperties;
+import com.guardedbox.properties.CryptographyProperties;
 import com.guardedbox.service.transactional.AccountsService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,8 +37,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SignatureVerificationService {
 
-    /** SecurityParametersProperties. */
-    private final SecurityParametersProperties securityParameters;
+    /** CryptographyProperties. */
+    private final CryptographyProperties cryptographyProperties;
 
     /** AccountsService. */
     private final AccountsService accountsService;
@@ -57,12 +56,12 @@ public class SignatureVerificationService {
         try {
 
             signatureAlgorithmId = new AlgorithmIdentifier((ASN1ObjectIdentifier) EdECObjectIdentifiers.class
-                    .getDeclaredField("id_" + securityParameters.getSignatureAlgorithm()).get(null));
+                    .getDeclaredField("id_" + cryptographyProperties.getSignatureAlgorithm()).get(null));
 
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
             throw new RuntimeException(String.format(
                     "Error creating the AlgorithmIdentifier corresponding to the signature algorithm %s",
-                    securityParameters.getSignatureAlgorithm()));
+                    cryptographyProperties.getSignatureAlgorithm()));
         }
 
     }
@@ -73,15 +72,24 @@ public class SignatureVerificationService {
      * @param originalMessage The original message.
      * @param signedMessage The signature of the original message.
      * @param email The email corresponding to the Account whose private key was used to sign the message.
+     * @param login Boolean indicating if the login public key of the account should be used to verify the signature or the signing one instead.
      * @return Boolean indicating if the signature is verified.
      */
     public boolean verifySignature(
             byte[] originalMessage,
             byte[] signedMessage,
-            String email) {
+            String email,
+            boolean login) {
 
-        AccountDto account = accountsService.getAndCheckAccountPublicKeysByEmail(email);
-        return verifySignature(originalMessage, signedMessage, Base64.getDecoder().decode(account.getSigningPublicKey()));
+        String signingPublicKey = null;
+
+        if (login) {
+            signingPublicKey = accountsService.getAndCheckAccountLoginPublicKeyByEmail(email).getLoginPublicKey();
+        } else {
+            signingPublicKey = accountsService.getAndCheckAccountPublicKeysByEmail(email).getSigningPublicKey();
+        }
+
+        return verifySignature(originalMessage, signedMessage, Base64.getDecoder().decode(signingPublicKey));
 
     }
 
@@ -100,10 +108,10 @@ public class SignatureVerificationService {
 
         try {
 
-            KeyFactory keyFactory = KeyFactory.getInstance(securityParameters.getSignatureAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
+            KeyFactory keyFactory = KeyFactory.getInstance(cryptographyProperties.getSignatureAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
             KeySpec keySpec = new X509EncodedKeySpec(new SubjectPublicKeyInfo(signatureAlgorithmId, signingPublicKey).getEncoded());
             PublicKey pubKey = keyFactory.generatePublic(keySpec);
-            Signature signature = Signature.getInstance(securityParameters.getSignatureAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
+            Signature signature = Signature.getInstance(cryptographyProperties.getSignatureAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
             signature.initVerify(pubKey);
             signature.update(originalMessage);
 

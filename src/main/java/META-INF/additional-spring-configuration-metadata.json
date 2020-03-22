@@ -116,6 +116,11 @@
             "description": "Security Parameter: RegistrationsController.createRegistration method execution time."
         },
         {
+            "name": "security-parameters.login-salt-execution-time",
+            "type": "long",
+            "description": "Security Parameter: AccountsController.getAccountLoginSalt method execution time."
+        },
+        {
             "name": "security-parameters.challenge-length",
             "type": "int",
             "description": "Security Parameter: Challenge length (number of bytes)."
@@ -151,14 +156,24 @@
             "description": "Security Parameter: SessionController.login method execution time."
         },
         {
-            "name": "security-parameters.signature-algorithm",
-            "type": "java.lang.String",
-            "description": "Security Parameter: Signature algorithm."
+            "name": "cryptography.cryptography-length",
+            "type": "int",
+            "description": "General length (number of bytes) of the used cryptography (public keys, salts, etc.)"
         },
         {
-            "name": "security-parameters.bcrypt-rounds",
+            "name": "cryptography.signature-algorithm",
+            "type": "java.lang.String",
+            "description": "Signature algorithm."
+        },
+        {
+            "name": "cryptography.bcrypt-rounds",
             "type": "int",
-            "description": "Security Parameter: Bcrypt rounds."
+            "description": "Bcrypt rounds."
+        },
+        {
+            "name": "keys.hidden-derivation",
+            "type": "java.util.HashMap",
+            "description": "Map of secret keys (base64) used to create hidden derivations by length (number of bytes)."
         },
         {
             "name": "i18n.default-language",

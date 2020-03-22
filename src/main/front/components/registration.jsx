@@ -5,9 +5,9 @@ import logo from 'images/logo.png';
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
-import { loading } from 'services/loading.jsx';
+import { loading, notLoading } from 'services/loading.jsx';
 import { currentLocationParams } from 'services/location.jsx';
-import { generateSessionKeys, deleteSessionKeys, getEncryptionPublicKey, getSigningPublicKey } from 'services/crypto/crypto.jsx';
+import { generateLoginKeys, deleteLoginKeys, getLoginPublicKey, generateSessionKeys, deleteSessionKeys, getEncryptionPublicKey, getSigningPublicKey } from 'services/crypto/crypto.jsx';
 import { randomBytes } from 'services/crypto/random.jsx';
 import { reset } from 'services/session.jsx';
 import { modalMessage } from 'services/modal.jsx';
@@ -180,19 +180,29 @@ class Registration extends Component {
 
                 var token = this.state.token;
                 var password = this.state.password;
-                var salt = randomBytes(properties.registration.saltBytes, 'base64');
+                var loginSalt = randomBytes(properties.cryptography.length, 'base64');
+                var encryptionSalt = randomBytes(properties.cryptography.length, 'base64');
+                var signingSalt = randomBytes(properties.cryptography.length, 'base64');
 
-                generateSessionKeys(password, salt);
+                generateLoginKeys(password, loginSalt);
+                var loginPublicKey = getLoginPublicKey();
+                deleteLoginKeys();
+
+                generateSessionKeys(password, encryptionSalt, signingSalt);
                 var encryptionPublicKey = getEncryptionPublicKey();
                 var signingPublicKey = getSigningPublicKey();
+                deleteSessionKeys();
 
                 rest({
                     method: 'post',
                     url: '/api/accounts',
                     body: {
                         registrationToken: token,
-                        salt: salt,
+                        loginSalt: loginSalt,
+                        loginPublicKey: loginPublicKey,
+                        encryptionSalt: encryptionSalt,
                         encryptionPublicKey: encryptionPublicKey,
+                        signingSalt: signingSalt,
                         signingPublicKey: signingPublicKey
                     },
                     loadingChained: true,
@@ -207,8 +217,6 @@ class Registration extends Component {
 
                     }
                 });
-
-                deleteSessionKeys();
 
             });
 

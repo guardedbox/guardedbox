@@ -1,5 +1,6 @@
 package com.guardedbox.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,8 +9,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.guardedbox.config.SpringContext;
 import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
+import com.guardedbox.entity.projection.AccountLoginPublicKeyProjection;
+import com.guardedbox.entity.projection.AccountLoginSaltProjection;
 import com.guardedbox.entity.projection.AccountPublicKeysProjection;
-import com.guardedbox.entity.projection.AccountSaltProjection;
+import com.guardedbox.entity.projection.AccountPublicKeysSaltsProjection;
 
 /**
  * Repository: Account.
@@ -22,6 +25,24 @@ public interface AccountsRepository
         JpaSpecificationExecutor<AccountEntity> {
 
     /**
+     * @param email AccountEntity.email.
+     * @return Boolean indicating if an AccountEntity corresponding to the introduced email exists.
+     */
+    boolean existsByEmail(
+            String email);
+
+    /**
+     * @param loginSalts List of AccountEntity.loginSalt.
+     * @param encryptionSalts List of AccountEntity.encryptionSalt.
+     * @param signingSalts List of AccountEntity.signingSalt.
+     * @return Boolean indicating if an AccountEntity corresponding to any of the introduced salts exists.
+     */
+    boolean existsByLoginSaltInOrEncryptionSaltInOrSigningSaltIn(
+            List<String> loginSalts,
+            List<String> encryptionSalts,
+            List<String> signingSalts);
+
+    /**
      * @param accountId AccountEntity.accountId.
      * @return The AccountBaseProjection corresponding to the introduced accountId.
      */
@@ -30,9 +51,23 @@ public interface AccountsRepository
 
     /**
      * @param accountId AccountEntity.accountId.
-     * @return The AccountSaltProjection corresponding to the introduced accountId.
+     * @return The AccountLoginSaltProjection corresponding to the introduced accountId.
      */
-    AccountSaltProjection findSaltByAccountId(
+    AccountLoginSaltProjection findLoginSaltByAccountId(
+            UUID accountId);
+
+    /**
+     * @param accountId AccountEntity.accountId.
+     * @return The AccountLoginPublicKeyProjection corresponding to the introduced accountId.
+     */
+    AccountLoginPublicKeyProjection findLoginPublicKeyByAccountId(
+            UUID accountId);
+
+    /**
+     * @param accountId AccountEntity.accountId.
+     * @return The AccountPublicKeysSaltsProjection corresponding to the introduced accountId.
+     */
+    AccountPublicKeysSaltsProjection findPublicKeysSaltsByAccountId(
             UUID accountId);
 
     /**
@@ -41,20 +76,6 @@ public interface AccountsRepository
      */
     AccountPublicKeysProjection findPublicKeysByAccountId(
             UUID accountId);
-
-    /**
-     * @param email AccountEntity.email.
-     * @return Boolean indicating if an AccountFullEntity corresponding to the introduced email exists.
-     */
-    boolean existsByEmail(
-            String email);
-
-    /**
-     * @param salt AccountEntity.salt.
-     * @return Boolean indicating if an AccountFullEntity corresponding to the introduced salt exists.
-     */
-    boolean existsBySalt(
-            String salt);
 
     /**
      * @param email AccountEntity.email.
@@ -74,7 +95,21 @@ public interface AccountsRepository
      * @param email AccountEntity.email.
      * @return The AccountSaltProjection corresponding to the introduced email.
      */
-    AccountSaltProjection findSaltByEmail(
+    AccountLoginSaltProjection findLoginSaltByEmail(
+            String email);
+
+    /**
+     * @param email AccountEntity.email.
+     * @return The AccountPublicKeyProjection corresponding to the introduced email.
+     */
+    AccountLoginPublicKeyProjection findLoginPublicKeyByEmail(
+            String email);
+
+    /**
+     * @param email AccountEntity.email.
+     * @return The AccountPublicKeysSaltsProjection corresponding to the introduced email.
+     */
+    AccountPublicKeysSaltsProjection findPublicKeysSaltsByEmail(
             String email);
 
     /**
@@ -94,17 +129,36 @@ public interface AccountsRepository
             AccountEntity entity,
             Class<T> type) {
 
+        if (entity == null)
+            return null;
+
         AccountsRepository accountsRepository = SpringContext.getAccountsRepository();
         UUID accountId = entity.getAccountId();
 
-        if (AccountBaseProjection.class.equals(type)) {
-            return type.cast(accountsRepository.findBaseByAccountId(accountId));
-        } else if (AccountSaltProjection.class.equals(type)) {
-            return type.cast(accountsRepository.findSaltByAccountId(accountId));
+        if (AccountLoginSaltProjection.class.equals(type)) {
+
+            return type.cast(accountsRepository.findLoginSaltByAccountId(accountId));
+
+        } else if (AccountLoginPublicKeyProjection.class.equals(type)) {
+
+            return type.cast(accountsRepository.findLoginPublicKeyByAccountId(accountId));
+
+        } else if (AccountPublicKeysSaltsProjection.class.equals(type)) {
+
+            return type.cast(accountsRepository.findPublicKeysSaltsByAccountId(accountId));
+
         } else if (AccountPublicKeysProjection.class.equals(type)) {
+
             return type.cast(accountsRepository.findPublicKeysByAccountId(accountId));
+
+        } else if (AccountBaseProjection.class.equals(type)) {
+
+            return type.cast(accountsRepository.findBaseByAccountId(accountId));
+
         } else {
+
             throw new IllegalArgumentException("Type must extend AccountBaseProjection");
+
         }
 
     }

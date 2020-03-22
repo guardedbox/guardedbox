@@ -15,7 +15,7 @@ import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
 import com.guardedbox.properties.CookiesProperties;
-import com.guardedbox.properties.SecurityParametersProperties;
+import com.guardedbox.properties.CryptographyProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,8 +30,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig
         extends WebSecurityConfigurerAdapter {
 
-    /** SecurityParametersProperties. */
-    private final SecurityParametersProperties securityParameters;
+    /** CryptographyProperties. */
+    private final CryptographyProperties cryptographyProperties;
 
     /** CookiesProperties. */
     private final CookiesProperties cookiesProperties;
@@ -46,7 +46,7 @@ public class SecurityConfig
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(securityParameters.getBcryptRounds());
+        return new BCryptPasswordEncoder(cryptographyProperties.getBcryptRounds());
     }
 
     /**
@@ -92,16 +92,15 @@ public class SecurityConfig
                 .regexMatchers(HttpMethod.GET, "/font/.*\\.(woff2?|eot|ttf)").permitAll()
 
                 // Allow API Public Endpoints.
+                .antMatchers(HttpMethod.POST, API_BASE_PATH + "registrations").permitAll()
+                .antMatchers(HttpMethod.GET, API_BASE_PATH + "registrations").permitAll()
+                .antMatchers(HttpMethod.POST, API_BASE_PATH + "accounts").permitAll()
+                .antMatchers(HttpMethod.GET, API_BASE_PATH + "accounts/login-salt").permitAll()
                 .antMatchers(HttpMethod.GET, API_BASE_PATH + "session").permitAll()
                 .antMatchers(HttpMethod.POST, API_BASE_PATH + "session/challenge").permitAll()
                 .antMatchers(HttpMethod.POST, API_BASE_PATH + "session/otp").permitAll()
                 .antMatchers(HttpMethod.POST, API_BASE_PATH + "session/login").permitAll()
                 .antMatchers(HttpMethod.POST, API_BASE_PATH + "session/logout").permitAll()
-                .antMatchers(HttpMethod.GET, API_BASE_PATH + "registrations").permitAll()
-                .antMatchers(HttpMethod.POST, API_BASE_PATH + "registrations").permitAll()
-                .antMatchers(HttpMethod.POST, API_BASE_PATH + "accounts").permitAll()
-                .antMatchers(HttpMethod.GET, API_BASE_PATH + "accounts/salt").permitAll()
-                .antMatchers(HttpMethod.GET, API_BASE_PATH + "accounts/encryption-public-key").permitAll()
 
                 // Require Authentication for any other Endpoint.
                 .anyRequest().fullyAuthenticated()

@@ -119,7 +119,8 @@ public class SharedSecretsService {
 
         SecretEntity secret = secretsService.findAndCheckSecret(secretId, ownerAccountId);
 
-        AccountBaseProjection receiverAccount = accountsService.findAndCheckAccountBaseByEmail(shareSecretDto.getReceiverEmail());
+        AccountBaseProjection receiverAccount = accountsService.findAndCheckAccountByEmail(
+                shareSecretDto.getReceiverEmail(), AccountBaseProjection.class);
         if (receiverAccount.getAccountId().equals(ownerAccountId)) {
             throw new ServiceException(String.format(
                     "Secret %s belongs to email %s", secretId, shareSecretDto.getReceiverEmail()))
@@ -158,7 +159,7 @@ public class SharedSecretsService {
 
         secretsService.findAndCheckSecret(secretId, ownerAccountId);
 
-        AccountBaseProjection reveiverAccount = accountsService.findAndCheckAccountBaseByEmail(receiverEmail);
+        AccountBaseProjection reveiverAccount = accountsService.findAndCheckAccountByEmail(receiverEmail, AccountBaseProjection.class);
 
         SharedSecretEntity sharedSecret =
                 sharedSecretsRepository.findBySecretSecretIdAndReceiverAccountAccountId(secretId, reveiverAccount.getAccountId());

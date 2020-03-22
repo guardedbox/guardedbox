@@ -40,7 +40,7 @@ public class AccountEntity
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = 6866705595856938620L;
+    private static final long serialVersionUID = -619161199837846513L;
 
     /** Account ID. */
     @Id
@@ -55,12 +55,26 @@ public class AccountEntity
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
     private String email;
 
-    /** Salt. */
-    @Column(name = "salt")
+    /** Login Salt. */
+    @Column(name = "login_salt")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
-    private String salt;
+    private String loginSalt;
+
+    /** Login Public Key. */
+    @Column(name = "login_public_key")
+    @NotBlank
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
+    private String loginPublicKey;
+
+    /** Encryption Salt. */
+    @Column(name = "encryption_salt")
+    @NotBlank
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
+    private String encryptionSalt;
 
     /** Encryption Public Key. */
     @Column(name = "encryption_public_key")
@@ -68,6 +82,13 @@ public class AccountEntity
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String encryptionPublicKey;
+
+    /** Signing Salt. */
+    @Column(name = "signing_salt")
+    @NotBlank
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
+    private String signingSalt;
 
     /** Signing Public Key. */
     @Column(name = "signing_public_key")

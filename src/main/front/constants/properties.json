@@ -6,8 +6,7 @@
     "registration": {
         "registrationTokenPattern": "^[a-zA-Z0-9]{86}$",
         "passwordMinLength": 20,
-        "passwordMinStrength": 100,
-        "saltBytes": 32
+        "passwordMinStrength": 100
     },
     "secrets": {
         "secretNameMaxLength": 100,
@@ -19,8 +18,20 @@
     "groups": {
         "groupNameMaxLength": 100
     },
+    "cryptography": {
+        "length": 32,
+        "ecc": {
+            "ecdhCurve": "curve25519",
+            "eddsaCurve": "ed25519",
+            "pbkdf2Hash": "sha256",
+            "pbkdf2Iterations": 10000
+        },
+        "aes": {
+            "mode": "aes-256-gcm",
+            "ivLength": 12
+        }
+    },
     "keys": {
-        "generatedKeysBytes": 32,
         "encryptionPublicKeyMaxLength": 44,
         "encryptionPublicKeyPattern": "[a-zA-Z0-9+\/=]{44}"
     }

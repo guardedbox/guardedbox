@@ -24,7 +24,7 @@ public class AccountDto
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = 8700265010013018958L;
+    private static final long serialVersionUID = -568415178350373739L;
 
     /** Account ID. */
     @JsonIgnore
@@ -33,11 +33,20 @@ public class AccountDto
     /** Email. */
     private String email;
 
-    /** Salt. */
-    private String salt;
+    /** Login Salt. */
+    private String loginSalt;
+
+    /** Login Public Key. */
+    private String loginPublicKey;
+
+    /** Encryption Salt. */
+    private String encryptionSalt;
 
     /** Encryption Public Key. */
     private String encryptionPublicKey;
+
+    /** Signing Salt. */
+    private String signingSalt;
 
     /** Signing Public Key. */
     private String signingPublicKey;

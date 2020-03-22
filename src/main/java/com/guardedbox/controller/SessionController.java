@@ -152,7 +152,7 @@ public class SessionController {
             session.removeAttribute(SessionAttribute.OTP.getAttributeName());
 
             // Verify the signed challenge response.
-            if (!challengeService.verifySignedChallengeResponse(signedChallengeResponseDto, challengeDto)) {
+            if (!challengeService.verifySignedChallengeResponse(signedChallengeResponseDto, challengeDto, true)) {
                 throw new ServiceException("Challenge response is incorrect");
             }
 

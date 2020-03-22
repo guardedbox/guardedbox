@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, InputGroup, Button, Popover, PopoverBody, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, InputGroup, Button, Popover, PopoverBody } from 'reactstrap';
 import Octicon, { Eye, Key } from '@primer/octicons-react'
 import logo from 'images/logo.png';
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
+import { loading, notLoading } from 'services/loading.jsx';
 import { setSessionInfo } from 'services/session.jsx';
 import { changeLocation } from 'services/location.jsx';
 import { modalMessage } from 'services/modal.jsx';
-import { generateSessionKeys, sign } from 'services/crypto/crypto.jsx';
+import { generateLoginKeys, deleteLoginKeys, generateSessionKeys, sign } from 'services/crypto/crypto.jsx';
 import properties from 'constants/properties.json';
 import views from 'constants/views.json';
 
@@ -65,15 +66,14 @@ class Login extends Component {
 
             rest({
                 method: 'get',
-                url: '/api/accounts/salt',
+                url: '/api/accounts/login-salt',
                 params: {
                     'email': email
                 },
                 loadingChain: true,
                 callback: (response) => {
 
-                    var salt = response.salt;
-                    generateSessionKeys(password, salt);
+                    var loginSalt = response.loginSalt;
 
                     rest({
                         method: 'post',
@@ -83,7 +83,10 @@ class Login extends Component {
                         callback: (response) => {
 
                             var challenge = response.challenge;
-                            var signedChallengeResponse = sign(challenge, 'base64');
+
+                            generateLoginKeys(password, loginSalt);
+                            var signedChallengeResponse = sign(challenge, true, 'base64');
+                            deleteLoginKeys();
 
                             rest({
                                 method: 'post',
@@ -119,6 +122,7 @@ class Login extends Component {
     login = () => {
 
         var code = this.state.code;
+        var password = this.state.password;
 
         this.setState({
             getCodePopoverActive: false
@@ -126,27 +130,47 @@ class Login extends Component {
 
             rest({
                 method: 'post',
-                url: 'api/session/login',
+                url: '/api/session/login',
                 body: {
                     otp: code
                 },
+                loadingChain: true,
                 callback: (response) => {
 
                     if (response.success) {
 
                         setSessionInfo(response);
-                        changeLocation(views.defaultPath);
+
+                        rest({
+                            method: 'get',
+                            url: '/api/accounts/public-keys-salts',
+                            loadingChained: true,
+                            loadingChain: true,
+                            callback: (response) => {
+
+                                var encryptionSalt = response.encryptionSalt;
+                                var signingSalt = response.signingSalt;
+                                generateSessionKeys(password, encryptionSalt, signingSalt);
+
+                                notLoading(() => { changeLocation(views.defaultPath); });
+
+                            }
+                        })
 
                     } else {
 
-                        this.txtCode.current.value = '';
+                        notLoading(() => {
 
-                        this.setState({
-                            getCodeEnabled: true,
-                            loginEnabled: false,
-                            loginFailedPopoverActive: true
-                        }, () => {
-                            this.txtEmail.current.focus();
+                            this.txtCode.current.value = '';
+
+                            this.setState({
+                                getCodeEnabled: true,
+                                loginEnabled: false,
+                                loginFailedPopoverActive: true
+                            }, () => {
+                                this.txtEmail.current.focus();
+                            });
+
                         });
 
                     }

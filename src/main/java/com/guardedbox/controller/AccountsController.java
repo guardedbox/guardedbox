@@ -22,6 +22,9 @@ import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.CreateAccountDto;
 import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.dto.SuccessDto;
+import com.guardedbox.properties.SecurityParametersProperties;
+import com.guardedbox.service.ExecutionTimeService;
+import com.guardedbox.service.SessionAccountService;
 import com.guardedbox.service.transactional.AccountsService;
 import com.guardedbox.service.transactional.RegistrationsService;
 
@@ -39,21 +42,46 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AccountsController {
 
+    /** SecurityParametersProperties. */
+    private final SecurityParametersProperties securityParameters;
+
     /** AccountsService. */
     private final AccountsService accountsService;
 
     /** RegistrationsService. */
     private final RegistrationsService registrationsService;
 
+    /** SessionAccountService. */
+    private final SessionAccountService sessionAccount;
+
+    /** ExecutionTimeService. */
+    private final ExecutionTimeService executionTimeService;
+
     /**
      * @param email An email.
-     * @return The salt of the account corresponding to the introduced email.
+     * @return The login salt of the account corresponding to the introduced email.
      */
-    @GetMapping("/salt")
-    public AccountDto getAccountSalt(
+    @GetMapping("/login-salt")
+    public AccountDto getAccountLoginSalt(
             @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
 
-        return accountsService.getAndCheckAccountSaltByEmail(email);
+        long startTime = System.currentTimeMillis();
+
+        AccountDto accountSalt = accountsService.getAndCheckAccountLoginSaltByEmail(email);
+
+        executionTimeService.fix(startTime, securityParameters.getLoginSaltExecutionTime());
+
+        return accountSalt;
+
+    }
+
+    /**
+     * @return The public keys salts of the current session account.
+     */
+    @GetMapping("/public-keys-salts")
+    public AccountDto getAccountPublicKeysSalts() {
+
+        return accountsService.getAndCheckAccountPublicKeysSaltsByAccountId(sessionAccount.getAccountId());
 
     }
 
@@ -62,7 +90,7 @@ public class AccountsController {
      * @return The public keys of the account corresponding to the introduced email.
      */
     @GetMapping("/public-keys")
-    public AccountDto getAccountEncryptionPublicKey(
+    public AccountDto getAccountPublicKeys(
             @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
 
         return accountsService.getAndCheckAccountPublicKeysByEmail(email);

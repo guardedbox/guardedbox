@@ -27,6 +27,9 @@ public class SecurityParametersProperties {
     /** Property: security-parameters.registration-execution-time. */
     private final Long registrationExecutionTime;
 
+    /** Property: security-parameters.login-salt-execution-time. */
+    private final Long loginSaltExecutionTime;
+
     /** Property: security-parameters.challenge-length. */
     private final Integer challengeLength;
 
@@ -47,11 +50,5 @@ public class SecurityParametersProperties {
 
     /** Property: security-parameters.login-execution-time. */
     private final Long loginExecutionTime;
-
-    /** Property: security-parameters.signature-algorithm. */
-    private final String signatureAlgorithm;
-
-    /** Property: security-parameters.bcrypt-rounds. */
-    private final Integer bcryptRounds;
 
 }

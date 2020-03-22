@@ -22,8 +22,11 @@ DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
   `account_id` binary(16) NOT NULL,
   `email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `salt` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `login_salt` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `login_public_key` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `encryption_salt` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `encryption_public_key` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `signing_salt` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signing_public_key` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`account_id`),
   KEY `EMAIL` (`email`)

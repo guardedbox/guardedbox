@@ -47,11 +47,13 @@ public class ChallengeService {
      *
      * @param signedChallengeResponseDto Signed challenge response object.
      * @param challengeDto Challenge object, as it is returned by the method generateChallenge.
+     * @param login Boolean indicating if this is a login verification.
      * @return Boolean indicating if the signed challenge response is valid.
      */
     public boolean verifySignedChallengeResponse(
             SignedChallengeResponseDto signedChallengeResponseDto,
-            ChallengeDto challengeDto) {
+            ChallengeDto challengeDto,
+            boolean login) {
 
         // Verify expiration time.
         long currentTime = System.currentTimeMillis();
@@ -64,7 +66,8 @@ public class ChallengeService {
         if (!signatureVerificationService.verifySignature(
                 Base64.getDecoder().decode(challengeDto.getChallenge()),
                 Base64.getDecoder().decode(signedChallengeResponseDto.getSignedChallengeResponse()),
-                signedChallengeResponseDto.getEmail())) {
+                signedChallengeResponseDto.getEmail(),
+                login)) {
             return false;
         }
 

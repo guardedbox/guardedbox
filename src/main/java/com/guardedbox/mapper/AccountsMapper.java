@@ -6,8 +6,10 @@ import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.CreateAccountDto;
 import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
+import com.guardedbox.entity.projection.AccountLoginPublicKeyProjection;
+import com.guardedbox.entity.projection.AccountLoginSaltProjection;
 import com.guardedbox.entity.projection.AccountPublicKeysProjection;
-import com.guardedbox.entity.projection.AccountSaltProjection;
+import com.guardedbox.entity.projection.AccountPublicKeysSaltsProjection;
 
 /**
  * Mapper: Account.
@@ -30,53 +32,66 @@ public class AccountsMapper {
         return accountEntity == null ? null : new AccountDto()
                 .setAccountId(accountEntity.getAccountId())
                 .setEmail(accountEntity.getEmail())
-                .setSalt(accountEntity.getSalt())
+                .setLoginSalt(accountEntity.getLoginSalt())
+                .setLoginPublicKey(accountEntity.getLoginPublicKey())
+                .setEncryptionSalt(accountEntity.getEncryptionSalt())
                 .setEncryptionPublicKey(accountEntity.getEncryptionPublicKey())
+                .setSigningSalt(accountEntity.getSigningSalt())
                 .setSigningPublicKey(accountEntity.getSigningPublicKey());
 
     }
 
     /**
-     * Maps an Account Entity to DTO.
+     * Maps an Account Projection to DTO.
      *
-     * @param accountEntity The Account Entity.
+     * @param accountProjection The Account Projection.
      * @return The Account DTO.
      */
     public AccountDto toDto(
-            AccountBaseProjection accountEntity) {
+            AccountBaseProjection accountProjection) {
 
-        return accountEntity == null ? null : new AccountDto()
-                .setAccountId(accountEntity.getAccountId())
-                .setEmail(accountEntity.getEmail());
+        if (accountProjection == null)
+            return null;
 
-    }
+        AccountDto accountDto = new AccountDto()
+                .setAccountId(accountProjection.getAccountId())
+                .setEmail(accountProjection.getEmail());
 
-    /**
-     * Maps an Account Entity to DTO.
-     *
-     * @param accountEntity The Account Entity.
-     * @return The Account DTO.
-     */
-    public AccountDto toDto(
-            AccountSaltProjection accountEntity) {
+        if (accountProjection instanceof AccountLoginSaltProjection) {
 
-        return accountEntity == null ? null : toDto((AccountBaseProjection) accountEntity)
-                .setSalt(accountEntity.getSalt());
+            AccountLoginSaltProjection accountSubProjection = (AccountLoginSaltProjection) accountProjection;
+            return accountDto
+                    .setLoginSalt(accountSubProjection.getLoginSalt());
 
-    }
+        } else if (accountProjection instanceof AccountLoginPublicKeyProjection) {
 
-    /**
-     * Maps an Account Entity to DTO.
-     *
-     * @param accountEntity The Account Entity.
-     * @return The Account DTO.
-     */
-    public AccountDto toDto(
-            AccountPublicKeysProjection accountEntity) {
+            AccountLoginPublicKeyProjection accountSubProjection = (AccountLoginPublicKeyProjection) accountProjection;
+            return accountDto
+                    .setLoginPublicKey(accountSubProjection.getLoginPublicKey());
 
-        return accountEntity == null ? null : toDto((AccountBaseProjection) accountEntity)
-                .setEncryptionPublicKey(accountEntity.getEncryptionPublicKey())
-                .setSigningPublicKey(accountEntity.getSigningPublicKey());
+        } else if (accountProjection instanceof AccountPublicKeysSaltsProjection) {
+
+            AccountPublicKeysSaltsProjection accountSubProjection = (AccountPublicKeysSaltsProjection) accountProjection;
+            return accountDto
+                    .setEncryptionSalt(accountSubProjection.getEncryptionSalt())
+                    .setSigningSalt(accountSubProjection.getSigningSalt());
+
+        } else if (accountProjection instanceof AccountPublicKeysProjection) {
+
+            AccountPublicKeysProjection accountSubProjection = (AccountPublicKeysProjection) accountProjection;
+            return accountDto
+                    .setEncryptionPublicKey(accountSubProjection.getEncryptionPublicKey())
+                    .setSigningPublicKey(accountSubProjection.getSigningPublicKey());
+
+        } else if (accountProjection instanceof AccountBaseProjection) {
+
+            return accountDto;
+
+        } else {
+
+            throw new IllegalArgumentException("Type must extend AccountBaseProjection");
+
+        }
 
     }
 
@@ -90,10 +105,13 @@ public class AccountsMapper {
             CreateAccountDto accountDto) {
 
         return accountDto == null ? null : new AccountEntity()
-                .setSalt(accountDto.getSalt())
+                .setEmail(accountDto.getEmail())
+                .setLoginSalt(accountDto.getLoginSalt())
+                .setLoginPublicKey(accountDto.getLoginPublicKey())
+                .setEncryptionSalt(accountDto.getEncryptionSalt())
                 .setEncryptionPublicKey(accountDto.getEncryptionPublicKey())
-                .setSigningPublicKey(accountDto.getSigningPublicKey())
-                .setEmail(accountDto.getEmail());
+                .setSigningSalt(accountDto.getSigningSalt())
+                .setSigningPublicKey(accountDto.getSigningPublicKey());
 
     }
 

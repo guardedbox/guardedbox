@@ -121,7 +121,7 @@ class Groups extends Component {
 
         var name = this.state.newGroupName;
 
-        var groupKey = randomBytes(properties.keys.generatedKeysBytes);
+        var groupKey = randomBytes(properties.cryptography.length);
         var encryptedGroupKey = encrypt(groupKey);
         if (encryptedGroupKey == '') return;
 

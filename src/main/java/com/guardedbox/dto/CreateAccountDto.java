@@ -28,7 +28,7 @@ public class CreateAccountDto
         implements Serializable {
 
     /** Serial Version UID. */
-    private static final long serialVersionUID = 6664037383974293428L;
+    private static final long serialVersionUID = -4007403640170238288L;
 
     /** Registration Token. */
     @NotBlank
@@ -40,17 +40,35 @@ public class CreateAccountDto
     @JsonIgnore
     private String email;
 
-    /** Salt. */
+    /** Login Salt. */
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
-    private String salt;
+    private String loginSalt;
+
+    /** Login Public Key. */
+    @NotBlank
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
+    private String loginPublicKey;
+
+    /** Encryption Salt. */
+    @NotBlank
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
+    private String encryptionSalt;
 
     /** Encryption Public Key. */
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String encryptionPublicKey;
+
+    /** Signing Salt. */
+    @NotBlank
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
+    private String signingSalt;
 
     /** Signing Public Key. */
     @NotBlank

@@ -6,9 +6,9 @@ package com.guardedbox.entity.projection;
  * @author s3curitybug@gmail.com
  *
  */
-public interface AccountSaltProjection
+public interface AccountLoginPublicKeyProjection
         extends AccountBaseProjection {
 
-    String getSalt();
+    String getLoginPublicKey();
 
 }

@@ -30,9 +30,5 @@
             "mode": "aes-256-gcm",
             "ivLength": 12
         }
-    },
-    "keys": {
-        "encryptionPublicKeyMaxLength": 44,
-        "encryptionPublicKeyPattern": "[a-zA-Z0-9+\/=]{44}"
     }
 }

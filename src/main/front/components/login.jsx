@@ -224,7 +224,7 @@ class Login extends Component {
 
                     <Col className="logo-col">
                         <div className="text-center">
-                            <h1>{t('login.h-title')}</h1>
+                            <h1>{t('global.app-name')}</h1>
                             <img src={logo} style={{ marginTop: '5em', marginBottom: '5em' }} />
                         </div>
                     </Col>
@@ -232,7 +232,7 @@ class Login extends Component {
                     <Col className="main-col">
                         <Jumbotron className="text-center">
 
-                            <h4>{t('login.h-login')}</h4><hr />
+                            <h4>{t('global.login')}</h4><hr />
                             <Form onSubmit={(e) => { e.preventDefault(); this.getCode(); }} >
                                 <FormGroup>
                                     <Input
@@ -240,7 +240,7 @@ class Login extends Component {
                                         innerRef={this.txtEmail}
                                         type="email"
                                         autoComplete="section-login username"
-                                        placeholder={t('login.txt-email')}
+                                        placeholder={t('global.email')}
                                         pattern={properties.general.emailPattern}
                                         maxLength={properties.general.emailMaxLength}
                                         required
@@ -254,7 +254,7 @@ class Login extends Component {
                                         innerRef={this.txtPassword}
                                         type={this.state.passwordVisible ? "text" : "password"}
                                         autoComplete="section-login current-password"
-                                        placeholder={t('login.txt-password')}
+                                        placeholder={t('global.password')}
                                         required
                                         onChange={(e) => { this.setState({ password: e.target.value }) }}
                                         disabled={!this.state.getCodeEnabled}
@@ -303,8 +303,8 @@ class Login extends Component {
                                 </FormGroup>
                                 <FormGroup className="group-spaced">
                                     <span className="icon-inline float-left"></span>
-                                    <Button type="submit" color="primary" disabled={!this.state.loginEnabled}>{t('login.btn-login')}</Button>
-                                    <Button onClick={this.cancelLogin} color="primary" disabled={!this.state.loginEnabled}>{t('login.btn-cancel-login')}</Button>
+                                    <Button type="submit" color="primary" disabled={!this.state.loginEnabled}>{t('global.login')}</Button>
+                                    <Button onClick={this.cancelLogin} color="primary" disabled={!this.state.loginEnabled}>{t('global.cancel')}</Button>
                                     <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>
                                         <Octicon icon={this.state.passwordVisible ? Key : Eye} />
                                     </span>
@@ -320,13 +320,13 @@ class Login extends Component {
                                 </Popover>
                             </Form>
 
-                            <h4 style={{ marginTop: '2.75rem' }}>{t('login.h-register')}</h4><hr />
+                            <h4 style={{ marginTop: '2.75rem' }}>{t('global.register')}</h4><hr />
                             <Form onSubmit={(e) => { e.preventDefault(); this.register(); }}>
                                 <FormGroup>
                                     <Input
                                         type="email"
                                         autoComplete="off"
-                                        placeholder={t('login.txt-register-email')}
+                                        placeholder={t('global.email')}
                                         pattern={properties.general.emailPattern}
                                         maxLength={properties.general.emailMaxLength}
                                         required
@@ -334,7 +334,7 @@ class Login extends Component {
                                     />
                                 </FormGroup>
                                 <FormGroup className="group-spaced">
-                                    <Button type="submit" color="primary">{t('login.btn-register')}</Button>
+                                    <Button type="submit" color="primary">{t('global.register')}</Button>
                                 </FormGroup>
                             </Form>
 

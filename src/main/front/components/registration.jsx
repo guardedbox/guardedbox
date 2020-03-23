@@ -232,7 +232,7 @@ class Registration extends Component {
 
                     <Col className="logo-col">
                         <div className="text-center">
-                            <h1>{t('registration.h-title')}</h1>
+                            <h1>{t('global.app-name')}</h1>
                             <img src={logo} style={{ marginTop: '5em', marginBottom: '5em' }} />
                         </div>
                     </Col>
@@ -240,13 +240,13 @@ class Registration extends Component {
                     <Col className="main-col">
                         <Jumbotron className="text-center">
 
-                            <h4>{t('registration.h-registration')}</h4><hr />
+                            <h4>{t('global.register')}</h4><hr />
                             <Form onSubmit={(e) => { e.preventDefault(); this.register(); }}>
                                 <FormGroup>
                                     <Input
                                         type="email"
                                         autoComplete="section-registration username"
-                                        placeholder={t('registration.txt-email')}
+                                        placeholder={t('global.email')}
                                         defaultValue={this.state.email}
                                         required
                                         readOnly
@@ -257,10 +257,10 @@ class Registration extends Component {
                                 </Alert>
                                 <div>
                                     <Progress color="primary" value={this.state.passwordLength * 100 / properties.registration.passwordMinLength}>
-                                        {t('registration.password-length') + this.state.passwordLength + ' / ' + properties.registration.passwordMinLength}
+                                        {t('global.length') + ' ' + this.state.passwordLength + ' / ' + properties.registration.passwordMinLength}
                                     </Progress>
                                     <Progress color="primary" style={{ marginTop: '5px', marginBottom: '14px' }} value={this.state.passwordStrength}>
-                                        {t('registration.password-strength') + this.state.passwordStrength + '%'}
+                                        {t('global.strength') + ' ' + this.state.passwordStrength + '%'}
                                     </Progress>
                                 </div>
                                 <FormGroup>
@@ -269,7 +269,7 @@ class Registration extends Component {
                                         innerRef={this.txtPassword}
                                         type={this.state.passwordVisible ? "text" : "password"}
                                         autoComplete="section-registration new-password"
-                                        placeholder={t('registration.txt-password')}
+                                        placeholder={t('global.password')}
                                         valid={Boolean(this.state.password) && !Boolean(this.state.passwordError)}
                                         invalid={Boolean(this.state.password) && Boolean(this.state.passwordError)}
                                         required
@@ -293,7 +293,7 @@ class Registration extends Component {
                                 </FormGroup>
                                 <FormGroup>
                                     <span className="icon-inline float-left"></span>
-                                    <Button type="submit" color="primary">{t('registration.btn-register')}</Button>
+                                    <Button type="submit" color="primary">{t('global.register')}</Button>
                                     <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>
                                         <Octicon icon={this.state.passwordVisible ? Key : Eye} />
                                     </span>

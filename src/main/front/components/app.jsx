@@ -11,7 +11,6 @@ import NavigationBar from 'components/navigation-bar.jsx';
 import MySecrets from 'components/my-secrets.jsx';
 import SecretsSharedWithMe from 'components/secrets-shared-with-me.jsx';
 import Groups from 'components/groups.jsx';
-import TrustedKeys from 'components/trusted-keys.jsx';
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { listenLocationChange } from 'services/location.jsx';
@@ -58,10 +57,9 @@ class App extends Component {
                     <CacheRoute exact path={views.viewPaths.mySecrets} component={MySecrets} />
                     <CacheRoute exact path={views.viewPaths.secretsSharedWithMe} component={SecretsSharedWithMe} />
                     <CacheRoute exact path={views.viewPaths.groups} component={Groups} />
-                    <CacheRoute exact path={views.viewPaths.trustedKeys} component={TrustedKeys} />
                 </CacheSwitch>
 
-                <Loader loading={this.state.loading} text={t('app.loading-text')} fullPage />
+                <Loader loading={this.state.loading} text={t('global.loading-spinner-text')} fullPage />
 
                 <Modal isOpen={this.state.modalMessageActive} toggle={closeModalMessage}>
                     <ModalHeader>{this.state.modalMessageHeader}</ModalHeader>

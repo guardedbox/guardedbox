@@ -245,7 +245,7 @@ class MySecrets extends Component {
 
                 for (var account of accounts) {
 
-                    var sharingValue = encrypt(this.state.editSecretValue, account.encryptionPublicKey, account.email);
+                    var sharingValue = encrypt(this.state.editSecretValue, account.encryptionPublicKey);
                     if (sharingValue == '') return;
 
                     sharings.push({
@@ -327,7 +327,7 @@ class MySecrets extends Component {
         var secretId = secret.secretId;
 
         modalConfirmation(
-            t('my-secrets.delete-secret-modal-title'),
+            t('global.confirmation'),
             t('my-secrets.delete-secret-modal-body'),
             () => {
 
@@ -401,7 +401,7 @@ class MySecrets extends Component {
 
                 var account = response;
 
-                var shareSecretValue = encrypt(this.state.shareSecretValue, account.encryptionPublicKey, shareSecretReceiverEmail);
+                var shareSecretValue = encrypt(this.state.shareSecretValue, account.encryptionPublicKey);
                 if (shareSecretValue == '') return;
 
                 rest({
@@ -476,8 +476,8 @@ class MySecrets extends Component {
                 <h4>{t('my-secrets.title')}</h4><hr />
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="primary" onClick={this.newSecret}><Octicon className="button-icon" icon={DiffAdded} />{t('my-secrets.btn-new-secret')}</Button>
-                    <Button color="secondary" onClick={this.loadSecrets}><Octicon className="button-icon" icon={Sync} />{t('my-secrets.btn-reload')}</Button>
+                    <Button color="primary" onClick={this.newSecret}><Octicon className="button-icon" icon={DiffAdded} />{t('secrets.new-secret')}</Button>
+                    <Button color="secondary" onClick={this.loadSecrets}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
                 {
@@ -488,8 +488,8 @@ class MySecrets extends Component {
                             <Table striped hover>
                                 <thead>
                                     <tr>
-                                        <th style={{ width: '40%' }}>{t('my-secrets.secrets-table-name')}</th>
-                                        <th style={{ width: '60%' }}>{t('my-secrets.secrets-table-value')}</th>
+                                        <th style={{ width: '40%' }}>{t('global.name')}</th>
+                                        <th style={{ width: '60%' }}>{t('global.value')}</th>
                                         <th style={{ width: '5rem' }}></th>
                                     </tr>
                                 </thead>
@@ -507,7 +507,7 @@ class MySecrets extends Component {
                                                         <Octicon icon={File} />
                                                     </span>
                                                     <UncontrolledTooltip placement="top" target={"my-secrets_icon-copy-secret-name-" + i}>
-                                                        {t('my-secrets.copy')}
+                                                        {t('global.copy')}
                                                     </UncontrolledTooltip>
                                                 </div>
                                             </td>
@@ -523,7 +523,7 @@ class MySecrets extends Component {
                                                             <Octicon icon={File} />
                                                         </span>
                                                         <UncontrolledTooltip placement="top" target={"my-secrets_icon-copy-secret-value-" + i}>
-                                                            {t('my-secrets.copy')}
+                                                            {t('global.copy')}
                                                         </UncontrolledTooltip>
                                                         <span className="space-between-icons"></span>
                                                         <span
@@ -533,7 +533,7 @@ class MySecrets extends Component {
                                                             <Octicon icon={Shield} />
                                                         </span>
                                                         <UncontrolledTooltip placement="top" target={"my-secrets_icon-hide-secret-value-" + i}>
-                                                            {t('my-secrets.hide')}
+                                                            {t('global.hide')}
                                                         </UncontrolledTooltip>
                                                     </div>
                                                     :
@@ -545,7 +545,7 @@ class MySecrets extends Component {
                                                             <Octicon icon={File} />
                                                         </span>
                                                         <UncontrolledTooltip placement="top" target={"my-secrets_icon-copy-secret-value-" + i}>
-                                                            {t('my-secrets.copy')}
+                                                            {t('global.copy')}
                                                         </UncontrolledTooltip>
                                                         <span className="space-between-icons"></span>
                                                         <span
@@ -555,7 +555,7 @@ class MySecrets extends Component {
                                                             <Octicon icon={History} />
                                                         </span>
                                                         <UncontrolledTooltip placement="top" target={"my-secrets_icon-blink-secret-value-" + i}>
-                                                            {t('my-secrets.blink')}
+                                                            {t('global.blink')}
                                                         </UncontrolledTooltip>
                                                         <span className="space-between-icons"></span>
                                                         <span
@@ -565,7 +565,7 @@ class MySecrets extends Component {
                                                             <Octicon icon={ShieldLock} />
                                                         </span>
                                                         <UncontrolledTooltip placement="top" target={"my-secrets_icon-show-secret-value-" + i}>
-                                                            {t('my-secrets.show')}
+                                                            {t('global.show')}
                                                         </UncontrolledTooltip>
                                                     </div>
                                                 }
@@ -578,7 +578,7 @@ class MySecrets extends Component {
                                                     <Octicon icon={Pencil} />
                                                 </span>
                                                 <UncontrolledTooltip placement="top" target={"my-secrets_icon-edit-secret-" + i}>
-                                                    {t('my-secrets.edit')}
+                                                    {t('global.edit')}
                                                 </UncontrolledTooltip>
                                                 <span className="space-between-icons"></span>
                                                 <span
@@ -588,7 +588,7 @@ class MySecrets extends Component {
                                                     <Octicon icon={Trashcan} />
                                                 </span>
                                                 <UncontrolledTooltip placement="top" target={"my-secrets_icon-delete-secret-" + i}>
-                                                    {t('my-secrets.delete')}
+                                                    {t('global.delete')}
                                                 </UncontrolledTooltip>
                                                 <span className="space-between-icons"></span>
                                                 <span
@@ -598,7 +598,7 @@ class MySecrets extends Component {
                                                     <Octicon icon={FileSymlinkFile} />
                                                 </span>
                                                 <UncontrolledTooltip placement="top" target={"my-secrets_icon-share-secret-" + i}>
-                                                    {t('my-secrets.share')}
+                                                    {t('global.share')}
                                                 </UncontrolledTooltip>
                                             </td>
                                         </tr>
@@ -608,14 +608,14 @@ class MySecrets extends Component {
                 }
 
                 <Modal isOpen={this.state.newSecretModalActive} toggle={this.cancelNewSecret}>
-                    <ModalHeader>{t('my-secrets.new-secret-modal-title')}</ModalHeader>
+                    <ModalHeader>{t('secrets.new-secret')}</ModalHeader>
                     <ModalBody>
                         <Form id="my-secrets_form-new-secret" onSubmit={(e) => { e.preventDefault(); this.commitNewSecret(); }}>
                             <FormGroup>
                                 <Input
                                     innerRef={this.newSecretModalTxtName}
                                     type="text"
-                                    placeholder={t('my-secrets.new-secret-modal-txt-name')}
+                                    placeholder={t('global.name')}
                                     maxLength={properties.secrets.secretNameMaxLength}
                                     required
                                     onChange={(e) => { this.setState({ newSecretName: e.target.value }) }}
@@ -625,7 +625,7 @@ class MySecrets extends Component {
                                 <Input
                                     innerRef={this.newSecretModalTxtValue}
                                     type="textarea"
-                                    placeholder={t('my-secrets.new-secret-modal-txt-value')}
+                                    placeholder={t('global.value')}
                                     maxLength={properties.secrets.secretValueMaxLength}
                                     required
                                     onChange={(e) => {
@@ -639,21 +639,21 @@ class MySecrets extends Component {
                                 />
                                 <InputGroup style={{ marginTop: '.4rem' }}>
                                     <Badge color="primary" className="badge-progress" style={{ width: '30%' }}>
-                                        {t('my-secrets.new-secret-modal-value-length') + this.state.newSecretValueLength + ' / ' + properties.secrets.secretValueMaxLength}
+                                        {t('global.length') + ' ' + this.state.newSecretValueLength + ' / ' + properties.secrets.secretValueMaxLength}
                                     </Badge>
                                     <div style={{ width: '1%' }}></div>
                                     <Progress color="primary" value={this.state.newSecretValueStrength} style={{ width: '69%' }}>
-                                        {t('my-secrets.new-secret-modal-value-strength') + this.state.newSecretValueStrength + '%'}
+                                        {t('global.strength') + ' ' + this.state.newSecretValueStrength + '%'}
                                     </Progress>
                                 </InputGroup>
                             </FormGroup>
                         </Form>
                         <fieldset disabled={Boolean(this.state.newSecretValue)}>
                             <Form inline className="group-spaced" onSubmit={(e) => { e.preventDefault(); this.newSecretGenerateRandomValue(); }}>
-                                <Label size="sm">{t('my-secrets.new-secret-modal-label-generate-random-value')}</Label>
+                                <Label size="sm">{t('secrets.generate-random-value')}</Label>
                                 <Input
                                     type="number"
-                                    placeholder={t('my-secrets.new-secret-modal-txt-generate-random-value-length')}
+                                    placeholder={t('global.length')}
                                     min={1}
                                     max={properties.secrets.secretValueMaxLength}
                                     pattern="[0-9]*"
@@ -662,25 +662,25 @@ class MySecrets extends Component {
                                     style={{ flexGrow: '100' }}
                                     onChange={(e) => { this.setState({ newSecretGenerateRandomValueLength: e.target.value }); }}
                                 />
-                                <Button type="submit" color="secondary" size="sm">{t('my-secrets.new-secret-modal-btn-generate-random-value')}</Button>
+                                <Button type="submit" color="secondary" size="sm">{t('global.generate')}</Button>
                             </Form>
                         </fieldset>
                     </ModalBody>
                     <ModalFooter>
-                        <Button type="submit" form="my-secrets_form-new-secret" color="primary">{t('my-secrets.new-secret-modal-btn-create')}</Button>
-                        <Button color="secondary" onClick={this.cancelNewSecret}>{t('my-secrets.new-secret-modal-btn-cancel')}</Button>
+                        <Button type="submit" form="my-secrets_form-new-secret" color="primary">{t('global.create')}</Button>
+                        <Button color="secondary" onClick={this.cancelNewSecret}>{t('global.cancel')}</Button>
                     </ModalFooter>
                 </Modal>
 
                 <Modal isOpen={this.state.editSecretModalActive} toggle={this.cancelEditSecret}>
-                    <ModalHeader>{t('my-secrets.edit-secret-modal-title')}</ModalHeader>
+                    <ModalHeader>{t('secrets.edit-secret')}</ModalHeader>
                     <ModalBody>
                         <Form id="my-secrets_form-edit-secret" onSubmit={(e) => { e.preventDefault(); this.commitEditSecret(); }}>
                             <FormGroup>
                                 <Input
                                     innerRef={this.editSecretModalTxtName}
                                     type="text"
-                                    placeholder={t('my-secrets.edit-secret-modal-txt-name')}
+                                    placeholder={t('global.name')}
                                     maxLength={properties.secrets.secretNameMaxLength}
                                     required
                                     onChange={(e) => { this.setState({ editSecretName: e.target.value }) }}
@@ -690,7 +690,7 @@ class MySecrets extends Component {
                                 <Input
                                     innerRef={this.editSecretModalTxtValue}
                                     type="textarea"
-                                    placeholder={t('my-secrets.edit-secret-modal-txt-value')}
+                                    placeholder={t('global.value')}
                                     maxLength={properties.secrets.secretValueMaxLength}
                                     required
                                     onChange={(e) => {
@@ -704,21 +704,21 @@ class MySecrets extends Component {
                                 />
                                 <InputGroup style={{ marginTop: '.4rem' }}>
                                     <Badge color="primary" className="badge-progress" style={{ width: '30%' }}>
-                                        {t('my-secrets.edit-secret-modal-value-length') + this.state.editSecretValueLength + ' / ' + properties.secrets.secretValueMaxLength}
+                                        {t('global.length') + ' ' + this.state.editSecretValueLength + ' / ' + properties.secrets.secretValueMaxLength}
                                     </Badge>
                                     <div style={{ width: '1%' }}></div>
                                     <Progress color="primary" value={this.state.editSecretValueStrength} style={{ width: '69%' }}>
-                                        {t('my-secrets.edit-secret-modal-value-strength') + this.state.editSecretValueStrength + '%'}
+                                        {t('global.strength') + ' ' + this.state.editSecretValueStrength + '%'}
                                     </Progress>
                                 </InputGroup>
                             </FormGroup>
                         </Form>
                         <fieldset disabled={Boolean(this.state.editSecretValue)}>
                             <Form inline className="group-spaced" onSubmit={(e) => { e.preventDefault(); this.editSecretGenerateRandomValue(); }}>
-                                <Label size="sm">{t('my-secrets.edit-secret-modal-label-generate-random-value')}</Label>
+                                <Label size="sm">{t('secrets.generate-random-value')}</Label>
                                 <Input
                                     type="number"
-                                    placeholder={t('my-secrets.edit-secret-modal-txt-generate-random-value-length')}
+                                    placeholder={t('global.length')}
                                     min={1}
                                     max={properties.secrets.secretValueMaxLength}
                                     pattern="[0-9]*"
@@ -727,18 +727,18 @@ class MySecrets extends Component {
                                     style={{ flexGrow: '100' }}
                                     onChange={(e) => { this.setState({ editSecretGenerateRandomValueLength: e.target.value }); }}
                                 />
-                                <Button type="submit" color="secondary" size="sm">{t('my-secrets.edit-secret-modal-btn-generate-random-value')}</Button>
+                                <Button type="submit" color="secondary" size="sm">{t('global.generate')}</Button>
                             </Form>
                         </fieldset>
                     </ModalBody>
                     <ModalFooter>
-                        <Button type="submit" form="my-secrets_form-edit-secret" color="primary">{t('my-secrets.edit-secret-modal-btn-edit')}</Button>
-                        <Button color="secondary" onClick={this.cancelEditSecret}>{t('my-secrets.edit-secret-modal-btn-cancel')}</Button>
+                        <Button type="submit" form="my-secrets_form-edit-secret" color="primary">{t('global.edit')}</Button>
+                        <Button color="secondary" onClick={this.cancelEditSecret}>{t('global.cancel')}</Button>
                     </ModalFooter>
                 </Modal>
 
                 <Modal isOpen={this.state.shareSecretModalActive} toggle={this.closeShareSecretModal}>
-                    <ModalHeader>{t('my-secrets.share-secret-modal-title')}</ModalHeader>
+                    <ModalHeader>{t('secrets.share-secret')}</ModalHeader>
                     <ModalBody>
                         {
                             !this.state.shareSecretAccounts || this.state.shareSecretAccounts.length == 0 ?
@@ -763,13 +763,13 @@ class MySecrets extends Component {
                                 innerRef={this.shareSecretModalTxtEmail}
                                 type="email"
                                 style={{ flexGrow: '100' }}
-                                placeholder={t('my-secrets.share-secret-modal-txt-email')}
+                                placeholder={t('global.email')}
                                 pattern={properties.general.emailPattern}
                                 maxLength={properties.general.emailMaxLength}
                                 required
                                 onChange={(e) => { this.setState({ shareSecretReceiverEmail: e.target.value }); }}
                             />
-                            <Button type="submit" color="primary">{t('my-secrets.share-secret-modal-btn-share')}</Button>
+                            <Button type="submit" color="primary">{t('global.share')}</Button>
                         </Form>
                     </ModalBody>
                 </Modal>

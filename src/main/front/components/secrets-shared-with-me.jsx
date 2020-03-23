@@ -58,7 +58,7 @@ class SecretsSharedWithMe extends Component {
 
     clipboardSecretValue = (accountRowIndex, account, secretRowIndex, secret) => {
 
-        var clearValue = decrypt(secret.value, account.encryptionPublicKey, account.email);
+        var clearValue = decrypt(secret.value, account.encryptionPublicKey);
         if (clearValue == '') return;
 
         copyToClipboard(clearValue);
@@ -74,7 +74,7 @@ class SecretsSharedWithMe extends Component {
 
     showSecretValue = (accountRowIndex, account, secretRowIndex, secret) => {
 
-        var clearValue = decrypt(secret.value, account.encryptionPublicKey, account.email);
+        var clearValue = decrypt(secret.value, account.encryptionPublicKey);
         if (clearValue == '') return;
 
         secret.clearValue = clearValue;
@@ -102,7 +102,7 @@ class SecretsSharedWithMe extends Component {
         var secretId = secret.secretId;
 
         modalConfirmation(
-            t('secrets-shared-with-me.reject-shared-secret-modal-title'),
+            t('global.confirmation'),
             t('secrets-shared-with-me.reject-shared-secret-modal-body'),
             () => {
 
@@ -141,7 +141,7 @@ class SecretsSharedWithMe extends Component {
                 <h4>{t('secrets-shared-with-me.title')}</h4><hr />
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="secondary" onClick={this.loadSecrets}><Octicon className="button-icon" icon={Sync} />{t('secrets-shared-with-me.btn-reload')}</Button>
+                    <Button color="secondary" onClick={this.loadSecrets}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
                 {
@@ -151,12 +151,12 @@ class SecretsSharedWithMe extends Component {
                             <p>{t('secrets-shared-with-me.no-secrets')}</p> :
                             this.state.secretsSharedWithMe.map((account, j) =>
                                 <div key={'account-' + account.email}>
-                                    <h5 style={{ marginTop: '2em' }}>{t('secrets-shared-with-me.h-from') + account.email}</h5>
+                                    <h5 style={{ marginTop: '2em' }}>{t('secrets-shared-with-me.h-from') + ' ' + account.email}</h5>
                                     <Table striped hover>
                                         <thead>
                                             <tr>
-                                                <th style={{ width: '40%' }}>{t('secrets-shared-with-me.secrets-table-name')}</th>
-                                                <th style={{ width: '60%' }}>{t('secrets-shared-with-me.secrets-table-value')}</th>
+                                                <th style={{ width: '40%' }}>{t('global.name')}</th>
+                                                <th style={{ width: '60%' }}>{t('global.value')}</th>
                                                 <th style={{ width: '3rem' }}></th>
                                             </tr>
                                         </thead>
@@ -174,7 +174,7 @@ class SecretsSharedWithMe extends Component {
                                                                 <Octicon icon={File} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-copy-secret-name-" + i}>
-                                                                {t('my-secrets.copy')}
+                                                                {t('global.copy')}
                                                             </UncontrolledTooltip>
                                                         </div>
                                                     </td>
@@ -190,7 +190,7 @@ class SecretsSharedWithMe extends Component {
                                                                     <Octicon icon={File} />
                                                                 </span>
                                                                 <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-copy-secret-value-" + i}>
-                                                                    {t('my-secrets.copy')}
+                                                                    {t('global.copy')}
                                                                 </UncontrolledTooltip>
                                                                 <span className="space-between-icons"></span>
                                                                 <span
@@ -200,7 +200,7 @@ class SecretsSharedWithMe extends Component {
                                                                     <Octicon icon={Shield} />
                                                                 </span>
                                                                 <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-hide-secret-value-" + i}>
-                                                                    {t('my-secrets.hide')}
+                                                                    {t('global.hide')}
                                                                 </UncontrolledTooltip>
                                                             </div>
                                                             :
@@ -212,7 +212,7 @@ class SecretsSharedWithMe extends Component {
                                                                     <Octicon icon={File} />
                                                                 </span>
                                                                 <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-copy-secret-value-" + i}>
-                                                                    {t('my-secrets.copy')}
+                                                                    {t('global.copy')}
                                                                 </UncontrolledTooltip>
                                                                 <span className="space-between-icons"></span>
                                                                 <span
@@ -222,7 +222,7 @@ class SecretsSharedWithMe extends Component {
                                                                     <Octicon icon={History} />
                                                                 </span>
                                                                 <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-blink-secret-value-" + i}>
-                                                                    {t('my-secrets.blink')}
+                                                                    {t('global.blink')}
                                                                 </UncontrolledTooltip>
                                                                 <span className="space-between-icons"></span>
                                                                 <span
@@ -232,7 +232,7 @@ class SecretsSharedWithMe extends Component {
                                                                     <Octicon icon={ShieldLock} />
                                                                 </span>
                                                                 <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-show-secret-value-" + i}>
-                                                                    {t('my-secrets.show')}
+                                                                    {t('global.show')}
                                                                 </UncontrolledTooltip>
                                                             </div>
                                                         }
@@ -245,7 +245,7 @@ class SecretsSharedWithMe extends Component {
                                                             <Octicon icon={X} />
                                                         </span>
                                                         <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-reject-shared-secret-" + i}>
-                                                            {t('shared-secrets.reject')}
+                                                            {t('global.reject')}
                                                         </UncontrolledTooltip>
                                                     </td>
                                                 </tr>

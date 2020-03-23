@@ -161,7 +161,7 @@ class Groups extends Component {
 
         var groupId = group.groupId;
 
-        var groupKey = decrypt(group.encryptedGroupKey, null, null, 'base64', 'base64', 'base64');
+        var groupKey = decrypt(group.encryptedGroupKey, null, 'base64', 'base64', 'base64');
         if (groupKey == '') return;
 
         rest({
@@ -209,7 +209,7 @@ class Groups extends Component {
 
                 var participant = response;
 
-                var participantEncryptedGroupKey = encrypt(this.state.ownedGroupKey, participant.encryptionPublicKey, participantEmail, 'base64');
+                var participantEncryptedGroupKey = encrypt(this.state.ownedGroupKey, participant.encryptionPublicKey, 'base64');
                 if (participantEncryptedGroupKey == '') return;
 
                 rest({
@@ -280,7 +280,7 @@ class Groups extends Component {
 
         var groupId = group.groupId;
 
-        var groupKey = decrypt(group.encryptedGroupKey, null, null, 'base64', 'base64', 'base64');
+        var groupKey = decrypt(group.encryptedGroupKey, null, 'base64', 'base64', 'base64');
         if (groupKey == '') return;
 
         rest({
@@ -434,7 +434,7 @@ class Groups extends Component {
         var groupId = group.groupId;
 
         modalConfirmation(
-            t('groups.delete-group-modal-title'),
+            t('global.confirmation'),
             t('groups.delete-group-modal-body'),
             () => {
 
@@ -460,7 +460,7 @@ class Groups extends Component {
 
         var groupId = group.groupId;
 
-        var groupKey = decrypt(group.encryptedGroupKey, group.ownerAccount.encryptionPublicKey, group.ownerAccount.email, 'base64', 'base64', 'base64');
+        var groupKey = decrypt(group.encryptedGroupKey, group.ownerAccount.encryptionPublicKey, 'base64', 'base64', 'base64');
         if (groupKey == '') return;
 
         rest({
@@ -504,7 +504,7 @@ class Groups extends Component {
 
         var groupId = group.groupId;
 
-        var groupKey = decrypt(group.encryptedGroupKey, group.ownerAccount.encryptionPublicKey, group.ownerAccount.email, 'base64', 'base64', 'base64');
+        var groupKey = decrypt(group.encryptedGroupKey, group.ownerAccount.encryptionPublicKey, 'base64', 'base64', 'base64');
         if (groupKey == '') return;
 
         rest({
@@ -597,8 +597,8 @@ class Groups extends Component {
                 <h4>{t('groups.owned-groups')}</h4><hr />
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="primary" onClick={this.newGroup}><Octicon className="button-icon" icon={DiffAdded} />{t('groups.btn-new-group')}</Button>
-                    <Button color="secondary" onClick={() => { this.loadOwnedGroups() }}><Octicon className="button-icon" icon={Sync} />{t('groups.btn-reload')}</Button>
+                    <Button color="primary" onClick={this.newGroup}><Octicon className="button-icon" icon={DiffAdded} />{t('groups.new-group')}</Button>
+                    <Button color="secondary" onClick={() => { this.loadOwnedGroups() }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
                 {
@@ -609,7 +609,7 @@ class Groups extends Component {
                             <Table striped hover>
                                 <thead>
                                     <tr>
-                                        <th style={{ width: '100%' }}>{t('groups.owned-groups-table-name')}</th>
+                                        <th style={{ width: '100%' }}>{t('global.name')}</th>
                                         <th style={{ width: '4rem' }}></th>
                                         <th style={{ width: '4rem' }}></th>
                                     </tr>
@@ -648,7 +648,7 @@ class Groups extends Component {
                                                     <Octicon icon={Trashcan} />
                                                 </span>
                                                 <UncontrolledTooltip placement="top" target={"groups_icon-delete-owned-group-" + i}>
-                                                    {t('groups.delete')}
+                                                    {t('global.delete')}
                                                 </UncontrolledTooltip>
                                             </td>
                                         </tr>
@@ -658,14 +658,14 @@ class Groups extends Component {
                 }
 
                 <Modal isOpen={this.state.newGroupModalActive} toggle={this.cancelNewGroup}>
-                    <ModalHeader>{t('groups.new-group-modal-title')}</ModalHeader>
+                    <ModalHeader>{t('groups.new-group')}</ModalHeader>
                     <ModalBody>
                         <Form id="groups_form-new-group" onSubmit={(e) => { e.preventDefault(); this.commitNewGroup(); }}>
                             <FormGroup>
                                 <Input
                                     innerRef={this.newGroupModalTxtName}
                                     type="text"
-                                    placeholder={t('groups.new-group-modal-txt-name')}
+                                    placeholder={t('global.name')}
                                     maxLength={properties.groups.groupNameMaxLength}
                                     required
                                     onChange={(e) => { this.setState({ newGroupName: e.target.value }) }}
@@ -674,13 +674,13 @@ class Groups extends Component {
                         </Form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button type="submit" form="groups_form-new-group" color="primary">{t('groups.new-group-modal-btn-create')}</Button>
-                        <Button color="secondary" onClick={this.cancelNewGroup}>{t('groups.new-group-modal-btn-cancel')}</Button>
+                        <Button type="submit" form="groups_form-new-group" color="primary">{t('global.create')}</Button>
+                        <Button color="secondary" onClick={this.cancelNewGroup}>{t('global.cancel')}</Button>
                     </ModalFooter>
                 </Modal>
 
                 <Modal isOpen={this.state.ownedGroupParticipantsModalActive} toggle={this.closeOwnedGroupParticipantsModal}>
-                    <ModalHeader>{t('groups.owned-group-participants-modal-title')}</ModalHeader>
+                    <ModalHeader>{t('groups.participants')}</ModalHeader>
                     <ModalBody>
                         {
                             !this.state.ownedGroupParticipants || this.state.ownedGroupParticipants.length == 0 ?
@@ -705,19 +705,19 @@ class Groups extends Component {
                                 innerRef={this.ownedGroupParticipantsModalTxtEmail}
                                 type="email"
                                 style={{ flexGrow: '100' }}
-                                placeholder={t('groups.owned-group-participants-modal-txt-email')}
+                                placeholder={t('global.email')}
                                 pattern={properties.general.emailPattern}
                                 maxLength={properties.general.emailMaxLength}
                                 required
                                 onChange={(e) => { this.setState({ ownedGroupAddParticipantEmail: e.target.value }); }}
                             />
-                            <Button type="submit" color="primary">{t('groups.owned-group-participants-modal-btn-add')}</Button>
+                            <Button type="submit" color="primary">{t('global.add')}</Button>
                         </Form>
                     </ModalBody>
                 </Modal>
 
                 <Modal isOpen={this.state.ownedGroupSecretsModalActive} toggle={this.closeOwnedGroupSecretsModal}>
-                    <ModalHeader>{t('groups.owned-group-secrets-modal-title')}</ModalHeader>
+                    <ModalHeader>{t('groups.secrets')}</ModalHeader>
                     <ModalBody>
                         {
                             !this.state.ownedGroupSecrets || this.state.ownedGroupSecrets.length == 0 ?
@@ -725,8 +725,8 @@ class Groups extends Component {
                                 <Table striped hover size="sm">
                                     <thead>
                                         <tr>
-                                            <th style={{ width: '50%' }}>{t('groups.owned-group-secrets-modal-table-name')}</th>
-                                            <th style={{ width: '50%' }}>{t('groups.owned-group-secrets-modal-table-value')}</th>
+                                            <th style={{ width: '50%' }}>{t('global.name')}</th>
+                                            <th style={{ width: '50%' }}>{t('global.value')}</th>
                                             <th style={{ width: '5rem' }}></th>
                                         </tr>
                                     </thead>
@@ -744,7 +744,7 @@ class Groups extends Component {
                                                             <Octicon icon={File} />
                                                         </span>
                                                         <UncontrolledTooltip placement="top" target={"groups_icon-copy-owned-group-secret-name-" + i}>
-                                                            {t('my-secrets.copy')}
+                                                            {t('global.copy')}
                                                         </UncontrolledTooltip>
                                                     </div>
                                                 </td>
@@ -760,7 +760,7 @@ class Groups extends Component {
                                                                 <Octicon icon={File} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-copy-owned-group-secret-value-" + i}>
-                                                                {t('my-secrets.copy')}
+                                                                {t('global.copy')}
                                                             </UncontrolledTooltip>
                                                             <span className="space-between-icons"></span>
                                                             <span
@@ -770,7 +770,7 @@ class Groups extends Component {
                                                                 <Octicon icon={Shield} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon_icon-hide-owned-group-secret-value-" + i}>
-                                                                {t('my-secrets.hide')}
+                                                                {t('global.hide')}
                                                             </UncontrolledTooltip>
                                                         </div>
                                                         :
@@ -782,7 +782,7 @@ class Groups extends Component {
                                                                 <Octicon icon={File} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-copy-owned-group-secret-value-" + i}>
-                                                                {t('my-secrets.copy')}
+                                                                {t('global.copy')}
                                                             </UncontrolledTooltip>
                                                             <span className="space-between-icons"></span>
                                                             <span
@@ -792,7 +792,7 @@ class Groups extends Component {
                                                                 <Octicon icon={History} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-blink-owned-group-secret-value-" + i}>
-                                                                {t('my-secrets.blink')}
+                                                                {t('global.blink')}
                                                             </UncontrolledTooltip>
                                                             <span className="space-between-icons"></span>
                                                             <span
@@ -802,7 +802,7 @@ class Groups extends Component {
                                                                 <Octicon icon={ShieldLock} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-show-owned-group-secret-value-" + i}>
-                                                                {t('my-secrets.show')}
+                                                                {t('global.show')}
                                                             </UncontrolledTooltip>
                                                         </div>
                                                     }
@@ -822,7 +822,7 @@ class Groups extends Component {
                                 innerRef={this.ownedGroupSecretsModalTxtName}
                                 type="text"
                                 style={{ flexGrow: '50' }}
-                                placeholder={t('groups.owned-group-secrets-modal-txt-name')}
+                                placeholder={t('global.name')}
                                 maxLength={properties.secrets.secretNameMaxLength}
                                 required
                                 onChange={(e) => { this.setState({ ownedGroupAddSecretName: e.target.value }); }}
@@ -830,12 +830,12 @@ class Groups extends Component {
                             <Input
                                 type="text"
                                 style={{ flexGrow: '50' }}
-                                placeholder={t('groups.owned-group-secrets-modal-txt-value')}
+                                placeholder={t('global.value')}
                                 maxLength={properties.secrets.secretValueMaxLength}
                                 required
                                 onChange={(e) => { this.setState({ ownedGroupAddSecretValue: e.target.value }); }}
                             />
-                            <Button type="submit" color="primary">{t('groups.owned-group-secrets-modal-btn-add')}</Button>
+                            <Button type="submit" color="primary">{t('global.add')}</Button>
                         </Form>
                     </ModalBody>
                 </Modal>
@@ -843,7 +843,7 @@ class Groups extends Component {
                 <h4 style={{ marginTop: '4rem' }}>{t('groups.participant-groups')}</h4><hr />
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="secondary" onClick={() => { this.loadParticipantGroups() }}><Octicon className="button-icon" icon={Sync} />{t('groups.btn-reload')}</Button>
+                    <Button color="secondary" onClick={() => { this.loadParticipantGroups() }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
                 {
@@ -854,8 +854,8 @@ class Groups extends Component {
                             <Table striped hover>
                                 <thead>
                                     <tr>
-                                        <th style={{ width: '50%' }}>{t('groups.participant-groups-table-name')}</th>
-                                        <th style={{ width: '50%' }}>{t('groups.participant-groups-table-owner')}</th>
+                                        <th style={{ width: '50%' }}>{t('global.name')}</th>
+                                        <th style={{ width: '50%' }}>{t('global.owner')}</th>
                                         <th style={{ width: '4rem' }}></th>
                                     </tr>
                                 </thead>
@@ -892,7 +892,7 @@ class Groups extends Component {
                 }
 
                 <Modal isOpen={this.state.participantGroupParticipantsModalActive} toggle={this.closeParticipantGroupParticipantsModal}>
-                    <ModalHeader>{t('groups.participant-group-participants-modal-title')}</ModalHeader>
+                    <ModalHeader>{t('groups.participants')}</ModalHeader>
                     <ModalBody>
                         {
                             !this.state.participantGroupParticipants || this.state.participantGroupParticipants.length == 0 ?
@@ -911,7 +911,7 @@ class Groups extends Component {
                 </Modal>
 
                 <Modal isOpen={this.state.participantGroupSecretsModalActive} toggle={this.closeParticipantGroupSecretsModal}>
-                    <ModalHeader>{t('groups.participant-group-secrets-modal-title')}</ModalHeader>
+                    <ModalHeader>{t('groups.secrets')}</ModalHeader>
                     <ModalBody>
                         {
                             !this.state.participantGroupSecrets || this.state.participantGroupSecrets.length == 0 ?
@@ -919,8 +919,8 @@ class Groups extends Component {
                                 <Table striped hover size="sm">
                                     <thead>
                                         <tr>
-                                            <th style={{ width: '50%' }}>{t('groups.participant-group-secrets-modal-table-name')}</th>
-                                            <th style={{ width: '50%' }}>{t('groups.participant-group-secrets-modal-table-value')}</th>
+                                            <th style={{ width: '50%' }}>{t('global.name')}</th>
+                                            <th style={{ width: '50%' }}>{t('global.value')}</th>
                                         </tr>
                                     </thead>
                                     <tbody ref={this.participantGroupSecretsModalTableBody}>
@@ -937,7 +937,7 @@ class Groups extends Component {
                                                             <Octicon icon={File} />
                                                         </span>
                                                         <UncontrolledTooltip placement="top" target={"groups_icon-copy-participant-group-secret-name-" + i}>
-                                                            {t('my-secrets.copy')}
+                                                            {t('global.copy')}
                                                         </UncontrolledTooltip>
                                                     </div>
                                                 </td>
@@ -953,7 +953,7 @@ class Groups extends Component {
                                                                 <Octicon icon={File} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-copy-participant-group-secret-value-" + i}>
-                                                                {t('my-secrets.copy')}
+                                                                {t('global.copy')}
                                                             </UncontrolledTooltip>
                                                             <span className="space-between-icons"></span>
                                                             <span
@@ -963,7 +963,7 @@ class Groups extends Component {
                                                                 <Octicon icon={Shield} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-hide-participant-group-secret-value-" + i}>
-                                                                {t('my-secrets.hide')}
+                                                                {t('global.hide')}
                                                             </UncontrolledTooltip>
                                                         </div>
                                                         :
@@ -975,7 +975,7 @@ class Groups extends Component {
                                                                 <Octicon icon={File} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-copy-participant-group-secret-value-" + i}>
-                                                                {t('my-secrets.copy')}
+                                                                {t('global.copy')}
                                                             </UncontrolledTooltip>
                                                             <span className="space-between-icons"></span>
                                                             <span
@@ -985,7 +985,7 @@ class Groups extends Component {
                                                                 <Octicon icon={History} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-blink-participant-group-secret-value-" + i}>
-                                                                {t('my-secrets.blink')}
+                                                                {t('global.blink')}
                                                             </UncontrolledTooltip>
                                                             <span className="space-between-icons"></span>
                                                             <span
@@ -995,7 +995,7 @@ class Groups extends Component {
                                                                 <Octicon icon={ShieldLock} />
                                                             </span>
                                                             <UncontrolledTooltip placement="top" target={"groups_icon-show-participant-group-secret-value-" + i}>
-                                                                {t('my-secrets.show')}
+                                                                {t('global.show')}
                                                             </UncontrolledTooltip>
                                                         </div>
                                                     }

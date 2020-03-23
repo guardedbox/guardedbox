@@ -36,7 +36,7 @@ class NavigationBar extends Component {
                 <Navbar color="light" light expand="md" style={{ marginBottom: "3rem" }}>
 
                     <NavbarBrand><img src={logo} height="25" width="25" style={{ verticalAlign: "bottom", margin: "0 1rem 0 0.5rem" }} />
-                        {t('navigation-bar.brand')}
+                        {t('global.app-name')}
                     </NavbarBrand>
                     <NavbarToggler onClick={this.toggleNavbarToggler} />
 
@@ -44,22 +44,19 @@ class NavigationBar extends Component {
 
                         <Nav className="mr-auto" navbar>
                             <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.mySecrets} activeClassName="active">
-                                {t('navigation-bar.my-secrets')}
+                                {t('my-secrets.title')}
                             </NavLink></NavItem>
                             <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.secretsSharedWithMe} activeClassName="active">
-                                {t('navigation-bar.secrets-shared-with-me')}
+                                {t('secrets-shared-with-me.title')}
                             </NavLink></NavItem>
                             <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.groups} activeClassName="active">
-                                {t('navigation-bar.groups')}
-                            </NavLink></NavItem>
-                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.trustedKeys} activeClassName="active">
-                                {t('navigation-bar.trusted-keys')}
+                                {t('groups.title')}
                             </NavLink></NavItem>
                         </Nav>
 
                         <Nav className="ml-auto" navbar>
                             <span style={{ margin: '8px' }}>{this.state.email}</span>
-                            <div className="form-inline"><Button color="secondary" size="sm" onClick={logout}>{t('navigation-bar.logout')}</Button></div>
+                            <div className="form-inline"><Button color="secondary" size="sm" onClick={logout}>{t('global.logout')}</Button></div>
                         </Nav>
 
                     </Collapse>

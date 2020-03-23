@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Container, Button, Modal, ModalHeader, ModalBody, ModalFooter, Badge, Progress, Form, FormGroup, Label, Input, InputGroup, Table, UncontrolledTooltip } from 'reactstrap';
-import Octicon, { DiffAdded, Sync, File, History, ShieldLock, Shield, Pencil, Trashcan, FileSymlinkFile, X } from '@primer/octicons-react'
+import Octicon, { DiffAdded, Sync, File, History, ShieldLock, Shield, Pencil, Trashcan, FileSymlinkFile, Key, X } from '@primer/octicons-react'
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
 import { encrypt, decrypt } from 'services/crypto/crypto.jsx';
 import { addElementToStateArray, setStateArrayElement, removeStateArrayElement } from 'services/state-utils.jsx';
 import { modalConfirmation } from 'services/modal.jsx';
+import { openCheckKeysModal } from 'services/check-keys.jsx';
 import { copyToClipboard, selectTableBodyCell } from 'services/selector.jsx';
 import { secretStrength, randomSecret } from 'services/secret-utils.jsx';
 import properties from 'constants/properties.json';
@@ -43,6 +44,7 @@ class MySecrets extends Component {
     newSecretModalTxtValue = React.createRef();
     editSecretModalTxtName = React.createRef();
     editSecretModalTxtValue = React.createRef();
+    shareSecretModalForm = React.createRef();
     shareSecretModalTxtEmail = React.createRef();
 
     constructor(props) {
@@ -373,7 +375,7 @@ class MySecrets extends Component {
                     shareSecretValue: clearValue,
                     shareSecretAccounts: shareSecretAccounts,
                     shareSecretModalActive: true,
-                    shareSecretEmail: ''
+                    shareSecretReceiverEmail: ''
                 }, () => {
                     setTimeout(() => {
                         this.shareSecretModalTxtEmail.current.focus();
@@ -382,6 +384,14 @@ class MySecrets extends Component {
 
             }
         });
+
+    }
+
+    shareSecretCheckKeys = () => {
+
+        if (!this.shareSecretModalForm.current.reportValidity()) return;
+
+        openCheckKeysModal(this.state.shareSecretReceiverEmail);
 
     }
 
@@ -749,16 +759,36 @@ class MySecrets extends Component {
                                             <tr key={'account-' + account.email}>
                                                 <td style={{ width: '100%' }}>{account.email}</td>
                                                 <td style={{ width: '4rem' }} align="center">
-                                                    <span onClick={() => { this.unshareSecret(i, account) }} style={{ cursor: 'pointer' }}>
+                                                    <span
+                                                        id={"my-secrets_icon-check-keys-share-secret-email-" + i}
+                                                        onClick={() => { openCheckKeysModal(account.email) }}
+                                                        style={{ cursor: 'pointer' }}>
+                                                        <Octicon icon={Key} />
+                                                    </span>
+                                                    <UncontrolledTooltip placement="top" target={"my-secrets_icon-check-keys-share-secret-email-" + i}>
+                                                        {t('accounts.check-keys')}
+                                                    </UncontrolledTooltip>
+                                                    <span className="space-between-icons"></span>
+                                                    <span
+                                                        id={"my-secrets_icon-remove-share-secret-email-" + i}
+                                                        onClick={() => { this.unshareSecret(i, account) }}
+                                                        style={{ cursor: 'pointer' }}>
                                                         <Octicon icon={X} />
                                                     </span>
+                                                    <UncontrolledTooltip placement="top" target={"my-secrets_icon-remove-share-secret-email-" + i}>
+                                                        {t('global.remove')}
+                                                    </UncontrolledTooltip>
                                                 </td>
                                             </tr>
                                         )}
                                     </tbody>
                                 </Table>
                         }
-                        <Form inline className="group-spaced" onSubmit={(e) => { e.preventDefault(); this.commitShareSecret(); }}>
+                        <Form
+                            innerRef={this.shareSecretModalForm}
+                            inline
+                            className="group-spaced"
+                            onSubmit={(e) => { e.preventDefault(); this.commitShareSecret(); }}>
                             <Input
                                 innerRef={this.shareSecretModalTxtEmail}
                                 type="email"
@@ -769,6 +799,7 @@ class MySecrets extends Component {
                                 required
                                 onChange={(e) => { this.setState({ shareSecretReceiverEmail: e.target.value }); }}
                             />
+                            <Button onClick={this.shareSecretCheckKeys} color="secondary">{t('accounts.check-keys')}</Button>
                             <Button type="submit" color="primary">{t('global.share')}</Button>
                         </Form>
                     </ModalBody>

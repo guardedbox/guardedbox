@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert, Form, FormGroup, Input, InputGroup, Table, UncontrolledTooltip } from 'reactstrap';
-import Octicon, { DiffAdded, Sync, Organization, Lock, Pencil, Trashcan, File, History, ShieldLock, Shield, X } from '@primer/octicons-react'
+import Octicon, { DiffAdded, Sync, Organization, Lock, Pencil, Trashcan, File, History, ShieldLock, Shield, Key, X } from '@primer/octicons-react'
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
@@ -8,6 +8,7 @@ import { encrypt, decrypt, encryptSymmetric, decryptSymmetric } from 'services/c
 import { randomBytes } from 'services/crypto/random.jsx';
 import { addElementToStateArray, setStateArrayElement, removeStateArrayElement } from 'services/state-utils.jsx';
 import { modalConfirmation } from 'services/modal.jsx';
+import { openCheckKeysModal } from 'services/check-keys.jsx';
 import { copyToClipboard, selectTableBodyCell } from 'services/selector.jsx';
 import properties from 'constants/properties.json';
 
@@ -38,6 +39,7 @@ class Groups extends Component {
     };
 
     newGroupModalTxtName = React.createRef();
+    ownedGroupParticipantsModalForm = React.createRef();
     ownedGroupParticipantsModalTxtEmail = React.createRef();
     ownedGroupSecretsModalTableBody = React.createRef();
     ownedGroupSecretsModalTxtName = React.createRef();
@@ -190,6 +192,14 @@ class Groups extends Component {
 
             }
         });
+
+    }
+
+    ownedGroupParticipantCheckKeys = () => {
+
+        if (!this.ownedGroupParticipantsModalForm.current.reportValidity()) return;
+
+        openCheckKeysModal(this.state.ownedGroupAddParticipantEmail);
 
     }
 
@@ -691,16 +701,36 @@ class Groups extends Component {
                                             <tr key={'participant-' + participant.email}>
                                                 <td style={{ width: '100%' }}>{participant.email}</td>
                                                 <td style={{ width: '4rem' }} align="center">
-                                                    <span onClick={() => { this.removeParticipantFromGroup(i, participant) }} style={{ cursor: 'pointer' }}>
+                                                    <span
+                                                        id={"groups_icon-check-keys-owned-group-participant-" + i}
+                                                        onClick={() => { openCheckKeysModal(participant.email) }}
+                                                        style={{ cursor: 'pointer' }}>
+                                                        <Octicon icon={Key} />
+                                                    </span>
+                                                    <UncontrolledTooltip placement="top" target={"groups_icon-check-keys-owned-group-participant-" + i}>
+                                                        {t('accounts.check-keys')}
+                                                    </UncontrolledTooltip>
+                                                    <span className="space-between-icons"></span>
+                                                    <span
+                                                        id={"groups_icon-remove-owned-group-participant-" + i}
+                                                        onClick={() => { this.removeParticipantFromGroup(i, participant) }}
+                                                        style={{ cursor: 'pointer' }}>
                                                         <Octicon icon={X} />
                                                     </span>
+                                                    <UncontrolledTooltip placement="top" target={"groups_icon-remove-owned-group-participant-" + i}>
+                                                        {t('global.remove')}
+                                                    </UncontrolledTooltip>
                                                 </td>
                                             </tr>
                                         )}
                                     </tbody>
                                 </Table>
                         }
-                        <Form inline className="group-spaced" onSubmit={(e) => { e.preventDefault(); this.addParticipantToGroup(); }}>
+                        <Form
+                            innerRef={this.ownedGroupParticipantsModalForm}
+                            inline
+                            className="group-spaced"
+                            onSubmit={(e) => { e.preventDefault(); this.addParticipantToGroup(); }}>
                             <Input
                                 innerRef={this.ownedGroupParticipantsModalTxtEmail}
                                 type="email"
@@ -711,6 +741,7 @@ class Groups extends Component {
                                 required
                                 onChange={(e) => { this.setState({ ownedGroupAddParticipantEmail: e.target.value }); }}
                             />
+                            <Button onClick={this.ownedGroupParticipantCheckKeys} color="secondary">{t('accounts.check-keys')}</Button>
                             <Button type="submit" color="primary">{t('global.add')}</Button>
                         </Form>
                     </ModalBody>
@@ -863,7 +894,19 @@ class Groups extends Component {
                                     {this.state.participantGroups.map((group, i) =>
                                         <tr key={'participant-group-' + group.groupId}>
                                             <td style={{ width: '50%' }}>{group.name}</td>
-                                            <td style={{ width: '50%' }}>{group.ownerAccount.email}</td>
+                                            <td style={{ width: '50%' }}>
+                                                {group.ownerAccount.email}
+                                                <span className="space-between-text-and-icons"></span>
+                                                <span
+                                                    id={"groups_icon-check-keys-participant-group-owner-" + i}
+                                                    onClick={() => { openCheckKeysModal(group.ownerAccount.email) }}
+                                                    style={{ cursor: 'pointer' }}>
+                                                    <Octicon icon={Key} />
+                                                </span>
+                                                <UncontrolledTooltip placement="top" target={"groups_icon-check-keys-participant-group-owner-" + i}>
+                                                    {t('accounts.check-keys')}
+                                                </UncontrolledTooltip>
+                                            </td>
                                             <td style={{ width: '4rem' }}>
                                                 <span
                                                     id={"groups_icon-show-participant-group-participants-" + i}
@@ -902,6 +945,17 @@ class Groups extends Component {
                                         {this.state.participantGroupParticipants.map((participant, i) =>
                                             <tr key={'participant-' + participant.email}>
                                                 <td style={{ width: '100%' }}>{participant.email}</td>
+                                                <td style={{ width: '4rem' }} align="center">
+                                                    <span
+                                                        id={"groups_icon-check-keys-participant-group-participant-" + i}
+                                                        onClick={() => { openCheckKeysModal(participant.email) }}
+                                                        style={{ cursor: 'pointer' }}>
+                                                        <Octicon icon={Key} />
+                                                    </span>
+                                                    <UncontrolledTooltip placement="top" target={"groups_icon-check-keys-participant-group-participant-" + i}>
+                                                        {t('accounts.check-keys')}
+                                                    </UncontrolledTooltip>
+                                                </td>
                                             </tr>
                                         )}
                                     </tbody>

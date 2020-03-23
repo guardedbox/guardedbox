@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Container, Button, Table, UncontrolledTooltip } from 'reactstrap';
-import Octicon, { Sync, File, History, ShieldLock, Shield, X } from '@primer/octicons-react'
+import Octicon, { Sync, File, History, ShieldLock, Shield, Key, X } from '@primer/octicons-react'
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
 import { decrypt } from 'services/crypto/crypto.jsx';
 import { setStateArrayElement, removeStateArrayElement } from 'services/state-utils.jsx';
 import { modalConfirmation } from 'services/modal.jsx';
+import { openCheckKeysModal } from 'services/check-keys.jsx';
 import { copyToClipboard, selectTableBodyCell } from 'services/selector.jsx';
 import properties from 'constants/properties.json';
 
@@ -151,7 +152,19 @@ class SecretsSharedWithMe extends Component {
                             <p>{t('secrets-shared-with-me.no-secrets')}</p> :
                             this.state.secretsSharedWithMe.map((account, j) =>
                                 <div key={'account-' + account.email}>
-                                    <h5 style={{ marginTop: '2em' }}>{t('secrets-shared-with-me.h-from') + ' ' + account.email}</h5>
+                                    <h5 style={{ marginTop: '2em' }}>
+                                        {t('secrets-shared-with-me.h-from') + ' ' + account.email}
+                                        <span className="space-between-text-and-icons"></span>
+                                        <span
+                                            id={"secrets-shared-with-me_icon-check-keys-from-email-" + j}
+                                            onClick={() => { openCheckKeysModal(account.email) }}
+                                            style={{ cursor: 'pointer', float: 'right', marginRight: '16px' }}>
+                                            <Octicon icon={Key} />
+                                        </span>
+                                        <UncontrolledTooltip placement="top" target={"secrets-shared-with-me_icon-check-keys-from-email-" + j}>
+                                            {t('accounts.check-keys')}
+                                        </UncontrolledTooltip>
+                                    </h5>
                                     <Table striped hover>
                                         <thead>
                                             <tr>

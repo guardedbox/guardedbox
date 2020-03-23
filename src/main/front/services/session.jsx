@@ -1,15 +1,13 @@
-import { getViewComponent } from 'services/view-components.jsx';
 import { rest } from 'services/rest.jsx';
-import { changeLocation, currentLocationPath, isLocationPublic } from 'services/location.jsx';
-import { areSessionKeysGenerated, deleteSessionKeys } from 'services/crypto/crypto.jsx';
+import { currentLocationPath, isLocationPublic } from 'services/location.jsx';
+import { areSessionKeysGenerated } from 'services/crypto/crypto.jsx';
 import { loading } from 'services/loading.jsx';
-import views from 'constants/views.json';
 
 var currentSession = null;
 
 /**
  * Updates the current session info.
- * 
+ *
  * @param {object} options The options.
  * @param {boolean} [options.loading = true] Set the loading state while the session info is being updated.
  * @param {boolean} [options.loadingChain = false] Indicates if the loading state should not be deactivated once the session info has been updated.
@@ -49,7 +47,7 @@ export function updateSessionInfo({
 
 /**
  * Sets the current session info.
- * 
+ *
  * @param {object} sessionInfo The session info to set.
  */
 export function setSessionInfo(sessionInfo) {

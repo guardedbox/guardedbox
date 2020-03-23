@@ -4,7 +4,8 @@ import { withRouter, Route } from 'react-router-dom';
 import CacheRoute, { CacheSwitch } from 'react-router-cache-route';
 import { Loader } from 'react-overlay-loader';
 import reactOverlayLoaderCss from 'react-overlay-loader/styles.css';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, InputGroup, Input, UncontrolledTooltip } from 'reactstrap';
+import Octicon, { File } from '@primer/octicons-react'
 import Login from 'components/login.jsx';
 import Registration from 'components/registration.jsx';
 import NavigationBar from 'components/navigation-bar.jsx';
@@ -15,6 +16,8 @@ import { registerViewComponent, getViewComponent } from 'services/view-component
 import { t } from 'services/translation.jsx';
 import { listenLocationChange } from 'services/location.jsx';
 import { closeModalMessage, closeModalConfirmation } from 'services/modal.jsx';
+import { closeCheckKeysModal } from 'services/check-keys.jsx';
+import { copyToClipboard } from 'services/selector.jsx';
 import views from 'constants/views.json';
 
 class App extends Component {
@@ -29,7 +32,11 @@ class App extends Component {
         modalConfirmationHeader: '',
         modalConfirmationBody: '',
         modalConfirmationYesCallback: null,
-        modalConfirmationNoCallback: null
+        modalConfirmationNoCallback: null,
+        checkKeysModalOpen: false,
+        checkKeysEmail: '',
+        checkKeysEncryptionPublicKey: '',
+        checkKeysSigningPublicKey: ''
     };
 
     constructor(props) {
@@ -75,7 +82,51 @@ class App extends Component {
                     </ModalFooter>
                 </Modal>
 
-            </div>
+                <Modal isOpen={this.state.checkKeysModalOpen} toggle={closeCheckKeysModal}>
+                    <ModalBody>
+                        <h6>{t('global.email')}</h6>
+                        <InputGroup>
+                            <span className="space-between-text-and-icons"></span>
+                            <span
+                                id="app-copy-email"
+                                onClick={() => { copyToClipboard(this.state.checkKeysEmail) }}
+                                style={{ cursor: 'pointer', marginTop: '6px' }}>
+                                <Octicon icon={File} />
+                            </span>
+                            <UncontrolledTooltip placement="top" target="app-copy-email">
+                                {t('global.copy')}
+                            </UncontrolledTooltip>
+                            <span className="space-between-text-and-icons"></span>
+                            <Input
+                                type="text"
+                                readOnly
+                                value={this.state.checkKeysEmail}
+                                onFocus={(e) => { e.target.select(); }}
+                            />
+                        </InputGroup>
+                        <h6 style={{ marginTop: '15px' }}>{t('accounts.encryption-public-key')}</h6>
+                        <InputGroup>
+                            <span className="space-between-text-and-icons"></span>
+                            <span
+                                id="app-copy-encryption-public-key"
+                                onClick={() => { copyToClipboard(this.state.checkKeysEncryptionPublicKey) }}
+                                style={{ cursor: 'pointer', marginTop: '6px' }}>
+                                <Octicon icon={File} />
+                            </span>
+                            <UncontrolledTooltip placement="top" target="app-copy-encryption-public-key">
+                                {t('global.copy')}
+                            </UncontrolledTooltip>
+                            <span className="space-between-text-and-icons"></span>
+                            <Input
+                                type="text"
+                                readOnly
+                                value={this.state.checkKeysEncryptionPublicKey}
+                                onFocus={(e) => { e.target.select(); }}
+                            />
+                        </InputGroup>
+                    </ModalBody>
+                </Modal>
+            </div >
         );
 
     }

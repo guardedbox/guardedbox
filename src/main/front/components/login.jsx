@@ -234,35 +234,35 @@ class Login extends Component {
 
                             <h4>{t('login.h-login')}</h4><hr />
                             <Form onSubmit={(e) => { e.preventDefault(); this.getCode(); }} >
-                                <fieldset disabled={!this.state.getCodeEnabled}>
-                                    <FormGroup>
-                                        <Input
-                                            id="login_txt-email"
-                                            innerRef={this.txtEmail}
-                                            type="email"
-                                            autoComplete="section-login username"
-                                            placeholder={t('login.txt-email')}
-                                            pattern={properties.general.emailPattern}
-                                            maxLength={properties.general.emailMaxLength}
-                                            required
-                                            autoFocus
-                                            onChange={(e) => { this.setState({ email: e.target.value }) }}
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Input
-                                            innerRef={this.txtPassword}
-                                            type={this.state.passwordVisible ? "text" : "password"}
-                                            autoComplete="section-login current-password"
-                                            placeholder={t('login.txt-password')}
-                                            required
-                                            onChange={(e) => { this.setState({ password: e.target.value }) }}
-                                        />
-                                    </FormGroup>
-                                    <FormGroup className="group-spaced">
-                                        <Button type="submit" color="primary">{t('login.btn-get-code')}</Button>
-                                    </FormGroup>
-                                </fieldset>
+                                <FormGroup>
+                                    <Input
+                                        id="login_txt-email"
+                                        innerRef={this.txtEmail}
+                                        type="email"
+                                        autoComplete="section-login username"
+                                        placeholder={t('login.txt-email')}
+                                        pattern={properties.general.emailPattern}
+                                        maxLength={properties.general.emailMaxLength}
+                                        required
+                                        autoFocus
+                                        onChange={(e) => { this.setState({ email: e.target.value }) }}
+                                        disabled={!this.state.getCodeEnabled}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Input
+                                        innerRef={this.txtPassword}
+                                        type={this.state.passwordVisible ? "text" : "password"}
+                                        autoComplete="section-login current-password"
+                                        placeholder={t('login.txt-password')}
+                                        required
+                                        onChange={(e) => { this.setState({ password: e.target.value }) }}
+                                        disabled={!this.state.getCodeEnabled}
+                                    />
+                                </FormGroup>
+                                <FormGroup className="group-spaced">
+                                    <Button type="submit" color="primary" disabled={!this.state.getCodeEnabled}>{t('login.btn-get-code')}</Button>
+                                </FormGroup>
                                 <Popover
                                     target="login_txt-email"
                                     trigger="legacy"
@@ -275,41 +275,40 @@ class Login extends Component {
                             </Form>
 
                             <Form onSubmit={(e) => { e.preventDefault(); this.login(); }}>
-                                <fieldset disabled={!this.state.loginEnabled}>
-                                    <FormGroup style={{ display: 'none' }}>
-                                        <Input
-                                            type="email"
-                                            autoComplete="section-login username"
-                                            value={this.state.email}
-                                            readOnly
-                                        />
-                                        <Input
-                                            type="password"
-                                            autoComplete="section-login current-password"
-                                            value={this.state.password}
-                                            readOnly
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Input
-                                            id="login_txt-code"
-                                            innerRef={this.txtCode}
-                                            type={this.state.passwordVisible ? "text" : "password"}
-                                            autoComplete="section-login one-time-code"
-                                            placeholder={t('login.txt-code')}
-                                            required
-                                            onChange={(e) => { this.setState({ code: e.target.value }) }}
-                                        />
-                                    </FormGroup>
-                                    <FormGroup className="group-spaced">
-                                        <span className="icon-inline float-left"></span>
-                                        <Button type="submit" color="primary">{t('login.btn-login')}</Button>
-                                        <Button onClick={this.cancelLogin} color="primary">{t('login.btn-cancel-login')}</Button>
-                                        <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>
-                                            <Octicon icon={this.state.passwordVisible ? Key : Eye} />
-                                        </span>
-                                    </FormGroup>
-                                </fieldset>
+                                <FormGroup style={{ display: 'none' }}>
+                                    <Input
+                                        type="email"
+                                        autoComplete="section-login username"
+                                        value={this.state.email}
+                                        readOnly
+                                    />
+                                    <Input
+                                        type="password"
+                                        autoComplete="section-login current-password"
+                                        value={this.state.password}
+                                        readOnly
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Input
+                                        id="login_txt-code"
+                                        innerRef={this.txtCode}
+                                        type={this.state.passwordVisible ? "text" : "password"}
+                                        autoComplete="section-login one-time-code"
+                                        placeholder={t('login.txt-code')}
+                                        required
+                                        onChange={(e) => { this.setState({ code: e.target.value }) }}
+                                        disabled={!this.state.loginEnabled}
+                                    />
+                                </FormGroup>
+                                <FormGroup className="group-spaced">
+                                    <span className="icon-inline float-left"></span>
+                                    <Button type="submit" color="primary" disabled={!this.state.loginEnabled}>{t('login.btn-login')}</Button>
+                                    <Button onClick={this.cancelLogin} color="primary" disabled={!this.state.loginEnabled}>{t('login.btn-cancel-login')}</Button>
+                                    <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>
+                                        <Octicon icon={this.state.passwordVisible ? Key : Eye} />
+                                    </span>
+                                </FormGroup>
                                 <Popover
                                     target="login_txt-code"
                                     trigger="legacy"
@@ -343,7 +342,7 @@ class Login extends Component {
                     </Col>
 
                 </Row>
-            </Container>
+            </Container >
         );
 
     }

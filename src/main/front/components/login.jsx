@@ -257,7 +257,7 @@ class Login extends Component {
                                     <Input
                                         id="login_txt-code"
                                         innerRef={this.txtCode}
-                                        type={"text"}
+                                        type="text"
                                         autoComplete="section-login one-time-code"
                                         placeholder={t('login.txt-code')}
                                         required

@@ -20,7 +20,6 @@ class Login extends Component {
         password: '',
         passwordVisible: false,
         code: '',
-        getCodeEnabled: true,
         loginEnabled: false,
         getCodePopoverActive: false,
         loginFailedPopoverActive: false,
@@ -44,13 +43,7 @@ class Login extends Component {
         this.setState({
             passwordVisible: !this.state.passwordVisible
         }, () => {
-
-            if (this.state.getCodeEnabled) {
-                this.txtPassword.current.select();
-            } else if (this.state.loginEnabled) {
-                this.txtCode.current.select();
-            }
-
+            this.txtPassword.current.select();
         });
 
     }
@@ -99,7 +92,6 @@ class Login extends Component {
                                 callback: (response) => {
 
                                     this.setState({
-                                        getCodeEnabled: false,
                                         loginEnabled: true,
                                         getCodePopoverActive: true
                                     }, () => {
@@ -164,7 +156,6 @@ class Login extends Component {
                             this.txtCode.current.value = '';
 
                             this.setState({
-                                getCodeEnabled: true,
                                 loginEnabled: false,
                                 loginFailedPopoverActive: true
                             }, () => {
@@ -178,21 +169,6 @@ class Login extends Component {
                 }
             });
 
-        });
-
-    }
-
-    cancelLogin = () => {
-
-        this.txtCode.current.value = this.txtCode.current.defaultValue;
-
-        this.setState({
-            getCodeEnabled: true,
-            loginEnabled: false,
-            getCodePopoverActive: false,
-            loginFailedPopoverActive: false
-        }, () => {
-            this.txtEmail.current.focus();
         });
 
     }
@@ -246,7 +222,6 @@ class Login extends Component {
                                         required
                                         autoFocus
                                         onChange={(e) => { this.setState({ email: e.target.value }) }}
-                                        disabled={!this.state.getCodeEnabled}
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -257,11 +232,14 @@ class Login extends Component {
                                         placeholder={t('global.password')}
                                         required
                                         onChange={(e) => { this.setState({ password: e.target.value }) }}
-                                        disabled={!this.state.getCodeEnabled}
                                     />
                                 </FormGroup>
                                 <FormGroup className="group-spaced">
-                                    <Button type="submit" color="primary" disabled={!this.state.getCodeEnabled}>{t('login.btn-get-code')}</Button>
+                                    <span className="icon-inline float-left"></span>
+                                    <Button type="submit" color="primary">{t('login.btn-get-code')}</Button>
+                                    <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>
+                                        <Octicon icon={this.state.passwordVisible ? Key : Eye} />
+                                    </span>
                                 </FormGroup>
                                 <Popover
                                     target="login_txt-email"
@@ -275,39 +253,20 @@ class Login extends Component {
                             </Form>
 
                             <Form onSubmit={(e) => { e.preventDefault(); this.login(); }}>
-                                <FormGroup style={{ display: 'none' }}>
-                                    <Input
-                                        type="email"
-                                        autoComplete="section-login username"
-                                        value={this.state.email}
-                                        readOnly
-                                    />
-                                    <Input
-                                        type="password"
-                                        autoComplete="section-login current-password"
-                                        value={this.state.password}
-                                        readOnly
-                                    />
-                                </FormGroup>
                                 <FormGroup>
                                     <Input
                                         id="login_txt-code"
                                         innerRef={this.txtCode}
-                                        type={this.state.passwordVisible ? "text" : "password"}
+                                        type={"text"}
                                         autoComplete="section-login one-time-code"
                                         placeholder={t('login.txt-code')}
                                         required
-                                        onChange={(e) => { this.setState({ code: e.target.value }) }}
                                         disabled={!this.state.loginEnabled}
+                                        onChange={(e) => { this.setState({ code: e.target.value }) }}
                                     />
                                 </FormGroup>
                                 <FormGroup className="group-spaced">
-                                    <span className="icon-inline float-left"></span>
                                     <Button type="submit" color="primary" disabled={!this.state.loginEnabled}>{t('global.login')}</Button>
-                                    <Button onClick={this.cancelLogin} color="primary" disabled={!this.state.loginEnabled}>{t('global.cancel')}</Button>
-                                    <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>
-                                        <Octicon icon={this.state.passwordVisible ? Key : Eye} />
-                                    </span>
                                 </FormGroup>
                                 <Popover
                                     target="login_txt-code"

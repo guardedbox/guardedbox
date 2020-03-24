@@ -240,7 +240,7 @@ class Registration extends Component {
                     <Col className="main-col">
                         <Jumbotron className="text-center">
 
-                            <h4>{t('global.register')}</h4><hr />
+                            <h4>{t('registration.title')}</h4><hr />
                             <Form onSubmit={(e) => { e.preventDefault(); this.register(); }}>
                                 <FormGroup>
                                     <Input
@@ -276,6 +276,15 @@ class Registration extends Component {
                                         onChange={(e) => { this.changePassword(e.target.value) }}
                                         onBlur={(e) => { this.checkPasswordErrors() }}
                                     />
+                                    <Popover
+                                        target="registration_txt-password"
+                                        trigger="legacy"
+                                        placement="left"
+                                        isOpen={this.state.passwordPopoverActive}
+                                        toggle={() => { this.setState({ passwordPopoverActive: false, passwordPopoverBody: '' }) }}
+                                    >
+                                        <PopoverBody>{t(this.state.passwordPopoverBody, { passwordMinLength: properties.registration.passwordMinLength })}</PopoverBody>
+                                    </Popover>
                                 </FormGroup>
                                 <FormGroup>
                                     <Input
@@ -290,32 +299,24 @@ class Registration extends Component {
                                         onChange={(e) => { this.changeRepeatPassword(e.target.value) }}
                                         onBlur={(e) => { this.checkPasswordErrors() }}
                                     />
+                                    <Popover
+                                        target="registration_txt-repeat-password"
+                                        trigger="legacy"
+                                        placement="left"
+                                        isOpen={this.state.repeatPasswordPopoverActive}
+                                        toggle={() => { this.setState({ repeatPasswordPopoverActive: false, repeatPasswordPopoverBody: '' }) }}
+                                    >
+                                        <PopoverBody>{t(this.state.repeatPasswordPopoverBody)}</PopoverBody>
+                                    </Popover>
                                 </FormGroup>
                                 <FormGroup>
                                     <span className="icon-inline float-left"></span>
-                                    <Button type="submit" color="primary">{t('global.register')}</Button>
+                                    <Button type="submit" color="primary">{t('registration.btn-register')}</Button>
                                     <span className="icon-inline float-right" onClick={this.showHidePassword} style={{ cursor: 'pointer' }}>
                                         <Octicon icon={this.state.passwordVisible ? Key : Eye} />
                                     </span>
                                 </FormGroup>
-                                <Popover
-                                    target="registration_txt-password"
-                                    trigger="legacy"
-                                    placement="left"
-                                    isOpen={this.state.passwordPopoverActive}
-                                    toggle={() => { this.setState({ passwordPopoverActive: false, passwordPopoverBody: '' }) }}
-                                >
-                                    <PopoverBody>{t(this.state.passwordPopoverBody, { passwordMinLength: properties.registration.passwordMinLength })}</PopoverBody>
-                                </Popover>
-                                <Popover
-                                    target="registration_txt-repeat-password"
-                                    trigger="legacy"
-                                    placement="left"
-                                    isOpen={this.state.repeatPasswordPopoverActive}
-                                    toggle={() => { this.setState({ repeatPasswordPopoverActive: false, repeatPasswordPopoverBody: '' }) }}
-                                >
-                                    <PopoverBody>{t(this.state.repeatPasswordPopoverBody)}</PopoverBody>
-                                </Popover>
+
                             </Form>
 
                         </Jumbotron>

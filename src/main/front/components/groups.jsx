@@ -445,7 +445,7 @@ class Groups extends Component {
 
         modalConfirmation(
             t('global.confirmation'),
-            t('groups.delete-group-modal-body'),
+            t('groups.delete-group-modal-body', { group: group.name }),
             () => {
 
                 rest({
@@ -607,7 +607,7 @@ class Groups extends Component {
                 <h4>{t('groups.owned-groups')}</h4><hr />
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="primary" onClick={this.newGroup}><Octicon className="button-icon" icon={DiffAdded} />{t('groups.new-group')}</Button>
+                    <Button color="primary" onClick={this.newGroup}><Octicon className="button-icon" icon={DiffAdded} />{t('groups.btn-new-group')}</Button>
                     <Button color="secondary" onClick={() => { this.loadOwnedGroups() }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
@@ -668,7 +668,7 @@ class Groups extends Component {
                 }
 
                 <Modal isOpen={this.state.newGroupModalActive} toggle={this.cancelNewGroup}>
-                    <ModalHeader>{t('groups.new-group')}</ModalHeader>
+                    <ModalHeader>{t('groups.title-new-group')}</ModalHeader>
                     <ModalBody>
                         <Form id="groups_form-new-group" onSubmit={(e) => { e.preventDefault(); this.commitNewGroup(); }}>
                             <FormGroup>

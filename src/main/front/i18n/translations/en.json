@@ -25,84 +25,91 @@
         "no": "No",
         "email": "Email",
         "password": "Password",
-        "login": "Login",
-        "logout": "Logout",
-        "register": "Register",
+        "logout": "Log out",
         "owner": "Owner",
         "name": "Name",
         "value": "Value",
         "length": "Length",
-        "strength": "Strength"
+        "strength": "Strength",
+        "copyright": "GuardedBox documentation is available at \"guardedbox.eu\""
     },
     "login": {
-        "btn-get-code": "Get Code",
-        "popover-get-code": "If the credentials are correct, you will receive an email with your login code. For security reasons, no notification is made if the credentials are not correct.",
+        "title-login": "Log in",
+        "btn-get-code": "Get access code",
+        "popover-get-code": "If your credentials are correct, you will receive an email with your login code within the next 2 minutes. Otherwise, check your email and password and try again.",
         "txt-code": "Code",
-        "popover-login-failed": "The credentials are not correct. Please, try again.",
-        "register-success-modal-title": "Email Sent",
-        "register-success-modal-body": "You will receive an email with the instructions to complete the registration process.",
+        "btn-login": "Log in",
+        "popover-login-failed": "One or more of the three credential components is incorrect (email, password or code). Please verify them and try again.",
+        "title-register": "Create new account",
+        "btn-register": "Register",
+        "register-success-modal-title": "Email sent",
+        "register-success-modal-body": "You will receive an email with the instructions to complete the GuardedBox registration process. You can now close this page.",
         "register-mail-just-sent": "A registration email was sent to {email} a few minutes ago. Please, follow the instructions in the email to complete the registration process."
     },
     "registration": {
-        "info-password": "Please, choose a strong password. It must have at least {passwordMinlength} characters. Try to use a phrase you can remember. Your password will be used to encrypt your secrets. If you forget this password, you will lose all your secrets!",
-        "txt-repeat-password": "Repeat Password",
+        "title": "Create an account",
+        "info-password": "Please, choose a strong password. It must have at least {passwordMinlength} characters. Try to use a phrase you can remember. Your password will be used to encrypt your secrets. If you forget this password, you will not have access to your secrets!. IMPORTANT: the current release of GuardedBox doesn't support password modification",
+        "txt-repeat-password": "Repeat password",
+        "btn-register": "Register",
         "registration-completed": "Your account has been successfully registered.",
-        "registration-token-not-found": "Sorry, the registration code is not valid. Please, start over the registration process again.",
-        "registration-token-expired": "Sorry, the registration code has expired. Please, start over the registration process again.",
+        "registration-token-not-found": "Sorry, the registration link is not valid. Please, start over the registration process again.",
+        "registration-token-expired": "Sorry, the registration link has expired. Please, start over the registration process again.",
         "password-insufficient-length": "Your password must have at least {passwordMinLength} characters.",
         "password-insufficient-strength": "Please, choose a stronger password.",
         "passwords-do-not-match": "Passwords do not match."
     },
     "accounts": {
-        "check-keys": "Check Key",
-        "encryption-public-key": "Encryption Public Key",
-        "signing-public-key": "Signing Public Key",
-        "email-already-registered": "Email {email} is already registered.",
-        "email-not-registered": "Email {email} is not registed."
+        "check-keys": "Check key",
+        "encryption-public-key": "Encryption public key",
+        "signing-public-key": "Signing public key",
+        "email-already-registered": "Email {email} is already registered in GuardedBox.",
+        "email-not-registered": "Email {email} is not registered in GuardedBox."
     },
     "my-account": {
-        "title": "My Account",
-        "h-delete-account": "Delete My Account",
-        "delete-account-modal-body": "Your account ({email}) will be permanently deleted. All your secrets, shared secrets and groups will be deleted as well. This operation is irreversible! Are you sure?",
+        "title": "My account",
+        "title-delete-account": "Delete my account",
+        "delete-account-modal-body": "Your account \"{email}\" will be permanently deleted. All your secrets, shared secrets and groups will be deleted as well. This operation is irreversible! Are you sure?",
         "introduce-email": "Introduce your email to confirm it",
         "incorrect-introduced-mail": "The email you introduced is not your email",
-        "h-account-deleted": "Your account has been deleted",
+        "title-account-deleted": "Your account has been deleted",
         "account-deleted": "Sorry to see you go!"
     },
     "secrets": {
-        "new-secret": "New Secret",
-        "edit-secret": "Edit Secret",
-        "share-secret": "Share Secret",
-        "generate-random-value": "Generate Random Value: "
+        "title-new-secret": "New secret",
+        "title-edit-secret": "Edit secret",
+        "title-share-secret": "Share secret",
+        "generate-random-value": "Generate random value"
     },
     "my-secrets": {
-        "title": "My Secrets",
-        "no-secrets": "Nothing in my pockets, nothing up my sleeves. Add a secret!",
-        "delete-secret-modal-body": "The secret will be deleted! Are you sure?",
+        "title": "My secrets",
+        "btn-new-secret": "Add secret",
+        "no-secrets": "Your box of secrets is empty!",
+        "delete-secret-modal-body": "The secret \"{secret}\" will be deleted! Are you sure?",
         "secret-does-not-exist": "The secret does not exist."
     },
     "shared-secrets": {
-        "do-not-self-share": "You cannot share one of your secrets with yourself.",
-        "secret-already-shared-with-email": "The secret is already shared with {email}.",
+        "do-not-self-share": "You cannot share secrets with yourself.",
+        "secret-already-shared-with-email": "This secret is already shared with {email}.",
         "secret-not-shared-with-email": "The secret is not shared with {email}.",
         "secret-not-shared-with-you": "The secret is not shared with you."
     },
     "secrets-shared-with-me": {
-        "title": "Secrets Shared With Me",
-        "no-secrets": "Nobody shared anything with you. What a pitty!",
-        "h-from": "From",
-        "reject-shared-secret-modal-body": "Are you sure you want to reject this secret shared with you?"
+        "title": "Secrets shared with me",
+        "no-secrets": "There are no secrets shared with you.",
+        "title-from": "From",
+        "reject-shared-secret-modal-body": "Are you sure you want to reject the shared secret \"{secret}\"?"
     },
     "groups": {
         "title": "Groups",
-        "new-group": "New Group",
+        "btn-new-group": "Add group",
+        "title-new-group": "New group",
         "participants": "Participants",
         "secrets": "Secrets",
-        "owned-groups": "Owned Groups",
-        "no-owned-groups": "You do not have any groups. Such a loneliness.",
-        "participant-groups": "Groups To Which I Am Invited",
-        "no-participant-groups": "Nobody invited you to any group. You must be very mean.",
-        "delete-group-modal-body": "The group will be deleted! Are you sure?",
-        "group-does-not-exist": "The group does not exist."
+        "owned-groups": "Owned groups",
+        "no-owned-groups": "You do not have any groups.",
+        "participant-groups": "Groups to which I am invited",
+        "no-participant-groups": "You have not been invited to any group.",
+        "delete-group-modal-body": "The group \"{group}\" will be deleted! Are you sure?",
+        "group-does-not-exist": "This group no longer exists."
     }
 }

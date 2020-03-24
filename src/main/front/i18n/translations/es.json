@@ -1,0 +1,115 @@
+{
+    "global": {
+        "app-name": "GuardedBox",
+        "loading-spinner-text": "",
+        "add": "Añadir",
+        "create": "Crear",
+        "generate": "Generar",
+        "edit": "Editar",
+        "delete": "Borrar",
+        "remove": "Quitar",
+        "cancel": "Cancelar",
+        "reload": "Refrescar",
+        "share": "Compartir",
+        "reject": "Rechazar",
+        "copy": "Copiar",
+        "blink": "Mostrar brevemente",
+        "show": "Mostrar",
+        "hide": "Ocultar",
+        "success": "Operación completada con éxito",
+        "information": "Información",
+        "confirmation": "Confirmación",
+        "error": "Error",
+        "error-occurred": "Se ha producido un error. Por favor, vuelve a intentarlo más tarde.",
+        "yes": "Sí",
+        "no": "No",
+        "email": "Email",
+        "password": "Contraseña",
+        "logout": "Cerrar sesión",
+        "owner": "Propietario",
+        "name": "Nombre",
+        "value": "Valor",
+        "length": "Longitud",
+        "strength": "Fortaleza",
+        "copyright": "La documentación de GuardedBox está disponible en \"guardedbox.es\""
+    },
+    "login": {
+        "title-login": "Iniciar sesión",
+        "btn-get-code": "Obtener código de acceso",
+        "popover-get-code": "Si tus credenciales son correctas, recibirás un email con un código de acceso en los próximos 2 minutos. En caso contrario, verifica el email y la contraseña tecleados e inténtalo de nuevo.",
+        "txt-code": "Código",
+        "btn-login": "Iniciar sesión",
+        "popover-login-failed": "Alguno de los tres componentes de las credenciales de acceso (email, password o código) es incorrecto. Verifícalos e inténtalo de nuevo.",
+        "title-register": "Crear nueva cuenta",
+        "btn-register": "Registrarse",
+        "register-success-modal-title": "Solicitud de registro recibida",
+        "register-success-modal-body": "Recibirás un email con las instrucciones para completar el registro de tu cuenta en GuardedBox. Puedes cerrar esta página.",
+        "register-mail-just-sent": "Se ha enviado un email con las instrucciones para completar tu registro a {email}. Sigue las indicaciones del mensaje para terminar de crear tu cuenta."
+    },
+    "registration": {
+        "title": "Crear una nueva cuenta",
+        "info-password": "Elige una contraseña robusta con un mínimo de {passwordMinlength} caracteres. Te sugerimos utilizar una frase que solo tú puedas recordar. Esta contraseña se utilizará para cifrar tus secretos. Asegúrate de recordarla... ¡sin ella no podrás acceder a tus secretos!. IMPORTANTE: la versión actual de GuardedBox no permite modificar esta contraseña",
+        "txt-repeat-password": "Repite la contraseña",
+        "btn-register": "Registrarse",
+        "registration-completed": "Tu cuenta ha sido creada satisfactoriamente.",
+        "registration-token-not-found": "Lo sentimos, el enlace para completar el registro no es válido. Por favor, repite el proceso desde el inicio.",
+        "registration-token-expired": "Lo sentimos, el enlace de registro ha expirado. Por favor, repite el proceso desde el inicio para obtener uno nuevo.",
+        "password-insufficient-length": "Tu contraseña debe tener al menos {passwordMinLength} caracteres.",
+        "password-insufficient-strength": "La contraseña elegida no es suficientemente segura. Por favor, elige otra.",
+        "passwords-do-not-match": "Las contraseñas no coinciden."
+    },
+    "accounts": {
+        "check-keys": "Verificar la clave",
+        "encryption-public-key": "Clave pública de cifrado",
+        "signing-public-key": "Clave pública de firma",
+        "email-already-registered": "La dirección {email} ya existe en GuardedBox.",
+        "email-not-registered": "La dirección {email} no está registrada en GuardedBox."
+    },
+    "my-account": {
+        "title": "Mi cuenta",
+        "title-delete-account": "Eliminar mi cuenta",
+        "delete-account-modal-body": "Tu cuenta \"{email}\" se eliminará de GuardedBox de forma permanente. Tus secretos, los secretos que hayas compartido y los grupos serán también eliminados. ¡Esta operación es irreversible! ¿Deseas continuar?",
+        "introduce-email": "Confirma tu email",
+        "incorrect-introduced-mail": "La dirección indicada no se corresponde con tu email",
+        "title-account-deleted": "Tu cuenta ha sido eliminada de GuardedBox",
+        "account-deleted": "¡Esperamos verte de nuevo!"
+    },
+    "secrets": {
+        "title-new-secret": "Nuevo secreto",
+        "title-edit-secret": "Editar secreto",
+        "title-share-secret": "Compartir secreto",
+        "generate-random-value": "Generar un valor aleatorio"
+    },
+    "my-secrets": {
+        "title": "Mis secretos",
+        "btn-new-secret": "Añadir secreto",
+        "no-secrets": "Tu almacén de secretos está vacío.",
+        "delete-secret-modal-body": "El secreto \"{secret}\" será eliminado y no podrá recuperarse. ¿Deseas continuar?",
+        "secret-does-not-exist": "El secreto no existe."
+    },
+    "shared-secrets": {
+        "do-not-self-share": "No se permite autocompartición de secretos.",
+        "secret-already-shared-with-email": "Ya compartiste este secreto con {email}.",
+        "secret-not-shared-with-email": "Este secreto no se comparte con {email}.",
+        "secret-not-shared-with-you": "Este secreto no se comparte contigo."
+    },
+    "secrets-shared-with-me": {
+        "title": "Secretos que me han compartido",
+        "no-secrets": "No existen secretos compartidos contigo.",
+        "title-from": "Origen",
+        "reject-shared-secret-modal-body": "¿Deseas rechazar el secreto compartido \"{secret}\"?"
+    },
+    "groups": {
+        "title": "Grupos",
+        "btn-new-group": "Crear grupo",
+        "title-new-group": "Nuevo grupo",
+        "participants": "Integrantes",
+        "secrets": "Secretos",
+        "owned-groups": "Mis grupos",
+        "no-owned-groups": "No tienes grupos creados.",
+        "participant-groups": "Grupos a los que me han invitado",
+        "no-participant-groups": "Aún no te han añadido a ningún grupo.",
+        "delete-group-modal-body": "El grupo \"{group}\" se eliminará. ¿Deseas continuar?",
+        "group-does-not-exist": "Este grupo ya no existe."
+    }
+}

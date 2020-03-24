@@ -208,7 +208,7 @@ class Login extends Component {
                     <Col className="main-col">
                         <Jumbotron className="text-center">
 
-                            <h4>{t('global.login')}</h4><hr />
+                            <h4>{t('login.title-login')}</h4><hr />
                             <Form onSubmit={(e) => { e.preventDefault(); this.getCode(); }} >
                                 <FormGroup>
                                     <Input
@@ -266,7 +266,7 @@ class Login extends Component {
                                     />
                                 </FormGroup>
                                 <FormGroup className="group-spaced">
-                                    <Button type="submit" color="primary" disabled={!this.state.loginEnabled}>{t('global.login')}</Button>
+                                    <Button type="submit" color="primary" disabled={!this.state.loginEnabled}>{t('login.btn-login')}</Button>
                                 </FormGroup>
                                 <Popover
                                     target="login_txt-code"
@@ -279,7 +279,7 @@ class Login extends Component {
                                 </Popover>
                             </Form>
 
-                            <h4 style={{ marginTop: '2.75rem' }}>{t('global.register')}</h4><hr />
+                            <h4 style={{ marginTop: '2.75rem' }}>{t('login.title-register')}</h4><hr />
                             <Form onSubmit={(e) => { e.preventDefault(); this.register(); }}>
                                 <FormGroup>
                                     <Input
@@ -293,7 +293,7 @@ class Login extends Component {
                                     />
                                 </FormGroup>
                                 <FormGroup className="group-spaced">
-                                    <Button type="submit" color="primary">{t('global.register')}</Button>
+                                    <Button type="submit" color="primary">{t('login.btn-register')}</Button>
                                 </FormGroup>
                             </Form>
 

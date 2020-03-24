@@ -330,7 +330,7 @@ class MySecrets extends Component {
 
         modalConfirmation(
             t('global.confirmation'),
-            t('my-secrets.delete-secret-modal-body'),
+            t('my-secrets.delete-secret-modal-body', { secret: secret.name }),
             () => {
 
                 rest({
@@ -486,7 +486,7 @@ class MySecrets extends Component {
                 <h4>{t('my-secrets.title')}</h4><hr />
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="primary" onClick={this.newSecret}><Octicon className="button-icon" icon={DiffAdded} />{t('secrets.new-secret')}</Button>
+                    <Button color="primary" onClick={this.newSecret}><Octicon className="button-icon" icon={DiffAdded} />{t('my-secrets.btn-new-secret')}</Button>
                     <Button color="secondary" onClick={this.loadSecrets}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
@@ -618,7 +618,7 @@ class MySecrets extends Component {
                 }
 
                 <Modal isOpen={this.state.newSecretModalActive} toggle={this.cancelNewSecret}>
-                    <ModalHeader>{t('secrets.new-secret')}</ModalHeader>
+                    <ModalHeader>{t('secrets.title-new-secret')}</ModalHeader>
                     <ModalBody>
                         <Form id="my-secrets_form-new-secret" onSubmit={(e) => { e.preventDefault(); this.commitNewSecret(); }}>
                             <FormGroup>
@@ -683,7 +683,7 @@ class MySecrets extends Component {
                 </Modal>
 
                 <Modal isOpen={this.state.editSecretModalActive} toggle={this.cancelEditSecret}>
-                    <ModalHeader>{t('secrets.edit-secret')}</ModalHeader>
+                    <ModalHeader>{t('secrets.title-edit-secret')}</ModalHeader>
                     <ModalBody>
                         <Form id="my-secrets_form-edit-secret" onSubmit={(e) => { e.preventDefault(); this.commitEditSecret(); }}>
                             <FormGroup>
@@ -748,7 +748,7 @@ class MySecrets extends Component {
                 </Modal>
 
                 <Modal isOpen={this.state.shareSecretModalActive} toggle={this.closeShareSecretModal}>
-                    <ModalHeader>{t('secrets.share-secret')}</ModalHeader>
+                    <ModalHeader>{t('secrets.title-share-secret')}</ModalHeader>
                     <ModalBody>
                         {
                             !this.state.shareSecretAccounts || this.state.shareSecretAccounts.length == 0 ?

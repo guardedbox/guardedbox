@@ -104,7 +104,7 @@ class SecretsSharedWithMe extends Component {
 
         modalConfirmation(
             t('global.confirmation'),
-            t('secrets-shared-with-me.reject-shared-secret-modal-body'),
+            t('secrets-shared-with-me.reject-shared-secret-modal-body', { secret: secret.name }),
             () => {
 
                 rest({
@@ -153,7 +153,7 @@ class SecretsSharedWithMe extends Component {
                             this.state.secretsSharedWithMe.map((account, j) =>
                                 <div key={'account-' + account.email}>
                                     <h5 style={{ marginTop: '2em' }}>
-                                        {t('secrets-shared-with-me.h-from') + ' ' + account.email}
+                                        {t('secrets-shared-with-me.title-from') + ' ' + account.email}
                                         <span className="space-between-text-and-icons"></span>
                                         <span
                                             id={"secrets-shared-with-me_icon-check-keys-from-email-" + j}

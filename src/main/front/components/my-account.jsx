@@ -72,7 +72,7 @@ class MySecrets extends Component {
             url: '/api/accounts',
             callback: (response) => {
 
-                modalMessage(t('my-account.h-account-deleted'), t('my-account.account-deleted'), reset);
+                modalMessage(t('my-account.title-account-deleted'), t('my-account.account-deleted'), reset);
 
             }
         });
@@ -127,7 +127,7 @@ class MySecrets extends Component {
                     />
                 </InputGroup>
 
-                <h4 style={{ marginTop: '2.75rem' }}>{t('my-account.h-delete-account')}</h4><hr />
+                <h4 style={{ marginTop: '2.75rem' }}>{t('my-account.title-delete-account')}</h4><hr />
                 <Button onClick={this.openDeleteAccountModal} color="danger">{t('global.delete')}</Button>
 
                 <Modal isOpen={this.state.deleteAccountModalActive} toggle={this.closeDeleteAccountModal}>

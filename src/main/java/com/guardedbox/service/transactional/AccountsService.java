@@ -20,7 +20,10 @@ import com.guardedbox.entity.projection.AccountPublicKeysSaltsProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.properties.CryptographyProperties;
+import com.guardedbox.properties.EmailsProperties;
+import com.guardedbox.properties.LanguageProperties;
 import com.guardedbox.repository.AccountsRepository;
+import com.guardedbox.service.EmailService;
 import com.guardedbox.service.HiddenDerivationService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,6 +42,12 @@ public class AccountsService {
     /** CryptographyProperties. */
     private final CryptographyProperties cryptographyProperties;
 
+    /** EmailsProperties. */
+    private final EmailsProperties emailsProperties;
+
+    /** LanguageProperties. */
+    private final LanguageProperties languageProperties;
+
     /** AccountsRepository. */
     private final AccountsRepository accountsRepository;
 
@@ -47,6 +56,9 @@ public class AccountsService {
 
     /** HiddenDerivationService. */
     private final HiddenDerivationService hiddenDerivationService;
+
+    /** EmailService. */
+    private final EmailService emailService;
 
     /**
      * @param email Account.email.
@@ -143,7 +155,15 @@ public class AccountsService {
         }
 
         // Create the new account.
-        return accountsMapper.toDto(accountsRepository.save(accountsMapper.fromDto(createAccountDto)));
+        AccountDto accountDto = accountsMapper.toDto(accountsRepository.save(accountsMapper.fromDto(createAccountDto)));
+
+        // Send the registration completed email.
+        emailService.sendAsync(
+                accountDto.getEmail(),
+                emailsProperties.getRegistrationCompleteSubject().get(languageProperties.getDefaultLanguage()),
+                emailsProperties.getRegistrationCompleteBody().get(languageProperties.getDefaultLanguage()));
+
+        return accountDto;
 
     }
 

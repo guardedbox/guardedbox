@@ -26,6 +26,12 @@ public class EmailsProperties {
     /** Property Map: emails.otp-body. */
     private final HashMap<String, String> otpBody;
 
+    /** Property Map: emails.otp-incorrect-subject. */
+    private final HashMap<String, String> otpIncorrectSubject;
+
+    /** Property Map: emails.otp-incorrect-body. */
+    private final HashMap<String, String> otpIncorrectBody;
+
     /** Property Map: emails.registration-subject. */
     private final HashMap<String, String> registrationSubject;
 
@@ -37,5 +43,11 @@ public class EmailsProperties {
 
     /** Property Map: emails.already-registered-body. */
     private final HashMap<String, String> alreadyRegisteredBody;
+
+    /** Property Map: emails.registration-complete-subject. */
+    private final HashMap<String, String> registrationCompleteSubject;
+
+    /** Property Map: emails.registration-complete-body. */
+    private final HashMap<String, String> registrationCompleteBody;
 
 }

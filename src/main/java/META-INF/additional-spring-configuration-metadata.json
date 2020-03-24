@@ -191,6 +191,16 @@
             "description": "Map of bodies of the OTP email by language."
         },
         {
+            "name": "emails.otp-incorrect-subject",
+            "type": "java.util.HashMap",
+            "description": "Map of subjects of the incorrect OTP email by language."
+        },
+        {
+            "name": "emails.otp-incorrect-body",
+            "type": "java.util.HashMap",
+            "description": "Map of bodies of the incorrect OTP email by language."
+        },
+        {
             "name": "emails.registration-subject",
             "type": "java.util.HashMap",
             "description": "Map of subjects of the registration email by language."
@@ -214,6 +224,16 @@
             "name": "language.defaultLang",
             "type": "java.lang.String",
             "description": "A description for 'language.defaultLang'"
+        },
+        {
+            "name": "emails.registration-complete-subject",
+            "type": "java.util.HashMap",
+            "description": "Map of subjects of the registration complete email by language."
+        },
+        {
+            "name": "emails.registration-complete-body",
+            "type": "java.util.HashMap",
+            "description": "Map of bodies of the registration complete email by language."
         }
     ]
 }

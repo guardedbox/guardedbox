@@ -60,6 +60,15 @@
         "email-already-registered": "Email {email} is already registered.",
         "email-not-registered": "Email {email} is not registed."
     },
+    "my-account": {
+        "title": "My Account",
+        "h-delete-account": "Delete My Account",
+        "delete-account-modal-body": "Your account ({email}) will be permanently deleted. All your secrets, shared secrets and groups will be deleted as well. This operation is irreversible! Are you sure?",
+        "introduce-email": "Introduce your email to confirm it",
+        "incorrect-introduced-mail": "The email you introduced is not your email",
+        "h-account-deleted": "Your account has been deleted",
+        "account-deleted": "Sorry to see you go!"
+    },
     "secrets": {
         "new-secret": "New Secret",
         "edit-secret": "Edit Secret",

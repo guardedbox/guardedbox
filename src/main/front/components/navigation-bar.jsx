@@ -52,6 +52,9 @@ class NavigationBar extends Component {
                             <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.groups} activeClassName="active">
                                 {t('groups.title')}
                             </NavLink></NavItem>
+                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.myAccount} activeClassName="active">
+                                {t('my-account.title')}
+                            </NavLink></NavItem>
                         </Nav>
 
                         <Nav className="ml-auto" navbar>

@@ -4,9 +4,10 @@
         "registration": "/registration",
         "mySecrets": "/my-secrets",
         "secretsSharedWithMe": "/secrets-shared-with-me",
-        "groups": "/groups"
+        "groups": "/groups",
+        "myAccount": "/my-account"
     },
-    "navbarPaths": "/(my-secrets|secrets-shared-with-me|groups)",
+    "navbarPaths": "/(my-secrets|secrets-shared-with-me|groups|my-account)",
     "defaultPath": "/my-secrets",
     "publicPaths": [
         "/",

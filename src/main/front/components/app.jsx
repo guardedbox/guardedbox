@@ -12,6 +12,7 @@ import NavigationBar from 'components/navigation-bar.jsx';
 import MySecrets from 'components/my-secrets.jsx';
 import SecretsSharedWithMe from 'components/secrets-shared-with-me.jsx';
 import Groups from 'components/groups.jsx';
+import MyAccount from 'components/my-account.jsx';
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { listenLocationChange } from 'services/location.jsx';
@@ -64,6 +65,7 @@ class App extends Component {
                     <CacheRoute exact path={views.viewPaths.mySecrets} component={MySecrets} />
                     <CacheRoute exact path={views.viewPaths.secretsSharedWithMe} component={SecretsSharedWithMe} />
                     <CacheRoute exact path={views.viewPaths.groups} component={Groups} />
+                    <CacheRoute exact path={views.viewPaths.myAccount} component={MyAccount} />
                 </CacheSwitch>
 
                 <Loader loading={this.state.loading} text={t('global.loading-spinner-text')} fullPage />

@@ -168,6 +168,18 @@ public class AccountsService {
     }
 
     /**
+     * Deletes an Account.
+     *
+     * @param accountId Account.accountId of the Account to be deleted.
+     */
+    public void deleteAccount(
+            UUID accountId) {
+
+        accountsRepository.deleteById(accountId);
+
+    }
+
+    /**
      * Finds an AccountEntity by email and checks if it exists.
      *
      * @param email The email.

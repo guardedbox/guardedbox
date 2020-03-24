@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,6 +119,20 @@ public class AccountsController {
         registrationsService.deleteRegistration(registrationDto.getRegistrationId());
 
         // Successful result.
+        return new SuccessDto(true);
+
+    }
+
+    /**
+     * Deletes the current session Account.
+     *
+     * @return Object indicating if the execution was successful.
+     */
+    @DeleteMapping()
+    public SuccessDto deleteAccount() {
+
+        accountsService.deleteAccount(sessionAccount.getAccountId());
+
         return new SuccessDto(true);
 
     }

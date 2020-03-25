@@ -16,10 +16,7 @@ import views from 'constants/views.json';
 class Login extends Component {
 
     state = {
-        email: '',
-        password: '',
         passwordVisible: false,
-        code: '',
         loginEnabled: false,
         getCodePopoverActive: false,
         loginFailedPopoverActive: false,
@@ -50,8 +47,8 @@ class Login extends Component {
 
     getCode = () => {
 
-        var email = this.state.email;
-        var password = this.state.password;
+        var email = this.txtEmail.current.value;
+        var password = this.txtPassword.current.value;
 
         this.setState({
             loginFailedPopoverActive: false
@@ -86,7 +83,7 @@ class Login extends Component {
                                 url: '/api/session/otp',
                                 loadingChained: true,
                                 body: {
-                                    email: this.state.email,
+                                    email: email,
                                     signedChallengeResponse: signedChallengeResponse
                                 },
                                 callback: (response) => {
@@ -113,8 +110,8 @@ class Login extends Component {
 
     login = () => {
 
-        var code = this.state.code;
-        var password = this.state.password;
+        var code = this.txtCode.current.value;
+        var password = this.txtPassword.current.value;
 
         this.setState({
             getCodePopoverActive: false

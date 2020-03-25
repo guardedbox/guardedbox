@@ -19,14 +19,12 @@ class Registration extends Component {
     state = {
         token: '',
         email: '',
-        password: '',
         passwordVisible: false,
         passwordLength: 0,
         passwordStrength: 0,
         passwordError: null,
         passwordPopoverActive: false,
         passwordPopoverBody: '',
-        repeatPassword: '',
         repeatPasswordError: null,
         repeatPasswordPopoverActive: false,
         repeatPasswordPopoverBody: ''
@@ -113,7 +111,7 @@ class Registration extends Component {
             newState.passwordPopoverBody = '';
         }
 
-        this.setState(newState, () => { this.changeRepeatPassword(this.state.repeatPassword) });
+        this.setState(newState, () => { this.changeRepeatPassword(this.txtRepeatPassword.current.value) });
 
     }
 
@@ -124,7 +122,7 @@ class Registration extends Component {
             repeatPasswordError: null
         };
 
-        if (value !== this.state.password) {
+        if (value !== this.txtPassword.current.value) {
             newState.repeatPasswordError = 'registration.passwords-do-not-match';
         } else {
             newState.repeatPasswordPopoverActive = false;
@@ -179,7 +177,7 @@ class Registration extends Component {
             loading(() => {
 
                 var token = this.state.token;
-                var password = this.state.password;
+                var password = this.txtPassword.current.value;
                 var loginSalt = randomBytes(properties.cryptography.length, 'base64');
                 var encryptionSalt = randomBytes(properties.cryptography.length, 'base64');
                 var signingSalt = randomBytes(properties.cryptography.length, 'base64');
@@ -270,8 +268,8 @@ class Registration extends Component {
                                         type={this.state.passwordVisible ? "text" : "password"}
                                         autoComplete="section-registration new-password"
                                         placeholder={t('global.password')}
-                                        valid={Boolean(this.state.password) && !Boolean(this.state.passwordError)}
-                                        invalid={Boolean(this.state.password) && Boolean(this.state.passwordError)}
+                                        valid={Boolean(this.txtPassword.current.value) && !Boolean(this.state.passwordError)}
+                                        invalid={Boolean(this.txtPassword.current.value) && Boolean(this.state.passwordError)}
                                         required
                                         onChange={(e) => { this.changePassword(e.target.value) }}
                                         onBlur={(e) => { this.checkPasswordErrors() }}
@@ -293,8 +291,8 @@ class Registration extends Component {
                                         type={this.state.passwordVisible ? "text" : "password"}
                                         autoComplete="section-registration new-password"
                                         placeholder={t('registration.txt-repeat-password')}
-                                        valid={Boolean(this.state.repeatPassword) && !Boolean(this.state.repeatPasswordError)}
-                                        invalid={Boolean(this.state.repeatPassword) && Boolean(this.state.repeatPasswordError)}
+                                        valid={Boolean(this.txtRepeatPassword.current.value) && !Boolean(this.state.repeatPasswordError)}
+                                        invalid={Boolean(this.txtRepeatPassword.current.value) && Boolean(this.state.repeatPasswordError)}
                                         required
                                         onChange={(e) => { this.changeRepeatPassword(e.target.value) }}
                                         onBlur={(e) => { this.checkPasswordErrors() }}

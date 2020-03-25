@@ -742,7 +742,7 @@ class MySecrets extends Component {
                         </fieldset>
                     </ModalBody>
                     <ModalFooter>
-                        <Button type="submit" form="my-secrets_form-edit-secret" color="primary">{t('global.edit')}</Button>
+                        <Button type="submit" form="my-secrets_form-edit-secret" color="primary">{t('global.accept')}</Button>
                         <Button color="secondary" onClick={this.cancelEditSecret}>{t('global.cancel')}</Button>
                     </ModalFooter>
                 </Modal>
@@ -799,7 +799,12 @@ class MySecrets extends Component {
                                 required
                                 onChange={(e) => { this.setState({ shareSecretReceiverEmail: e.target.value }); }}
                             />
-                            <Button onClick={this.shareSecretCheckKeys} color="secondary">{t('accounts.check-keys')}</Button>
+                            <Button id="my-secrets_btn-check-keys-share-secret" onClick={this.shareSecretCheckKeys} color="secondary">
+                                <Octicon icon={Key} />
+                            </Button>
+                            <UncontrolledTooltip placement="top" target="my-secrets_btn-check-keys-share-secret">
+                                {t('accounts.check-keys')}
+                            </UncontrolledTooltip>
                             <Button type="submit" color="primary">{t('global.share')}</Button>
                         </Form>
                     </ModalBody>

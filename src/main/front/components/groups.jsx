@@ -741,7 +741,12 @@ class Groups extends Component {
                                 required
                                 onChange={(e) => { this.setState({ ownedGroupAddParticipantEmail: e.target.value }); }}
                             />
-                            <Button onClick={this.ownedGroupParticipantCheckKeys} color="secondary">{t('accounts.check-keys')}</Button>
+                            <Button id="groups_btn-check-keys-owned-group" onClick={this.ownedGroupParticipantCheckKeys} color="secondary">
+                                <Octicon icon={Key} />
+                            </Button>
+                            <UncontrolledTooltip placement="top" target="groups_btn-check-keys-owned-group">
+                                {t('accounts.check-keys')}
+                            </UncontrolledTooltip>
                             <Button type="submit" color="primary">{t('global.add')}</Button>
                         </Form>
                     </ModalBody>

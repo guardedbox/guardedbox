@@ -250,25 +250,34 @@ class Groups extends Component {
     removeParticipantFromGroup = (rowIndex, participant) => {
 
         var groupId = this.state.ownedGroup.groupId;
+        var groupName = this.state.ownedGroup.name;
         var email = participant.email;
 
-        rest({
-            method: 'delete',
-            url: '/api/groups/{group-id}/participants',
-            pathVariables: {
-                'group-id': groupId
-            },
-            params: {
-                'email': email
-            },
-            callback: (response) => {
+        modalConfirmation(
+            t('global.confirmation'),
+            t('groups.remove-participant', { group: groupName, email: email }),
+            () => {
 
-                removeStateArrayElement(this, 'ownedGroupParticipants', rowIndex, () => {
-                    this.ownedGroupParticipantsModalTxtEmail.current.focus();
+                rest({
+                    method: 'delete',
+                    url: '/api/groups/{group-id}/participants',
+                    pathVariables: {
+                        'group-id': groupId
+                    },
+                    params: {
+                        'email': email
+                    },
+                    callback: (response) => {
+
+                        removeStateArrayElement(this, 'ownedGroupParticipants', rowIndex, () => {
+                            this.ownedGroupParticipantsModalTxtEmail.current.focus();
+                        });
+
+                    }
                 });
 
             }
-        });
+        );
 
     }
 

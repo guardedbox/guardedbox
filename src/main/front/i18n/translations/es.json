@@ -89,6 +89,7 @@
         "secret-does-not-exist": "El secreto no existe."
     },
     "shared-secrets": {
+        "remove-receiver": "¿Estás seguro de que quieres dejar de compartir el secreto \"{secret}\" con \"{email}\"?",
         "do-not-self-share": "No se permite autocompartición de secretos.",
         "secret-already-shared-with-email": "Ya compartiste este secreto con {email}.",
         "secret-not-shared-with-email": "Este secreto no se comparte con {email}.",
@@ -108,6 +109,7 @@
         "secrets": "Secretos",
         "owned-groups": "Mis grupos",
         "no-owned-groups": "No tienes grupos creados.",
+        "remove-participant": "¿Estás seguro de que quieres quitar a \"{email}\" del grupo \"{group}\"?",
         "participant-groups": "Grupos a los que me han invitado",
         "no-participant-groups": "Aún no te han añadido a ningún grupo.",
         "delete-group-modal-body": "El grupo \"{group}\" se eliminará. ¿Deseas continuar?",

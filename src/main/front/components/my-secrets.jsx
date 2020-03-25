@@ -442,25 +442,34 @@ class MySecrets extends Component {
     unshareSecret = (rowIndex, account) => {
 
         var secretId = this.state.shareSecret.secretId;
+        var secretName = this.state.shareSecret.name;
         var receiverEmail = account.email;
 
-        rest({
-            method: 'delete',
-            url: '/api/shared-secrets/sent/{secret-id}',
-            pathVariables: {
-                'secret-id': secretId
-            },
-            params: {
-                'receiver-email': receiverEmail
-            },
-            callback: (response) => {
+        modalConfirmation(
+            t('global.confirmation'),
+            t('shared-secrets.remove-receiver', { secret: secretName, email: receiverEmail }),
+            () => {
 
-                removeStateArrayElement(this, 'shareSecretAccounts', rowIndex, () => {
-                    this.shareSecretModalTxtEmail.current.focus();
+                rest({
+                    method: 'delete',
+                    url: '/api/shared-secrets/sent/{secret-id}',
+                    pathVariables: {
+                        'secret-id': secretId
+                    },
+                    params: {
+                        'receiver-email': receiverEmail
+                    },
+                    callback: (response) => {
+
+                        removeStateArrayElement(this, 'shareSecretAccounts', rowIndex, () => {
+                            this.shareSecretModalTxtEmail.current.focus();
+                        });
+
+                    }
                 });
 
             }
-        });
+        );
 
     }
 

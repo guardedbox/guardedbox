@@ -258,7 +258,7 @@ class Login extends Component {
                                         id="login_txt-code"
                                         innerRef={this.txtCode}
                                         type="text"
-                                        autoComplete="section-login one-time-code"
+                                        autoComplete="off"
                                         placeholder={t('login.txt-code')}
                                         required
                                         disabled={!this.state.loginEnabled}

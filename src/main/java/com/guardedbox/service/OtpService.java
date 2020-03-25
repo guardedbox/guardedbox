@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.OtpDto;
 import com.guardedbox.dto.OtpResponseDto;
-import com.guardedbox.properties.EmailsProperties;
-import com.guardedbox.properties.LanguageProperties;
 import com.guardedbox.properties.SecurityParametersProperties;
 
 import lombok.RequiredArgsConstructor;
@@ -24,17 +22,11 @@ public class OtpService {
     /** SecurityParametersProperties. */
     private final SecurityParametersProperties securityParameters;
 
-    /** EmailsProperties. */
-    private final EmailsProperties emailsProperties;
-
-    /** LanguageProperties. */
-    private final LanguageProperties languageProperties;
-
     /** RandomService. */
     private final RandomService randomService;
 
-    /** EmailService. */
-    private final EmailService emailService;
+    /** MessagesService. */
+    private final MessagesService messagesService;
 
     /** PasswordEncoder. */
     private final PasswordEncoder passwordEncoder;
@@ -52,10 +44,7 @@ public class OtpService {
 
         String otp = randomService.randomAlphanumericString(securityParameters.getOtpLength());
 
-        emailService.sendAsync(
-                email,
-                emailsProperties.getOtpSubject().get(languageProperties.getDefaultLanguage()),
-                String.format(emailsProperties.getOtpBody().get(languageProperties.getDefaultLanguage()), otp));
+        messagesService.sendOtpMessage(email, otp);
 
         return new OtpDto()
                 .setEmail(email)

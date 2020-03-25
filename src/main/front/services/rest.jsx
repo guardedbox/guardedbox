@@ -1,11 +1,12 @@
 import { loading as loadingF, notLoading as notLoadingF } from 'services/loading.jsx';
+import { currentLanguage } from 'services/translation.jsx';
 import { reset } from 'services/session.jsx';
 import { t } from 'services/translation.jsx';
 import { modalMessage } from 'services/modal.jsx';
 
 /**
  * REST Request.
- * 
+ *
  * @param {object} options The options.
  * @param {string} options.method The request method: get, post, put, delete.
  * @param {string} options.url The URL.
@@ -42,7 +43,8 @@ export function rest({
     }
 
     var headers = {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'App-Language': currentLanguage()
     };
     if (body) {
         headers['Content-Type'] = 'application/json';

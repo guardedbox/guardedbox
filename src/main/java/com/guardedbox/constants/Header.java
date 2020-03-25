@@ -38,7 +38,10 @@ public enum Header {
     REFERRER_POLICY("Referrer-Policy"),
 
     /** Feature Policy. */
-    FEATURE_POLICY("Feature-Policy");
+    FEATURE_POLICY("Feature-Policy"),
+
+    /** App Language. */
+    APP_LANGUAGE("App-Language");
 
     /** Header name. */
     private final String headerName;

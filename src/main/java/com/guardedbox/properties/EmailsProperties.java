@@ -20,6 +20,24 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class EmailsProperties {
 
+    /** Property Map: emails.registration-subject. */
+    private final HashMap<String, String> registrationSubject;
+
+    /** Property Map: emails.registration-body. */
+    private final HashMap<String, String> registrationBody;
+
+    /** Property Map: emails.registration-complete-subject. */
+    private final HashMap<String, String> registrationCompleteSubject;
+
+    /** Property Map: emails.registration-complete-body. */
+    private final HashMap<String, String> registrationCompleteBody;
+
+    /** Property Map: emails.already-registered-subject. */
+    private final HashMap<String, String> alreadyRegisteredSubject;
+
+    /** Property Map: emails.already-registered-body. */
+    private final HashMap<String, String> alreadyRegisteredBody;
+
     /** Property Map: emails.otp-subject. */
     private final HashMap<String, String> otpSubject;
 
@@ -31,23 +49,5 @@ public class EmailsProperties {
 
     /** Property Map: emails.otp-incorrect-body. */
     private final HashMap<String, String> otpIncorrectBody;
-
-    /** Property Map: emails.registration-subject. */
-    private final HashMap<String, String> registrationSubject;
-
-    /** Property Map: emails.registration-body. */
-    private final HashMap<String, String> registrationBody;
-
-    /** Property Map: emails.already-registered-subject. */
-    private final HashMap<String, String> alreadyRegisteredSubject;
-
-    /** Property Map: emails.already-registered-body. */
-    private final HashMap<String, String> alreadyRegisteredBody;
-
-    /** Property Map: emails.registration-complete-subject. */
-    private final HashMap<String, String> registrationCompleteSubject;
-
-    /** Property Map: emails.registration-complete-body. */
-    private final HashMap<String, String> registrationCompleteBody;
 
 }

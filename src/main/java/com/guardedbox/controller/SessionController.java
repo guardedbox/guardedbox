@@ -32,12 +32,10 @@ import com.guardedbox.dto.SessionInfoDto;
 import com.guardedbox.dto.SignedChallengeResponseDto;
 import com.guardedbox.dto.SuccessDto;
 import com.guardedbox.exception.ServiceException;
-import com.guardedbox.properties.EmailsProperties;
-import com.guardedbox.properties.LanguageProperties;
 import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.service.ChallengeService;
-import com.guardedbox.service.EmailService;
 import com.guardedbox.service.ExecutionTimeService;
+import com.guardedbox.service.MessagesService;
 import com.guardedbox.service.OtpService;
 import com.guardedbox.service.SessionAccountService;
 import com.guardedbox.service.transactional.AccountsService;
@@ -63,12 +61,6 @@ public class SessionController {
     /** SecurityParametersProperties. */
     private final SecurityParametersProperties securityParameters;
 
-    /** EmailsProperties. */
-    private final EmailsProperties emailsProperties;
-
-    /** LanguageProperties. */
-    private final LanguageProperties languageProperties;
-
     /** AccountsService. */
     private final AccountsService accountsService;
 
@@ -84,8 +76,8 @@ public class SessionController {
     /** OtpService. */
     private final OtpService otpService;
 
-    /** EmailService. */
-    private final EmailService emailService;
+    /** MessagesService. */
+    private final MessagesService messagesService;
 
     /** Current Request. */
     private final HttpServletRequest request;
@@ -217,10 +209,7 @@ public class SessionController {
 
             // Verify the one time password response.
             if (!dev && !otpService.verifyOtp(otpResponseDto, otpDto)) {
-                emailService.sendAsync(
-                        otpDto.getEmail(),
-                        emailsProperties.getOtpIncorrectSubject().get(languageProperties.getDefaultLanguage()),
-                        emailsProperties.getOtpIncorrectBody().get(languageProperties.getDefaultLanguage()));
+                messagesService.sendOtpIncorrectMessage(otpDto.getEmail());
                 throw new ServiceException("One time password response is incorrect");
             }
 

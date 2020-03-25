@@ -59,7 +59,15 @@ export function currentLocationPath() {
  */
 export function currentLocationParams() {
 
-    return queryString.parse(location().search);
+    var search = window.location.search;
+
+    if (!search) {
+        var hash = window.location.hash;
+        var hashSplit = hash.split('?');
+        if (hashSplit.length == 2) search = hashSplit[1];
+    }
+
+    return search ? queryString.parse(search) : {};
 
 }
 
@@ -75,7 +83,7 @@ export function isLocationPublic(path) {
 
 /**
  * Changes the current location path.
- * 
+ *
  * @param {string} path The new path.
  */
 export function changeLocation(path) {

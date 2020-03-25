@@ -16,3 +16,12 @@ export function t(key, replacements) {
     return translation;
 
 }
+
+/**
+ * @returns The current language of the app.
+ */
+export function currentLanguage() {
+
+    return getViewComponent('app').props.i18n.language.split('-')[0];
+
+}

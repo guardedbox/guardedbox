@@ -17,8 +17,8 @@ import com.guardedbox.mapper.RegistrationsMapper;
 import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.repository.AccountsRepository;
 import com.guardedbox.repository.RegistrationsRepository;
+import com.guardedbox.service.MessagesService;
 import com.guardedbox.service.RandomService;
-import com.guardedbox.service.RegistrationMessageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,8 +45,8 @@ public class RegistrationsService {
     /** RegistrationsMapper. */
     private final RegistrationsMapper registrationsMapper;
 
-    /** RegistrationMessageService. */
-    private final RegistrationMessageService registrationMessageService;
+    /** MessagesService. */
+    private final MessagesService messagesService;
 
     /** RandomService. */
     private final RandomService randomService;
@@ -86,7 +86,7 @@ public class RegistrationsService {
         if (accountsRepository.existsByEmail(createRegistrationDto.getEmail())) {
 
             // Send a message indicating that the email is already registered.
-            registrationMessageService.sendAlreadyRegisteredMessage(createRegistrationDto.getEmail());
+            messagesService.sendAlreadyRegisteredMessage(createRegistrationDto.getEmail());
 
             throw new ServiceException(String.format(
                     "Registration token was not generated for email %s since it is already registered",
@@ -103,7 +103,7 @@ public class RegistrationsService {
             } while (registrationsRepository.existsByToken(token));
 
             // Send the registration message.
-            registrationMessageService.sendRegistrationMessage(createRegistrationDto.getEmail(), token);
+            messagesService.sendRegistrationMessage(createRegistrationDto.getEmail(), token);
 
             // Store the registration in the database, overwriting the previous one in case it exists.
             RegistrationEntity registration = (prevRegistration == null ? new RegistrationEntity() : prevRegistration)

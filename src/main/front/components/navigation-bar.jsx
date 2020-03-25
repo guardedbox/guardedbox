@@ -11,7 +11,7 @@ class NavigationBar extends Component {
 
     state = {
         navbarTogglerActive: false,
-        email: sessionEmail()
+        email: sessionEmail(true)
     };
 
     constructor(props) {

@@ -79,11 +79,21 @@ export function isAuthenticated() {
 }
 
 /**
+ * @param {boolean} [obfuscate] Boolean indicating if the email must be returned obfuscated.
  * @returns {string} Indicates the current session email, in case it is authenticated, or null otherwise.
  */
-export function sessionEmail() {
+export function sessionEmail(obfuscate = false) {
 
-    return currentSession ? currentSession.email : null;
+    var email = currentSession ? currentSession.email : null;
+
+    if (email && obfuscate) {
+        try {
+            var regexExec = /^(.)(.*?)(.@.+)$/.exec(sessionEmail());
+            return regexExec[1] + '*'.repeat(regexExec[2].length) + regexExec[3];
+        } catch (e) { }
+    }
+
+    return email;
 
 }
 

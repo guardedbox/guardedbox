@@ -21,7 +21,7 @@ var currentSessionKeys = {
 /**
  * Generates and internally stores the login keys, derived from a password, and a login salt.
  *
- * @param {string} password The password,.
+ * @param {string} password The password.
  * @param {(Uint8Array|string)} loginSalt The encryption salt.
  * @param {string} [passwordFormat] The format of the password, in case it is a string. Default: utf8.
  * @param {string} [loginSaltFormat] The format of the login salt, in case it is a string. Default: base64.
@@ -94,7 +94,7 @@ export function getLoginPublicKey(outputFormat = 'base64') {
 /**
  * Generates and internally stores the current session keys, derived from a password, a encryption salt, and a signing salt.
  *
- * @param {string} password The password,.
+ * @param {string} password The password.
  * @param {(Uint8Array|string)} encryptionSalt The encryption salt.
  * @param {(Uint8Array|string)} signingSalt The signing salt.
  * @param {string} [passwordFormat] The format of the password, in case it is a string. Default: utf8.

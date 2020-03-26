@@ -268,8 +268,8 @@ class Registration extends Component {
                                         type={this.state.passwordVisible ? "text" : "password"}
                                         autoComplete="section-registration new-password"
                                         placeholder={t('global.password')}
-                                        valid={Boolean(this.txtPassword.current.value) && !Boolean(this.state.passwordError)}
-                                        invalid={Boolean(this.txtPassword.current.value) && Boolean(this.state.passwordError)}
+                                        valid={(Boolean(this.txtPassword.current) && Boolean(this.txtPassword.current.value)) && !Boolean(this.state.passwordError)}
+                                        invalid={(Boolean(this.txtPassword.current) && Boolean(this.txtPassword.current.value)) && Boolean(this.state.passwordError)}
                                         required
                                         onChange={(e) => { this.changePassword(e.target.value) }}
                                         onBlur={(e) => { this.checkPasswordErrors() }}
@@ -291,8 +291,8 @@ class Registration extends Component {
                                         type={this.state.passwordVisible ? "text" : "password"}
                                         autoComplete="section-registration new-password"
                                         placeholder={t('registration.txt-repeat-password')}
-                                        valid={Boolean(this.txtRepeatPassword.current.value) && !Boolean(this.state.repeatPasswordError)}
-                                        invalid={Boolean(this.txtRepeatPassword.current.value) && Boolean(this.state.repeatPasswordError)}
+                                        valid={(Boolean(this.txtRepeatPassword.current) && Boolean(this.txtRepeatPassword.current.value)) && !Boolean(this.state.repeatPasswordError)}
+                                        invalid={(Boolean(this.txtRepeatPassword.current) && Boolean(this.txtRepeatPassword.current.value)) && Boolean(this.state.repeatPasswordError)}
                                         required
                                         onChange={(e) => { this.changeRepeatPassword(e.target.value) }}
                                         onBlur={(e) => { this.checkPasswordErrors() }}

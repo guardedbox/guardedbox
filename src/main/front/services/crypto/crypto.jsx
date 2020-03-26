@@ -3,7 +3,6 @@ import { pbkdf2 } from 'services/crypto/hash.jsx';
 import { generateEcdhKeyPair, generateEddsaKeyPair } from 'services/crypto/ecc.jsx';
 import { aesEncrypt, aesDecrypt } from 'services/crypto/aes.jsx';
 import { randomBytes } from 'services/crypto/random.jsx';
-import { notLoading } from 'services/loading.jsx';
 import { t } from 'services/translation.jsx';
 import { modalMessage } from 'services/modal.jsx';
 import properties from 'constants/properties.json';

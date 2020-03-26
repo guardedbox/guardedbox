@@ -34,6 +34,12 @@
         "strength": "Fortaleza",
         "copyright": "La documentación de GuardedBox está disponible en \"guardedbox.es\""
     },
+    "session": {
+        "title-session-expired": "Tu sesión ha caducado",
+        "body-session-expired": "¿Quieres seguir trabajando sin sesión? Si eliges 'No', serás redirigido a la página de login.",
+        "title-working-without-session": "Estás trabajando sin sesión",
+        "body-working-without-session": "No puedes realizar ninguna operación"
+    },
     "login": {
         "title-login": "Iniciar sesión",
         "btn-get-code": "Obtener código de acceso",

@@ -4,6 +4,7 @@ import Octicon, { Sync, File, History, ShieldLock, Shield, Key, X } from '@prime
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
+import { workingWithoutSession } from 'services/session.jsx';
 import { decrypt } from 'services/crypto/crypto.jsx';
 import { setStateArrayElement, removeStateArrayElement } from 'services/state-utils.jsx';
 import { modalConfirmation } from 'services/modal.jsx';
@@ -28,16 +29,18 @@ class SecretsSharedWithMe extends Component {
 
     handleLocationChange = () => {
 
-        if (this.state.secretsSharedWithMe == null)
-            this.loadSecrets();
+        if (!workingWithoutSession()) {
+            this.loadSecrets(false);
+        }
 
     }
 
-    loadSecrets = () => {
+    loadSecrets = (loading) => {
 
         rest({
             method: 'get',
             url: '/api/shared-secrets/received',
+            loading: loading,
             callback: (response) => {
 
                 var secretsSharedWithMe = response;
@@ -142,7 +145,7 @@ class SecretsSharedWithMe extends Component {
                 <h4>{t('secrets-shared-with-me.title')}</h4><hr />
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="secondary" onClick={this.loadSecrets}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
+                    <Button color="secondary" onClick={() => { this.loadSecrets(true) }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
                 {

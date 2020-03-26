@@ -2,7 +2,7 @@ import { getViewComponent } from 'services/view-components.jsx';
 
 /**
  * Opens a modal message.
- * 
+ *
  * @param {string} header The modal message header.
  * @param {string} body The modal message body.
  * @param {function} [exitCallback] This function will be invoked when the modal message is closed.
@@ -38,27 +38,29 @@ export function closeModalMessage() {
 
 /**
  * Opens a modal confirmation with two buttons: Yes and No.
- * 
+ *
  * @param {string} header The modal message header.
  * @param {string} body The modal message body.
  * @param {function} yesCallback This function will be invoked when the Yes button is clicked.
  * @param {function} [noCallback] This function will be invoked when the No button  is clicked, or when the confirmation modal is closed.
+ * @param {boolean} [lock] True not to allow to close the modal without clicking one of the buttons.
  */
-export function modalConfirmation(header, body, yesCallback, noCallback) {
+export function modalConfirmation(header, body, yesCallback, noCallback, lock = false) {
 
     getViewComponent('app').setState({
         modalConfirmationActive: true,
         modalConfirmationHeader: header,
         modalConfirmationBody: body,
         modalConfirmationYesCallback: yesCallback,
-        modalConfirmationNoCallback: noCallback
+        modalConfirmationNoCallback: noCallback,
+        modalConfirmationLock: lock
     });
 
 }
 
 /**
  * Closes the modal confirmation and invokes the yesCallback or noCallback function introduced in the modalConfirmation method.
- * 
+ *
  * @param {string} button 'yes' to invoke the yesCallback function, 'no' to invoke the noCallback function.
  */
 export function closeModalConfirmation(button) {
@@ -76,7 +78,8 @@ export function closeModalConfirmation(button) {
         modalConfirmationHeader: '',
         modalConfirmationBody: '',
         modalConfirmationYesCallback: null,
-        modalConfirmationNoCallback: null
+        modalConfirmationNoCallback: null,
+        modalConfirmationLock: false,
     }, callback);
 
 }

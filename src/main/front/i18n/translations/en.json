@@ -34,6 +34,12 @@
         "strength": "Strength",
         "copyright": "GuardedBox documentation is available at \"guardedbox.eu\""
     },
+    "session": {
+        "title-session-expired": "Your session expired",
+        "body-session-expired": "Would you like to keep working without session? If you choose 'No', you will be redirected to the login page.",
+        "title-working-without-session": "You are working without session",
+        "body-working-without-session": "You cannot perform any operation"
+    },
     "login": {
         "title-login": "Log in",
         "btn-get-code": "Get access code",

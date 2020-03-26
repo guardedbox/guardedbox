@@ -4,6 +4,7 @@ import Octicon, { DiffAdded, Sync, Organization, Lock, Pencil, Trashcan, File, H
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
+import { workingWithoutSession } from 'services/session.jsx';
 import { encrypt, decrypt, encryptSymmetric, decryptSymmetric } from 'services/crypto/crypto.jsx';
 import { randomBytes } from 'services/crypto/random.jsx';
 import { addElementToStateArray, setStateArrayElement, removeStateArrayElement } from 'services/state-utils.jsx';
@@ -54,23 +55,20 @@ class Groups extends Component {
 
     handleLocationChange = () => {
 
-        if (this.state.ownedGroups == null) {
-            this.loadOwnedGroups(() => {
-
-                if (this.state.participantGroups == null) {
-                    this.loadParticipantGroups();
-                }
-
+        if (!workingWithoutSession()) {
+            this.loadOwnedGroups(false, () => {
+                this.loadParticipantGroups(false);
             });
         }
 
     }
 
-    loadOwnedGroups = (callback) => {
+    loadOwnedGroups = (loading, callback) => {
 
         rest({
             method: 'get',
             url: '/api/groups/owned',
+            loading: loading,
             callback: (response) => {
 
                 var ownedGroups = response;
@@ -86,11 +84,12 @@ class Groups extends Component {
 
     }
 
-    loadParticipantGroups = (callback) => {
+    loadParticipantGroups = (loading, callback) => {
 
         rest({
             method: 'get',
             url: '/api/groups/invited',
+            loading: loading,
             callback: (response) => {
 
                 var participantGroups = response;
@@ -617,7 +616,7 @@ class Groups extends Component {
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
                     <Button color="primary" onClick={this.newGroup}><Octicon className="button-icon" icon={DiffAdded} />{t('groups.btn-new-group')}</Button>
-                    <Button color="secondary" onClick={() => { this.loadOwnedGroups() }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
+                    <Button color="secondary" onClick={() => { this.loadOwnedGroups(true) }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
                 {
@@ -888,7 +887,7 @@ class Groups extends Component {
                 <h4 style={{ marginTop: '4rem' }}>{t('groups.participant-groups')}</h4><hr />
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="secondary" onClick={() => { this.loadParticipantGroups() }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
+                    <Button color="secondary" onClick={() => { this.loadParticipantGroups(true) }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
                 {

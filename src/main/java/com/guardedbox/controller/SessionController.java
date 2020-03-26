@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guardedbox.config.AuthenticationPrincipal;
+import com.guardedbox.constants.Header;
 import com.guardedbox.constants.Role;
 import com.guardedbox.constants.SessionAttribute;
 import com.guardedbox.dto.AccountDto;
@@ -82,6 +84,9 @@ public class SessionController {
     /** Current Request. */
     private final HttpServletRequest request;
 
+    /** Current Response. */
+    private final HttpServletResponse response;
+
     /** Current Session. */
     private final HttpSession session;
 
@@ -122,6 +127,9 @@ public class SessionController {
 
         // Store it in the current session.
         session.setAttribute(SessionAttribute.CHALLENGE.getAttributeName(), challengeDto);
+
+        // Add the session id to the session id response header.
+        response.addHeader(Header.SESSION_ID.getHeaderName(), session.getId());
 
         // Fix execution time.
         executionTimeService.fix(startTime, securityParameters.getChallengeExecutionTime());
@@ -175,6 +183,9 @@ public class SessionController {
         } catch (Exception e) {
         }
 
+        // Add the session id to the session id response header.
+        response.addHeader(Header.SESSION_ID.getHeaderName(), session.getId());
+
         // Fix execution time.
         executionTimeService.fix(startTime, securityParameters.getOtpExecutionTime());
 
@@ -220,7 +231,7 @@ public class SessionController {
             Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationPrincipal, null, roles);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Change session ID (Cookie).
+            // Change session ID.
             request.changeSessionId();
 
             // Successful result.
@@ -232,6 +243,9 @@ public class SessionController {
             return new SessionInfoDto().setSuccess(false);
 
         } finally {
+
+            // Add the session id to the session id response header.
+            response.addHeader(Header.SESSION_ID.getHeaderName(), session.getId());
 
             // Fix execution time.
             executionTimeService.fix(startTime, securityParameters.getLoginExecutionTime());

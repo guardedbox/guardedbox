@@ -40,8 +40,11 @@ public enum Header {
     /** Feature Policy. */
     FEATURE_POLICY("Feature-Policy"),
 
+    /** Session ID. */
+    SESSION_ID("X-Auth-Token"),
+
     /** App Language. */
-    APP_LANGUAGE("App-Language");
+    APP_LANGUAGE("X-App-Language");
 
     /** Header name. */
     private final String headerName;

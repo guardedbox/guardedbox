@@ -1,8 +1,9 @@
 import { loading as loadingF, notLoading as notLoadingF } from 'services/loading.jsx';
 import { currentLanguage } from 'services/translation.jsx';
-import { reset } from 'services/session.jsx';
+import { setSesionId, sessionId, workingWithoutSession, startWorkingWithoutSession, reset } from 'services/session.jsx';
 import { t } from 'services/translation.jsx';
 import { modalMessage } from 'services/modal.jsx';
+import properties from 'constants/properties.json';
 
 /**
  * REST Request.
@@ -32,6 +33,15 @@ export function rest({
     serviceExceptionCallback
 }) {
 
+    if (workingWithoutSession()) {
+        if (!loading && !loadingChained) {
+            if (callback) callback();
+        } else {
+            startWorkingWithoutSession();
+        }
+        return;
+    }
+
     if (loading && !loadingChained) loadingF();
 
     var fullUrl = url;
@@ -42,13 +52,11 @@ export function rest({
         fullUrl += '?' + Object.keys(params).map((param) => encodeURIComponent(param) + '=' + encodeURIComponent(params[param])).join('&');
     }
 
-    var headers = {
-        'Accept': 'application/json',
-        'App-Language': currentLanguage()
-    };
-    if (body) {
-        headers['Content-Type'] = 'application/json';
-    }
+    var headers = {};
+    if (sessionId()) headers[properties.headers.sessionId] = sessionId();
+    headers['Accept'] = 'application/json';
+    if (body) headers['Content-Type'] = 'application/json';
+    headers[properties.headers.appLanguage] = currentLanguage();
 
     fetch(fullUrl, {
         method: method,
@@ -72,6 +80,9 @@ export function rest({
 
 function processSuccess(callback, serviceExceptionCallback, response) {
 
+    var sessionId = response.headers.get(properties.headers.sessionId);
+    if (sessionId) setSesionId(sessionId);
+
     if (response.status >= 200 && response.status < 300) {
 
         if (callback) {
@@ -88,7 +99,11 @@ function processSuccess(callback, serviceExceptionCallback, response) {
             }
         });
 
-    } else if (response.status == 401 || response.status == 403) {
+    } else if (response.status == 401) {
+
+        startWorkingWithoutSession();
+
+    } else if (response.status == 403) {
 
         reset();
 

@@ -4,6 +4,7 @@ import Octicon, { DiffAdded, Sync, File, History, ShieldLock, Shield, Pencil, Tr
 import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
+import { workingWithoutSession } from 'services/session.jsx';
 import { encrypt, decrypt } from 'services/crypto/crypto.jsx';
 import { addElementToStateArray, setStateArrayElement, removeStateArrayElement } from 'services/state-utils.jsx';
 import { modalConfirmation } from 'services/modal.jsx';
@@ -56,16 +57,18 @@ class MySecrets extends Component {
 
     handleLocationChange = () => {
 
-        if (this.state.mySecrets == null)
-            this.loadSecrets();
+        if (!workingWithoutSession()) {
+            this.loadSecrets(false);
+        }
 
     }
 
-    loadSecrets = () => {
+    loadSecrets = (loading) => {
 
         rest({
             method: 'get',
             url: '/api/secrets',
+            loading: loading,
             callback: (response) => {
 
                 var mySecrets = response;
@@ -496,7 +499,7 @@ class MySecrets extends Component {
 
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
                     <Button color="primary" onClick={this.newSecret}><Octicon className="button-icon" icon={DiffAdded} />{t('my-secrets.btn-new-secret')}</Button>
-                    <Button color="secondary" onClick={this.loadSecrets}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
+                    <Button color="secondary" onClick={() => { this.loadSecrets(true) }}><Octicon className="button-icon" icon={Sync} />{t('global.reload')}</Button>
                 </div>
 
                 {

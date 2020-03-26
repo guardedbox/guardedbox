@@ -18,6 +18,10 @@
     "groups": {
         "groupNameMaxLength": 100
     },
+    "headers": {
+        "sessionId": "X-Auth-Token",
+        "appLanguage": "X-App-Language"
+    },
     "cryptography": {
         "length": 32,
         "ecc": {

@@ -3,7 +3,7 @@ var viewComponents = {};
 
 /**
  * Registers a view component.
- * 
+ *
  * @param {string} name The view component name.
  * @param {React.Component} component The view component.
  */

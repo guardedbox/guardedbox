@@ -11,10 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.session.web.http.CookieSerializer;
-import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
+import org.springframework.session.web.http.HttpSessionIdResolver;
 
-import com.guardedbox.properties.CookiesProperties;
 import com.guardedbox.properties.CryptographyProperties;
 
 import lombok.RequiredArgsConstructor;
@@ -33,11 +32,18 @@ public class SecurityConfig
     /** CryptographyProperties. */
     private final CryptographyProperties cryptographyProperties;
 
-    /** CookiesProperties. */
-    private final CookiesProperties cookiesProperties;
-
     /** CustomHeaderWriter. */
     private final CustomHeaderWriter customHeaderWriter;
+
+    /**
+     * Bean: HttpSessionIdResolver.
+     *
+     * @return HeaderHttpSessionIdResolver.
+     */
+    @Bean
+    public HttpSessionIdResolver httpSessionIdResolver() {
+        return HeaderHttpSessionIdResolver.xAuthToken();
+    }
 
     /**
      * Bean: PasswordEncoder.
@@ -47,19 +53,6 @@ public class SecurityConfig
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(cryptographyProperties.getBcryptRounds());
-    }
-
-    /**
-     * Bean: CookieSerializer.
-     *
-     * @return DefaultCookieSerializer.
-     */
-    @Bean
-    public CookieSerializer cookieSerializer() {
-        DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
-        cookieSerializer.setUseBase64Encoding(cookiesProperties.getValueBase64());
-        cookieSerializer.setSameSite(cookiesProperties.getSameSite());
-        return cookieSerializer;
     }
 
     /**

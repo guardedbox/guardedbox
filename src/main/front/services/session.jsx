@@ -1,9 +1,34 @@
 import { rest } from 'services/rest.jsx';
 import { currentLocationPath, isLocationPublic } from 'services/location.jsx';
 import { areSessionKeysGenerated } from 'services/crypto/crypto.jsx';
+import { t } from 'services/translation.jsx';
+import { modalConfirmation, modalMessage } from 'services/modal.jsx';
 import { loading } from 'services/loading.jsx';
 
+var currentSessionId = null;
 var currentSession = null;
+var authenticatedOnce = false;
+var currentlyWorkingWithoutSession = false;
+
+/**
+ * Sets the current session ID.
+ *
+ * @param {string} sessionId
+ */
+export function setSesionId(sessionId) {
+
+    currentSessionId = sessionId;
+
+}
+
+/**
+ * @returns {string} The current session ID.
+ */
+export function sessionId() {
+
+    return currentSessionId;
+
+}
 
 /**
  * Updates the current session info.
@@ -21,6 +46,11 @@ export function updateSessionInfo({
     callback
 }) {
 
+    if (workingWithoutSession()) {
+        if (callback) setTimeout(callback, 25);
+        return;
+    }
+
     rest({
         method: 'get',
         url: '/api/session',
@@ -29,16 +59,15 @@ export function updateSessionInfo({
         loadingChained: loadingChained,
         callback: (response) => {
 
-            var previousSession = currentSession || {};
             setSessionInfo(response);
 
-            if (!isLocationPublic(currentLocationPath())
-                && (!isAuthenticated() || (currentSession.email !== previousSession.email))) {
-                reset();
-                return;
-            }
+            if (isAuthenticated()) authenticatedOnce = true;
 
-            if (callback) callback();
+            if (isLocationPublic(currentLocationPath()) || isAuthenticated()) {
+                if (callback) callback();
+            } else {
+                startWorkingWithoutSession(callback);
+            }
 
         }
     });
@@ -56,7 +85,7 @@ export function setSessionInfo(sessionInfo) {
 
         currentSession = {
             authenticated: sessionInfo.authenticated,
-            email: sessionInfo.email
+            email: sessionInfo.email || (currentSession ? currentSession.email : null)
         };
 
     } else {
@@ -72,7 +101,8 @@ export function setSessionInfo(sessionInfo) {
  */
 export function isAuthenticated() {
 
-    return Boolean(currentSession)
+    return Boolean(currentSessionId)
+        && Boolean(currentSession)
         && currentSession.authenticated
         && areSessionKeysGenerated();
 
@@ -80,7 +110,7 @@ export function isAuthenticated() {
 
 /**
  * @param {boolean} [obfuscate] Boolean indicating if the email must be returned obfuscated.
- * @returns {string} Indicates the current session email, in case it is authenticated, or null otherwise.
+ * @returns {string} The current session email, in case it is authenticated, or null otherwise.
  */
 export function sessionEmail(obfuscate = false) {
 
@@ -98,9 +128,54 @@ export function sessionEmail(obfuscate = false) {
 }
 
 /**
+ * Asks the user if he would like to start working without session.
+ *
+ * @param {function} callback Invoked if the user says yes.
+ */
+export function startWorkingWithoutSession(callback) {
+
+    if (!authenticatedOnce) reset();
+
+    if (!currentlyWorkingWithoutSession) {
+
+        modalConfirmation(
+            t('session.title-session-expired'),
+            t('session.body-session-expired'),
+            () => {
+                currentlyWorkingWithoutSession = true;
+                if (callback) callback();
+            },
+            reset,
+            true);
+
+    } else {
+
+        modalMessage(
+            t('session.title-working-without-session'),
+            t('session.body-working-without-session'),
+            () => {
+                if (callback) callback();
+            });
+
+    }
+
+}
+
+/**
+ * @returns {boolean} If the app is currently working without session.
+ */
+export function workingWithoutSession() {
+
+    return currentlyWorkingWithoutSession;
+
+}
+
+/**
  * Terminates the current session.
  */
 export function logout() {
+
+    if (workingWithoutSession()) reset();
 
     rest({
         method: 'post',

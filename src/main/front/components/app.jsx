@@ -34,6 +34,7 @@ class App extends Component {
         modalConfirmationBody: '',
         modalConfirmationYesCallback: null,
         modalConfirmationNoCallback: null,
+        modalConfirmationLock: false,
         checkKeysModalOpen: false,
         checkKeysEmail: '',
         checkKeysEncryptionPublicKey: '',
@@ -75,7 +76,7 @@ class App extends Component {
                     <ModalBody>{this.state.modalMessageBody}</ModalBody>
                 </Modal>
 
-                <Modal isOpen={this.state.modalConfirmationActive} toggle={() => { closeModalConfirmation('no') }}>
+                <Modal isOpen={this.state.modalConfirmationActive} toggle={() => { if (!this.state.modalConfirmationLock) closeModalConfirmation('no') }}>
                     <ModalHeader>{this.state.modalConfirmationHeader}</ModalHeader>
                     <ModalBody>{this.state.modalConfirmationBody}</ModalBody>
                     <ModalFooter>

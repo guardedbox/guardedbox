@@ -10,7 +10,7 @@ import { modalMessage } from 'services/modal.jsx';
 import { copyToClipboard } from 'services/selector.jsx';
 import properties from 'constants/properties.json';
 
-class MySecrets extends Component {
+class MyAccount extends Component {
 
     state = {
         email: '',
@@ -162,4 +162,4 @@ class MySecrets extends Component {
 
 }
 
-export default MySecrets;
+export default MyAccount;

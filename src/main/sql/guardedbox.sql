@@ -124,7 +124,7 @@ CREATE TABLE `secret` (
 -- Table structure for table `session`
 --
 
-DROP TABLE IF EXISTS `session`;
+DROP TABLE IF EXISTS `spring_session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `session` (
@@ -146,7 +146,7 @@ CREATE TABLE `session` (
 -- Table structure for table `session_attributes`
 --
 
-DROP TABLE IF EXISTS `session_attributes`;
+DROP TABLE IF EXISTS `spring_session_attributes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `session_attributes` (

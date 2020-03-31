@@ -31,6 +31,11 @@
     border-radius: .2rem;
 }
 
+.footer {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
 /*
  * Custom Defaults.
  */

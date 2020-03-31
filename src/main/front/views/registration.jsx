@@ -232,6 +232,7 @@ class Registration extends Component {
 
         return (
             <Container>
+
                 <Row>
 
                     {/* Left part */}
@@ -239,9 +240,7 @@ class Registration extends Component {
                         <div className="text-center" style={{ marginBottom: '2.5em' }}>
                             <h1>{t('global.app-name')}</h1>
                             <img src={logo} style={{ marginTop: '5em', marginBottom: '5em' }} />
-                            <h6>{t('global.copyright-slogan')}</h6>
-                            <h6>{t('global.copyright-reference')}</h6>
-                            <h6>{t('global.copyright')}</h6>
+                            <h6>{t('global.slogan')}</h6>
                         </div>
                     </Col>
 
@@ -331,7 +330,16 @@ class Registration extends Component {
                     </Col>
 
                 </Row>
-            </Container >
+
+                <footer className="footer">
+                    <Container className="text-center">
+                        <h6 className="text-muted">{t('global.doc-reference')}</h6>
+                        <h6 className="text-muted">{t('global.legal-notice')}</h6>
+                        <h6 className="text-muted">{t('global.copyright')}</h6>
+                    </Container>
+                </footer>
+
+            </Container>
         );
 
     }

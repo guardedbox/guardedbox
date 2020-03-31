@@ -304,6 +304,7 @@ class App extends Component {
                         </InputGroup>
                     </ModalBody>
                 </Modal>
+
             </div>
         );
 

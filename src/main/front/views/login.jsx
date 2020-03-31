@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, InputGroup, Button, Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, InputGroup, Button, Popover, PopoverHeader, PopoverBody, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
 import { Eye, Key } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import logo from 'images/logo.png';
@@ -22,7 +22,7 @@ class Login extends Component {
         getCodePopoverActive: false,
         loginFailedPopoverActive: false,
         registerEmail: '',
-        registerPopoverActive: false
+        privacyModalActive: false
     };
 
     txtEmail = React.createRef();
@@ -209,6 +209,7 @@ class Login extends Component {
 
         return (
             <Container>
+
                 <Row>
 
                     {/* Left part */}
@@ -216,9 +217,7 @@ class Login extends Component {
                         <div className="text-center" style={{ marginBottom: '2.5em' }}>
                             <h1>{t('global.app-name')}</h1>
                             <img src={logo} style={{ marginTop: '5em', marginBottom: '5em' }} />
-                            <h6>{t('global.copyright-slogan')}</h6>
-                            <h6>{t('global.copyright-reference')}</h6>
-                            <h6>{t('global.copyright')}</h6>
+                            <h6>{t('global.slogan')}</h6>
                         </div>
                     </Col>
 
@@ -294,7 +293,7 @@ class Login extends Component {
 
                             {/* Register */}
                             <h4 style={{ marginTop: '2.75rem' }}>{t('login.title-register')}</h4><hr />
-                            <Form onSubmit={(e) => { e.preventDefault(); this.register(); }}>
+                            <Form onSubmit={(e) => { e.preventDefault(); this.setState({ privacyModalActive: true }) }}>
                                 <FormGroup>
                                     <Input
                                         type="email"
@@ -315,7 +314,61 @@ class Login extends Component {
                     </Col>
 
                 </Row>
-            </Container >
+
+                {/* Privacy modal */}
+                <Modal isOpen={this.state.privacyModalActive} toggle={() => { this.setState({ privacyModalActive: false }) }}>
+                    <ModalHeader>{t('login.privacy-modal-title')}</ModalHeader>
+                    <ModalBody>
+                        <div>{t('login.privacy-modal-p1')}</div>
+                        <Table size="sm" striped style={{ marginTop: '1rem' }}>
+                            <tbody>
+                                <tr>
+                                    <td style={{ width: '40%' }}>{t('login.privacy-modal-row1-col1')}</td>
+                                    <td style={{ width: '60%' }}>{t('login.privacy-modal-row1-col2')}</td>
+                                </tr>
+                                <tr>
+                                    <td style={{ width: '40%' }}>{t('login.privacy-modal-row2-col1')}</td>
+                                    <td style={{ width: '60%' }}>{t('login.privacy-modal-row2-col2')}</td>
+                                </tr>
+                                <tr>
+                                    <td style={{ width: '40%' }}>{t('login.privacy-modal-row3-col1')}</td>
+                                    <td style={{ width: '60%' }}>{t('login.privacy-modal-row3-col2')}</td>
+                                </tr>
+                                <tr>
+                                    <td style={{ width: '40%' }}>{t('login.privacy-modal-row4-col1')}</td>
+                                    <td style={{ width: '60%' }}>{t('login.privacy-modal-row4-col2')}</td>
+                                </tr>
+                                <tr>
+                                    <td style={{ width: '40%' }}>{t('login.privacy-modal-row5-col1')}</td>
+                                    <td style={{ width: '60%' }}>{t('login.privacy-modal-row5-col2')}</td>
+                                </tr>
+                                <tr>
+                                    <td style={{ width: '40%' }}>{t('login.privacy-modal-row6-col1')}</td>
+                                    <td style={{ width: '60%' }}>{t('login.privacy-modal-row6-col2')}</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                        <div>{t('login.privacy-modal-p2')}</div>
+                        <div style={{ marginTop: '1rem' }}>{t('login.privacy-modal-p3')}</div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={() => {
+                            this.setState({ privacyModalActive: false }, () => { this.register() });
+                        }}>{t('global.yes')}</Button>
+                        <Button color="secondary" onClick={() => { this.setState({ privacyModalActive: false }) }}>{t('global.no')}</Button>
+                    </ModalFooter>
+                </Modal>
+
+                {/* Footer */}
+                <footer className="footer">
+                    <Container className="text-center">
+                        <h6 className="text-muted">{t('global.doc-reference')}</h6>
+                        <h6 className="text-muted">{t('global.legal-notice')}</h6>
+                        <h6 className="text-muted">{t('global.copyright')}</h6>
+                    </Container>
+                </footer>
+
+            </Container>
         );
 
     }

@@ -22,6 +22,6 @@ export function t(key, replacements) {
  */
 export function currentLanguage() {
 
-    return app().props.i18n.language.split('-')[0];
+    return app().props.i18n.language.split(/\W/)[0];
 
 }

@@ -1,4 +1,4 @@
-import { getViewComponent } from 'services/view-components.jsx';
+import { app } from 'services/views.jsx';
 
 /**
  * @param {string} key A translation key.
@@ -7,7 +7,7 @@ import { getViewComponent } from 'services/view-components.jsx';
  */
 export function t(key, replacements) {
 
-    var translation = getViewComponent('app').props.t(key);
+    var translation = app().props.t(key);
 
     for (var replacement in replacements) {
         translation = translation.replace(new RegExp('{' + replacement + '}', 'gi'), replacements[replacement]);
@@ -22,6 +22,6 @@ export function t(key, replacements) {
  */
 export function currentLanguage() {
 
-    return getViewComponent('app').props.i18n.language.split('-')[0];
+    return app().props.i18n.language.split('-')[0];
 
 }

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Container, Button, Form, FormGroup, Input, InputGroup, UncontrolledTooltip, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Octicon, { File } from '@primer/octicons-react'
-import { registerViewComponent, getViewComponent } from 'services/view-components.jsx';
+import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
 import { sessionEmail, reset } from 'services/session.jsx';
 import { getEncryptionPublicKey, getSigningPublicKey } from 'services/crypto/crypto.jsx';
-import { modalMessage } from 'services/modal.jsx';
+import { messageModal } from 'services/modal.jsx';
 import { copyToClipboard } from 'services/selector.jsx';
 import properties from 'constants/properties.json';
 
@@ -25,17 +25,24 @@ class MyAccount extends Component {
     constructor(props) {
 
         super(props);
-        registerViewComponent('myAccount', this);
+        registerView('myAccount', this);
 
     }
 
     handleLocationChange = () => {
 
-        this.setState({
-            email: sessionEmail(),
-            encryptionPublicKey: getEncryptionPublicKey('hex'),
-            signingPublicKey: getSigningPublicKey('hex')
-        });
+        try {
+
+            this.setState({
+                email: sessionEmail(),
+                encryptionPublicKey: getEncryptionPublicKey('hex'),
+                signingPublicKey: getSigningPublicKey('hex')
+            });
+
+        } catch (err) {
+            messageModal(t('global.error'), t('global.error-occurred'));
+            return;
+        }
 
     }
 
@@ -63,7 +70,7 @@ class MyAccount extends Component {
     deleteAccount = () => {
 
         if (this.state.deleteAccountEmail !== this.state.email) {
-            modalMessage(t('global.error'), t('my-account.incorrect-introduced-mail'), this.closeDeleteAccountModal);
+            messageModal(t('global.error'), t('my-account.incorrect-introduced-mail'), this.closeDeleteAccountModal);
             return;
         }
 
@@ -72,7 +79,7 @@ class MyAccount extends Component {
             url: '/api/accounts',
             callback: (response) => {
 
-                modalMessage(t('my-account.title-account-deleted'), t('my-account.account-deleted'), reset);
+                messageModal(t('my-account.title-account-deleted'), t('my-account.account-deleted'), reset);
 
             }
         });

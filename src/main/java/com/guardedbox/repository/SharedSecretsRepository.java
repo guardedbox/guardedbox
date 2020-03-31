@@ -29,17 +29,16 @@ public interface SharedSecretsRepository
 
     /**
      * @param accountId Account.accountId.
-     * @return The List of SharedSecretEntity corresponding to the introduced receiver accountId, ordered by owner Account.email and Secret.name.
+     * @return The List of SharedSecretEntity corresponding to the introduced receiver accountId.
      */
-    List<SharedSecretEntity> findByReceiverAccountAccountIdOrderBySecretOwnerAccountEmailAscSecretNameAsc(
+    List<SharedSecretEntity> findByReceiverAccountAccountId(
             UUID accountId);
 
     /**
      * @param accountId Account.accountId.
-     * @return The List of SharedSecretEntity corresponding to Secrets corresponding to the introduced owner accountId, ordered by owner Account.email
-     *         and Secret.name.
+     * @return The List of SharedSecretEntity corresponding to Secrets corresponding to the introduced owner accountId.
      */
-    List<SharedSecretEntity> findBySecretOwnerAccountAccountIdOrderBySecretOwnerAccountEmailAscSecretNameAsc(
+    List<SharedSecretEntity> findBySecretOwnerAccountAccountId(
             UUID accountId);
 
 }

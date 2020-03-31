@@ -10,7 +10,9 @@
     },
     "secrets": {
         "secretNameMaxLength": 100,
+        "secretKeyMaxLength": 100,
         "secretValueMaxLength": 4000,
+        "secretMaxKeyValuePairs": 10,
         "secretStrengthMaxLength": 40,
         "randomSecretCharset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
         "showSecretTime": 2500
@@ -28,7 +30,7 @@
             "ecdhCurve": "curve25519",
             "eddsaCurve": "ed25519",
             "pbkdf2Hash": "sha256",
-            "pbkdf2Iterations": 10000
+            "pbkdf2Iterations": 2
         },
         "aes": {
             "mode": "aes-256-gcm",

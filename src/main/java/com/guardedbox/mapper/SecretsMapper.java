@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.guardedbox.dto.CreateSecretDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.entity.SecretEntity;
+import com.guardedbox.entity.projection.SecretBaseProjection;
 
 /**
  * Mapper: Secret.
@@ -29,8 +30,36 @@ public class SecretsMapper {
 
         return secretEntity == null ? null : new SecretDto()
                 .setSecretId(secretEntity.getSecretId())
-                .setName(secretEntity.getName())
-                .setValue(secretEntity.getValue());
+                .setValue(secretEntity.getValue())
+                .setEncryptedKey(secretEntity.getEncryptedKey());
+
+    }
+
+    /**
+     * Maps a Secret Projection to DTO.
+     *
+     * @param secretProjection The Secret Projection.
+     * @return The Secret DTO.
+     */
+    public SecretDto toDto(
+            SecretBaseProjection secretProjection) {
+
+        if (secretProjection == null)
+            return null;
+
+        SecretDto secretDto = new SecretDto()
+                .setSecretId(secretProjection.getSecretId())
+                .setValue(secretProjection.getValue());
+
+        if (secretProjection instanceof SecretBaseProjection) {
+
+            return secretDto;
+
+        } else {
+
+            throw new IllegalArgumentException("Type must extend SecretBaseProjection");
+
+        }
 
     }
 
@@ -64,8 +93,8 @@ public class SecretsMapper {
             CreateSecretDto secretDto) {
 
         return secretDto == null ? null : new SecretEntity()
-                .setName(secretDto.getName())
-                .setValue(secretDto.getValue());
+                .setValue(secretDto.getValue())
+                .setEncryptedKey(secretDto.getEncryptedKey());
 
     }
 

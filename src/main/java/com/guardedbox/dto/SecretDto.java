@@ -21,10 +21,10 @@ public class SecretDto
     /** Secret ID. */
     private UUID secretId;
 
-    /** Name. */
-    private String name;
-
     /** Value. */
     private String value;
+
+    /** Encrypted Key. */
+    private String encryptedKey;
 
 }

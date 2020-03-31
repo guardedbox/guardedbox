@@ -2,7 +2,7 @@ import { rest } from 'services/rest.jsx';
 import { currentLocationPath, isLocationPublic } from 'services/location.jsx';
 import { areSessionKeysGenerated } from 'services/crypto/crypto.jsx';
 import { t } from 'services/translation.jsx';
-import { modalConfirmation, modalMessage } from 'services/modal.jsx';
+import { messageModal, confirmationModal } from 'services/modal.jsx';
 import { loading } from 'services/loading.jsx';
 
 var currentSessionId = null;
@@ -138,7 +138,7 @@ export function startWorkingWithoutSession(callback) {
 
     if (!currentlyWorkingWithoutSession) {
 
-        modalConfirmation(
+        confirmationModal(
             t('session.title-session-expired'),
             t('session.body-session-expired'),
             () => {
@@ -150,7 +150,7 @@ export function startWorkingWithoutSession(callback) {
 
     } else {
 
-        modalMessage(
+        messageModal(
             t('session.title-working-without-session'),
             t('session.body-working-without-session'),
             () => {

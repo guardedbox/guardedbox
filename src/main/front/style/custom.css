@@ -23,6 +23,14 @@
     background-color: #c2e0f4;
 }
 
+.btn-group-xs>.btn,
+.btn-xs {
+    padding: .2rem .25rem;
+    font-size: .8rem;
+    line-height: .75;
+    border-radius: .2rem;
+}
+
 /*
  * Custom Defaults.
  */
@@ -65,7 +73,7 @@ input::-webkit-inner-spin-button {
 }
 
 .space-between-icons {
-    width: .35rem;
+    width: .75rem;
     display: inline-block;
 }
 

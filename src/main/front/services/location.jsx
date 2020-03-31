@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import { updateSessionInfo, isAuthenticated } from 'services/session.jsx';
-import { getViewComponent } from 'services/view-components.jsx';
+import { view, app } from 'services/views.jsx';
 import views from 'constants/views.json';
 
 /**
@@ -35,9 +35,9 @@ function handleLocationChange(location) {
 
 function handleLocationChangeToPath(path) {
 
-    for (var view in views.viewPaths) {
-        if (views.viewPaths[view] === path) {
-            var component = getViewComponent(view);
+    for (var viewName in views.viewPaths) {
+        if (views.viewPaths[viewName] === path) {
+            var component = view(viewName);
             if (component && component.handleLocationChange) component.handleLocationChange();
             return;
         }
@@ -96,7 +96,7 @@ export function changeLocation(path) {
 
 function history() {
 
-    return getViewComponent('app').props.history;
+    return app().props.history;
 
 }
 

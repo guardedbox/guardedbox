@@ -1,10 +1,10 @@
-import { getViewComponent } from 'services/view-components.jsx';
+import { app } from 'services/views.jsx';
 
 var loadingActive = 0;
 
 /**
  * Activates the loading state.
- * 
+ *
  * @param {function} [callback] This function will be passed to the app setState callback.
  */
 export function loading(callback) {
@@ -15,7 +15,7 @@ export function loading(callback) {
 
         document.onkeydown = (e) => { return false; }
 
-        getViewComponent('app').setState({
+        app().setState({
             loading: true
         }, () => {
             document.getElementsByClassName("react-overlay-loader-spinner")[0].parentElement.style.zIndex = 1060;
@@ -28,7 +28,7 @@ export function loading(callback) {
 
 /**
  * Deactivates the loading state.
- * 
+ *
  * @param {function} [callback] This function will be passed to the app setState callback.
  */
 export function notLoading(callback) {
@@ -41,7 +41,7 @@ export function notLoading(callback) {
 
             document.onkeydown = null;
 
-            getViewComponent('app').setState({
+            app().setState({
                 loading: false
             }, () => {
                 if (callback) setTimeout(callback, 50);
@@ -55,7 +55,7 @@ export function notLoading(callback) {
 
 /**
  * Activates the loading state for some time, and then deactivates it.
- * 
+ *
  * @param {number} loadingTime The time the loading state will remain active.
  * @param {function} [loadingCallback] This function will be executed when the loading state is activated.
  * @param {function} [notLoadingCallback] This function will be executed when the loading state is deactivated.
@@ -71,5 +71,14 @@ export function temporaryLoading(loadingTime, loadingCallback, notLoadingCallbac
         if (loadingCallback) loadingCallback();
 
     });
+
+}
+
+/**
+ * @returns {boolean} True if the loading state is currently active.
+ */
+export function currentlyLoading() {
+
+    return loadingActive > 0;
 
 }

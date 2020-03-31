@@ -2,7 +2,7 @@ import { loading as loadingF, notLoading as notLoadingF } from 'services/loading
 import { currentLanguage } from 'services/translation.jsx';
 import { setSesionId, sessionId, workingWithoutSession, startWorkingWithoutSession, reset } from 'services/session.jsx';
 import { t } from 'services/translation.jsx';
-import { modalMessage } from 'services/modal.jsx';
+import { messageModal } from 'services/modal.jsx';
 import properties from 'constants/properties.json';
 
 /**
@@ -95,7 +95,7 @@ function processSuccess(callback, serviceExceptionCallback, response) {
             if (serviceExceptionCallback) {
                 serviceExceptionCallback(responseJson);
             } else {
-                modalMessage(t('global.error'), t(responseJson.errorCode || 'global.error-occurred', responseJson.additionalData));
+                messageModal(t('global.error'), t(responseJson.errorCode || 'global.error-occurred', responseJson.additionalData));
             }
         });
 
@@ -109,7 +109,7 @@ function processSuccess(callback, serviceExceptionCallback, response) {
 
     } else {
 
-        modalMessage(t('global.error'), t('global.error-occurred'), reset);
+        messageModal(t('global.error'), t('global.error-occurred'), reset);
 
     }
 
@@ -117,6 +117,6 @@ function processSuccess(callback, serviceExceptionCallback, response) {
 
 function processError(error) {
 
-    modalMessage(t('global.error'), t('global.error-occurred'), reset);
+    messageModal(t('global.error'), t('global.error-occurred'), reset);
 
 }

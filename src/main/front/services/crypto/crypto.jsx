@@ -3,8 +3,6 @@ import { pbkdf2 } from 'services/crypto/hash.jsx';
 import { generateEcdhKeyPair, generateEddsaKeyPair } from 'services/crypto/ecc.jsx';
 import { aesEncrypt, aesDecrypt } from 'services/crypto/aes.jsx';
 import { randomBytes } from 'services/crypto/random.jsx';
-import { t } from 'services/translation.jsx';
-import { modalMessage } from 'services/modal.jsx';
 import properties from 'constants/properties.json';
 
 var loginKeys = {
@@ -14,7 +12,7 @@ var loginKeys = {
 var currentSessionKeys = {
     ecdhKeyPair: null,
     eddsaKeyPair: null,
-    selfSecret: null
+    selfKey: null
 };
 
 /**
@@ -29,26 +27,20 @@ export function generateLoginKeys(password, loginSalt, passwordFormat = 'utf8', 
 
     deleteLoginKeys();
 
-    try {
+    var eddsaKeyPair = generateEddsaKeyPair({
+        curve: properties.cryptography.ecc.eddsaCurve,
+        privateKey: pbkdf2({
+            algorithm: properties.cryptography.ecc.pbkdf2Hash,
+            iterations: properties.cryptography.ecc.pbkdf2Iterations,
+            password: password,
+            passwordFormat: passwordFormat,
+            salt: loginSalt,
+            saltFormat: loginSaltFormat,
+            outputLength: properties.cryptography.length
+        })
+    });
 
-        var eddsaKeyPair = generateEddsaKeyPair({
-            curve: properties.cryptography.ecc.eddsaCurve,
-            privateKey: pbkdf2({
-                algorithm: properties.cryptography.ecc.pbkdf2Hash,
-                iterations: properties.cryptography.ecc.pbkdf2Iterations,
-                password: password,
-                passwordFormat: passwordFormat,
-                salt: loginSalt,
-                saltFormat: loginSaltFormat,
-                outputLength: properties.cryptography.length
-            })
-        });
-
-        loginKeys.eddsaKeyPair = eddsaKeyPair;
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-    }
+    loginKeys.eddsaKeyPair = eddsaKeyPair;
 
 }
 
@@ -73,20 +65,13 @@ export function deleteLoginKeys() {
 
 /**
  * @param {string} [outputFormat] The format of the output login public key. Default: base64.
- * @returns {string} The login public key.
+ * @returns {(Uint8Array|string)} The login public key.
  */
 export function getLoginPublicKey(outputFormat = 'base64') {
 
-    if (!areLoginKeysGenerated()) return '';
+    if (!areLoginKeysGenerated()) throw 'login-keys-not-generated';
 
-    try {
-
-        return loginKeys.eddsaKeyPair.getPublicKey(outputFormat);
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-        return '';
-    }
+    return loginKeys.eddsaKeyPair.getPublicKey(outputFormat);
 
 }
 
@@ -105,43 +90,37 @@ export function generateSessionKeys(password, encryptionSalt, signingSalt,
 
     deleteSessionKeys();
 
-    try {
+    var ecdhKeyPair = generateEcdhKeyPair({
+        curve: properties.cryptography.ecc.ecdhCurve,
+        privateKey: pbkdf2({
+            algorithm: properties.cryptography.ecc.pbkdf2Hash,
+            iterations: properties.cryptography.ecc.pbkdf2Iterations,
+            password: password,
+            passwordFormat: passwordFormat,
+            salt: encryptionSalt,
+            saltFormat: encryptionSaltFormat,
+            outputLength: properties.cryptography.length
+        })
+    });
 
-        var ecdhKeyPair = generateEcdhKeyPair({
-            curve: properties.cryptography.ecc.ecdhCurve,
-            privateKey: pbkdf2({
-                algorithm: properties.cryptography.ecc.pbkdf2Hash,
-                iterations: properties.cryptography.ecc.pbkdf2Iterations,
-                password: password,
-                passwordFormat: passwordFormat,
-                salt: encryptionSalt,
-                saltFormat: encryptionSaltFormat,
-                outputLength: properties.cryptography.length
-            })
-        });
+    var eddsaKeyPair = generateEddsaKeyPair({
+        curve: properties.cryptography.ecc.eddsaCurve,
+        privateKey: pbkdf2({
+            algorithm: properties.cryptography.ecc.pbkdf2Hash,
+            iterations: properties.cryptography.ecc.pbkdf2Iterations,
+            password: password,
+            passwordFormat: passwordFormat,
+            salt: signingSalt,
+            saltFormat: signingSaltFormat,
+            outputLength: properties.cryptography.length
+        })
+    });
 
-        var eddsaKeyPair = generateEddsaKeyPair({
-            curve: properties.cryptography.ecc.eddsaCurve,
-            privateKey: pbkdf2({
-                algorithm: properties.cryptography.ecc.pbkdf2Hash,
-                iterations: properties.cryptography.ecc.pbkdf2Iterations,
-                password: password,
-                passwordFormat: passwordFormat,
-                salt: signingSalt,
-                saltFormat: signingSaltFormat,
-                outputLength: properties.cryptography.length
-            })
-        });
+    var selfKey = ecdhKeyPair.computeSecret({ publicKey: ecdhKeyPair.getPublicKey() });
 
-        var selfSecret = ecdhKeyPair.computeSecret({ publicKey: ecdhKeyPair.getPublicKey() });
-
-        currentSessionKeys.ecdhKeyPair = ecdhKeyPair;
-        currentSessionKeys.eddsaKeyPair = eddsaKeyPair;
-        currentSessionKeys.selfSecret = selfSecret;
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-    }
+    currentSessionKeys.ecdhKeyPair = ecdhKeyPair;
+    currentSessionKeys.eddsaKeyPair = eddsaKeyPair;
+    currentSessionKeys.selfKey = selfKey;
 
 }
 
@@ -153,7 +132,7 @@ export function areSessionKeysGenerated() {
     return Boolean(currentSessionKeys)
         && Boolean(currentSessionKeys.ecdhKeyPair)
         && Boolean(currentSessionKeys.eddsaKeyPair)
-        && Boolean(currentSessionKeys.selfSecret);
+        && Boolean(currentSessionKeys.selfKey);
 
 }
 
@@ -162,7 +141,7 @@ export function areSessionKeysGenerated() {
  */
 export function deleteSessionKeys() {
 
-    currentSessionKeys.selfSecret = null;
+    currentSessionKeys.selfKey = null;
     currentSessionKeys.ecdhKeyPair = null;
     currentSessionKeys.eddsaKeyPair = null;
 
@@ -170,39 +149,53 @@ export function deleteSessionKeys() {
 
 /**
  * @param {string} [outputFormat] The format of the output encryption public key. Default: base64.
- * @returns {string} The current session encryption public key.
+ * @returns {(Uint8Array|string)} The current session encryption public key.
  */
 export function getEncryptionPublicKey(outputFormat = 'base64') {
 
-    if (!areSessionKeysGenerated()) return '';
+    if (!areSessionKeysGenerated()) throw 'session-keys-not-generated';
 
-    try {
-
-        return currentSessionKeys.ecdhKeyPair.getPublicKey(outputFormat);
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-        return '';
-    }
+    return currentSessionKeys.ecdhKeyPair.getPublicKey(outputFormat);
 
 }
 
 /**
  * @param {string} [outputFormat] The format of the output signing public key. Default: base64.
- * @returns {string} The current session signing public key.
+ * @returns {(Uint8Array|string)} The current session signing public key.
  */
 export function getSigningPublicKey(outputFormat = 'base64') {
 
-    if (!areSessionKeysGenerated()) return '';
+    if (!areSessionKeysGenerated()) throw 'session-keys-not-generated';
 
-    try {
+    return currentSessionKeys.eddsaKeyPair.getPublicKey(outputFormat);
 
-        return currentSessionKeys.eddsaKeyPair.getPublicKey(outputFormat);
+}
 
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-        return '';
+/**
+ * @param {string} [outputFormat] The format of the output symmetric key. Default: base64.
+ * @returns {(Uint8Array|string)} A randomly generated symmetric key.
+ */
+export function generateRandomSymmetricKey(outputFormat = 'base64') {
+
+    return randomBytes(properties.cryptography.length, outputFormat);
+
+}
+
+/**
+ * @param {(Uint8Array|string)} [publicKey] A public key.
+ * @param {string} [publicKeyFormat] The format of the public key, in case it is a string. Default: base64.
+ * @param {string} [outputFormat] The format of the symmetric key. Default: base64.
+ * @returns {(Uint8Array|string)} The symmetric key corresponding to the Diffie-Hellman between the current session encryption private key and the introduced public key, or the current session self-key if no public key is introduced.
+ */
+export function getSymmetricKey(publicKey, publicKeyFormat = 'base64', outputFormat = 'base64') {
+
+    if (publicKey) {
+        var key = currentSessionKeys.ecdhKeyPair.computeSecret({ publicKey: publicKey, publicKeyFormat: publicKeyFormat });
+    } else {
+        var key = currentSessionKeys.selfKey;
     }
+
+    return outputFormat ? key.toString(outputFormat) : key;
 
 }
 
@@ -210,97 +203,38 @@ export function getSigningPublicKey(outputFormat = 'base64') {
  * Encrypts a message.
  *
  * @param {(Uint8Array|string)} plainText The message to encrypt.
- * @param {string} [publicKey] If not introduced, the current session self secret is used to encrypt. If introduced, a secret is computed using the current session ECDH private key.
+ * @param {(Uint8Array|string)} symmetricKey A symmetric key.
  * @param {string} [plainTextFormat] The format of the message to encrypt, in case it is a string. Default: utf8.
- * @param {string} [publicKeyFormat] The format of the public key, in case it is a string. Default: base64.
+ * @param {string} [keyFormat] The format of the symmetric key, in case it is a string. Default: base64.
  * @param {string} [outputFormat] The format of the output encrypted message. Default: base64.
- * @returns {string} The encrypted message.
+ * @returns {(Uint8Array|string)} The encrypted message.
  */
-export function encrypt(plainText, publicKey, plainTextFormat = 'utf8', publicKeyFormat = 'base64', outputFormat = 'base64') {
+export function encrypt(plainText, symmetricKey, plainTextFormat = 'utf8', keyFormat = 'base64', outputFormat = 'base64') {
 
-    try {
+    var iv = randomBytes(properties.cryptography.aes.ivLength);
+    var encryptedMessage = aesEncrypt({ mode: properties.cryptography.aes.mode, input: plainText, inputFormat: plainTextFormat, key: symmetricKey, keyFormat: keyFormat, iv: iv });
+    var cipherText = concatenate(iv, encryptedMessage);
 
-        if (publicKey == null) {
-            var key = currentSessionKeys.selfSecret;
-        } else {
-            var key = currentSessionKeys.ecdhKeyPair.computeSecret({ publicKey: publicKey, publicKeyFormat: publicKeyFormat });
-        }
-
-        var iv = randomBytes(properties.cryptography.aes.ivLength);
-        var encryptedMessage = aesEncrypt({ mode: properties.cryptography.aes.mode, input: plainText, inputFormat: plainTextFormat, key: key, iv: iv });
-        var cipherText = concatenate(iv, encryptedMessage);
-
-        return outputFormat ? cipherText.toString(outputFormat) : cipherText;
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-        return '';
-    }
+    return outputFormat ? cipherText.toString(outputFormat) : cipherText;
 
 }
 
 /**
- * Decrypts an encrypted message.
+ * Decrypts a message.
  *
- * @param {string} cipherText The encrypted message to decrypt.
- * @param {string} [publicKey] If not introduced, the current session self secret is used to decrypt. If introduced, a secret is computed using the current session ECDH private key.
- * @param {string} [cipherTextFormat] The format of the encrypted message to decrypt, in case it is a string. Default: base64.
- * @param {string} [publicKeyFormat] The format of the public key, in case it is a string. Default: base64.
+ * @param {(Uint8Array|string)} cipherText The message to decrypt.
+ * @param {(Uint8Array|string)} symmetricKey A symmetric key.
+ * @param {string} [cipherTextFormat] The format of the message to decrypt, in case it is a string. Default: base64.
+ * @param {string} [keyFormat] The format of the symmetric key, in case it is a string. Default: base64.
  * @param {string} [outputFormat] The format of the output decrypted message. Default: utf8.
  * @returns {(Uint8Array|string)} The decrypted message.
  */
-export function decrypt(cipherText, publicKey, cipherTextFormat = 'base64', publicKeyFormat = 'base64', outputFormat = 'utf8') {
+export function decrypt(cipherText, symmetricKey, cipherTextFormat = 'base64', keyFormat = 'base64', outputFormat = 'utf8') {
 
-    try {
+    var [iv, encryptedMessage] = split(Uint8Array(cipherText, cipherTextFormat), properties.cryptography.aes.ivLength);
+    var plainText = aesDecrypt({ mode: properties.cryptography.aes.mode, input: encryptedMessage, key: symmetricKey, keyFormat: keyFormat, iv: iv });
 
-        if (publicKey == null) {
-            var key = currentSessionKeys.selfSecret;
-        } else {
-            var key = currentSessionKeys.ecdhKeyPair.computeSecret({ publicKey: publicKey, publicKeyFormat: publicKeyFormat });
-        }
-
-        var [iv, encryptedMessage] = split(Uint8Array(cipherText, cipherTextFormat), properties.cryptography.aes.ivLength);
-        var plainText = aesDecrypt({ mode: properties.cryptography.aes.mode, input: encryptedMessage, key: key, iv: iv });
-
-        return outputFormat ? plainText.toString(outputFormat) : plainText;
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-        return '';
-    }
-
-}
-
-export function encryptSymmetric(plainText, symmetricKey, plainTextFormat = 'utf8', symmetricKeyFormat = 'base64', outputFormat = 'base64') {
-
-    try {
-
-        var iv = randomBytes(properties.cryptography.aes.ivLength);
-        var encryptedMessage = aesEncrypt({ mode: properties.cryptography.aes.mode, input: plainText, inputFormat: plainTextFormat, key: symmetricKey, keyFormat: symmetricKeyFormat, iv: iv });
-        var cipherText = concatenate(iv, encryptedMessage);
-
-        return outputFormat ? cipherText.toString(outputFormat) : cipherText;
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-        return '';
-    }
-
-}
-
-export function decryptSymmetric(cipherText, symmetricKey, cipherTextFormat = 'base64', symmetricKeyFormat = 'base64', outputFormat = 'utf8') {
-
-    try {
-
-        var [iv, encryptedMessage] = split(Uint8Array(cipherText, cipherTextFormat), properties.cryptography.aes.ivLength);
-        var plainText = aesDecrypt({ mode: properties.cryptography.aes.mode, input: encryptedMessage, key: symmetricKey, keyFormat: symmetricKeyFormat, iv: iv });
-
-        return outputFormat ? plainText.toString(outputFormat) : plainText;
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-        return '';
-    }
+    return outputFormat ? plainText.toString(outputFormat) : plainText;
 
 }
 
@@ -315,15 +249,9 @@ export function decryptSymmetric(cipherText, symmetricKey, cipherTextFormat = 'b
  */
 export function sign(plainText, login, plainTextFormat = 'utf8', outputFormat = 'base64') {
 
-    try {
 
-        var eddsaKeyPair = login ? loginKeys.eddsaKeyPair : currentSessionKeys.eddsaKeyPair;
+    var eddsaKeyPair = login ? loginKeys.eddsaKeyPair : currentSessionKeys.eddsaKeyPair;
 
-        return eddsaKeyPair.sign({ input: plainText, inputFormat: plainTextFormat, outputFormat: outputFormat });
-
-    } catch (err) {
-        modalMessage(t('global.error'), t('global.error-occurred'));
-        return '';
-    }
+    return eddsaKeyPair.sign({ input: plainText, inputFormat: plainTextFormat, outputFormat: outputFormat });
 
 }

@@ -132,28 +132,28 @@ public interface AccountsRepository
         if (entity == null)
             return null;
 
-        AccountsRepository accountsRepository = SpringContext.getAccountsRepository();
-        UUID accountId = entity.getAccountId();
+        AccountsRepository repository = SpringContext.getAccountsRepository();
+        UUID id = entity.getAccountId();
 
         if (AccountLoginSaltProjection.class.equals(type)) {
 
-            return type.cast(accountsRepository.findLoginSaltByAccountId(accountId));
+            return type.cast(repository.findLoginSaltByAccountId(id));
 
         } else if (AccountLoginPublicKeyProjection.class.equals(type)) {
 
-            return type.cast(accountsRepository.findLoginPublicKeyByAccountId(accountId));
+            return type.cast(repository.findLoginPublicKeyByAccountId(id));
 
         } else if (AccountPublicKeysSaltsProjection.class.equals(type)) {
 
-            return type.cast(accountsRepository.findPublicKeysSaltsByAccountId(accountId));
+            return type.cast(repository.findPublicKeysSaltsByAccountId(id));
 
         } else if (AccountPublicKeysProjection.class.equals(type)) {
 
-            return type.cast(accountsRepository.findPublicKeysByAccountId(accountId));
+            return type.cast(repository.findPublicKeysByAccountId(id));
 
         } else if (AccountBaseProjection.class.equals(type)) {
 
-            return type.cast(accountsRepository.findBaseByAccountId(accountId));
+            return type.cast(repository.findBaseByAccountId(id));
 
         } else {
 

@@ -133,7 +133,6 @@ public class GroupsService {
         for (GroupSecretEntity groupSecret : group.getSecrets()) {
             SecretDto secret = new SecretDto()
                     .setSecretId(groupSecret.getGroupSecretId())
-                    .setName(groupSecret.getName())
                     .setValue(groupSecret.getValue());
             secrets.add(secret);
         }
@@ -202,7 +201,6 @@ public class GroupsService {
 
         SecretDto secret = new SecretDto()
                 .setSecretId(groupSecret.getGroupSecretId())
-                .setName(groupSecret.getName())
                 .setValue(groupSecret.getValue());
         return secret;
 

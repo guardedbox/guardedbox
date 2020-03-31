@@ -29,24 +29,31 @@
         "logout": "Log out",
         "owner": "Owner",
         "name": "Name",
+        "key": "Property",
+        "keys": "Properties",
         "value": "Value",
+        "values": "Valores",
         "length": "Length",
         "strength": "Strength",
-        "copyright": "GuardedBox documentation is available at \"guardedbox.eu\""
+        "copyright-slogan": "Online client-side manager for secure storage and secrets sharing.",
+        "copyright-reference": "GuardedBox documentation is available at \"guardedbox.eu\".",
+        "copyright": "Copyright (C) 2020 Dino Security S.L. All rights reserved."
     },
     "session": {
-        "title-session-expired": "Your session expired",
-        "body-session-expired": "Would you like to keep working without session? If you choose 'No', you will be redirected to the login page.",
-        "title-working-without-session": "You are working without session",
-        "body-working-without-session": "You cannot perform any operation"
+        "title-session-expired": "Your session has expired.",
+        "body-session-expired": "Would you like to keep working without a session? If you choose 'No', you will be redirected to the login page.",
+        "title-working-without-session": "You are working without a session.",
+        "body-working-without-session": "You cannot perform any modification or data update."
     },
     "login": {
         "title-login": "Log in",
         "btn-get-code": "Get access code",
+        "popover-get-code-title": "Access code submitted",
         "popover-get-code": "If your credentials are correct, you will receive an email with your login code within the next 2 minutes. Otherwise, check your email and password and try again.",
         "txt-code": "Code",
         "btn-login": "Log in",
-        "popover-login-failed": "One or more of the three credential components is incorrect (email, password or code). Please verify them and try again.",
+        "popover-login-failed-title": "Incorrect credentials",
+        "popover-login-failed": "Any of the three credentials components (email, password or access code) is incorrect. Please, verify all them and try again.",
         "title-register": "Create new account",
         "btn-register": "Register",
         "register-success-modal-title": "Email sent",
@@ -54,13 +61,13 @@
         "register-mail-just-sent": "A registration email was sent to {email} a few minutes ago. Please, follow the instructions in the email to complete the registration process."
     },
     "registration": {
-        "title": "Create an account",
-        "info-password": "Please, choose a very strong password. It must have at least {passwordMinlength} characters. Try to use a passphrase you can remember, rather than a simple password. Your password will be used to encrypt your secrets. If you forget this password, you will not have access to your secrets!. IMPORTANT: The current GuardedBox version doesn't support changing the password.",
+        "title-register": "Create new account",
+        "info-password": "Please, choose a very strong password. It must have at least {passwordMinlength} characters. Try to use a passphrase only you can remember, rather than a simple password. Your password will be used to encrypt your secrets. If you forget this password, you will not have access to your secrets!. IMPORTANT: The current GuardedBox version doesn't support changing the password.",
         "txt-repeat-password": "Repeat password",
-        "btn-register": "Register",
-        "registration-completed": "Your account has been successfully registered.",
-        "registration-token-not-found": "Sorry, the registration link is not valid. Please, start over the registration process again.",
-        "registration-token-expired": "Sorry, the registration link has expired. Please, start over the registration process again.",
+        "btn-register": "Sign up",
+        "registration-completed": "Your account has been successfully created.",
+        "registration-token-not-found": "Sorry, the registration link is not valid. Please, start over the registration process.",
+        "registration-token-expired": "Sorry, the registration link has expired. Please, start over the registration process.",
         "password-insufficient-length": "Your password must have at least {passwordMinLength} characters.",
         "password-insufficient-strength": "Please, choose a stronger password.",
         "passwords-do-not-match": "Passwords do not match."
@@ -69,29 +76,32 @@
         "check-keys": "Check key",
         "encryption-public-key": "Encryption public key",
         "signing-public-key": "Signing public key",
-        "email-already-registered": "Email {email} is already registered in GuardedBox.",
-        "email-not-registered": "Email {email} is not registered in GuardedBox."
+        "email-already-registered": "The email {email} is already registered in GuardedBox.",
+        "email-not-registered": "The email {email} is not registered in GuardedBox."
     },
     "my-account": {
         "title": "My account",
         "title-delete-account": "Delete my account",
-        "delete-account-modal-body": "Your account \"{email}\" will be permanently deleted. All your secrets, shared secrets and groups will be deleted as well. This operation is irreversible! Are you sure?",
-        "introduce-email": "Confirm your e-mail",
-        "incorrect-introduced-mail": "The email you typed is not your email",
-        "title-account-deleted": "Your account has been deleted",
+        "delete-account-modal-body": "Your account \"{email}\" will be permanently deleted from GuardedBox. All your secrets, shared secrets and groups will be deleted as well. This operation is irreversible! Are you sure?",
+        "introduce-email": "Confirm your email",
+        "incorrect-introduced-mail": "The email you typed is not your email.",
+        "title-account-deleted": "Your account has been deleted from GuardedBox.",
         "account-deleted": "Sorry to see you go!"
     },
     "secrets": {
         "title-new-secret": "New secret",
         "title-edit-secret": "Edit secret",
         "title-share-secret": "Share secret",
+        "secret-name": "Secret name",
+        "add-key-value-pair": "Add value",
+        "remove-key-value-pair": "Remove value",
         "generate-random-value": "Generate random value"
     },
     "my-secrets": {
         "title": "My secrets",
         "btn-new-secret": "Add secret",
         "no-secrets": "Your box of secrets is empty!",
-        "delete-secret-modal-body": "The secret \"{secret}\" will be deleted! Are you sure?",
+        "delete-secret-modal-body": "The secret \"{secret}\" will be deleted. Are you sure?",
         "secret-does-not-exist": "The secret does not exist."
     },
     "shared-secrets": {
@@ -104,20 +114,21 @@
     "secrets-shared-with-me": {
         "title": "Secrets shared with me",
         "no-secrets": "There are no secrets shared with you.",
-        "title-from": "From",
+        "title-from": "Shared by",
         "reject-shared-secret-modal-body": "Are you sure you want to reject the shared secret \"{secret}\"?"
     },
     "groups": {
         "title": "Groups",
-        "btn-new-group": "Add group",
+        "btn-new-group": "Create group",
         "title-new-group": "New group",
         "participants": "Participants",
         "secrets": "Secrets",
-        "owned-groups": "Owned groups",
-        "no-owned-groups": "You do not have any groups.",
-        "remove-participant": "Are you sure that you want to remove \"{email}\" from the group \"{group}\"?",
-        "participant-groups": "Groups to which I am invited",
-        "no-participant-groups": "You have not been invited to any group.",
+        "owned-groups": "My groups",
+        "no-owned-groups": "You have not created any group.",
+        "remove-participant": "Are you sure that you want to remove \"{email}\" from the \"{group}\" group?",
+        "remove-secret": "Are you sure that you want to remove the \"{secret}\" secret from the \"{group}\" group?",
+        "participant-groups": "Groups I have been added to",
+        "no-participant-groups": "You have not been added to any group.",
         "delete-group-modal-body": "The group \"{group}\" will be deleted! Are you sure?",
         "group-does-not-exist": "This group no longer exists."
     }

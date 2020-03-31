@@ -12,12 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.CreateSecretDto;
 import com.guardedbox.dto.EditSecretDto;
-import com.guardedbox.dto.EditSecretSharingDto;
 import com.guardedbox.dto.SecretDto;
+import com.guardedbox.dto.ShareSecretDto;
 import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.SecretEntity;
 import com.guardedbox.entity.SharedSecretEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
+import com.guardedbox.entity.projection.SecretBaseProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.SecretsMapper;
 import com.guardedbox.repository.SecretsRepository;
@@ -48,7 +49,7 @@ public class SecretsService {
     public List<SecretDto> getSecretsByOwnerAccountId(
             UUID ownerAccountId) {
 
-        return secretsMapper.toDto(secretsRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
+        return secretsMapper.toDto(secretsRepository.findByOwnerAccountAccountId(ownerAccountId));
 
     }
 
@@ -63,8 +64,9 @@ public class SecretsService {
             UUID ownerAccountId,
             CreateSecretDto createSecretDto) {
 
-        SecretEntity secret = secretsMapper.fromDto(createSecretDto);
-        secret.setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId));
+        SecretEntity secret = secretsMapper.fromDto(createSecretDto)
+                .setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId));
+
         return secretsMapper.toDto(secretsRepository.save(secret));
 
     }
@@ -82,26 +84,31 @@ public class SecretsService {
             UUID secretId,
             EditSecretDto editSecretDto) {
 
-        SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId)
-                .setName(editSecretDto.getName())
-                .setValue(editSecretDto.getValue());
+        SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId);
 
-        if (editSecretDto.getSharings().size() != secret.getSharedSecrets().size()) {
-            throw new ServiceException(String.format(
-                    "Edit secret sharings do not match secret %s current sharings", secretId));
-        }
-        Map<String, EditSecretSharingDto> editSecretSharings = new HashMap<>();
-        for (EditSecretSharingDto editSecretSharing : editSecretDto.getSharings()) {
-            editSecretSharings.put(editSecretSharing.getReceiverEmail(), editSecretSharing);
-        }
-        for (SharedSecretEntity sharedSecret : secret.getSharedSecrets()) {
-            EditSecretSharingDto editSecretSharing = editSecretSharings.get(sharedSecret.getReceiverAccount(AccountBaseProjection.class).getEmail());
-            if (editSecretSharing == null) {
+        if (editSecretDto.getSharings() != null) {
+            if (editSecretDto.getSharings().size() != secret.getSharedSecrets().size()) {
                 throw new ServiceException(String.format(
                         "Edit secret sharings do not match secret %s current sharings", secretId));
             }
-            sharedSecret.setValue(editSecretSharing.getValue());
+            Map<String, ShareSecretDto> editSecretSharings = new HashMap<>();
+            for (ShareSecretDto editSecretSharing : editSecretDto.getSharings()) {
+                editSecretSharings.put(editSecretSharing.getEmail(), editSecretSharing);
+            }
+            for (SharedSecretEntity sharedSecret : secret.getSharedSecrets()) {
+                ShareSecretDto editSecretSharing = editSecretSharings.get(
+                        sharedSecret.getReceiverAccount(AccountBaseProjection.class).getEmail());
+                if (editSecretSharing == null) {
+                    throw new ServiceException(String.format(
+                            "Edit secret sharings do not match secret %s current sharings", secretId));
+                }
+                sharedSecret.setEncryptedKey(editSecretSharing.getEncryptedKey());
+            }
         }
+
+        secret
+                .setValue(editSecretDto.getValue())
+                .setEncryptedKey(editSecretDto.getEncryptedKey());
 
         return secretsMapper.toDto(secretsRepository.save(secret));
 
@@ -149,6 +156,47 @@ public class SecretsService {
         }
 
         return secret;
+
+    }
+
+    /**
+     * Finds a Secret Projection by secretId and checks if it exists and belongs to an ownerAccountId.
+     *
+     * @param <T> The projection type.
+     * @param secretId The secretId.
+     * @param ownerAccountId The accountId.
+     * @param type The class of the projection.
+     * @return The Secret Projection.
+     */
+    protected <T extends SecretBaseProjection> T findAndCheckSecret(
+            UUID secretId,
+            UUID ownerAccountId,
+            Class<T> type) {
+
+        SecretBaseProjection secret = null;
+
+        if (SecretBaseProjection.class.equals(type)) {
+
+            secret = secretsRepository.findBaseBySecretId(secretId);
+
+        } else {
+
+            throw new IllegalArgumentException("Type must extend AccountBaseProjection");
+
+        }
+
+        if (secret == null) {
+            throw new ServiceException(String.format("Secret %s does not exist", secretId))
+                    .setErrorCode("my-secrets.secret-does-not-exist");
+        }
+
+        if (ownerAccountId != null && !ownerAccountId.equals(secret.getOwnerAccount().getAccountId())) {
+            throw new AuthorizationServiceException(String.format(
+                    "Secret %s cannot be managed by account %s since it belongs to account %s",
+                    secretId, ownerAccountId, secret.getOwnerAccount().getAccountId()));
+        }
+
+        return type.cast(secret);
 
     }
 

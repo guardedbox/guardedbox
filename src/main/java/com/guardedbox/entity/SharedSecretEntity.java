@@ -1,7 +1,7 @@
 package com.guardedbox.entity;
 
+import static com.guardedbox.constants.Constraints.BASE64_44BYTES_LENGTH;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
-import static com.guardedbox.constants.Constraints.SECRET_VALUE_MAX_LENGTH;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -22,7 +22,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.guardedbox.entity.projection.AccountBaseProjection;
+import com.guardedbox.entity.projection.SecretBaseProjection;
 import com.guardedbox.repository.AccountsRepository;
+import com.guardedbox.repository.SecretsRepository;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -61,12 +63,25 @@ public class SharedSecretEntity
     @Valid
     private AccountEntity receiverAccount;
 
-    /** Value. */
-    @Column(name = "value")
+    /** Encrypted Key. */
+    @Column(name = "encrypted_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
-    @Size(max = SECRET_VALUE_MAX_LENGTH)
-    private String value;
+    @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
+    private String encryptedKey;
+
+    /**
+     * @param <T> A projection type.
+     * @param type The class of the projection.
+     * @return The secret corresponding to the introduced projection class.
+     */
+    @Transient
+    public <T extends SecretBaseProjection> T getSecret(
+            Class<T> type) {
+
+        return SecretsRepository.getProjection(this.getSecret(), type);
+
+    }
 
     /**
      * @param <T> A projection type.

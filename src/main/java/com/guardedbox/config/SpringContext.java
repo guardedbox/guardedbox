@@ -3,6 +3,7 @@ package com.guardedbox.config;
 import org.springframework.stereotype.Component;
 
 import com.guardedbox.repository.AccountsRepository;
+import com.guardedbox.repository.SecretsRepository;
 
 import lombok.Getter;
 
@@ -19,13 +20,20 @@ public final class SpringContext {
     @Getter
     private static AccountsRepository accountsRepository;
 
+    /** SecretsRepository. */
+    @Getter
+    private static SecretsRepository secretsRepository;
+
     /**
      * @param accountsRepository AccountsRepository.
+     * @param secretsRepository SecretsRepository.
      */
     private SpringContext(
-            AccountsRepository accountsRepository) {
+            AccountsRepository accountsRepository,
+            SecretsRepository secretsRepository) {
 
         SpringContext.accountsRepository = accountsRepository;
+        SpringContext.secretsRepository = secretsRepository;
 
     }
 

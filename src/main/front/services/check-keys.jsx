@@ -1,4 +1,4 @@
-import { getViewComponent } from 'services/view-components.jsx';
+import { app } from 'services/views.jsx';
 import { rest } from 'services/rest.jsx';
 import { Uint8Array } from 'services/crypto/Uint8Array.jsx';
 
@@ -7,7 +7,7 @@ import { Uint8Array } from 'services/crypto/Uint8Array.jsx';
  *
  * @param {string} email The email.
  */
-export function openCheckKeysModal(email) {
+export function checkKeysModal(email) {
 
     rest({
         method: 'get',
@@ -17,7 +17,7 @@ export function openCheckKeysModal(email) {
         },
         callback: (response) => {
 
-            getViewComponent('app').setState({
+            app().setState({
                 checkKeysModalOpen: true,
                 checkKeysEmail: email,
                 checkKeysEncryptionPublicKey: Uint8Array(response.encryptionPublicKey, 'base64').toString('hex'),
@@ -34,7 +34,7 @@ export function openCheckKeysModal(email) {
  */
 export function closeCheckKeysModal() {
 
-    getViewComponent('app').setState({
+    app().setState({
         checkKeysModalOpen: false,
         checkKeysEmail: '',
         checkKeysEncryptionPublicKey: '',

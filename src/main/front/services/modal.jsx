@@ -1,85 +1,81 @@
-import { getViewComponent } from 'services/view-components.jsx';
+import { app } from 'services/views.jsx';
 
 /**
- * Opens a modal message.
+ * Opens the message modal.
  *
- * @param {string} header The modal message header.
- * @param {string} body The modal message body.
- * @param {function} [exitCallback] This function will be invoked when the modal message is closed.
+ * @param {string} header The message modal header.
+ * @param {string} body The message modal body.
+ * @param {function} [exitCallback] This function will be invoked when the message modal is closed.
  */
-export function modalMessage(header, body, exitCallback) {
+export function messageModal(header, body, exitCallback) {
 
-    getViewComponent('app').setState({
-        modalMessageActive: true,
-        modalMessageHeader: header,
-        modalMessageBody: body,
-        modalMessageExitCallback: exitCallback
+    app().setState({
+        messageModalActive: true,
+        messageModalHeader: header,
+        messageModalBody: body,
+        messageModalExitCallback: exitCallback
     });
 
 }
 
 /**
- * Closes the modal message and invokes the exitCallback function introduced in the modalMessage method.
+ * Closes the message modal and invokes the exitCallback function introduced in the messageModal method.
  */
-export function closeModalMessage() {
+export function closeMessageModal() {
 
-    var app = getViewComponent('app');
+    var callback = app().state.messageModalExitCallback;
 
-    var callback = app.state.modalMessageExitCallback;
-
-    app.setState({
-        modalMessageActive: false,
-        modalMessageHeader: '',
-        modalMessageBody: '',
-        modalMessageExitCallback: null
+    app().setState({
+        messageModalActive: false,
+        messageModalHeader: '',
+        messageModalBody: '',
+        messageModalExitCallback: null
     }, callback);
 
 }
 
 /**
- * Opens a modal confirmation with two buttons: Yes and No.
+ * Opens the confirmation modal.
  *
- * @param {string} header The modal message header.
- * @param {string} body The modal message body.
+ * @param {string} header The confirmation modal header.
+ * @param {string} body The confirmation modal body.
  * @param {function} yesCallback This function will be invoked when the Yes button is clicked.
- * @param {function} [noCallback] This function will be invoked when the No button  is clicked, or when the confirmation modal is closed.
+ * @param {function} [noCallback] This function will be invoked when the No button is clicked, or when the confirmation modal is closed.
  * @param {boolean} [lock] True not to allow to close the modal without clicking one of the buttons.
  */
-export function modalConfirmation(header, body, yesCallback, noCallback, lock = false) {
+export function confirmationModal(header, body, yesCallback, noCallback, lock = false) {
 
-    getViewComponent('app').setState({
-        modalConfirmationActive: true,
-        modalConfirmationHeader: header,
-        modalConfirmationBody: body,
-        modalConfirmationYesCallback: yesCallback,
-        modalConfirmationNoCallback: noCallback,
-        modalConfirmationLock: lock
+    app().setState({
+        confirmationModalActive: true,
+        confirmationModalHeader: header,
+        confirmationModalBody: body,
+        confirmationModalYesCallback: yesCallback,
+        confirmationModalNoCallback: noCallback,
+        confirmationModalLock: lock
     });
 
 }
 
 /**
- * Closes the modal confirmation and invokes the yesCallback or noCallback function introduced in the modalConfirmation method.
+ * Closes the confirmation modal and invokes the yesCallback or noCallback function introduced in the confirmationModal method.
  *
  * @param {string} button 'yes' to invoke the yesCallback function, 'no' to invoke the noCallback function.
  */
-export function closeModalConfirmation(button) {
-
-    var app = getViewComponent('app');
+export function closeConfirmationModal(button) {
 
     var callback = null;
     if (button === 'yes')
-        callback = app.state.modalConfirmationYesCallback;
+        callback = app().state.confirmationModalYesCallback;
     else if (button === 'no')
-        callback = app.state.modalConfirmationNoCallback;
+        callback = app().state.confirmationModalNoCallback;
 
-    app.setState({
-        modalConfirmationActive: false,
-        modalConfirmationHeader: '',
-        modalConfirmationBody: '',
-        modalConfirmationYesCallback: null,
-        modalConfirmationNoCallback: null,
-        modalConfirmationLock: false,
+    app().setState({
+        confirmationModalActive: false,
+        confirmationModalHeader: '',
+        confirmationModalBody: '',
+        confirmationModalYesCallback: null,
+        confirmationModalNoCallback: null,
+        confirmationModalLock: false,
     }, callback);
 
 }

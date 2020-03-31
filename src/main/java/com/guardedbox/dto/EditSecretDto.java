@@ -1,7 +1,8 @@
 package com.guardedbox.dto;
 
+import static com.guardedbox.constants.Constraints.BASE64_44BYTES_LENGTH;
+import static com.guardedbox.constants.Constraints.BASE64_JSON_PATTERN;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
-import static com.guardedbox.constants.Constraints.SECRET_NAME_MAX_LENGTH;
 import static com.guardedbox.constants.Constraints.SECRET_VALUE_MAX_LENGTH;
 
 import java.io.Serializable;
@@ -28,19 +29,19 @@ import lombok.Setter;
 public class EditSecretDto
         implements Serializable {
 
-    /** Name. */
-    @NotBlank
-    @Size(max = SECRET_NAME_MAX_LENGTH)
-    private String name;
-
     /** Value. */
     @NotBlank
-    @Pattern(regexp = BASE64_PATTERN)
+    @Pattern(regexp = BASE64_JSON_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
 
+    /** Encrypted Key. */
+    @NotBlank
+    @Pattern(regexp = BASE64_PATTERN)
+    @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
+    private String encryptedKey;
+
     /** Sharings. */
-    @NotNull
-    private List<@NotNull @Valid EditSecretSharingDto> sharings;
+    private List<@NotNull @Valid ShareSecretDto> sharings;
 
 }

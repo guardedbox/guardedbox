@@ -20,16 +20,16 @@ public interface GroupsRepository
 
     /**
      * @param ownerAccountId Account.accountId.
-     * @return The List of GroupEntities corresponding to the introduced owner accountId, ordered by Group.name.
+     * @return The List of GroupEntities corresponding to the introduced owner accountId.
      */
-    List<GroupEntity> findByOwnerAccountAccountIdOrderByNameAsc(
+    List<GroupEntity> findByOwnerAccountAccountId(
             UUID ownerAccountId);
 
     /**
      * @param accountId Account.accountId.
-     * @return The List of GroupEntities in which the introduced accountId is participant, ordered by Group.name.
+     * @return The List of GroupEntities in which the introduced accountId is participant.
      */
-    List<GroupEntity> findByParticipantsAccountAccountIdOrderByNameAsc(
+    List<GroupEntity> findByParticipantsAccountAccountId(
             UUID accountId);
 
 }

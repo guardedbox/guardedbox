@@ -45,6 +45,6 @@ public class AddParticipantToGroupDto
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
-    private String encryptedGroupKey;
+    private String encryptedKey;
 
 }

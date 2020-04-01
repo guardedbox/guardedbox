@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * DTO: Body of the create secret request.
+ * DTO: Body of the create group request.
  *
  * @author s3curitybug@gmail.com
  *
@@ -34,6 +34,6 @@ public class CreateGroupDto
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
-    private String encryptedGroupKey;
+    private String encryptedKey;
 
 }

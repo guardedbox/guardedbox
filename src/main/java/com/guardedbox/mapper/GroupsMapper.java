@@ -33,7 +33,7 @@ public class GroupsMapper {
         return groupEntity == null ? null : new GroupDto()
                 .setGroupId(groupEntity.getGroupId())
                 .setName(groupEntity.getName())
-                .setEncryptedGroupKey(groupEntity.getEncryptedGroupKey());
+                .setEncryptedKey(groupEntity.getEncryptedKey());
 
     }
 
@@ -68,7 +68,7 @@ public class GroupsMapper {
 
         return groupDto == null ? null : new GroupEntity()
                 .setName(groupDto.getName())
-                .setEncryptedGroupKey(groupDto.getEncryptedGroupKey());
+                .setEncryptedKey(groupDto.getEncryptedKey());
 
     }
 

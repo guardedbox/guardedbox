@@ -49,8 +49,11 @@ class NavigationBar extends Component {
                             <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.secretsSharedWithMe} activeClassName="active">
                                 {t('secrets-shared-with-me.title')}
                             </NavLink></NavItem>
-                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.groups} activeClassName="active">
-                                {t('groups.title')}
+                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.myGroups} activeClassName="active">
+                                {t('my-groups.title')}
+                            </NavLink></NavItem>
+                            <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.groupsIWasAddedTo} activeClassName="active">
+                                {t('groups-i-was-added-to.title')}
                             </NavLink></NavItem>
                             <NavItem><NavLink tag={RRNavLink} to={views.viewPaths.myAccount} activeClassName="active">
                                 {t('my-account.title')}

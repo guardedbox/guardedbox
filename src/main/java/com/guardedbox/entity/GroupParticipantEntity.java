@@ -61,12 +61,12 @@ public class GroupParticipantEntity
     @Valid
     private AccountEntity account;
 
-    /** Encrypted Group Key. */
-    @Column(name = "encrypted_group_key")
+    /** Encrypted Key. */
+    @Column(name = "encrypted_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
-    private String encryptedGroupKey;
+    private String encryptedKey;
 
     /**
      * @param <T> A projection type.

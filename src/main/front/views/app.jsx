@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withTranslation } from 'react-i18next';
 import { withRouter, Route } from 'react-router-dom';
 import CacheRoute, { CacheSwitch } from 'react-router-cache-route';
@@ -13,7 +13,8 @@ import Registration from 'views/registration.jsx';
 import NavigationBar from 'views/navigation-bar.jsx';
 import MySecrets from 'views/my-secrets.jsx';
 import SecretsSharedWithMe from 'views/secrets-shared-with-me.jsx';
-import Groups from 'views/groups.jsx';
+import MyGroups from 'views/my-groups.jsx';
+import GroupsIWasAddedTo from 'views/groups-i-was-added-to.jsx';
 import MyAccount from 'views/my-account.jsx';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
@@ -22,6 +23,7 @@ import { setStateArrayElement } from 'services/state-utils.jsx';
 import { closeMessageModal, closeConfirmationModal } from 'services/modal.jsx';
 import { secretStrength, secretModalAddKeyValuePair, secretModalRemoveKeyValuePair, secretModalGenerateRandomValue, buildSecretModalSecret, closeSecretModal } from 'services/secret-utils.jsx';
 import { participantsModalAddParticipant, participantsModalRemoveParticipant, closeParticipantsModal } from 'services/participant-utils.jsx';
+import { buildGroupModalSecret, closeGroupModal } from 'services/group-utils.jsx';
 import { checkKeysModal, closeCheckKeysModal } from 'services/check-keys.jsx';
 import { copyToClipboard } from 'services/selector.jsx';
 import properties from 'constants/properties.json';
@@ -30,17 +32,21 @@ import views from 'constants/views.json';
 class App extends Component {
 
     state = {
+
         loading: false,
+
         messageModalActive: false,
         messageModalHeader: '',
         messageModalBody: '',
         messageModalExitCallback: null,
+
         confirmationModalActive: false,
         confirmationModalHeader: '',
         confirmationModalBody: '',
         confirmationModalYesCallback: null,
         confirmationModalNoCallback: null,
         confirmationModalLock: false,
+
         secretModalActive: false,
         secretModalHeader: '',
         secretModalSecretName: '',
@@ -48,6 +54,8 @@ class App extends Component {
         secretModalGenerateRandomValueLength: 0,
         secretModalOriginalSecret: null,
         secretModalAcceptCallback: null,
+        secretModalAcceptCallbackThirdArg: null,
+
         participantsModalActive: false,
         participantsModalHeader: '',
         participantsModalAccounts: [],
@@ -56,10 +64,18 @@ class App extends Component {
         participantsModalAddParticipantFunction: null,
         participantsModalRemoveParticipantFunction: null,
         participantsModalFunctionsArg: null,
+
+        groupModalActive: false,
+        groupModalHeader: '',
+        groupModalGroupName: '',
+        groupModalOriginalGroup: null,
+        groupModalAcceptCallback: null,
+
         checkKeysModalOpen: false,
         checkKeysEmail: '',
         checkKeysEncryptionPublicKey: '',
         checkKeysSigningPublicKey: ''
+
     };
 
     secretModalTxtName = React.createRef();
@@ -67,6 +83,7 @@ class App extends Component {
     secretModalTxtValue = [];
     participantsModalForm = React.createRef();
     participantsModalTxtEmail = React.createRef();
+    groupModalTxtName = React.createRef();
 
     constructor(props) {
 
@@ -93,7 +110,8 @@ class App extends Component {
                 <CacheSwitch>
                     <CacheRoute exact path={views.viewPaths.mySecrets} component={MySecrets} />
                     <CacheRoute exact path={views.viewPaths.secretsSharedWithMe} component={SecretsSharedWithMe} />
-                    <CacheRoute exact path={views.viewPaths.groups} component={Groups} />
+                    <CacheRoute exact path={views.viewPaths.myGroups} component={MyGroups} />
+                    <CacheRoute exact path={views.viewPaths.groupsIWasAddedTo} component={GroupsIWasAddedTo} />
                     <CacheRoute exact path={views.viewPaths.myAccount} component={MyAccount} />
                 </CacheSwitch>
 
@@ -121,7 +139,10 @@ class App extends Component {
                     <ModalBody>
                         <Form id="app_form-secret-modal" onSubmit={(e) => {
                             e.preventDefault();
-                            this.state.secretModalAcceptCallback(buildSecretModalSecret(), this.state.secretModalOriginalSecret);
+                            this.state.secretModalAcceptCallback(
+                                buildSecretModalSecret(),
+                                this.state.secretModalOriginalSecret,
+                                this.state.secretModalAcceptCallbackThirdArg);
                         }}>
                             <FormGroup style={{ marginTop: '8px' }}>
                                 <Input
@@ -244,34 +265,70 @@ class App extends Component {
                                                 <td style={{ width: '4rem' }} align="center">
                                                     <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}
                                                         onClick={() => { checkKeysModal(account.email) }} />
-                                                    <span className="space-between-icons"></span>
-                                                    <ActionIcon icon={X} tooltipText={t('global.remove')}
-                                                        onClick={() => { participantsModalRemoveParticipant({ 'email': account.email }) }} />
+                                                    {
+                                                        this.state.participantsModalRemoveParticipantFunction ?
+                                                            <Fragment>
+                                                                <span className="space-between-icons"></span>
+                                                                <ActionIcon icon={X} tooltipText={t('global.remove')}
+                                                                    onClick={() => { participantsModalRemoveParticipant({ 'email': account.email }) }} />
+                                                            </Fragment>
+                                                            : null
+                                                    }
                                                 </td>
                                             </tr>
                                         )}
                                     </tbody>
                                 </Table>
                         }
-                        <Form innerRef={this.participantsModalForm} inline className="group-spaced" onSubmit={(e) => {
+                        {
+                            this.state.participantsModalAddParticipantFunction ?
+                                <Form innerRef={this.participantsModalForm} inline className="group-spaced" onSubmit={(e) => {
+                                    e.preventDefault();
+                                    participantsModalAddParticipant({ 'email': this.state.participantsModalEmail })
+                                }}>
+                                    <Input
+                                        innerRef={this.participantsModalTxtEmail}
+                                        type="email"
+                                        style={{ flexGrow: '100' }}
+                                        placeholder={t('global.email')}
+                                        pattern={properties.general.emailPattern}
+                                        maxLength={properties.general.emailMaxLength}
+                                        required
+                                        onChange={(e) => { this.setState({ participantsModalEmail: e.target.value }); }}
+                                    />
+                                    <ButtonIcon icon={Key} tooltipText={t('accounts.check-keys')} color="secondary"
+                                        onClick={() => { if (this.participantsModalForm.current.reportValidity()) checkKeysModal(this.state.participantsModalEmail) }} />
+                                    <Button type="submit" color="primary">{t('global.add')}</Button>
+                                </Form>
+                                : null
+                        }
+                    </ModalBody>
+                </Modal>
+
+                {/* Group modal */}
+                <Modal isOpen={this.state.groupModalActive} toggle={() => { closeGroupModal() }}>
+                    <ModalHeader>{this.state.groupModalHeader}</ModalHeader>
+                    <ModalBody>
+                        <Form id="app_form-group-modal" onSubmit={(e) => {
                             e.preventDefault();
-                            participantsModalAddParticipant({ 'email': this.state.participantsModalEmail })
+                            this.state.groupModalAcceptCallback(buildGroupModalSecret(), this.state.groupModalOriginalGroup);
                         }}>
-                            <Input
-                                innerRef={this.participantsModalTxtEmail}
-                                type="email"
-                                style={{ flexGrow: '100' }}
-                                placeholder={t('global.email')}
-                                pattern={properties.general.emailPattern}
-                                maxLength={properties.general.emailMaxLength}
-                                required
-                                onChange={(e) => { this.setState({ participantsModalEmail: e.target.value }); }}
-                            />
-                            <ButtonIcon icon={Key} tooltipText={t('accounts.check-keys')} color="secondary"
-                                onClick={() => { if (this.participantsModalForm.current.reportValidity()) checkKeysModal(this.state.participantsModalEmail) }} />
-                            <Button type="submit" color="primary">{t('global.share')}</Button>
+                            <FormGroup>
+                                <Input
+                                    innerRef={this.groupModalTxtName}
+                                    type="text"
+                                    placeholder={t('global.name')}
+                                    maxLength={properties.groups.groupNameMaxLength}
+                                    required
+                                    onChange={(e) => { this.setState({ groupModalGroupName: e.target.value }) }}
+                                />
+                            </FormGroup>
                         </Form>
                     </ModalBody>
+                    <ModalFooter>
+                        <Button type="submit" form="app_form-group-modal" color="primary">{t('global.accept')}</Button>
+                        <Button color="secondary" onClick={() => { closeGroupModal() }}>{t('global.cancel')}</Button>
+                    </ModalFooter>
                 </Modal>
 
                 {/* Check keys modal */}

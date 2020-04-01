@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Button, Table } from 'reactstrap';
-import Octicon, { Sync, Key, File, Eye, X } from '@primer/octicons-react'
+import Octicon, { Sync, Key, File, Eye, X } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
@@ -43,7 +43,7 @@ class SecretsSharedWithMe extends Component {
                 var secretsSharedWithMe = response;
 
                 for (var account of secretsSharedWithMe) {
-                    account.secrets = processSecrets(account.secrets, account.encryptionPublicKey);
+                    account.secrets = processSecrets(account.secrets, null, account.encryptionPublicKey);
                 }
 
                 sortAccounts(secretsSharedWithMe);
@@ -102,11 +102,13 @@ class SecretsSharedWithMe extends Component {
                             <p>{t('secrets-shared-with-me.no-secrets')}</p> :
                             this.state.secretsSharedWithMe.map((account, a) =>
                                 <div key={'account-' + a}>
-                                    <h5 style={{ marginTop: '2em' }}>
+                                    <h5 style={{ marginTop: '3em' }}>
                                         {t('secrets-shared-with-me.title-from') + ' ' + account.email}
                                         <span className="space-between-text-and-icons"></span>
-                                        <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')} style={{ float: 'right', marginRight: '16px' }}
-                                            onClick={() => { checkKeysModal(account.email) }} />
+                                        <div style={{ float: 'right', marginRight: '16px' }}>
+                                            <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}
+                                                onClick={() => { checkKeysModal(account.email) }} />
+                                        </div>
                                     </h5>
                                     <Table striped hover>
                                         <thead>

@@ -17,4 +17,13 @@ public interface GroupParticipantsRepository
         extends JpaRepository<GroupParticipantEntity, UUID>,
         JpaSpecificationExecutor<GroupParticipantEntity> {
 
+    /**
+     * @param groupId Group.groupId.
+     * @param participantAccountId Account.accountId.
+     * @return The GroupParticipantEntity corresponding to the introduced groupId and accountId.
+     */
+    GroupParticipantEntity findByGroupGroupIdAndAccountAccountId(
+            UUID groupId,
+            UUID participantAccountId);
+
 }

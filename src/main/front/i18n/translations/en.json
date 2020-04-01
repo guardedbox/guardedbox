@@ -15,6 +15,7 @@
         "reload": "Reload",
         "share": "Share",
         "reject": "Reject",
+        "exit": "Exit",
         "copy": "Copy",
         "blink": "Blink",
         "show": "Show",
@@ -135,18 +136,26 @@
         "reject-shared-secret-modal-body": "Are you sure you want to reject the shared secret \"{secret}\"?"
     },
     "groups": {
-        "title": "Groups",
-        "btn-new-group": "Create group",
         "title-new-group": "New group",
+        "title-edit-group": "Edit group",
         "participants": "Participants",
-        "secrets": "Secrets",
-        "owned-groups": "My groups",
-        "no-owned-groups": "You have not created any group.",
         "remove-participant": "Are you sure that you want to remove \"{email}\" from the \"{group}\" group?",
-        "remove-secret": "Are you sure that you want to remove the \"{secret}\" secret from the \"{group}\" group?",
-        "participant-groups": "Groups I have been added to",
-        "no-participant-groups": "You have not been added to any group.",
-        "delete-group-modal-body": "The group \"{group}\" will be deleted! Are you sure?",
+        "add-secret": "Add secret",
+        "delete-secret": "Are you sure that you want to delete the \"{secret}\" secret from the \"{group}\" group?",
+        "do-not-self-invite": "You cannot invite yourself to one of your groups.",
+        "email-already-participant-in-group": "{email} is already a member of this group.",
+        "you-are-not-participant-in-group": "You are not a participant of this group.",
         "group-does-not-exist": "This group no longer exists."
+    },
+    "my-groups": {
+        "title": "My Groups",
+        "btn-new-group": "Create group",
+        "no-groups": "You have not created any group.",
+        "delete-group-modal-body": "The group \"{group}\" will be deleted. Are you sure?"
+    },
+    "groups-i-was-added-to": {
+        "title": "Groups I was added to",
+        "no-groups": "You have not been added to any group.",
+        "exit-group-modal-body": "Are you sure you want to leave the group \"{group}\"?"
     }
 }

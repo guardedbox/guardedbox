@@ -43,8 +43,8 @@ DROP TABLE IF EXISTS `group_`;
 CREATE TABLE `group_` (
   `group_id` binary(16) NOT NULL,
   `owner_account_id` binary(16) DEFAULT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `encrypted_group_key` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(416) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `encrypted_key` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`group_id`),
   KEY `OWNER_ACCOUNT_ID` (`owner_account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -61,7 +61,7 @@ CREATE TABLE `group_participant` (
   `group_participant_id` binary(16) NOT NULL,
   `group_id` binary(16) DEFAULT NULL,
   `account_id` binary(16) DEFAULT NULL,
-  `encrypted_group_key` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `encrypted_key` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`group_participant_id`),
   KEY `GROUP_ID` (`group_id`),
   KEY `ACCOUNT_ID` (`account_id`)
@@ -78,8 +78,7 @@ DROP TABLE IF EXISTS `group_secret`;
 CREATE TABLE `group_secret` (
   `group_secret_id` binary(16) NOT NULL,
   `group_id` binary(16) DEFAULT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `value` varchar(16016) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `value` mediumtext COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`group_secret_id`),
   KEY `GROUP_ID` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

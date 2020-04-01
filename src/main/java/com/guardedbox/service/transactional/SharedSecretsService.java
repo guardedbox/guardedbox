@@ -183,8 +183,7 @@ public class SharedSecretsService {
             UUID secretId,
             UUID receiverAccountId) {
 
-        SharedSecretEntity sharedSecret = sharedSecretsRepository.findBySecretSecretIdAndReceiverAccountAccountId(
-                secretId, receiverAccountId);
+        SharedSecretEntity sharedSecret = sharedSecretsRepository.findBySecretSecretIdAndReceiverAccountAccountId(secretId, receiverAccountId);
         if (sharedSecret == null) {
             throw new ServiceException(String.format(
                     "Secret %s is not shared with account %s", secretId, receiverAccountId))

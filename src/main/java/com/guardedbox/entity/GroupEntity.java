@@ -1,6 +1,7 @@
 package com.guardedbox.entity;
 
 import static com.guardedbox.constants.Constraints.BASE64_44BYTES_LENGTH;
+import static com.guardedbox.constants.Constraints.BASE64_JSON_PATTERN;
 import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
 import static com.guardedbox.constants.Constraints.GROUP_NAME_MAX_LENGTH;
 
@@ -61,15 +62,16 @@ public class GroupEntity
     /** Name. */
     @Column(name = "name")
     @NotBlank
+    @Pattern(regexp = BASE64_JSON_PATTERN)
     @Size(max = GROUP_NAME_MAX_LENGTH)
     private String name;
 
-    /** Encrypted Group Key. */
-    @Column(name = "encrypted_group_key")
+    /** Encrypted Key. */
+    @Column(name = "encrypted_key")
     @NotBlank
     @Pattern(regexp = BASE64_PATTERN)
     @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
-    private String encryptedGroupKey;
+    private String encryptedKey;
 
     /** Participants. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

@@ -13,6 +13,8 @@ import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.AddParticipantToGroupDto;
 import com.guardedbox.dto.AddSecretToGroupDto;
 import com.guardedbox.dto.CreateGroupDto;
+import com.guardedbox.dto.EditGroupDto;
+import com.guardedbox.dto.EditGroupSecretDto;
 import com.guardedbox.dto.GroupDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.entity.AccountEntity;
@@ -66,7 +68,26 @@ public class GroupsService {
     public List<GroupDto> getGroupsByOwnerAccountId(
             UUID ownerAccountId) {
 
-        return groupsMapper.toDto(groupsRepository.findByOwnerAccountAccountIdOrderByNameAsc(ownerAccountId));
+        List<GroupEntity> groupEntities = groupsRepository.findByOwnerAccountAccountId(ownerAccountId);
+        List<GroupDto> groupDtos = new ArrayList<>(groupEntities.size());
+
+        for (GroupEntity groupEntity : groupEntities) {
+
+            GroupDto groupDto = groupsMapper.toDto(groupEntity);
+
+            groupDto.setSecrets(new ArrayList<>(groupEntity.getSecrets().size()));
+            for (GroupSecretEntity groupSecret : groupEntity.getSecrets()) {
+                SecretDto secret = new SecretDto()
+                        .setSecretId(groupSecret.getGroupSecretId())
+                        .setValue(groupSecret.getValue());
+                groupDto.getSecrets().add(secret);
+            }
+
+            groupDtos.add(groupDto);
+
+        }
+
+        return groupDtos;
 
     }
 
@@ -74,23 +95,39 @@ public class GroupsService {
      * @param accountId Account.accountId.
      * @return The List of GroupDtos in which the introduced accountId is participant.
      */
-    public List<GroupDto> getGroupsByInvitedAccountId(
+    public List<GroupDto> getGroupsByParticipantAccountId(
             UUID accountId) {
 
-        List<GroupEntity> groupEntities = groupsRepository.findByParticipantsAccountAccountIdOrderByNameAsc(accountId);
+        List<GroupEntity> groupEntities = groupsRepository.findByParticipantsAccountAccountId(accountId);
         List<GroupDto> groupDtos = new ArrayList<>(groupEntities.size());
 
         for (GroupEntity groupEntity : groupEntities) {
+
             for (GroupParticipantEntity groupParticipant : groupEntity.getParticipants()) {
+
                 if (accountId.equals(groupParticipant.getAccount().getAccountId())) {
+
                     AccountDto ownerAccountDto = accountsMapper.toDto(groupEntity.getOwnerAccount(AccountPublicKeysProjection.class));
+
                     GroupDto groupDto = groupsMapper.toDto(groupEntity)
                             .setOwnerAccount(ownerAccountDto)
-                            .setEncryptedGroupKey(groupParticipant.getEncryptedGroupKey());
+                            .setEncryptedKey(groupParticipant.getEncryptedKey())
+                            .setSecrets(new ArrayList<>(groupEntity.getSecrets().size()));
+
+                    for (GroupSecretEntity groupSecret : groupEntity.getSecrets()) {
+                        SecretDto secret = new SecretDto()
+                                .setSecretId(groupSecret.getGroupSecretId())
+                                .setValue(groupSecret.getValue());
+                        groupDto.getSecrets().add(secret);
+                    }
+
                     groupDtos.add(groupDto);
+
                     break;
                 }
+
             }
+
         }
 
         return groupDtos;
@@ -119,33 +156,10 @@ public class GroupsService {
     }
 
     /**
-     * @param ownerOrParticipantAccountId An ID representing an account.
-     * @param groupId An ID representing a group.
-     * @return The list of secrets in the group. Checks that the account is the owner or a participant of the group.
-     */
-    public List<SecretDto> getGroupSecrets(
-            UUID ownerOrParticipantAccountId,
-            UUID groupId) {
-
-        GroupEntity group = findAndCheckGroup(groupId, ownerOrParticipantAccountId, true);
-
-        List<SecretDto> secrets = new ArrayList<>(group.getSecrets().size());
-        for (GroupSecretEntity groupSecret : group.getSecrets()) {
-            SecretDto secret = new SecretDto()
-                    .setSecretId(groupSecret.getGroupSecretId())
-                    .setValue(groupSecret.getValue());
-            secrets.add(secret);
-        }
-
-        return secrets;
-
-    }
-
-    /**
      * Creates a Group.
      *
      * @param ownerAccountId Account.accountId of the group owner.
-     * @param createGroupDto CreateGroupDto with the new Group data.
+     * @param createGroupDto Object with the new Group data.
      * @return GroupDto with the created Group data.
      */
     public GroupDto createGroup(
@@ -154,6 +168,25 @@ public class GroupsService {
 
         GroupEntity group = groupsMapper.fromDto(createGroupDto);
         group.setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId));
+        return groupsMapper.toDto(groupsRepository.save(group));
+
+    }
+
+    /**
+     * Edits a Group.
+     *
+     * @param ownerAccountId Account.accountId of the group owner.
+     * @param editGroupDto Object with the necessary data to edit the Group.
+     * @return GroupDto with the edited Group data.
+     */
+    public GroupDto editGroup(
+            UUID ownerAccountId,
+            EditGroupDto editGroupDto) {
+
+        GroupEntity group = findAndCheckGroup(editGroupDto.getGroupId(), ownerAccountId, false)
+                .setName(editGroupDto.getName())
+                .setEncryptedKey(editGroupDto.getEncryptedKey());
+
         return groupsMapper.toDto(groupsRepository.save(group));
 
     }
@@ -172,10 +205,25 @@ public class GroupsService {
 
         AccountBaseProjection account = accountsService.findAndCheckAccountByEmail(addParticipantToGroupDto.getEmail(), AccountBaseProjection.class);
 
+        if (account.getAccountId().equals(ownerAccountId)) {
+            throw new ServiceException(String.format(
+                    "Group %s belongs to email %s", addParticipantToGroupDto.getGroupId(), addParticipantToGroupDto.getEmail()))
+                            .setErrorCode("groups.do-not-self-invite");
+        }
+
+        for (GroupParticipantEntity participant : group.getParticipants()) {
+            if (participant.getAccount().getAccountId().equals(account.getAccountId())) {
+                throw new ServiceException(String.format(
+                        "Email %s is already participant in group %s", addParticipantToGroupDto.getEmail(), addParticipantToGroupDto.getGroupId()))
+                                .setErrorCode("groups.email-already-participant-in-group")
+                                .addAdditionalData("email", addParticipantToGroupDto.getEmail());
+            }
+        }
+
         GroupParticipantEntity groupParticipant = new GroupParticipantEntity()
                 .setGroup(group)
                 .setAccount(new AccountEntity().setAccountId(account.getAccountId()))
-                .setEncryptedGroupKey(addParticipantToGroupDto.getEncryptedGroupKey());
+                .setEncryptedKey(addParticipantToGroupDto.getEncryptedKey());
         groupParticipantsRepository.save(groupParticipant);
 
     }
@@ -195,14 +243,39 @@ public class GroupsService {
 
         GroupSecretEntity groupSecret = new GroupSecretEntity()
                 .setGroup(group)
-                .setName(addSecretToGroupDto.getName())
                 .setValue(addSecretToGroupDto.getValue());
         groupSecret = groupSecretsRepository.save(groupSecret);
 
-        SecretDto secret = new SecretDto()
+        return new SecretDto()
                 .setSecretId(groupSecret.getGroupSecretId())
                 .setValue(groupSecret.getValue());
-        return secret;
+
+    }
+
+    /**
+     * Edits a group secret.
+     *
+     * @param ownerAccountId Account.accountId of the group owner.
+     * @param editGroupSecretDto editGroupSecretDto Object with the necessary data to edit the group secret.
+     * @return SecretDto with the edited secret data.
+     */
+    public SecretDto editGroupSecret(
+            UUID ownerAccountId,
+            EditGroupSecretDto editGroupSecretDto) {
+
+        GroupEntity group = findAndCheckGroup(editGroupSecretDto.getGroupId(), ownerAccountId, false);
+
+        for (GroupSecretEntity groupSecret : group.getSecrets()) {
+            if (groupSecret.getGroupSecretId().equals(editGroupSecretDto.getSecretId())) {
+                groupSecret.setValue(editGroupSecretDto.getValue());
+            }
+        }
+
+        groupsRepository.save(group);
+
+        return new SecretDto()
+                .setSecretId(editGroupSecretDto.getSecretId())
+                .setValue(editGroupSecretDto.getValue());
 
     }
 
@@ -243,6 +316,27 @@ public class GroupsService {
                 group.getParticipants().remove(i);
             }
         }
+
+    }
+
+    /**
+     * Removes a participant from a group.
+     *
+     * @param groupId Group.groupId of the group.
+     * @param participantAccountId Account.accountId of the participant.
+     */
+    public void exitFromGroup(
+            UUID groupId,
+            UUID participantAccountId) {
+
+        GroupParticipantEntity groupParticipant = groupParticipantsRepository.findByGroupGroupIdAndAccountAccountId(groupId, participantAccountId);
+        if (groupParticipant == null) {
+            throw new ServiceException(String.format(
+                    "Account %s is not a participant of the group %s", participantAccountId, groupId))
+                            .setErrorCode("groups-i-was-added-to.you-are-not-participant-in-group");
+        }
+
+        groupParticipantsRepository.delete(groupParticipant);
 
     }
 

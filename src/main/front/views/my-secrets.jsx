@@ -126,9 +126,9 @@ class MySecrets extends Component {
         //     },
         //     callback: (response) => {
 
-        // closeSecretModal(() => {
-        //     this.loadSecrets(false);
-        // });
+        //         closeSecretModal(() => {
+        //             this.loadSecrets(false);
+        //         });
 
         //     }
         // });

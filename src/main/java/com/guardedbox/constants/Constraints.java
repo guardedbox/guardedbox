@@ -41,13 +41,10 @@ public class Constraints {
     /** Email Maximum Length. */
     public static final int EMAIL_MAX_LENGTH = 254;
 
-    /** Secret Name Maximum Length. */
-    public static final int SECRET_NAME_MAX_LENGTH = 100; // TODO Delete
-
     /** Secret Value Maximum Length. */
     public static final int SECRET_VALUE_MAX_LENGTH = 164978;
 
-    /** Group name Maximum Length. */
-    public static final int GROUP_NAME_MAX_LENGTH = 100;
+    /** Group Name Maximum Length. */
+    public static final int GROUP_NAME_MAX_LENGTH = 416;
 
 }

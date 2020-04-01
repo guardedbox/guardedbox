@@ -27,7 +27,7 @@ export function participantsModal(header, loadParticipantsFunction, addParticipa
         }, () => {
 
             setTimeout(() => {
-                app().participantsModalTxtEmail.current.focus();
+                if (app().participantsModalTxtEmail.current) app().participantsModalTxtEmail.current.focus();
             }, 25);
 
         });

@@ -1,7 +1,6 @@
 package com.guardedbox.entity;
 
-import static com.guardedbox.constants.Constraints.BASE64_PATTERN;
-import static com.guardedbox.constants.Constraints.SECRET_NAME_MAX_LENGTH;
+import static com.guardedbox.constants.Constraints.BASE64_JSON_PATTERN;
 import static com.guardedbox.constants.Constraints.SECRET_VALUE_MAX_LENGTH;
 
 import java.io.Serializable;
@@ -51,16 +50,10 @@ public class GroupSecretEntity
     @Valid
     private GroupEntity group;
 
-    /** Name. */
-    @Column(name = "name")
-    @NotBlank
-    @Size(max = SECRET_NAME_MAX_LENGTH)
-    private String name;
-
     /** Value. */
     @Column(name = "value")
     @NotBlank
-    @Pattern(regexp = BASE64_PATTERN)
+    @Pattern(regexp = BASE64_JSON_PATTERN)
     @Size(max = SECRET_VALUE_MAX_LENGTH)
     private String value;
 

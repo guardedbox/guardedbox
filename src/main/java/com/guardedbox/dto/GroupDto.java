@@ -1,6 +1,7 @@
 package com.guardedbox.dto;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,7 +32,10 @@ public class GroupDto
     /** Name. */
     private String name;
 
-    /** Encrypted Group Key. */
-    private String encryptedGroupKey;
+    /** Encrypted Key. */
+    private String encryptedKey;
+
+    /** Secrets. */
+    private List<SecretDto> secrets;
 
 }

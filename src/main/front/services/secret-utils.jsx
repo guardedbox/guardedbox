@@ -15,9 +15,10 @@ import properties from 'constants/properties.json';
  *
  * @param {string} header The secret modal header.
  * @param {object} secret A secret that will be loaded in the secret modal.
- * @param {function} [acceptCallback] This function will be invoked when the Accept button modal is clicked.
+ * @param {function} [acceptCallback] This function will be invoked when the Accept button is clicked. It will receive the value of the secret in the secret modal, the originally loaded secret and acceptCallbackThirdArg as arguments.
+ * @param {any} acceptCallbackThirdArg This argument will be passed to the function acceptCallback as third argument.
  */
-export function secretModal(header, secret, acceptCallback) {
+export function secretModal(header, secret, acceptCallback, acceptCallbackThirdArg) {
 
     if (secret) {
 
@@ -72,6 +73,7 @@ export function secretModal(header, secret, acceptCallback) {
         secretModalGenerateRandomValueLength: 0,
         secretModalOriginalSecret: secret,
         secretModalAcceptCallback: acceptCallback,
+        secretModalAcceptCallbackThirdArg: acceptCallbackThirdArg
     }, () => {
 
         setTimeout(() => {
@@ -109,6 +111,7 @@ export function closeSecretModal(callback) {
         secretModalGenerateRandomValueLength: 0,
         secretModalOriginalSecret: null,
         secretModalAcceptCallback: null,
+        secretModalAcceptCallbackThirdArg: null
     }, callback);
 
 }
@@ -249,16 +252,17 @@ export function sortSecrets(secretsArray) {
  * Parses an array of secrets and decrypts its names and keys.
  *
  * @param {array} encryptedSecrets The array of secrets.
+ * @param {(string|Uint8Array} [encryptedSymmetricKey] The secrets encrypted symmetric key. If not introduced, the one in each secret encyptedKey attribute will be used.
  * @param {(string|Uint8Array} [publicKeyToDecryptSymmetricKey] The public key to decrypt the secrets encrypted symmetric keys, as a base64 string on an Uint8Array. If not introduced, the current session keys one will be used.
  * @returns {array} The array of processed secrets.
  */
-export function processSecrets(encryptedSecrets, publicKeyToDecryptSymmetricKey) {
+export function processSecrets(encryptedSecrets, encryptedSymmetricKey, publicKeyToDecryptSymmetricKey) {
 
     var decryptedSecrets = [];
 
     for (var encryptedSecret of encryptedSecrets) {
 
-        var secretValueDecryption = decryptSecret(JSON.parse(encryptedSecret.value), null, encryptedSecret.encryptedKey, publicKeyToDecryptSymmetricKey, true);
+        var secretValueDecryption = decryptSecret(JSON.parse(encryptedSecret.value), null, encryptedSymmetricKey || encryptedSecret.encryptedKey, publicKeyToDecryptSymmetricKey, true);
         if (!secretValueDecryption) return;
 
         decryptedSecrets.push({

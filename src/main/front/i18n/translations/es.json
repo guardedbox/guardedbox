@@ -15,6 +15,7 @@
         "reload": "Refrescar",
         "share": "Compartir",
         "reject": "Rechazar",
+        "exit": "Salir",
         "copy": "Copiar",
         "blink": "Mostrar brevemente",
         "show": "Mostrar",
@@ -135,18 +136,26 @@
         "reject-shared-secret-modal-body": "¿Deseas rechazar el secreto compartido \"{secret}\"?"
     },
     "groups": {
-        "title": "Grupos",
-        "btn-new-group": "Crear grupo",
         "title-new-group": "Nuevo grupo",
+        "title-edit-group": "Editar grupo",
         "participants": "Integrantes",
-        "secrets": "Secretos",
-        "owned-groups": "Mis grupos",
-        "no-owned-groups": "No has creado ningún grupo.",
         "remove-participant": "¿Estás seguro de que quieres quitar a \"{email}\" del grupo \"{group}\"?",
-        "remove-secret": "¿Estás seguro de que quieres quitar el secreto \"{secret}\" del grupo \"{group}\"?",
-        "participant-groups": "Grupos a los que me han añadido",
-        "no-participant-groups": "Aún no te han añadido a ningún grupo.",
-        "delete-group-modal-body": "El grupo \"{group}\" se eliminará. ¿Deseas continuar?",
+        "add-secret": "Añadir secreto",
+        "delete-secret": "¿Estás seguro de que quieres eliminar el secreto \"{secret}\" del grupo \"{group}\"?",
+        "do-not-self-invite": "No puedes invitarte a un grupo tuyo.",
+        "email-already-participant-in-group": "{email} is already a member of this group.",
+        "you-are-not-participant-in-group": "{email} ya es un miembro de este grupo.",
         "group-does-not-exist": "Este grupo ya no existe."
+    },
+    "my-groups": {
+        "title": "Mis grupos",
+        "btn-new-group": "Crear grupo",
+        "no-groups": "No has creado ningún grupo.",
+        "delete-group-modal-body": "El grupo \"{group}\" se eliminará. ¿Deseas continuar?"
+    },
+    "groups-i-was-added-to": {
+        "title": "Grupos a los que me han añadido",
+        "no-groups": "Aún no te han añadido a ningún grupo.",
+        "exit-group-modal-body": "¿Deseas abandonar el grupo \"{group}\"?"
     }
 }

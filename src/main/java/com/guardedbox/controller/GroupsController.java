@@ -28,6 +28,8 @@ import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.AddParticipantToGroupDto;
 import com.guardedbox.dto.AddSecretToGroupDto;
 import com.guardedbox.dto.CreateGroupDto;
+import com.guardedbox.dto.EditGroupDto;
+import com.guardedbox.dto.EditGroupSecretDto;
 import com.guardedbox.dto.GroupDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.dto.SuccessDto;
@@ -67,10 +69,10 @@ public class GroupsController {
     /**
      * @return All the groups in which the current session account is participant.
      */
-    @GetMapping("/invited")
+    @GetMapping("/participant")
     public List<GroupDto> getInvitedGroups() {
 
-        return groupsService.getGroupsByInvitedAccountId(sessionAccount.getAccountId());
+        return groupsService.getGroupsByParticipantAccountId(sessionAccount.getAccountId());
 
     }
 
@@ -87,19 +89,7 @@ public class GroupsController {
     }
 
     /**
-     * @param groupId An ID representing a group.
-     * @return The secrets of the group corresponding to the introduced ID.
-     */
-    @GetMapping("/{group-id}/secrets")
-    public List<SecretDto> getGroupSecrets(
-            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
-
-        return groupsService.getGroupSecrets(sessionAccount.getAccountId(), groupId);
-
-    }
-
-    /**
-     * Creates Group, belonging to the current session account.
+     * Creates a Group, belonging to the current session account.
      *
      * @param createGroupDto Object with the necessary data to create a Group.
      * @return Object with the stored group data.
@@ -109,6 +99,23 @@ public class GroupsController {
             @RequestBody(required = true) @Valid CreateGroupDto createGroupDto) {
 
         return groupsService.createGroup(sessionAccount.getAccountId(), createGroupDto);
+
+    }
+
+    /**
+     * Edits a Group, belonging to the current session account.
+     *
+     * @param groupId The group ID.
+     * @param editGroupDto Object with the necessary data to edit the Group.
+     * @return Object with the edited group data.
+     */
+    @PostMapping("/{group-id}")
+    public GroupDto editGroup(
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId,
+            @RequestBody(required = true) @Valid EditGroupDto editGroupDto) {
+
+        editGroupDto.setGroupId(groupId);
+        return groupsService.editGroup(sessionAccount.getAccountId(), editGroupDto);
 
     }
 
@@ -148,6 +155,26 @@ public class GroupsController {
     }
 
     /**
+     * Edits a secret belonging to a group belonging to the current session account.
+     *
+     * @param groupId The group ID.
+     * @param secretId The secret ID.
+     * @param editGroupSecretDto Object with the necessary data to edit the group secret.
+     * @return Object with the edited secret data.
+     */
+    @PostMapping("/{group-id}/secrets/{secret-id}")
+    public SecretDto editGroupSecret(
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId,
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId,
+            @RequestBody(required = true) EditGroupSecretDto editGroupSecretDto) {
+
+        editGroupSecretDto.setGroupId(groupId);
+        editGroupSecretDto.setSecretId(secretId);
+        return groupsService.editGroupSecret(sessionAccount.getAccountId(), editGroupSecretDto);
+
+    }
+
+    /**
      * Deletes a group belonging to the current session account.
      *
      * @param groupId The group ID.
@@ -175,6 +202,21 @@ public class GroupsController {
             @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
 
         groupsService.removeParticipantFromGroup(sessionAccount.getAccountId(), groupId, email);
+        return new SuccessDto(true);
+
+    }
+
+    /**
+     * Removes the current session account from a group.
+     *
+     * @param groupId The group ID.
+     * @return Object indicating if the execution was successful.
+     */
+    @DeleteMapping("/{group-id}/participant")
+    public SuccessDto exitFromGroup(
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
+
+        groupsService.exitFromGroup(groupId, sessionAccount.getAccountId());
         return new SuccessDto(true);
 
     }

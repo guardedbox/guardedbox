@@ -4,7 +4,7 @@
         "type": "git",
         "url": "https://github.com/s3curitybug/guardedbox"
     },
-    "license": "Apache-2.0",
+    "license": "AGPL-3.0-or-later",
     "dependencies": {
         "@primer/octicons-react": "9.6.0",
         "crypto-browserify": "3.12.0",

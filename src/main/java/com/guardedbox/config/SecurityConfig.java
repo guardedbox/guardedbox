@@ -2,6 +2,7 @@ package com.guardedbox.config;
 
 import static com.guardedbox.constants.PathParameters.API_BASE_PATH;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig
         extends WebSecurityConfigurerAdapter {
+
+    /** Indicates if environment is dev, based on property environment. */
+    @Value("#{'${environment}' == 'dev'}")
+    private final boolean dev;
 
     /** CryptographyProperties. */
     private final CryptographyProperties cryptographyProperties;
@@ -63,6 +68,19 @@ public class SecurityConfig
             HttpSecurity httpSecurity)
             throws Exception {
 
+        if (dev) {
+
+            // Dev configuration.
+            httpSecurity
+
+                    // Allow Web Hot-Update Endpoints.
+                    .authorizeRequests()
+                    .regexMatchers(HttpMethod.GET, "/[a-zA-Z0-9]+\\.hot-update.json").permitAll()
+                    .regexMatchers(HttpMethod.GET, "/main\\.[a-zA-Z0-9]+\\.hot-update.js").permitAll();
+
+        }
+
+        // General configuration.
         httpSecurity
 
                 // Login.

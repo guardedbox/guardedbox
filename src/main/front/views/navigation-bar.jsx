@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { NavLink as RRNavLink } from 'react-router-dom';
-import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink, Button } from 'reactstrap';
+import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink, Badge, Button, UncontrolledTooltip } from 'reactstrap';
 import logo from 'images/logo.png';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
@@ -11,7 +11,9 @@ class NavigationBar extends Component {
 
     state = {
         navbarTogglerActive: false,
-        email: sessionEmail(true)
+        email: sessionEmail(true),
+        sessionExpirationTime: 0,
+        workingWithoutSession: false
     };
 
     constructor(props) {
@@ -61,7 +63,22 @@ class NavigationBar extends Component {
                         </Nav>
 
                         <Nav className="ml-auto" navbar>
-                            <span style={{ margin: '8px' }}>{this.state.email}</span>
+                            <span style={{ margin: '8px 0' }}>{this.state.email}</span>
+                            <span className="space-between-text"></span>
+                            <Badge id="navigation-bar_expiration-time-badge"
+                                color={this.state.workingWithoutSession ? "warning" : "info"}
+                                style={{ margin: '8px 0', padding: '0.4em', height: '22px', width: this.state.workingWithoutSession ? '60px' : '45px' }}>
+                                {this.state.workingWithoutSession ?
+                                    t('session.no-session') :
+                                    <Fragment>
+                                        {this.state.sessionExpirationTime / 60 + ' ' + t('session.minutes')}
+                                        <UncontrolledTooltip placement="bottom" target="navigation-bar_expiration-time-badge">
+                                            {t('session.expiration-time')}
+                                        </UncontrolledTooltip>
+                                    </Fragment>
+                                }
+                            </Badge>
+                            <span className="space-between-text"></span>
                             <div className="form-inline"><Button color="secondary" size="sm" onClick={logout}>{t('global.logout')}</Button></div>
                         </Nav>
 

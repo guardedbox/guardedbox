@@ -8,6 +8,9 @@
         "passwordMinLength": 20,
         "passwordMinStrength": 100
     },
+    "session": {
+        "timeout": 1800
+    },
     "secrets": {
         "secretNameMaxLength": 100,
         "secretKeyMaxLength": 100,

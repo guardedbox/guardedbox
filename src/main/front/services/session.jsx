@@ -1,12 +1,18 @@
 import { rest } from 'services/rest.jsx';
 import { currentLocationPath, isLocationPublic } from 'services/location.jsx';
 import { areSessionKeysGenerated } from 'services/crypto/crypto.jsx';
+import { view } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { messageModal, confirmationModal } from 'services/modal.jsx';
 import { loading } from 'services/loading.jsx';
+import properties from 'constants/properties.json';
 
 var currentSessionId = null;
 var currentSession = null;
+
+var currentSessionExpirationTime = 0;
+var currentSessionExpirationInterval = null;
+
 var authenticatedOnce = false;
 var currentlyWorkingWithoutSession = false;
 
@@ -47,7 +53,7 @@ export function updateSessionInfo({
 }) {
 
     if (workingWithoutSession()) {
-        if (callback) setTimeout(callback, 25);
+        if (callback) callback();
         return;
     }
 
@@ -88,9 +94,40 @@ export function setSessionInfo(sessionInfo) {
             email: sessionInfo.email || (currentSession ? currentSession.email : null)
         };
 
+        if (isAuthenticated()) authenticatedOnce = true;
+
     } else {
 
         currentSession = null;
+
+    }
+
+}
+
+/**
+ * Updates the current session expiration time.
+ */
+export function sessionRenewed() {
+
+    window.clearInterval(currentSessionExpirationInterval);
+
+    if (isAuthenticated()) {
+
+        currentSessionExpirationTime = properties.session.timeout;
+        if (view('navigationBar')) view('navigationBar').setState({ sessionExpirationTime: currentSessionExpirationTime });
+
+        currentSessionExpirationInterval = window.setInterval(() => {
+
+            if (currentSessionExpirationTime > 60) {
+                currentSessionExpirationTime -= 60;
+            } else {
+                currentSessionExpirationTime = 0;
+                setTimeout(() => { updateSessionInfo({}) }, 1000);
+            }
+
+            if (view('navigationBar')) view('navigationBar').setState({ sessionExpirationTime: currentSessionExpirationTime });
+
+        }, 60000);
 
     }
 
@@ -138,11 +175,17 @@ export function startWorkingWithoutSession(callback) {
 
     if (!currentlyWorkingWithoutSession) {
 
+        window.clearInterval(currentSessionExpirationInterval);
+        currentSession.authenticated = false;
+        currentSessionExpirationTime = 0;
+        if (view('navigationBar')) view('navigationBar').setState({ sessionExpirationTime: currentSessionExpirationTime });
+
         confirmationModal(
             t('session.title-session-expired'),
             t('session.body-session-expired'),
             () => {
                 currentlyWorkingWithoutSession = true;
+                if (view('navigationBar')) view('navigationBar').setState({ workingWithoutSession: true });
                 if (callback) callback();
             },
             reset,

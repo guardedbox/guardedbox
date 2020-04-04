@@ -136,7 +136,7 @@ class Login extends Component {
 
                     if (response.success) {
 
-                        setSessionInfo(response);
+                        var sessionInfo = response;
 
                         rest({
                             method: 'get',
@@ -157,6 +157,7 @@ class Login extends Component {
                                     return;
                                 }
 
+                                setSessionInfo(sessionInfo);
                                 notLoading(() => { changeLocation(views.defaultPath); });
 
                             }

@@ -1,6 +1,6 @@
 import { loading as loadingF, notLoading as notLoadingF } from 'services/loading.jsx';
 import { currentLanguage } from 'services/translation.jsx';
-import { setSesionId, sessionId, workingWithoutSession, startWorkingWithoutSession, reset } from 'services/session.jsx';
+import { setSesionId, sessionId, sessionRenewed, workingWithoutSession, startWorkingWithoutSession, reset } from 'services/session.jsx';
 import { t } from 'services/translation.jsx';
 import { messageModal } from 'services/modal.jsx';
 import properties from 'constants/properties.json';
@@ -89,6 +89,8 @@ function processSuccess(callback, serviceExceptionCallback, response) {
             response.json().then(callback);
         }
 
+        setTimeout(sessionRenewed, 100);
+
     } else if (response.status == 400) {
 
         response.json().then((responseJson) => {
@@ -98,6 +100,8 @@ function processSuccess(callback, serviceExceptionCallback, response) {
                 messageModal(t('global.error'), t(responseJson.errorCode || 'global.error-occurred', responseJson.additionalData));
             }
         });
+
+        setTimeout(sessionRenewed, 100);
 
     } else if (response.status == 401) {
 

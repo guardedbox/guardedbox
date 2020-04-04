@@ -82,6 +82,11 @@ input::-webkit-inner-spin-button {
     display: inline-block;
 }
 
+.space-between-text {
+    width: 1rem;
+    display: inline-block;
+}
+
 .space-between-text-and-icons {
     width: 1rem;
     display: inline-block;

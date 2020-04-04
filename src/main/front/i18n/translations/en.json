@@ -42,6 +42,9 @@
         "copyright": "Copyright (C) 2020 Dino Security S.L. All rights reserved."
     },
     "session": {
+        "minutes": "min",
+        "no-session": "No session",
+        "expiration-time": "Remaining session time",
         "title-session-expired": "Your session has expired.",
         "body-session-expired": "Would you like to keep working without a session? If you choose 'No', you will be redirected to the login page.",
         "title-working-without-session": "You are working without a session.",

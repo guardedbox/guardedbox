@@ -1,4 +1,4 @@
-const Path = require('path')
+const Path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
@@ -10,7 +10,8 @@ module.exports = (env, argv) => ({
     entry: './src/main/front/index.jsx',
     output: {
         path: Path.resolve('./src/main/resources/static/'),
-        filename: argv.mode === 'production' ? 'js/bundle.[contenthash].js' : 'js/bundle.js'
+        filename: argv.mode === 'production' ? 'js/bundle.[contenthash].js' : 'js/bundle.js',
+        crossOriginLoading: 'anonymous'
     },
     resolve: {
         modules: [
@@ -99,7 +100,7 @@ module.exports = (env, argv) => ({
             } : false
         }),
         new SriPlugin({
-            hashFuncNames: ['sha384'],
+            hashFuncNames: ['sha512', 'sha384'],
             enabled: argv.mode === 'production'
         }),
         new MiniCssExtractPlugin({

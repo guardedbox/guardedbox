@@ -325,7 +325,7 @@ class MyGroups extends Component {
                             <p>{t('my-groups.no-groups')}</p> :
                             this.state.myGroups.map((group, g) =>
                                 <div key={'group-' + g}>
-                                    <h5 style={{ marginTop: '3em' }}>
+                                    <h5 className="view-section">
                                         {group.name}
                                         <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>

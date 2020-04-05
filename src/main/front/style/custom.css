@@ -1,21 +1,20 @@
 /*
  * Overrides.
  */
-.react-overlay-loader-spinner:before {
-    border-color: #8eadc3;
-    border-top-color: #125c8e;
+.container {
+    margin-bottom: 3rem;
 }
 
-.progress {
-    height: 0.95rem;
+.navbar {
+    margin-bottom: 3rem;
+}
+
+.footer {
+    margin-top: 2rem;
 }
 
 .jumbotron {
     padding: 3.5rem 2rem 2rem 1.75rem;
-}
-
-.tooltip {
-    pointer-events: none;
 }
 
 .table-hover tbody tr:hover td,
@@ -31,9 +30,17 @@
     border-radius: .2rem;
 }
 
-.footer {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+.tooltip {
+    pointer-events: none;
+}
+
+.react-overlay-loader-spinner:before {
+    border-color: #8eadc3;
+    border-top-color: #125c8e;
+}
+
+.progress {
+    height: 0.95rem;
 }
 
 /*
@@ -67,6 +74,10 @@ input::-webkit-inner-spin-button {
 
 .main-col {
     margin-top: 4%;
+}
+
+.view-section {
+    margin-top: 3em;
 }
 
 .spaced {

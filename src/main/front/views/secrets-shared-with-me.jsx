@@ -102,7 +102,7 @@ class SecretsSharedWithMe extends Component {
                             <p>{t('secrets-shared-with-me.no-secrets')}</p> :
                             this.state.secretsSharedWithMe.map((account, a) =>
                                 <div key={'account-' + a}>
-                                    <h5 style={{ marginTop: '3em' }}>
+                                    <h5 className="view-section">
                                         {t('secrets-shared-with-me.title-from') + ' ' + account.email}
                                         <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>

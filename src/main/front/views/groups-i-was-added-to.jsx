@@ -126,7 +126,7 @@ class GroupsIWasAddedTo extends Component {
                             <p>{t('groups-i-was-added-to.no-groups')}</p> :
                             this.state.groupsIWasAddedTo.map((group, g) =>
                                 <div key={'group-' + g}>
-                                    <h5 style={{ marginTop: '3em' }}>
+                                    <h5 className="view-section">
                                         {group.name}
                                         <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>

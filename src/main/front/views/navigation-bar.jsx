@@ -35,7 +35,7 @@ class NavigationBar extends Component {
 
         return (
             <div>
-                <Navbar color="light" light expand="md" style={{ marginBottom: "3rem" }}>
+                <Navbar color="light" light expand="md">
 
                     <NavbarBrand><img src={logo} height="25" width="25" style={{ verticalAlign: "bottom", margin: "0 1rem 0 0.5rem" }} />
                         {t('global.app-name')}

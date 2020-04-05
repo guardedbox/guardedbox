@@ -67,7 +67,7 @@ class NavigationBar extends Component {
                             <span className="space-between-text"></span>
                             <Badge id="navigation-bar_expiration-time-badge"
                                 color={this.state.workingWithoutSession ? "warning" : "info"}
-                                style={{ margin: '8px 0', padding: '0.4em', height: '22px', width: this.state.workingWithoutSession ? '60px' : '45px' }}>
+                                style={{ margin: '8px 0', padding: '0.4em', height: '22px', width: this.state.workingWithoutSession ? '65px' : '45px' }}>
                                 {this.state.workingWithoutSession ?
                                     t('session.no-session') :
                                     <Fragment>

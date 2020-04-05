@@ -127,7 +127,7 @@ class GroupsIWasAddedTo extends Component {
                             this.state.groupsIWasAddedTo.map((group, g) =>
                                 <div key={'group-' + g}>
                                     <h5 className="view-section">
-                                        {group.name}
+                                        <span className="text-success">{group.name}</span>
                                         <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>
                                             <ActionIcon icon={X} tooltipText={t('global.exit')}

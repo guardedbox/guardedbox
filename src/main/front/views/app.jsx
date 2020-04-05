@@ -4,9 +4,10 @@ import { withRouter, Route } from 'react-router-dom';
 import CacheRoute, { CacheSwitch } from 'react-router-cache-route';
 import { Loader } from 'react-overlay-loader';
 import reactOverlayLoaderCss from 'react-overlay-loader/styles.css';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Badge, Progress, Form, FormGroup, Label, Input, InputGroup, Table } from 'reactstrap';
-import { File, Key, X } from '@primer/octicons-react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Badge, Progress, Form, FormGroup, Label, Input, InputGroup, Table, Popover, PopoverBody } from 'reactstrap';
+import { Info, File, Key, X } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
+import PopoverIcon from 'components/popover-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import Login from 'views/login.jsx';
 import Registration from 'views/registration.jsx';
@@ -157,21 +158,27 @@ class App extends Component {
                             {this.state.secretModalSecretKeyValuePairs.map((keyValuePair, k) =>
                                 <FormGroup key={'key-value-pair-' + k}>
                                     <hr style={{ margin: '1.5rem -1rem' }} />
-                                    <Input
-                                        innerRef={this.secretModalTxtKey[k]}
-                                        type="text"
-                                        placeholder={t('global.key') + ' ' + (k + 1)}
-                                        maxLength={properties.secrets.secretKeyMaxLength}
-                                        required
-                                        onChange={(e) => {
-                                            setStateArrayElement(this, 'secretModalSecretKeyValuePairs', k, {
-                                                key: e.target.value,
-                                                value: this.state.secretModalSecretKeyValuePairs[k].value,
-                                                valueLength: this.state.secretModalSecretKeyValuePairs[k].valueLength,
-                                                valueStrength: this.state.secretModalSecretKeyValuePairs[k].valueStrength
-                                            });
-                                        }}
-                                    />
+                                    <InputGroup>
+                                        <Input
+                                            innerRef={this.secretModalTxtKey[k]}
+                                            type="text"
+                                            placeholder={t('global.key') + ' ' + (k + 1)}
+                                            maxLength={properties.secrets.secretKeyMaxLength}
+                                            required
+                                            onChange={(e) => {
+                                                setStateArrayElement(this, 'secretModalSecretKeyValuePairs', k, {
+                                                    key: e.target.value,
+                                                    value: this.state.secretModalSecretKeyValuePairs[k].value,
+                                                    valueLength: this.state.secretModalSecretKeyValuePairs[k].valueLength,
+                                                    valueStrength: this.state.secretModalSecretKeyValuePairs[k].valueStrength
+                                                });
+                                            }}
+                                        />
+                                        {k > 0 ? null :
+                                            <PopoverIcon icon={Info} className="text-info" style={{ margin: '6px 8px' }}
+                                                popoverText={t('secrets.key-value-pair-info')} />
+                                        }
+                                    </InputGroup>
                                     <Input
                                         innerRef={this.secretModalTxtValue[k]}
                                         type="textarea"
@@ -359,6 +366,9 @@ class App extends Component {
                                 onFocus={(e) => { e.target.select(); }}
                             />
                         </InputGroup>
+                        <div style={{ marginTop: '20px' }}>
+                            {t('accounts.check-keys-info', { 'email': this.state.checkKeysEmail, 'view': t('my-account.title') })}
+                        </div>
                     </ModalBody>
                 </Modal>
 

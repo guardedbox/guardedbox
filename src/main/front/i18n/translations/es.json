@@ -68,7 +68,7 @@
         "privacy-modal-row2-col1": "¿Qué datos se tratan?",
         "privacy-modal-row2-col2": "Tu correo electrónico.",
         "privacy-modal-row3-col1": "¿Para qué?",
-        "privacy-modal-row3-col2": "Registrarte, entrar a tu cuenta y gestionarla.",
+        "privacy-modal-row3-col2": "Registrarte, entrar a tu cuenta de GuardedBox y gestionarla.",
         "privacy-modal-row4-col1": "¿Cuánto tiempo los usamos?",
         "privacy-modal-row4-col2": "El tiempo que uses GuardedBox.",
         "privacy-modal-row5-col1": "¿A quién cedemos los datos?",
@@ -97,6 +97,7 @@
         "check-keys": "Verificar clave",
         "encryption-public-key": "Clave pública de cifrado",
         "signing-public-key": "Clave pública de firma",
+        "check-keys-info": "Pídele a {email} que entre en la sección \"{view}\" de GuardedBox y te diga su clave pública de cifrado para que puedas comprobar que coincide con esta.",
         "email-already-registered": "La dirección {email} ya existe en GuardedBox.",
         "email-not-registered": "La dirección {email} no está registrada en GuardedBox."
     },
@@ -114,6 +115,7 @@
         "title-edit-secret": "Editar secreto",
         "title-share-secret": "Compartir secreto",
         "secret-name": "Nombre del secreto",
+        "key-value-pair-info": "Un secreto puede tener varias propiedades. Por ejemplo, si el secreto es una tarjeta de crédito, puede tener 3 propiedades: Número de tarjeta, CVV y Fecha de caducidad.",
         "add-key-value-pair": "Añadir propiedad",
         "remove-key-value-pair": "Quitar propiedad",
         "generate-random-value": "Generar un valor aleatorio"
@@ -154,7 +156,7 @@
         "title": "Mis grupos",
         "btn-new-group": "Crear grupo",
         "no-groups": "No has creado ningún grupo.",
-        "delete-group-modal-body": "El grupo \"{group}\" se eliminará. ¿Deseas continuar?"
+        "delete-group-modal-body": "El grupo \"{group}\" se eliminará junto con todos sus secretos. ¿Deseas continuar?"
     },
     "groups-i-was-added-to": {
         "title": "Grupos a los que me han añadido",

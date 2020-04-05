@@ -17,7 +17,7 @@ class ButtonIcon extends Component {
         return (
 
             <Button
-                id={this.id}
+                id={this.props.id || this.id}
                 onClick={this.props.onClick}
                 color={this.props.color}
                 className={this.props.className}
@@ -26,7 +26,7 @@ class ButtonIcon extends Component {
                 <Octicon icon={this.props.icon} />
 
                 {this.props.tooltipText ?
-                    <UncontrolledTooltip placement="top" target={this.id}>
+                    <UncontrolledTooltip placement="top" target={this.props.id || this.id}>
                         {this.props.tooltipText}
                     </UncontrolledTooltip>
                     : null

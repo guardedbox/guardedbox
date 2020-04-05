@@ -103,7 +103,7 @@ class SecretsSharedWithMe extends Component {
                             this.state.secretsSharedWithMe.map((account, a) =>
                                 <div key={'account-' + a}>
                                     <h5 className="view-section">
-                                        {t('secrets-shared-with-me.title-from') + ' ' + account.email}
+                                        <span className="text-success">{t('secrets-shared-with-me.title-from') + ' ' + account.email}</span>
                                         <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>
                                             <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}

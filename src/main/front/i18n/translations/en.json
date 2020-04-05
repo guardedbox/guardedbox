@@ -68,7 +68,7 @@
         "privacy-modal-row2-col1": "What are the processed data?",
         "privacy-modal-row2-col2": "Your e-mail.",
         "privacy-modal-row3-col1": "What is the processing purpose?",
-        "privacy-modal-row3-col2": "Register, log-in and manage your account.",
+        "privacy-modal-row3-col2": "Register, log-in and manage your GuardedBox account.",
         "privacy-modal-row4-col1": "How long do we keep your data?",
         "privacy-modal-row4-col2": "As long as you use GuardedBox.",
         "privacy-modal-row5-col1": "Who do we share your data with?",
@@ -97,6 +97,7 @@
         "check-keys": "Check key",
         "encryption-public-key": "Encryption public key",
         "signing-public-key": "Signing public key",
+        "check-keys-info": "Ask {email} to get into the \"{view}\" section of GuardedBox and to tell you his public encryption key so you can check that it matches this one.",
         "email-already-registered": "The email {email} is already registered in GuardedBox.",
         "email-not-registered": "The email {email} is not registered in GuardedBox."
     },
@@ -114,8 +115,9 @@
         "title-edit-secret": "Edit secret",
         "title-share-secret": "Share secret",
         "secret-name": "Secret name",
-        "add-key-value-pair": "Add value",
-        "remove-key-value-pair": "Remove value",
+        "key-value-pair-info": "A secret may have several properties. For example, if the secret is a credit card, it may have 3 properties: Card number, CVV and Expiration date.",
+        "add-key-value-pair": "Add property",
+        "remove-key-value-pair": "Remove property",
         "generate-random-value": "Generate random value"
     },
     "my-secrets": {
@@ -154,7 +156,7 @@
         "title": "My Groups",
         "btn-new-group": "Create group",
         "no-groups": "You have not created any group.",
-        "delete-group-modal-body": "The group \"{group}\" will be deleted. Are you sure?"
+        "delete-group-modal-body": "The group \"{group}\" will be deleted along with all its secrets. Are you sure?"
     },
     "groups-i-was-added-to": {
         "title": "Groups I was added to",

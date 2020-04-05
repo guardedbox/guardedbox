@@ -326,7 +326,7 @@ class MyGroups extends Component {
                             this.state.myGroups.map((group, g) =>
                                 <div key={'group-' + g}>
                                     <h5 className="view-section">
-                                        {group.name}
+                                        <span className="text-success">{group.name}</span>
                                         <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>
                                             <ActionIcon icon={DiffAdded} tooltipText={t('groups.add-secret')}

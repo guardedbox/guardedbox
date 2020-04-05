@@ -16,7 +16,7 @@ class ActionIcon extends Component {
         return (
 
             <span
-                id={this.id}
+                id={this.props.id || this.id}
                 onClick={this.props.onClick}
                 className={this.props.className}
                 style={{ ...this.props.style, ...{ cursor: 'pointer' } }}>
@@ -24,13 +24,13 @@ class ActionIcon extends Component {
                 <Octicon icon={this.props.icon} />
 
                 {this.props.tooltipText ?
-                    <UncontrolledTooltip placement="top" target={this.id}>
+                    <UncontrolledTooltip placement="top" target={this.props.id || this.id}>
                         {this.props.tooltipText}
                     </UncontrolledTooltip>
                     : null
                 }
 
-            </ span>
+            </span>
 
         );
 

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Container, Button, Table } from 'reactstrap';
-import Octicon, { DiffAdded, Sync, File, Eye, Pencil, Trashcan, FileSymlinkFile } from '@primer/octicons-react'
+import { Container, Table } from 'reactstrap';
+import { DiffAdded, Sync, File, Eye, Pencil, Trashcan, FileSymlinkFile } from '@primer/octicons-react'
 import ActionIcon from 'components/action-icon.jsx';
+import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
@@ -258,12 +259,10 @@ class MySecrets extends Component {
                 {/* Title and buttons */}
                 <h4>{t('my-secrets.title')}</h4><hr />
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="primary" onClick={() => { secretModal(t('secrets.title-new-secret'), null, this.createSecret) }}>
-                        <Octicon className="button-icon" icon={DiffAdded} />{t('my-secrets.btn-new-secret')}
-                    </Button>
-                    <Button color="secondary" onClick={() => { this.loadSecrets(true) }}>
-                        <Octicon className="button-icon" icon={Sync} />{t('global.reload')}
-                    </Button>
+                    <ButtonIcon icon={DiffAdded} tooltipText={t('my-secrets.btn-new-secret')} color="primary"
+                        onClick={() => { secretModal(t('secrets.title-new-secret'), null, this.createSecret) }} />
+                    <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary"
+                        onClick={() => { this.loadSecrets(true) }} />
                 </div>
 
                 {/* Secrets table */}

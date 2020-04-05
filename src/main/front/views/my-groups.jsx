@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Button, Table, Collapse } from 'reactstrap';
-import Octicon, { DiffAdded, Sync, ChevronUp, ChevronDown, Pencil, Trashcan, Organization, File, Eye } from '@primer/octicons-react';
+import { Container, Table, Collapse } from 'reactstrap';
+import { DiffAdded, Sync, ChevronUp, ChevronDown, Pencil, Trashcan, Organization, File, Eye } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
@@ -314,12 +314,10 @@ class MyGroups extends Component {
                 {/* Title and buttons */}
                 <h4>{t('my-groups.title')}</h4><hr />
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="primary" onClick={() => { groupModal(t('groups.title-new-group'), null, this.createGroup) }}>
-                        <Octicon className="button-icon" icon={DiffAdded} />{t('my-groups.btn-new-group')}
-                    </Button>
-                    <Button color="secondary" onClick={() => { this.loadGroups(true) }}>
-                        <Octicon className="button-icon" icon={Sync} />{t('global.reload')}
-                    </Button>
+                    <ButtonIcon icon={DiffAdded} tooltipText={t('my-groups.btn-new-group')} color="primary"
+                        onClick={() => { groupModal(t('groups.title-new-group'), null, this.createGroup) }} />
+                    <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary"
+                        onClick={() => { this.loadGroups(true) }} />
                     <ButtonIcon icon={ChevronDown} tooltipText={t('global.expand-all')} color="success"
                         onClick={() => { expandAllCollapsers(this) }} />
                     <ButtonIcon icon={ChevronUp} tooltipText={t('global.collapse-all')} color="success"

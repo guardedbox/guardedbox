@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Button, Table, Collapse } from 'reactstrap';
-import Octicon, { Sync, ChevronUp, ChevronDown, Key, File, Eye, X } from '@primer/octicons-react';
+import { Container, Table, Collapse } from 'reactstrap';
+import { Sync, ChevronUp, ChevronDown, Key, File, Eye, X } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
@@ -94,9 +94,8 @@ class SecretsSharedWithMe extends Component {
                 {/* Title and buttons */}
                 <h4>{t('secrets-shared-with-me.title')}</h4><hr />
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <Button color="secondary" onClick={() => { this.loadSecrets(true) }}>
-                        <Octicon className="button-icon" icon={Sync} />{t('global.reload')}
-                    </Button>
+                    <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary"
+                        onClick={() => { this.loadSecrets(true) }} />
                     <ButtonIcon icon={ChevronDown} tooltipText={t('global.expand-all')} color="success"
                         onClick={() => { expandAllCollapsers(this) }} />
                     <ButtonIcon icon={ChevronUp} tooltipText={t('global.collapse-all')} color="success"

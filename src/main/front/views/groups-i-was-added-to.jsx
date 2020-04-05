@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Container, Button, Table } from 'reactstrap';
-import Octicon, { Sync, X, Organization, Key, File, Eye } from '@primer/octicons-react';
+import { Container, Button, Table, Collapse } from 'reactstrap';
+import Octicon, { Sync, ChevronUp, ChevronDown, X, Organization, Key, File, Eye } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
+import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
@@ -12,11 +13,13 @@ import { sortGroups } from 'services/group-utils.jsx';
 import { participantsModal } from 'services/participant-utils.jsx';
 import { confirmationModal } from 'services/modal.jsx';
 import { checkKeysModal } from 'services/check-keys.jsx';
+import { loadCollapsersOpen, expandAllCollapsers, collapseAllCollapsers, toggleCollapser } from 'services/collapsers.jsx';
 
 class GroupsIWasAddedTo extends Component {
 
     state = {
-        groupsIWasAddedTo: null
+        groupsIWasAddedTo: null,
+        collapsersOpen: {}
     };
 
     constructor(props) {
@@ -52,7 +55,8 @@ class GroupsIWasAddedTo extends Component {
                 sortGroups(groupsIWasAddedTo);
 
                 this.setState({
-                    groupsIWasAddedTo: groupsIWasAddedTo
+                    groupsIWasAddedTo: groupsIWasAddedTo,
+                    collapsersOpen: loadCollapsersOpen(this, groupsIWasAddedTo, 'groupId')
                 });
 
             }
@@ -117,6 +121,10 @@ class GroupsIWasAddedTo extends Component {
                     <Button color="secondary" onClick={() => { this.loadGroups(true) }}>
                         <Octicon className="button-icon" icon={Sync} />{t('global.reload')}
                     </Button>
+                    <ButtonIcon icon={ChevronDown} tooltipText={t('global.expand-all')} color="success"
+                        onClick={() => { expandAllCollapsers(this) }} />
+                    <ButtonIcon icon={ChevronUp} tooltipText={t('global.collapse-all')} color="success"
+                        onClick={() => { collapseAllCollapsers(this) }} />
                 </div>
 
                 {/* Groups tables */}
@@ -127,6 +135,9 @@ class GroupsIWasAddedTo extends Component {
                             this.state.groupsIWasAddedTo.map((group, g) =>
                                 <div key={'group-' + g}>
                                     <h5 className="view-section">
+                                        <ActionIcon icon={this.state.collapsersOpen[group.groupId] ? ChevronUp : ChevronDown}
+                                            onClick={() => { toggleCollapser(this, group.groupId) }} />
+                                        <span className="space-between-text-and-icons"></span>
                                         <span className="text-success">{group.name}</span>
                                         <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>
@@ -151,59 +162,61 @@ class GroupsIWasAddedTo extends Component {
                                                 onClick={() => { checkKeysModal(group.ownerAccount.email) }} />
                                         </div>
                                     </h6>
-                                    <Table striped hover>
-                                        <thead>
-                                            <tr>
-                                                <th style={{ width: '40%' }}>{t('secrets.secret-name')}</th>
-                                                <th style={{ width: '60%' }}>{t('global.keys')}</th>
-                                                <th style={{ width: '6.5rem' }}></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {group.secrets.map((secret, s) =>
-                                                <tr key={'secret-' + s}>
-                                                    <td style={{ width: '40%' }}>
-                                                        <span>{secret.value.name}</span>
-                                                    </td>
-                                                    <td style={{ width: '60%' }}>
-                                                        {secret.value.values.map((keyValuePair, k) =>
-                                                            <div key={'key-value-pair-' + k}>
-                                                                {k == 0 ? null : <hr style={{ margin: '0.75rem -0.75rem' }} />}
-                                                                {keyValuePair.clearValue ?
-                                                                    <span>{keyValuePair.clearValue}</span>
-                                                                    :
-                                                                    <span>
-                                                                        <ActionIcon icon={File} tooltipText={t('global.copy')} onClick={() => {
-                                                                            copySecretValueToClipboard(
-                                                                                keyValuePair,
-                                                                                group.encryptedKey,
-                                                                                group.ownerAccount.encryptionPublicKey
-                                                                            )
-                                                                        }} />
-                                                                        <span className="space-between-icons"></span>
-                                                                        <ActionIcon icon={Eye} tooltipText={t('global.show')} onClick={() => {
-                                                                            blinkSecretValue(
-                                                                                keyValuePair,
-                                                                                group.encryptedKey,
-                                                                                group.ownerAccount.encryptionPublicKey,
-                                                                                this,
-                                                                                'groupsIWasAddedTo',
-                                                                                g,
-                                                                                group)
-                                                                        }} />
-                                                                        <span className="space-between-text-and-icons"></span>
-                                                                        <span>{keyValuePair.key}</span>
-                                                                    </span>
-                                                                }
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td style={{ width: '6.5rem' }} align="center">
-                                                    </td>
+                                    <Collapse isOpen={this.state.collapsersOpen[group.groupId]}>
+                                        <Table striped hover>
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ width: '40%' }}>{t('secrets.secret-name')}</th>
+                                                    <th style={{ width: '60%' }}>{t('global.keys')}</th>
+                                                    <th style={{ width: '6.5rem' }}></th>
                                                 </tr>
-                                            )}
-                                        </tbody>
-                                    </Table>
+                                            </thead>
+                                            <tbody>
+                                                {group.secrets.map((secret, s) =>
+                                                    <tr key={'secret-' + s}>
+                                                        <td style={{ width: '40%' }}>
+                                                            <span>{secret.value.name}</span>
+                                                        </td>
+                                                        <td style={{ width: '60%' }}>
+                                                            {secret.value.values.map((keyValuePair, k) =>
+                                                                <div key={'key-value-pair-' + k}>
+                                                                    {k == 0 ? null : <hr style={{ margin: '0.75rem -0.75rem' }} />}
+                                                                    {keyValuePair.clearValue ?
+                                                                        <span>{keyValuePair.clearValue}</span>
+                                                                        :
+                                                                        <span>
+                                                                            <ActionIcon icon={File} tooltipText={t('global.copy')} onClick={() => {
+                                                                                copySecretValueToClipboard(
+                                                                                    keyValuePair,
+                                                                                    group.encryptedKey,
+                                                                                    group.ownerAccount.encryptionPublicKey
+                                                                                )
+                                                                            }} />
+                                                                            <span className="space-between-icons"></span>
+                                                                            <ActionIcon icon={Eye} tooltipText={t('global.show')} onClick={() => {
+                                                                                blinkSecretValue(
+                                                                                    keyValuePair,
+                                                                                    group.encryptedKey,
+                                                                                    group.ownerAccount.encryptionPublicKey,
+                                                                                    this,
+                                                                                    'groupsIWasAddedTo',
+                                                                                    g,
+                                                                                    group)
+                                                                            }} />
+                                                                            <span className="space-between-text-and-icons"></span>
+                                                                            <span>{keyValuePair.key}</span>
+                                                                        </span>
+                                                                    }
+                                                                </div>
+                                                            )}
+                                                        </td>
+                                                        <td style={{ width: '6.5rem' }} align="center">
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Collapse>
                                 </div>
                             )
                 }

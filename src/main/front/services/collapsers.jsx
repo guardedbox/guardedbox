@@ -36,6 +36,34 @@ export function toggleCollapser(reactComponent, id) {
 }
 
 /**
+ * Expands a collapser of a React component, setting the collapser id to true in the 'collapsersOpen' attribute of the state of the component.
+ *
+ * @param {React.Component} reactComponent The React component.
+ * @param {string} id The collapser id.
+ */
+export function expandCollapser(reactComponent, id) {
+
+    var collapsersOpen = reactComponent.state.collapsersOpen;
+    collapsersOpen[id] = true;
+    reactComponent.setState({ collapsers: collapsersOpen });
+
+}
+
+/**
+ * Expands a collapser of a React component, setting the collapser id to false in the 'collapsersOpen' attribute of the state of the component.
+ *
+ * @param {React.Component} reactComponent The React component.
+ * @param {string} id The collapser id.
+ */
+export function collapseCollapser(reactComponent, id) {
+
+    var collapsersOpen = reactComponent.state.collapsersOpen;
+    collapsersOpen[id] = false;
+    reactComponent.setState({ collapsers: collapsersOpen });
+
+}
+
+/**
  * Expands all the collapsers of a React component, setting the collapsers ids to true in the 'collapsersOpen' attribute of the state of the component.
  *
  * @param {React.Component} reactComponent The React component.

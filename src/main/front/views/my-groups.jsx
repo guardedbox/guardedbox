@@ -12,7 +12,7 @@ import { processSecrets, decryptSecret, encryptSecret, recryptSymmetricKey, secr
 import { sortGroups, groupModal, closeGroupModal } from 'services/group-utils.jsx';
 import { participantsModal } from 'services/participant-utils.jsx';
 import { confirmationModal } from 'services/modal.jsx';
-import { loadCollapsersOpen, expandAllCollapsers, collapseAllCollapsers, toggleCollapser } from 'services/collapsers.jsx';
+import { loadCollapsersOpen, expandAllCollapsers, collapseAllCollapsers, toggleCollapser, expandCollapser } from 'services/collapsers.jsx';
 
 class MyGroups extends Component {
 
@@ -338,8 +338,10 @@ class MyGroups extends Component {
                                         <span className="text-success">{group.name}</span>
                                         <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>
-                                            <ActionIcon icon={DiffAdded} tooltipText={t('groups.add-secret')}
-                                                onClick={() => { secretModal(t('secrets.title-new-secret'), null, this.createGroupSecret, group) }} />
+                                            <ActionIcon icon={DiffAdded} tooltipText={t('groups.add-secret')} onClick={() => {
+                                                expandCollapser(this, group.groupId);
+                                                secretModal(t('secrets.title-new-secret'), null, this.createGroupSecret, group);
+                                            }} />
                                             <span className="space-between-icons"></span>
                                             <ActionIcon icon={Pencil} tooltipText={t('global.edit')}
                                                 onClick={() => { groupModal(t('groups.title-edit-group'), group, this.editGroup) }} />

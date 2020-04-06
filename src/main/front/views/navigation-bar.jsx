@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { NavLink as RRNavLink } from 'react-router-dom';
 import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink, Badge, Button, UncontrolledTooltip } from 'reactstrap';
 import logo from 'images/logo.png';
@@ -70,13 +70,12 @@ class NavigationBar extends Component {
                                 style={{ margin: '8px 0', padding: '0.4em', height: '22px', width: this.state.workingWithoutSession ? '65px' : '45px' }}>
                                 {this.state.workingWithoutSession ?
                                     t('session.no-session') :
-                                    <Fragment>
-                                        {this.state.sessionExpirationTime / 60 + ' ' + t('session.minutes')}
-                                        <UncontrolledTooltip placement="bottom" target="navigation-bar_expiration-time-badge">
-                                            {t('session.expiration-time')}
-                                        </UncontrolledTooltip>
-                                    </Fragment>
-                                }
+                                    this.state.sessionExpirationTime / 60 + ' ' + t('session.minutes')}
+                                <UncontrolledTooltip placement="bottom" target="navigation-bar_expiration-time-badge">
+                                    {this.state.workingWithoutSession ?
+                                        t('session.no-session-info') :
+                                        t('session.expiration-time')}
+                                </UncontrolledTooltip>
                             </Badge>
                             <span className="space-between-text"></span>
                             <div className="form-inline"><Button color="secondary" size="sm" onClick={logout}>{t('global.logout')}</Button></div>

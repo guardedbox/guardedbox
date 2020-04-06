@@ -47,12 +47,13 @@
     },
     "session": {
         "minutes": "min",
-        "no-session": "No session",
         "expiration-time": "Remaining session time",
+        "no-session": "No session",
+        "no-session-info": "You cannot load data or make any changes.",
         "title-session-expired": "Your session has expired.",
-        "body-session-expired": "Would you like to keep working without a session? If you choose 'No', you will be redirected to the login page.",
+        "body-session-expired": "Would you like to keep working without a session? If you choose 'Yes', you will be able to continue working but you will not be able to load data or make any changes. If you choose 'No', you will be redirected to the login page.",
         "title-working-without-session": "You are working without a session.",
-        "body-working-without-session": "You cannot perform any modification or data update."
+        "body-working-without-session": "You cannot load data or make any changes."
     },
     "login": {
         "title-login": "Log in",
@@ -101,7 +102,7 @@
         "check-keys": "Check key",
         "encryption-public-key": "Encryption public key",
         "signing-public-key": "Signing public key",
-        "check-keys-info": "Ask {email} to get into the \"{view}\" section of GuardedBox and to tell you his public encryption key so you can check that it matches this one.",
+        "check-keys-info": "We recommend you to ask {email} to get into the \"{view}\" section of GuardedBox and to tell you his public encryption key so you can check that it matches this one.",
         "email-already-registered": "The email {email} is already registered in GuardedBox.",
         "email-not-registered": "The email {email} is not registered in GuardedBox."
     },

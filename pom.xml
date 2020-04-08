@@ -45,7 +45,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependencies Versions -->
-        <bouncycastle.version>1.64</bouncycastle.version>
+        <bouncycastle.version>1.65</bouncycastle.version>
         <hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
 
         <!-- Docker -->

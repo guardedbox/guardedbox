@@ -268,7 +268,9 @@ export function processSecrets(encryptedSecrets, encryptedSymmetricKey, publicKe
         decryptedSecrets.push({
             secretId: encryptedSecret.secretId,
             value: secretValueDecryption.decryptedSecret,
-            encryptedKey: encryptedSecret.encryptedKey
+            encryptedKey: encryptedSecret.encryptedKey,
+            numberOfSharings: encryptedSecret.numberOfSharings,
+            wasShared: encryptedSecret.wasShared
         });
 
     }

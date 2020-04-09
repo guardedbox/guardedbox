@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { UncontrolledTooltip } from 'reactstrap';
+import { UncontrolledTooltip, Badge } from 'reactstrap';
 import Octicon from '@primer/octicons-react'
 
 class ActionIcon extends Component {
@@ -19,15 +19,20 @@ class ActionIcon extends Component {
                 id={this.props.id || this.id}
                 onClick={this.props.onClick}
                 className={this.props.className}
-                style={{ ...this.props.style, ...{ cursor: 'pointer' } }}>
+                style={{ ...this.props.style, ...{ cursor: 'pointer', position: 'relative' } }}>
 
                 <Octicon icon={this.props.icon} />
 
-                {this.props.tooltipText ?
+                {this.props.tooltipText == null ? null :
                     <UncontrolledTooltip placement="top" target={this.props.id || this.id}>
                         {this.props.tooltipText}
                     </UncontrolledTooltip>
-                    : null
+                }
+
+                {this.props.badgeText == null ? null :
+                    <Badge className="badge-notification" color={this.props.badgeColor}>
+                        {this.props.badgeText}
+                    </Badge>
                 }
 
             </span>

@@ -37,7 +37,7 @@ class GroupsIWasAddedTo extends Component {
 
     }
 
-    loadGroups = (loading) => {
+    loadGroups = (loading, callback) => {
 
         rest({
             method: 'get',
@@ -57,7 +57,7 @@ class GroupsIWasAddedTo extends Component {
                 this.setState({
                     groupsIWasAddedTo: groupsIWasAddedTo,
                     collapsersOpen: loadCollapsersOpen(this, groupsIWasAddedTo, 'groupId')
-                });
+                }, callback);
 
             }
         });

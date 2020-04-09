@@ -73,6 +73,16 @@ public class SecretEntity
     @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
     private String encryptedKey;
 
+    /** Must Rotate Key. */
+    @Column(name = "must_rotate_key")
+    @NotNull
+    private Boolean mustRotateKey;
+
+    /** Was Shared. */
+    @Column(name = "was_shared")
+    @NotNull
+    private Boolean wasShared;
+
     /** Shared Secrets Based on this Secret. */
     @OneToMany(mappedBy = "secret", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedSecretEntity> sharedSecrets;

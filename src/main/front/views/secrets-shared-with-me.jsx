@@ -35,7 +35,7 @@ class SecretsSharedWithMe extends Component {
 
     }
 
-    loadSecrets = (loading) => {
+    loadSecrets = (loading, callback) => {
 
         rest({
             method: 'get',
@@ -54,7 +54,7 @@ class SecretsSharedWithMe extends Component {
                 this.setState({
                     secretsSharedWithMe: secretsSharedWithMe,
                     collapsersOpen: loadCollapsersOpen(this, secretsSharedWithMe, 'email')
-                });
+                }, callback);
 
             }
         });

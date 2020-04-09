@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Table } from 'reactstrap';
-import { DiffAdded, Sync, File, Eye, Pencil, Trashcan, FileSymlinkFile } from '@primer/octicons-react'
+import { DiffAdded, Sync, File, Eye, Pencil, Trashcan, Organization } from '@primer/octicons-react'
 import ActionIcon from 'components/action-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
@@ -33,7 +33,7 @@ class MySecrets extends Component {
 
     }
 
-    loadSecrets = (loading) => {
+    loadSecrets = (loading, callback) => {
 
         rest({
             method: 'get',
@@ -43,7 +43,7 @@ class MySecrets extends Component {
 
                 this.setState({
                     mySecrets: processSecrets(response)
-                });
+                }, callback);
 
             }
         });
@@ -212,7 +212,7 @@ class MySecrets extends Component {
                     loadingChain: true,
                     callback: (response) => {
 
-                        callback(response);
+                        callback(() => { this.loadSecrets(false) });
 
                     }
                 });
@@ -241,7 +241,7 @@ class MySecrets extends Component {
                     loadingChain: true,
                     callback: (response) => {
 
-                        callback(response);
+                        callback(() => { this.loadSecrets(false) });
 
                     }
                 });
@@ -311,15 +311,25 @@ class MySecrets extends Component {
                                                 <ActionIcon icon={Trashcan} tooltipText={t('global.delete')}
                                                     onClick={() => { this.deleteSecret(secret) }} />
                                                 <span className="space-between-icons"></span>
-                                                <ActionIcon icon={FileSymlinkFile} tooltipText={t('global.share')} onClick={() => {
-                                                    participantsModal(
-                                                        t('secrets.title-share-secret'),
-                                                        this.loadSharedSecretReceiverAccounts,
-                                                        this.shareSecret,
-                                                        this.unshareSecret,
-                                                        secret
-                                                    )
-                                                }} />
+                                                <ActionIcon
+                                                    icon={Organization}
+                                                    badgeText={secret.wasShared ? secret.numberOfSharings : null} badgeColor="success"
+                                                    tooltipText={secret.wasShared ?
+                                                        secret.numberOfSharings > 0 ?
+                                                            t('shared-secrets.currently-shared', { n: secret.numberOfSharings }) :
+                                                            t('shared-secrets.was-shared') :
+                                                        t('global.share')
+                                                    }
+                                                    onClick={() => {
+                                                        participantsModal(
+                                                            t('secrets.title-share-secret'),
+                                                            this.loadSharedSecretReceiverAccounts,
+                                                            this.shareSecret,
+                                                            this.unshareSecret,
+                                                            secret
+                                                        )
+                                                    }}
+                                                />
                                             </td>
                                         </tr>
                                     )}

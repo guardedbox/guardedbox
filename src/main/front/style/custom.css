@@ -118,3 +118,10 @@ input::-webkit-inner-spin-button {
     font-size: 0.625rem;
     font-weight: 100;
 }
+
+.badge-notification {
+    position: absolute;
+    display: block;
+    top: -10px;
+    right: -10px;
+}

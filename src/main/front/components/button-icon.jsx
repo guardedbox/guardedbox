@@ -25,11 +25,10 @@ class ButtonIcon extends Component {
 
                 <Octicon icon={this.props.icon} />
 
-                {this.props.tooltipText ?
+                {this.props.tooltipText == null ? null :
                     <UncontrolledTooltip placement="top" target={this.props.id || this.id}>
                         {this.props.tooltipText}
                     </UncontrolledTooltip>
-                    : null
                 }
 
             </Button>

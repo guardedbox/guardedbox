@@ -31,4 +31,10 @@ public class SecretDto
     /** Encrypted Key. */
     private String encryptedKey;
 
+    /** Number of Sharings. */
+    private Integer numberOfSharings;
+
+    /** Was Shared. */
+    private Boolean wasShared;
+
 }

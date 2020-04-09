@@ -23,12 +23,12 @@ class PopoverIcon extends Component {
                 id={this.props.id || this.id}
                 onClick={() => { this.setState({ open: true }) }}
                 className={this.props.className}
-                style={{ ...this.props.style, ...{ cursor: 'pointer' } }}>
+                style={{ ...this.props.style, ...{ cursor: 'pointer', position: 'relative' } }}>
 
                 <Octicon icon={this.props.icon} />
 
-                {this.props.popoverText ?
-                    <Popover
+                {this.props.popoverText == null ? null :
+                    < Popover
                         target={this.props.id || this.id}
                         trigger="legacy"
                         placement={this.props.placement}
@@ -36,7 +36,12 @@ class PopoverIcon extends Component {
                         toggle={() => { this.setState({ open: false }) }}>
                         <PopoverBody>{this.props.popoverText}</PopoverBody>
                     </Popover>
-                    : null
+                }
+
+                {this.props.badgeText == null ? null :
+                    <Badge className="badge-notification" color={this.props.badgeColor}>
+                        {this.props.badgeText}
+                    </Badge>
                 }
 
             </span>

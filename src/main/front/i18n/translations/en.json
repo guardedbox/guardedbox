@@ -133,6 +133,8 @@
         "secret-does-not-exist": "The secret does not exist."
     },
     "shared-secrets": {
+        "currently-shared": "Shared with {n} user(s)",
+        "was-shared": "Was shared",
         "remove-receiver": "Are you sure you want to stop sharing the secret \"{secret}\" with \"{email}\"?",
         "do-not-self-share": "You cannot share secrets with yourself.",
         "secret-already-shared-with-email": "This secret is already shared with {email}.",

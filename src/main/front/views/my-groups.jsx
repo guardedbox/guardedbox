@@ -38,7 +38,7 @@ class MyGroups extends Component {
 
     }
 
-    loadGroups = (loading) => {
+    loadGroups = (loading, callback) => {
 
         rest({
             method: 'get',
@@ -58,7 +58,7 @@ class MyGroups extends Component {
                 this.setState({
                     myGroups: myGroups,
                     collapsersOpen: loadCollapsersOpen(this, myGroups, 'groupId')
-                });
+                }, callback);
 
             }
         });
@@ -190,7 +190,7 @@ class MyGroups extends Component {
                     loadingChain: true,
                     callback: (response) => {
 
-                        callback(response);
+                        callback(() => { this.loadGroups(false) });
 
                     }
                 });
@@ -218,7 +218,8 @@ class MyGroups extends Component {
                     },
                     callback: (response) => {
 
-                        callback(response);
+                        callback(() => { this.loadGroups(false) });
+
                     }
                 });
 

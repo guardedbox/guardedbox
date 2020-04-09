@@ -63,7 +63,7 @@ export function closeParticipantsModal(callback) {
  */
 export function participantsModalAddParticipant(account) {
 
-    app().state.participantsModalAddParticipantFunction(app().state.participantsModalFunctionsArg, account, () => {
+    app().state.participantsModalAddParticipantFunction(app().state.participantsModalFunctionsArg, account, (callback) => {
 
         app().state.participantsModalLoadParticipantsFunction(app().state.participantsModalFunctionsArg, (accounts) => {
 
@@ -80,6 +80,8 @@ export function participantsModalAddParticipant(account) {
                     app().participantsModalTxtEmail.current.focus();
                 }, 25);
 
+                if (callback) callback();
+
             });
 
         });
@@ -95,7 +97,7 @@ export function participantsModalAddParticipant(account) {
  */
 export function participantsModalRemoveParticipant(account) {
 
-    app().state.participantsModalRemoveParticipantFunction(app().state.participantsModalFunctionsArg, account, () => {
+    app().state.participantsModalRemoveParticipantFunction(app().state.participantsModalFunctionsArg, account, (callback) => {
 
         app().state.participantsModalLoadParticipantsFunction(app().state.participantsModalFunctionsArg, (accounts) => {
 
@@ -108,6 +110,8 @@ export function participantsModalRemoveParticipant(account) {
                 setTimeout(() => {
                     app().participantsModalTxtEmail.current.focus();
                 }, 200);
+
+                if (callback) callback();
 
             });
 

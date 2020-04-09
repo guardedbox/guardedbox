@@ -31,6 +31,9 @@ public class SecretDto
     /** Encrypted Key. */
     private String encryptedKey;
 
+    /** Must Rotate Key. */
+    private Boolean mustRotateKey;
+
     /** Number of Sharings. */
     private Integer numberOfSharings;
 

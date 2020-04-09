@@ -9,6 +9,8 @@ import com.guardedbox.dto.CreateSecretDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.entity.SecretEntity;
 import com.guardedbox.entity.projection.SecretBaseProjection;
+import com.guardedbox.entity.projection.SecretMustRotateKeyProjection;
+import com.guardedbox.entity.projection.SecretValueProjection;
 
 /**
  * Mapper: Secret.
@@ -50,10 +52,21 @@ public class SecretsMapper {
             return null;
 
         SecretDto secretDto = new SecretDto()
-                .setSecretId(secretProjection.getSecretId())
-                .setValue(secretProjection.getValue());
+                .setSecretId(secretProjection.getSecretId());
 
-        if (secretProjection instanceof SecretBaseProjection) {
+        if (secretProjection instanceof SecretValueProjection) {
+
+            SecretValueProjection secretSubProjection = (SecretValueProjection) secretProjection;
+            return secretDto
+                    .setValue(secretSubProjection.getValue());
+
+        } else if (secretProjection instanceof SecretMustRotateKeyProjection) {
+
+            SecretMustRotateKeyProjection secretSubProjection = (SecretMustRotateKeyProjection) secretProjection;
+            return secretDto
+                    .setMustRotateKey(secretSubProjection.getMustRotateKey());
+
+        } else if (secretProjection instanceof SecretBaseProjection) {
 
             return secretDto;
 

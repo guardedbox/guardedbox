@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.guardedbox.config.SpringContext;
 import com.guardedbox.entity.SecretEntity;
 import com.guardedbox.entity.projection.SecretBaseProjection;
+import com.guardedbox.entity.projection.SecretMustRotateKeyProjection;
+import com.guardedbox.entity.projection.SecretValueProjection;
 
 /**
  * Repository: Secret.
@@ -26,6 +28,20 @@ public interface SecretsRepository
      * @return The SecretBaseProjection corresponding to the introduced secretId.
      */
     SecretBaseProjection findBaseBySecretId(
+            UUID secretId);
+
+    /**
+     * @param secretId SecretEntity.secretId.
+     * @return The SecretValueProjection corresponding to the introduced secretId.
+     */
+    SecretValueProjection findValueBySecretId(
+            UUID secretId);
+
+    /**
+     * @param secretId SecretEntity.secretId.
+     * @return The SecretMustRotateKeyProjection corresponding to the introduced secretId.
+     */
+    SecretMustRotateKeyProjection findMustRotateKeyBySecretId(
             UUID secretId);
 
     /**
@@ -51,7 +67,15 @@ public interface SecretsRepository
         SecretsRepository repository = SpringContext.getSecretsRepository();
         UUID id = entity.getSecretId();
 
-        if (SecretBaseProjection.class.equals(type)) {
+        if (SecretValueProjection.class.equals(type)) {
+
+            return type.cast(repository.findValueBySecretId(id));
+
+        } else if (SecretMustRotateKeyProjection.class.equals(type)) {
+
+            return type.cast(repository.findMustRotateKeyBySecretId(id));
+
+        } else if (SecretBaseProjection.class.equals(type)) {
 
             return type.cast(repository.findBaseBySecretId(id));
 

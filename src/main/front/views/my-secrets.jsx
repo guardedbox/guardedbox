@@ -77,62 +77,82 @@ class MySecrets extends Component {
 
         rest({
             method: 'get',
-            url: '/api/shared-secrets/sent/{secret-id}/receiver-accounts',
+            url: '/api/secrets/{secret-id}/must-rotate-key',
             pathVariables: {
                 'secret-id': originalSecret.secretId
             },
             loadingChain: true,
             callback: (response) => {
 
-                var receiverAccounts = response;
-                var secretValueEncryption = encryptSecret(secretValue, null, originalSecret.encryptedKey, null, receiverAccounts);
-                if (!secretValueEncryption) return;
+                if (response.mustRotateKey) {
 
-                rest({
-                    method: 'post',
-                    url: '/api/secrets/{secret-id}',
-                    pathVariables: {
-                        'secret-id': originalSecret.secretId
-                    },
-                    body: {
-                        value: JSON.stringify(secretValueEncryption.encryptedSecret),
-                        encryptedKey: secretValueEncryption.encryptedSymmetricKeyForMe,
-                        sharings: secretValueEncryption.encryptedSymmetricKeyForOthers
-                    },
-                    loadingChained: true,
-                    callback: (response) => {
+                    rest({
+                        method: 'get',
+                        url: '/api/shared-secrets/sent/{secret-id}/receiver-accounts',
+                        pathVariables: {
+                            'secret-id': originalSecret.secretId
+                        },
+                        loadingChained: true,
+                        loadingChain: true,
+                        callback: (response) => {
 
-                        closeSecretModal(() => {
-                            this.loadSecrets(false);
-                        });
+                            var receiverAccounts = response;
+                            var secretValueEncryption = encryptSecret(secretValue, null, originalSecret.encryptedKey, null, receiverAccounts);
+                            if (!secretValueEncryption) { notLoading(); return; }
 
-                    }
-                });
+                            rest({
+                                method: 'post',
+                                url: '/api/secrets/{secret-id}',
+                                pathVariables: {
+                                    'secret-id': originalSecret.secretId
+                                },
+                                body: {
+                                    value: JSON.stringify(secretValueEncryption.encryptedSecret),
+                                    encryptedKey: secretValueEncryption.encryptedSymmetricKeyForMe,
+                                    sharings: secretValueEncryption.encryptedSymmetricKeyForOthers
+                                },
+                                loadingChained: true,
+                                callback: (response) => {
+
+                                    closeSecretModal(() => {
+                                        this.loadSecrets(false);
+                                    });
+
+                                }
+                            });
+
+                        }
+                    });
+
+                } else {
+
+                    var secretValueEncryption = encryptSecret(secretValue, null, originalSecret.encryptedKey);
+                    if (!secretValueEncryption) { notLoading(); return; }
+
+                    rest({
+                        method: 'post',
+                        url: '/api/secrets/{secret-id}',
+                        pathVariables: {
+                            'secret-id': originalSecret.secretId
+                        },
+                        body: {
+                            value: JSON.stringify(secretValueEncryption.encryptedSecret),
+                            encryptedKey: secretValueEncryption.encryptedSymmetricKeyForMe
+                        },
+                        loadingChained: true,
+                        callback: (response) => {
+
+                            closeSecretModal(() => {
+                                this.loadSecrets(false);
+                            });
+
+                        }
+                    });
+
+                }
 
             }
         });
-
-        // var secretValueEncryption = encryptSecret(secretValue, null, originalSecret.encryptedKey);
-        // if (!secretValueEncryption) return;
-
-        // rest({
-        //     method: 'post',
-        //     url: '/api/secrets/{secret-id}',
-        //     pathVariables: {
-        //         'secret-id': originalSecret.secretId
-        //     },
-        //     body: {
-        //         value: JSON.stringify(secretValueEncryption.encryptedSecret),
-        //         encryptedKey: secretValueEncryption.encryptedSymmetricKeyForMe
-        //     },
-        //     callback: (response) => {
-
-        //         closeSecretModal(() => {
-        //             this.loadSecrets(false);
-        //         });
-
-        //     }
-        // });
 
     }
 

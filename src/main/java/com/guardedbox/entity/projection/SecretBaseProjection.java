@@ -19,8 +19,6 @@ public interface SecretBaseProjection {
 
     AccountEntity getOwnerAccount();
 
-    String getValue();
-
     /**
      * @param <T> A projection type.
      * @param type The class of the projection.

@@ -19,6 +19,8 @@ import com.guardedbox.entity.SecretEntity;
 import com.guardedbox.entity.SharedSecretEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
 import com.guardedbox.entity.projection.SecretBaseProjection;
+import com.guardedbox.entity.projection.SecretMustRotateKeyProjection;
+import com.guardedbox.entity.projection.SecretValueProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.SecretsMapper;
 import com.guardedbox.repository.SecretsRepository;
@@ -50,6 +52,19 @@ public class SecretsService {
             UUID ownerAccountId) {
 
         return secretsMapper.toDto(secretsRepository.findByOwnerAccountAccountId(ownerAccountId));
+
+    }
+
+    /**
+     * @param ownerAccountId Account.accountId.
+     * @param secretId Secret.secretId.
+     * @return SecretDto indicating if the secret corresponding to the introduced secretId must rotate its key.
+     */
+    public SecretDto getSecretMustRotateKey(
+            UUID ownerAccountId,
+            UUID secretId) {
+
+        return secretsMapper.toDto(findAndCheckSecret(secretId, ownerAccountId, SecretMustRotateKeyProjection.class));
 
     }
 
@@ -88,6 +103,11 @@ public class SecretsService {
 
         SecretEntity secret = findAndCheckSecret(secretId, ownerAccountId);
 
+        if (secret.getMustRotateKey() && editSecretDto.getSharings() == null) {
+            throw new ServiceException(String.format(
+                    "Secret %s must rotate key", secretId));
+        }
+
         if (editSecretDto.getSharings() != null) {
             if (editSecretDto.getSharings().size() != secret.getSharedSecrets().size()) {
                 throw new ServiceException(String.format(
@@ -110,7 +130,8 @@ public class SecretsService {
 
         secret
                 .setValue(editSecretDto.getValue())
-                .setEncryptedKey(editSecretDto.getEncryptedKey());
+                .setEncryptedKey(editSecretDto.getEncryptedKey())
+                .setMustRotateKey(false);
 
         return secretsMapper.toDto(secretsRepository.save(secret));
 
@@ -177,7 +198,15 @@ public class SecretsService {
 
         SecretBaseProjection secret = null;
 
-        if (SecretBaseProjection.class.equals(type)) {
+        if (SecretValueProjection.class.equals(type)) {
+
+            secret = secretsRepository.findValueBySecretId(secretId);
+
+        } else if (SecretMustRotateKeyProjection.class.equals(type)) {
+
+            secret = secretsRepository.findMustRotateKeyBySecretId(secretId);
+
+        } else if (SecretBaseProjection.class.equals(type)) {
 
             secret = secretsRepository.findBaseBySecretId(secretId);
 

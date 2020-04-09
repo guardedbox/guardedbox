@@ -54,6 +54,18 @@ public class SecretsController {
     }
 
     /**
+     * @param secretId A secret ID.
+     * @return Object indicating if the secret corresponding to the introduced ID must rotate its key.
+     */
+    @GetMapping("/{secret-id}/must-rotate-key")
+    public SecretDto getSecretMustRotateKey(
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId) {
+
+        return secretsService.getSecretMustRotateKey(sessionAccount.getAccountId(), secretId);
+
+    }
+
+    /**
      * Creates Secret, belonging to the current session account.
      *
      * @param createSecretDto Object with the necessary data to create a Secret.

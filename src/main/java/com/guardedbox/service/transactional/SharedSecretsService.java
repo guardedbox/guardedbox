@@ -19,7 +19,7 @@ import com.guardedbox.entity.SecretEntity;
 import com.guardedbox.entity.SharedSecretEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
 import com.guardedbox.entity.projection.AccountPublicKeysProjection;
-import com.guardedbox.entity.projection.SecretBaseProjection;
+import com.guardedbox.entity.projection.SecretValueProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.mapper.SecretsMapper;
@@ -69,7 +69,7 @@ public class SharedSecretsService {
 
         for (SharedSecretEntity receivedSharedSecret : receivedSharedSecrets) {
 
-            SecretBaseProjection secret = receivedSharedSecret.getSecret(SecretBaseProjection.class);
+            SecretValueProjection secret = receivedSharedSecret.getSecret(SecretValueProjection.class);
             AccountPublicKeysProjection ownerAccount = secret.getOwnerAccount(AccountPublicKeysProjection.class);
 
             AccountDto ownerAccountWithSecrets = ownerAccountsWithSecrets.get(ownerAccount.getAccountId());

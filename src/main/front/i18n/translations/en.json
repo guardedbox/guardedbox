@@ -151,6 +151,8 @@
         "title-new-group": "New group",
         "title-edit-group": "Edit group",
         "participants": "Participants",
+        "currently-has-participants": "{n} participant(s)",
+        "had-participants": "Had participants",
         "remove-participant": "Are you sure that you want to remove \"{email}\" from the \"{group}\" group?",
         "add-secret": "Add secret",
         "delete-secret": "Are you sure that you want to delete the \"{secret}\" secret from the \"{group}\" group?",

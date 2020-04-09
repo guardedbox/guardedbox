@@ -143,15 +143,25 @@ class GroupsIWasAddedTo extends Component {
                                             <ActionIcon icon={X} tooltipText={t('global.exit')}
                                                 onClick={() => { this.exitGroup(group) }} />
                                             <span className="space-between-icons"></span>
-                                            <ActionIcon icon={Organization} tooltipText={t('groups.participants')} onClick={() => {
-                                                participantsModal(
-                                                    t('groups.participants'),
-                                                    this.loadGroupParticipants,
-                                                    null,
-                                                    null,
-                                                    group
-                                                )
-                                            }} />
+                                            <ActionIcon
+                                                icon={Organization}
+                                                badgeText={group.hadParticipants ? group.numberOfParticipants : null} badgeColor="success"
+                                                tooltipText={group.hadParticipants ?
+                                                    group.numberOfParticipants > 0 ?
+                                                        t('groups.currently-has-participants', { n: group.numberOfParticipants }) :
+                                                        t('groups.had-participants') :
+                                                    t('groups.participants')
+                                                }
+                                                onClick={() => {
+                                                    participantsModal(
+                                                        t('groups.participants'),
+                                                        this.loadGroupParticipants,
+                                                        null,
+                                                        null,
+                                                        group
+                                                    )
+                                                }}
+                                            />
                                         </div>
                                     </h5>
                                     <h6>

@@ -35,6 +35,12 @@ public class GroupDto
     /** Encrypted Key. */
     private String encryptedKey;
 
+    /** Number of Participants. */
+    private Integer numberOfParticipants;
+
+    /** Had Participants. */
+    private Boolean hadParticipants;
+
     /** Secrets. */
     private List<SecretDto> secrets;
 

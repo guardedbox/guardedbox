@@ -73,6 +73,16 @@ public class GroupEntity
     @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
     private String encryptedKey;
 
+    /** Must Rotate Key. */
+    @Column(name = "must_rotate_key")
+    @NotNull
+    private Boolean mustRotateKey;
+
+    /** Had Participants. */
+    @Column(name = "had_participants")
+    @NotNull
+    private Boolean hadParticipants;
+
     /** Participants. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupParticipantEntity> participants;

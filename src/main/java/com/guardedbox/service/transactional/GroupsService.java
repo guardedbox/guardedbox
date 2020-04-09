@@ -166,8 +166,11 @@ public class GroupsService {
             UUID ownerAccountId,
             CreateGroupDto createGroupDto) {
 
-        GroupEntity group = groupsMapper.fromDto(createGroupDto);
-        group.setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId));
+        GroupEntity group = groupsMapper.fromDto(createGroupDto)
+                .setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId))
+                .setMustRotateKey(false)
+                .setHadParticipants(false);
+
         return groupsMapper.toDto(groupsRepository.save(group));
 
     }
@@ -202,9 +205,9 @@ public class GroupsService {
             AddParticipantToGroupDto addParticipantToGroupDto) {
 
         GroupEntity group = findAndCheckGroup(addParticipantToGroupDto.getGroupId(), ownerAccountId, false);
+        groupsRepository.save(group.setHadParticipants(true));
 
         AccountBaseProjection account = accountsService.findAndCheckAccountByEmail(addParticipantToGroupDto.getEmail(), AccountBaseProjection.class);
-
         if (account.getAccountId().equals(ownerAccountId)) {
             throw new ServiceException(String.format(
                     "Group %s belongs to email %s", addParticipantToGroupDto.getGroupId(), addParticipantToGroupDto.getEmail()))
@@ -224,6 +227,7 @@ public class GroupsService {
                 .setGroup(group)
                 .setAccount(new AccountEntity().setAccountId(account.getAccountId()))
                 .setEncryptedKey(addParticipantToGroupDto.getEncryptedKey());
+
         groupParticipantsRepository.save(groupParticipant);
 
     }
@@ -309,6 +313,7 @@ public class GroupsService {
             String email) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
+        groupsRepository.save(group.setMustRotateKey(true));
 
         for (int i = 0; i < group.getParticipants().size(); i++) {
             GroupParticipantEntity participant = group.getParticipants().get(i);
@@ -328,6 +333,9 @@ public class GroupsService {
     public void exitFromGroup(
             UUID groupId,
             UUID participantAccountId) {
+
+        GroupEntity group = findAndCheckGroup(groupId, null, false);
+        groupsRepository.save(group.setMustRotateKey(true));
 
         GroupParticipantEntity groupParticipant = groupParticipantsRepository.findByGroupGroupIdAndAccountAccountId(groupId, participantAccountId);
         if (groupParticipant == null) {

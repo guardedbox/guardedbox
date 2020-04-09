@@ -49,7 +49,7 @@ class MyGroups extends Component {
                 var myGroups = response;
 
                 for (var group of myGroups) {
-                    group.name = decryptSecret(group.name, null, group.encryptedKey).decryptedSecret
+                    group.name = decryptSecret(group.name, null, group.encryptedKey).decryptedSecret;
                     group.secrets = processSecrets(group.secrets, group.encryptedKey);
                 }
 
@@ -350,15 +350,25 @@ class MyGroups extends Component {
                                             <ActionIcon icon={Trashcan} tooltipText={t('global.delete')}
                                                 onClick={() => { this.deleteGroup(group) }} />
                                             <span className="space-between-icons"></span>
-                                            <ActionIcon icon={Organization} tooltipText={t('groups.participants')} onClick={() => {
-                                                participantsModal(
-                                                    t('groups.participants'),
-                                                    this.loadGroupParticipants,
-                                                    this.addParticipantToGroup,
-                                                    this.removeParticipantFromGroup,
-                                                    group
-                                                )
-                                            }} />
+                                            <ActionIcon
+                                                icon={Organization}
+                                                badgeText={group.hadParticipants ? group.numberOfParticipants : null} badgeColor="success"
+                                                tooltipText={group.hadParticipants ?
+                                                    group.numberOfParticipants > 0 ?
+                                                        t('groups.currently-has-participants', { n: group.numberOfParticipants }) :
+                                                        t('groups.had-participants') :
+                                                    t('groups.participants')
+                                                }
+                                                onClick={() => {
+                                                    participantsModal(
+                                                        t('groups.participants'),
+                                                        this.loadGroupParticipants,
+                                                        this.addParticipantToGroup,
+                                                        this.removeParticipantFromGroup,
+                                                        group
+                                                    )
+                                                }}
+                                            />
                                         </div>
                                     </h5>
                                     <Collapse isOpen={this.state.collapsersOpen[group.groupId]}>

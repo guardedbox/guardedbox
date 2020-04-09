@@ -142,7 +142,7 @@ public class SharedSecretsService {
         }
 
         SharedSecretEntity sharedSecret = new SharedSecretEntity()
-                .setSecret(new SecretEntity().setSecretId(secretId))
+                .setSecret(secret)
                 .setReceiverAccount(new AccountEntity().setAccountId(receiverAccount.getAccountId()))
                 .setEncryptedKey(shareSecretDto.getEncryptedKey());
 

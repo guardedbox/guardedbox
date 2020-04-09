@@ -45,6 +45,8 @@ CREATE TABLE `group_` (
   `owner_account_id` binary(16) DEFAULT NULL,
   `name` varchar(416) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `encrypted_key` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `must_rotate_key` bit(1) DEFAULT NULL,
+  `had_participants` bit(1) DEFAULT NULL,
   PRIMARY KEY (`group_id`),
   KEY `OWNER_ACCOUNT_ID` (`owner_account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -114,6 +116,8 @@ CREATE TABLE `secret` (
   `owner_account_id` binary(16) DEFAULT NULL,
   `value` mediumtext COLLATE utf8mb4_unicode_ci,
   `encrypted_key` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `must_rotate_key` bit(1) DEFAULT NULL,
+  `was_shared` bit(1) DEFAULT NULL,
   PRIMARY KEY (`secret_id`),
   KEY `OWNER_ACCOUNT_ID` (`owner_account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

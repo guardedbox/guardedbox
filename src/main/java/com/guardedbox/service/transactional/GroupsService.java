@@ -1,7 +1,9 @@
 package com.guardedbox.service.transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -14,9 +16,11 @@ import com.guardedbox.dto.AddParticipantToGroupDto;
 import com.guardedbox.dto.AddSecretToGroupDto;
 import com.guardedbox.dto.CreateGroupDto;
 import com.guardedbox.dto.EditGroupDto;
+import com.guardedbox.dto.EditGroupEditSecretDto;
 import com.guardedbox.dto.EditGroupSecretDto;
 import com.guardedbox.dto.GroupDto;
 import com.guardedbox.dto.SecretDto;
+import com.guardedbox.dto.ShareSecretDto;
 import com.guardedbox.entity.AccountEntity;
 import com.guardedbox.entity.GroupEntity;
 import com.guardedbox.entity.GroupParticipantEntity;
@@ -60,6 +64,30 @@ public class GroupsService {
 
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
+
+    /**
+     * @param ownerOrParticipantAccountId An ID representing an account.
+     * @param groupId An ID representing a group.
+     * @return The GroupDto corresponding to the introduced groupId. Checks that the account is the owner or a participant of the group.
+     */
+    public GroupDto getGroup(
+            UUID ownerOrParticipantAccountId,
+            UUID groupId) {
+
+        GroupEntity groupEntity = findAndCheckGroup(groupId, ownerOrParticipantAccountId, true);
+        GroupDto groupDto = groupsMapper.toDto(groupEntity);
+
+        groupDto.setSecrets(new ArrayList<>(groupEntity.getSecrets().size()));
+        for (GroupSecretEntity groupSecret : groupEntity.getSecrets()) {
+            SecretDto secret = new SecretDto()
+                    .setSecretId(groupSecret.getGroupSecretId())
+                    .setValue(groupSecret.getValue());
+            groupDto.getSecrets().add(secret);
+        }
+
+        return groupDto;
+
+    }
 
     /**
      * @param ownerAccountId Account.accountId.
@@ -156,6 +184,23 @@ public class GroupsService {
     }
 
     /**
+     * @param ownerAccountId Account.accountId.
+     * @param groupId Group.groupId.
+     * @return GroupDto indicating if the group corresponding to the introduced groupId must rotate its key.
+     */
+    public GroupDto getGroupMustRotateKey(
+            UUID ownerAccountId,
+            UUID groupId) {
+
+        GroupEntity group = findAndCheckGroup(groupId, ownerAccountId, false);
+
+        return new GroupDto()
+                .setGroupId(group.getGroupId())
+                .setMustRotateKey(group.getMustRotateKey());
+
+    }
+
+    /**
      * Creates a Group.
      *
      * @param ownerAccountId Account.accountId of the group owner.
@@ -186,9 +231,56 @@ public class GroupsService {
             UUID ownerAccountId,
             EditGroupDto editGroupDto) {
 
-        GroupEntity group = findAndCheckGroup(editGroupDto.getGroupId(), ownerAccountId, false)
+        GroupEntity group = findAndCheckGroup(editGroupDto.getGroupId(), ownerAccountId, false);
+
+        if (group.getMustRotateKey() && (editGroupDto.getSecrets() == null || editGroupDto.getParticipants() == null)) {
+            throw new ServiceException(String.format(
+                    "Group %s must rotate key", editGroupDto.getGroupId()));
+        }
+
+        if (editGroupDto.getParticipants() != null) {
+            if (editGroupDto.getParticipants().size() != group.getParticipants().size()) {
+                throw new ServiceException(String.format(
+                        "Edit group participants do not match group %s current participants", editGroupDto.getGroupId()));
+            }
+            Map<String, ShareSecretDto> editGroupParticipants = new HashMap<>();
+            for (ShareSecretDto editGroupParticipant : editGroupDto.getParticipants()) {
+                editGroupParticipants.put(editGroupParticipant.getEmail(), editGroupParticipant);
+            }
+            for (GroupParticipantEntity participant : group.getParticipants()) {
+                ShareSecretDto editGroupParticipant = editGroupParticipants.get(
+                        participant.getAccount(AccountBaseProjection.class).getEmail());
+                if (editGroupParticipant == null) {
+                    throw new ServiceException(String.format(
+                            "Edit group participants do not match group %s current participants", editGroupDto.getGroupId()));
+                }
+                participant.setEncryptedKey(editGroupParticipant.getEncryptedKey());
+            }
+        }
+
+        if (editGroupDto.getSecrets() != null) {
+            if (editGroupDto.getSecrets().size() != group.getSecrets().size()) {
+                throw new ServiceException(String.format(
+                        "Edit group secrets do not match group %s current secrets", editGroupDto.getGroupId()));
+            }
+            Map<UUID, EditGroupEditSecretDto> editGroupSecrets = new HashMap<>();
+            for (EditGroupEditSecretDto editGroupSecret : editGroupDto.getSecrets()) {
+                editGroupSecrets.put(editGroupSecret.getSecretId(), editGroupSecret);
+            }
+            for (GroupSecretEntity groupSecret : group.getSecrets()) {
+                EditGroupEditSecretDto editGroupSecret = editGroupSecrets.get(groupSecret.getGroupSecretId());
+                if (editGroupSecret == null) {
+                    throw new ServiceException(String.format(
+                            "Edit group secrets do not match group %s current secrets", editGroupDto.getGroupId()));
+                }
+                groupSecret.setValue(editGroupSecret.getValue());
+            }
+        }
+
+        group
                 .setName(editGroupDto.getName())
-                .setEncryptedKey(editGroupDto.getEncryptedKey());
+                .setEncryptedKey(editGroupDto.getEncryptedKey())
+                .setMustRotateKey(false);
 
         return groupsMapper.toDto(groupsRepository.save(group));
 
@@ -245,6 +337,11 @@ public class GroupsService {
 
         GroupEntity group = findAndCheckGroup(addSecretToGroupDto.getGroupId(), ownerAccountId, false);
 
+        if (group.getMustRotateKey()) {
+            throw new ServiceException(String.format(
+                    "Group %s must rotate key", addSecretToGroupDto.getGroupId()));
+        }
+
         GroupSecretEntity groupSecret = new GroupSecretEntity()
                 .setGroup(group)
                 .setValue(addSecretToGroupDto.getValue());
@@ -268,6 +365,11 @@ public class GroupsService {
             EditGroupSecretDto editGroupSecretDto) {
 
         GroupEntity group = findAndCheckGroup(editGroupSecretDto.getGroupId(), ownerAccountId, false);
+
+        if (group.getMustRotateKey()) {
+            throw new ServiceException(String.format(
+                    "Group %s must rotate key", editGroupSecretDto.getGroupId()));
+        }
 
         for (GroupSecretEntity groupSecret : group.getSecrets()) {
             if (groupSecret.getGroupSecretId().equals(editGroupSecretDto.getSecretId())) {

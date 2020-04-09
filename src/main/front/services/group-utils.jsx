@@ -1,4 +1,6 @@
 import { app } from 'services/views.jsx';
+import { decryptSecret, encryptSecret } from 'services/secret-utils.jsx';
+import { rest } from 'services/rest.jsx';
 
 /**
  * Opens the group modal.
@@ -67,6 +69,98 @@ export function sortGroups(groupsArray) {
 
     groupsArray.sort((group1, group2) => {
         return group1.name > group2.name ? 1 : group1.name < group2.name ? -1 : 0;
+    });
+
+}
+
+/**
+ * Rotates the symmetric key of a group.
+ *
+ * @param {string} groupId The group id.
+ * @param {object} editedGroup The new group data, in case it is being edited.
+ * @param {function} callback This function will be invoked once the group symmetric key has been rotated.
+ */
+export function rotateGroupKey(groupId, editedGroup, callback) {
+
+    rest({
+        method: 'get',
+        url: '/api/groups/{group-id}',
+        pathVariables: {
+            'group-id': groupId
+        },
+        loadingChained: true,
+        loadingChain: true,
+        callback: (response) => {
+
+            var group = response;
+
+            rest({
+                method: 'get',
+                url: '/api/groups/{group-id}/participants',
+                pathVariables: {
+                    'group-id': groupId
+                },
+                loadingChained: true,
+                loadingChain: true,
+                callback: (response) => {
+
+                    var participants = response;
+
+                    if (!editedGroup) {
+
+                        var groupNameDecryption = decryptSecret(group.name, null, group.encryptedKey);
+                        if (!groupNameDecryption) { notLoading(); return; };
+
+                        editedGroup = {
+                            name: groupNameDecryption.decryptedSecret
+                        };
+
+                    }
+
+                    var groupEncryption = encryptSecret(editedGroup, null, null, null, participants);
+                    if (!groupEncryption) { notLoading(); return; };
+
+                    var secrets = [];
+                    for (var groupSecret of group.secrets) {
+
+                        var groupSecretDecryption = decryptSecret(JSON.parse(groupSecret.value), null, group.encryptedKey, null, false);
+                        if (!groupSecretDecryption) { notLoading(); return; };
+
+                        var groupSecretEncryption = encryptSecret(groupSecretDecryption.decryptedSecret, null, groupEncryption.encryptedSymmetricKeyForMe);
+                        if (!groupSecretEncryption) { notLoading(); return; };
+
+                        secrets.push({
+                            secretId: groupSecret.secretId,
+                            value: JSON.stringify(groupSecretEncryption.encryptedSecret)
+                        });
+
+                    }
+
+                    rest({
+                        method: 'post',
+                        url: '/api/groups/{group-id}',
+                        pathVariables: {
+                            'group-id': groupId
+                        },
+                        body: {
+                            name: groupEncryption.encryptedSecret.name,
+                            encryptedKey: groupEncryption.encryptedSymmetricKeyForMe,
+                            secrets: secrets,
+                            participants: groupEncryption.encryptedSymmetricKeyForOthers
+                        },
+                        loadingChained: true,
+                        loadingChain: true,
+                        callback: (response) => {
+
+                            if (callback) callback(groupEncryption.encryptedSymmetricKeyForMe);
+
+                        }
+                    });
+
+                }
+            });
+
+        }
     });
 
 }

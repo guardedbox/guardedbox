@@ -57,6 +57,18 @@ public class GroupsController {
     private final SessionAccountService sessionAccount;
 
     /**
+     * @param groupId An ID representing a group.
+     * @return The group corresponding to the introduced ID.
+     */
+    @GetMapping("/{group-id}")
+    public GroupDto getGroup(
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
+
+        return groupsService.getGroup(sessionAccount.getAccountId(), groupId);
+
+    }
+
+    /**
      * @return All the groups belonging to the current session account.
      */
     @GetMapping("/owned")
@@ -85,6 +97,18 @@ public class GroupsController {
             @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
 
         return groupsService.getGroupParticipants(sessionAccount.getAccountId(), groupId);
+
+    }
+
+    /**
+     * @param groupId A group ID.
+     * @return Object indicating if the group corresponding to the introduced ID must rotate its key.
+     */
+    @GetMapping("/{group-id}/must-rotate-key")
+    public GroupDto getGroupMustRotateKey(
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
+
+        return groupsService.getGroupMustRotateKey(sessionAccount.getAccountId(), groupId);
 
     }
 

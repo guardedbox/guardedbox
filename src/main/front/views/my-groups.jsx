@@ -9,7 +9,7 @@ import { rest } from 'services/rest.jsx';
 import { notLoading } from 'services/loading.jsx';
 import { workingWithoutSession } from 'services/session.jsx';
 import { processSecrets, decryptSecret, encryptSecret, recryptSymmetricKey, secretModal, closeSecretModal, copySecretValueToClipboard, blinkSecretValue } from 'services/secret-utils.jsx';
-import { sortGroups, groupModal, closeGroupModal } from 'services/group-utils.jsx';
+import { sortGroups, groupModal, closeGroupModal, rotateGroupKey } from 'services/group-utils.jsx';
 import { participantsModal } from 'services/participant-utils.jsx';
 import { confirmationModal } from 'services/modal.jsx';
 import { loadCollapsersOpen, expandAllCollapsers, collapseAllCollapsers, toggleCollapser, expandCollapser } from 'services/collapsers.jsx';
@@ -90,27 +90,60 @@ class MyGroups extends Component {
 
     editGroup = (group, originalGroup) => {
 
-        var groupEncryption = encryptSecret(group, null, originalGroup.encryptedKey);
-        if (!groupEncryption) return;
-
         rest({
-            method: 'post',
-            url: '/api/groups/{group-id}',
+            method: 'get',
+            url: '/api/groups/{groups-id}/must-rotate-key',
             pathVariables: {
-                'group-id': originalGroup.groupId
+                'groups-id': originalGroup.groupId
             },
-            body: {
-                name: groupEncryption.encryptedSecret.name,
-                encryptedKey: groupEncryption.encryptedSymmetricKeyForMe
-            },
+            loadingChain: true,
             callback: (response) => {
 
-                closeGroupModal(() => {
-                    this.loadGroups(false);
-                });
+                if (response.mustRotateKey) {
+
+                    rotateGroupKey(originalGroup.groupId, group, () => {
+
+                        notLoading(() => {
+
+                            closeGroupModal(() => {
+                                this.loadGroups(false);
+                            });
+
+                        });
+
+                    });
+
+                } else {
+
+                    var groupEncryption = encryptSecret(group, null, originalGroup.encryptedKey);
+                    if (!groupEncryption) { notLoading(); return; };
+
+                    rest({
+                        method: 'post',
+                        url: '/api/groups/{group-id}',
+                        pathVariables: {
+                            'group-id': originalGroup.groupId
+                        },
+                        body: {
+                            name: groupEncryption.encryptedSecret.name,
+                            encryptedKey: groupEncryption.encryptedSymmetricKeyForMe
+                        },
+                        loadingChained: true,
+                        callback: (response) => {
+
+                            closeGroupModal(() => {
+                                this.loadGroups(false);
+                            });
+
+                        }
+                    });
+
+                }
 
             }
         });
+
+
 
     }
 
@@ -230,23 +263,49 @@ class MyGroups extends Component {
 
     createGroupSecret = (secretValue, _, group) => {
 
-        var secretValueEncryption = encryptSecret(secretValue, null, group.encryptedKey);
-        if (!secretValueEncryption) return;
-
         rest({
-            method: 'post',
-            url: '/api/groups/{group-id}/secrets',
+            method: 'get',
+            url: '/api/groups/{groups-id}/must-rotate-key',
             pathVariables: {
-                'group-id': group.groupId
+                'groups-id': group.groupId
             },
-            body: {
-                value: JSON.stringify(secretValueEncryption.encryptedSecret)
-            },
+            loadingChain: true,
             callback: (response) => {
 
-                closeSecretModal(() => {
-                    this.loadGroups(false);
-                });
+                var f = (encryptedKey) => {
+
+                    var secretValueEncryption = encryptSecret(secretValue, null, encryptedKey || group.encryptedKey);
+                    if (!secretValueEncryption) return;
+
+                    rest({
+                        method: 'post',
+                        url: '/api/groups/{group-id}/secrets',
+                        pathVariables: {
+                            'group-id': group.groupId
+                        },
+                        body: {
+                            value: JSON.stringify(secretValueEncryption.encryptedSecret)
+                        },
+                        callback: (response) => {
+
+                            notLoading(() => {
+
+                                closeSecretModal(() => {
+                                    this.loadGroups(false);
+                                });
+
+                            });
+
+                        }
+                    });
+
+                };
+
+                if (response.mustRotateKey) {
+                    rotateGroupKey(group.groupId, null, f);
+                } else {
+                    f();
+                }
 
             }
         });
@@ -255,24 +314,50 @@ class MyGroups extends Component {
 
     editGroupSecret = (secretValue, originalSecret, group) => {
 
-        var secretValueEncryption = encryptSecret(secretValue, null, group.encryptedKey);
-        if (!secretValueEncryption) return;
-
         rest({
-            method: 'post',
-            url: '/api/groups/{group-id}/secrets/{secret-id}',
+            method: 'get',
+            url: '/api/groups/{groups-id}/must-rotate-key',
             pathVariables: {
-                'group-id': group.groupId,
-                'secret-id': originalSecret.secretId
+                'groups-id': group.groupId
             },
-            body: {
-                value: JSON.stringify(secretValueEncryption.encryptedSecret)
-            },
+            loadingChain: true,
             callback: (response) => {
 
-                closeSecretModal(() => {
-                    this.loadGroups(false);
-                });
+                var f = (encryptedKey) => {
+
+                    var secretValueEncryption = encryptSecret(secretValue, null, encryptedKey || group.encryptedKey);
+                    if (!secretValueEncryption) return;
+
+                    rest({
+                        method: 'post',
+                        url: '/api/groups/{group-id}/secrets/{secret-id}',
+                        pathVariables: {
+                            'group-id': group.groupId,
+                            'secret-id': originalSecret.secretId
+                        },
+                        body: {
+                            value: JSON.stringify(secretValueEncryption.encryptedSecret)
+                        },
+                        callback: (response) => {
+
+                            notLoading(() => {
+
+                                closeSecretModal(() => {
+                                    this.loadGroups(false);
+                                });
+
+                            });
+
+                        }
+                    });
+
+                }
+
+                if (response.mustRotateKey) {
+                    rotateGroupKey(group.groupId, null, f);
+                } else {
+                    f();
+                }
 
             }
         });

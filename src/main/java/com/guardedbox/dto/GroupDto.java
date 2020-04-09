@@ -35,6 +35,9 @@ public class GroupDto
     /** Encrypted Key. */
     private String encryptedKey;
 
+    /** Must Rotate Key. */
+    private Boolean mustRotateKey;
+
     /** Number of Participants. */
     private Integer numberOfParticipants;
 

@@ -31,6 +31,16 @@
             "description": "External (public IP) URL."
         },
         {
+            "name": "server.ssl.ecdh-curves",
+            "type": "java.lang.String",
+            "description": "TLS ECDH offered curves."
+        },
+        {
+            "name": "server.ssl.enable-ocsp-stapling",
+            "type": "boolean",
+            "description": "Enable TLS OCSP stapling."
+        },
+        {
             "name": "server.strict-transport-security-header",
             "type": "java.lang.String",
             "description": "Value for the Strict-Transport-Security header."
@@ -81,16 +91,6 @@
             "description": "Value for the Feature-Policy header."
         },
         {
-            "name": "server.ssl.ecdh-curves",
-            "type": "java.lang.String",
-            "description": "TLS ECDH offered curves."
-        },
-        {
-            "name": "server.ssl.enable-ocsp-stapling",
-            "type": "boolean",
-            "description": "Enable TLS OCSP stapling."
-        },
-        {
             "name": "server.servlet.session.cookie.value-base64",
             "type": "boolean",
             "description": "Set if the Base64 encoding of session cookie value should be used. This is valuable inorder to support RFC 6265 whichrecommends using Base 64 encoding to the cookie value."
@@ -99,6 +99,16 @@
             "name": "server.servlet.session.cookie.same-site",
             "type": "java.lang.String",
             "description": "Set the value for the SameSite session cookie directive. The default value is Lax."
+        },
+        {
+            "name": "spring.mail.from",
+            "type": "java.lang.String",
+            "description": "From field of the sent emails."
+        },
+        {
+            "name": "spring.mail.bcc",
+            "type": "java.lang.String",
+            "description": "BCC field of the sent emails."
         },
         {
             "name": "security-parameters.registration-ttl",
@@ -174,6 +184,11 @@
             "name": "keys.hidden-derivation",
             "type": "java.util.HashMap",
             "description": "Map of secret keys (base64) used to create hidden derivations by length (number of bytes)."
+        },
+        {
+            "name": "i18n.supported-languages",
+            "type": "java.util.List",
+            "description": "List of supported languages."
         },
         {
             "name": "i18n.default-language",

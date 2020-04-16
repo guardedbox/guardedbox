@@ -42,7 +42,7 @@ public class LanguageService {
 
         String appLanguage = request.getHeader(Header.APP_LANGUAGE.getHeaderName());
 
-        if (StringUtils.isEmpty(appLanguage))
+        if (StringUtils.isEmpty(appLanguage) || !languageProperties.getSupportedLanguages().contains(appLanguage))
             return getDefaultLanguage();
 
         return appLanguage;

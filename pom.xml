@@ -46,7 +46,7 @@
 
         <!-- Dependencies Versions -->
         <bouncycastle.version>1.65</bouncycastle.version>
-        <hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
+        <hibernate-validator.version>6.1.4.Final</hibernate-validator.version>
 
         <!-- Docker -->
         <docker.repository>s3curitybug</docker.repository>

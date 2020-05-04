@@ -89,7 +89,9 @@ module.exports = (env, argv) => ({
         ]
     },
     plugins: [
-        new CleanWebpackPlugin(),
+        new CleanWebpackPlugin({
+            cleanStaleWebpackAssets: false
+        }),
         new HtmlWebpackPlugin({
             template: './src/main/front/index.html',
             filename: 'index.html',

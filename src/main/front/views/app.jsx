@@ -135,7 +135,7 @@ class App extends Component {
                 </Modal>
 
                 {/* Secret modal */}
-                <Modal isOpen={this.state.secretModalActive} toggle={() => { closeSecretModal() }}>
+                <Modal isOpen={this.state.secretModalActive}>
                     <ModalHeader>{this.state.secretModalHeader}</ModalHeader>
                     <ModalBody>
                         <Form id="app_form-secret-modal" onSubmit={(e) => {
@@ -175,7 +175,7 @@ class App extends Component {
                                             }}
                                         />
                                         {k > 0 ? null :
-                                            <PopoverIcon icon={Info} className="text-info" style={{ margin: '6px 8px' }}
+                                            <PopoverIcon icon={Info} className="text-info" style={{ margin: '6px' }}
                                                 popoverText={t('secrets.key-value-pair-info')} />
                                         }
                                     </InputGroup>
@@ -269,16 +269,13 @@ class App extends Component {
                                         {this.state.participantsModalAccounts.map((account, a) =>
                                             <tr key={'account-' + a}>
                                                 <td style={{ width: '100%' }}>{account.email}</td>
-                                                <td style={{ width: '4rem' }} align="center">
+                                                <td className="icons-2-col" align="center">
                                                     <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}
                                                         onClick={() => { checkKeysModal(account.email) }} />
                                                     {
                                                         this.state.participantsModalRemoveParticipantFunction ?
-                                                            <Fragment>
-                                                                <span className="space-between-icons"></span>
-                                                                <ActionIcon icon={X} tooltipText={t('global.remove')}
-                                                                    onClick={() => { participantsModalRemoveParticipant({ 'email': account.email }) }} />
-                                                            </Fragment>
+                                                            <ActionIcon icon={X} tooltipText={t('global.remove')}
+                                                                onClick={() => { participantsModalRemoveParticipant({ 'email': account.email }) }} />
                                                             : null
                                                     }
                                                 </td>
@@ -313,7 +310,7 @@ class App extends Component {
                 </Modal>
 
                 {/* Group modal */}
-                <Modal isOpen={this.state.groupModalActive} toggle={() => { closeGroupModal() }}>
+                <Modal isOpen={this.state.groupModalActive}>
                     <ModalHeader>{this.state.groupModalHeader}</ModalHeader>
                     <ModalBody>
                         <Form id="app_form-group-modal" onSubmit={(e) => {
@@ -343,10 +340,8 @@ class App extends Component {
                     <ModalBody>
                         <h6>{t('global.email')}</h6>
                         <InputGroup>
-                            <span className="space-between-text-and-icons"></span>
-                            <ActionIcon icon={File} tooltipText={t('global.copy')} style={{ marginTop: '6px' }}
+                            <ActionIcon icon={File} tooltipText={t('global.copy')} style={{ marginTop: '6px', width: '40px' }}
                                 onClick={() => { copyToClipboard(this.state.checkKeysEmail) }} />
-                            <span className="space-between-text-and-icons"></span>
                             <Input
                                 type="text"
                                 readOnly
@@ -355,10 +350,8 @@ class App extends Component {
                         </InputGroup>
                         <h6 style={{ marginTop: '15px' }}>{t('accounts.encryption-public-key')}</h6>
                         <InputGroup>
-                            <span className="space-between-text-and-icons"></span>
-                            <ActionIcon icon={File} tooltipText={t('global.copy')} style={{ marginTop: '6px' }}
+                            <ActionIcon icon={File} tooltipText={t('global.copy')} style={{ marginTop: '6px', width: '40px' }}
                                 onClick={() => { copyToClipboard(this.state.checkKeysEncryptionPublicKey) }} />
-                            <span className="space-between-text-and-icons"></span>
                             <Input
                                 type="text"
                                 readOnly

@@ -43,6 +43,10 @@
     height: 0.95rem;
 }
 
+.octicon {
+    max-width: 16px;
+}
+
 /*
  * Custom Defaults.
  */
@@ -50,7 +54,9 @@ table {
     table-layout: fixed;
 }
 
-td {
+td,
+span,
+div {
     word-wrap: break-word;
     white-space: pre-wrap;
 }
@@ -88,23 +94,79 @@ input::-webkit-inner-spin-button {
     margin: .2rem;
 }
 
-.space-between-icons {
-    width: .75rem;
-    display: inline-block;
+.name-col {
+    width: 40%;
 }
 
-.space-between-text {
-    width: 1rem;
-    display: inline-block;
+.values-col {
+    width: 60%;
 }
 
-.space-between-text-and-icons {
-    width: 1rem;
-    display: inline-block;
+.icons-1-col {
+    width: 80px;
 }
 
-.button-icon {
-    margin-right: .25rem;
+.icons-2-col {
+    width: 80px;
+}
+
+.icons-3-col {
+    width: 120px;
+}
+
+@media screen and (max-width: 1279px) {
+    .icons-1-col {
+        width: 80px;
+    }
+
+    .icons-2-col {
+        width: 80px;
+    }
+
+    .icons-3-col {
+        width: 90px;
+    }
+}
+
+.icons-div {
+    display: inline-block;
+    text-align: left;
+}
+
+.value-icons-div {
+    display: inline-block;
+    text-align: left;
+    width: 120px;
+    min-width: 0;
+}
+
+.value-div {
+    display: inline-block;
+    text-align: left;
+    width: calc(100% - 120px)
+}
+
+@media screen and (max-width: 1279px) {
+    .value-icons-div {
+        width: 70px;
+    }
+
+    .value-div {
+        width: calc(100% - 70px)
+    }
+}
+
+.value-txt {
+    color: var(--info);
+    margin-top: 5px;
+}
+
+.action-icon {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    width: 30px;
 }
 
 .icon-inline {
@@ -122,7 +184,7 @@ input::-webkit-inner-spin-button {
 .badge-notification {
     position: absolute;
     display: block;
-    top: -.4rem;
-    right: -.75rem;
+    top: -.2rem;
+    right: -.2rem;
     font-size: 11px;
 }

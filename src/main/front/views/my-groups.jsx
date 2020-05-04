@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Container, Table, Collapse } from 'reactstrap';
-import { DiffAdded, Sync, ChevronUp, ChevronDown, Pencil, Trashcan, Organization, File, Eye } from '@primer/octicons-react';
+import { DiffAdded, Sync, ChevronUp, ChevronDown, File, Eye, EyeClosed, Clock, Pencil, Trashcan, Organization } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
@@ -8,7 +8,7 @@ import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
 import { notLoading } from 'services/loading.jsx';
 import { workingWithoutSession } from 'services/session.jsx';
-import { processSecrets, decryptSecret, encryptSecret, recryptSymmetricKey, secretModal, closeSecretModal, copySecretValueToClipboard, blinkSecretValue } from 'services/secret-utils.jsx';
+import { processSecrets, decryptSecret, encryptSecret, recryptSymmetricKey, secretModal, closeSecretModal, copySecretValueToClipboard, showSecretValue, hideSecretValue, blinkSecretValue, hideSecretsValues } from 'services/secret-utils.jsx';
 import { sortGroups, groupModal, closeGroupModal, rotateGroupKey } from 'services/group-utils.jsx';
 import { participantsModal } from 'services/participant-utils.jsx';
 import { confirmationModal } from 'services/modal.jsx';
@@ -31,6 +31,8 @@ class MyGroups extends Component {
     }
 
     handleLocationChange = () => {
+
+        hideSecretsValues(this, 'myGroups');
 
         if (!workingWithoutSession()) {
             this.loadGroups(false);
@@ -400,14 +402,21 @@ class MyGroups extends Component {
                 {/* Title and buttons */}
                 <h4>{t('my-groups.title')}</h4><hr />
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <ButtonIcon icon={DiffAdded} tooltipText={t('my-groups.btn-new-group')} color="primary"
-                        onClick={() => { groupModal(t('groups.title-new-group'), null, this.createGroup) }} />
-                    <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary"
-                        onClick={() => { this.loadGroups(true) }} />
-                    <ButtonIcon icon={ChevronDown} tooltipText={t('global.expand-all')} color="success"
-                        onClick={() => { expandAllCollapsers(this) }} />
-                    <ButtonIcon icon={ChevronUp} tooltipText={t('global.collapse-all')} color="success"
-                        onClick={() => { collapseAllCollapsers(this) }} />
+                    <ButtonIcon icon={DiffAdded} tooltipText={t('my-groups.btn-new-group')} color="primary" onClick={() => {
+                        groupModal(t('groups.title-new-group'), null, this.createGroup)
+                    }} />
+                    <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary" onClick={() => {
+                        this.loadGroups(true)
+                    }} />
+                    <ButtonIcon icon={ChevronDown} tooltipText={t('global.expand-all')} color="success" onClick={() => {
+                        expandAllCollapsers(this)
+                    }} />
+                    <ButtonIcon icon={ChevronUp} tooltipText={t('global.collapse-all')} color="success" onClick={() => {
+                        collapseAllCollapsers(this)
+                    }} />
+                    <ButtonIcon icon={EyeClosed} tooltipText={t('global.hide-all-secrets')} color="info" onClick={() => {
+                        hideSecretsValues(this, 'myGroups')
+                    }} />
                 </div>
 
                 {/* Groups tables */}
@@ -418,23 +427,18 @@ class MyGroups extends Component {
                             this.state.myGroups.map((group, g) =>
                                 <div key={'group-' + g}>
                                     <h5 className="view-section">
-                                        <ActionIcon icon={this.state.collapsersOpen[group.groupId] ? ChevronUp : ChevronDown}
+                                        <ActionIcon icon={this.state.collapsersOpen[group.groupId] ? ChevronUp : ChevronDown} style={{ textAlign: 'left' }}
                                             onClick={() => { toggleCollapser(this, group.groupId) }} />
-                                        <span className="space-between-text-and-icons"></span>
                                         <span className="text-success">{group.name}</span>
-                                        <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>
                                             <ActionIcon icon={DiffAdded} tooltipText={t('groups.add-secret')} onClick={() => {
                                                 expandCollapser(this, group.groupId);
                                                 secretModal(t('secrets.title-new-secret'), null, this.createGroupSecret, group);
                                             }} />
-                                            <span className="space-between-icons"></span>
                                             <ActionIcon icon={Pencil} tooltipText={t('global.edit')}
                                                 onClick={() => { groupModal(t('groups.title-edit-group'), group, this.editGroup) }} />
-                                            <span className="space-between-icons"></span>
                                             <ActionIcon icon={Trashcan} tooltipText={t('global.delete')}
                                                 onClick={() => { this.deleteGroup(group) }} />
-                                            <span className="space-between-icons"></span>
                                             <ActionIcon
                                                 icon={Organization}
                                                 badgeText={group.hadParticipants ? group.numberOfParticipants : null} badgeColor="success"
@@ -460,47 +464,61 @@ class MyGroups extends Component {
                                         <Table striped hover>
                                             <thead>
                                                 <tr>
-                                                    <th style={{ width: '40%' }}>{t('secrets.secret-name')}</th>
-                                                    <th style={{ width: '60%' }}>{t('global.keys')}</th>
-                                                    <th style={{ width: '6.5rem' }}></th>
+                                                    <th className="name-col">{t('secrets.secret-name')}</th>
+                                                    <th className="values-col">{t('global.keys')}</th>
+                                                    <th className="icons-3-col"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {group.secrets.map((secret, s) =>
                                                     <tr key={'secret-' + s}>
-                                                        <td style={{ width: '40%' }}>
+                                                        <td className="name-col">
                                                             <span>{secret.value.name}</span>
                                                         </td>
-                                                        <td style={{ width: '60%' }}>
+                                                        <td className="values-col">
                                                             {secret.value.values.map((keyValuePair, k) =>
                                                                 <div key={'key-value-pair-' + k}>
                                                                     {k == 0 ? null : <hr style={{ margin: '0.75rem -0.75rem' }} />}
-                                                                    {keyValuePair.clearValue ?
-                                                                        <span>{keyValuePair.clearValue}</span>
-                                                                        :
-                                                                        <span>
+                                                                    <div style={{ display: 'flex' }}>
+                                                                        <div className="value-icons-div">
                                                                             <ActionIcon icon={File} tooltipText={t('global.copy')} onClick={() => {
                                                                                 copySecretValueToClipboard(keyValuePair, group.encryptedKey)
                                                                             }} />
-                                                                            <span className="space-between-icons"></span>
-                                                                            <ActionIcon icon={Eye} tooltipText={t('global.show')} onClick={() => {
-                                                                                blinkSecretValue(keyValuePair, group.encryptedKey, null, this, 'myGroups', g, group)
-                                                                            }} />
-                                                                            <span className="space-between-text-and-icons"></span>
-                                                                            <span>{keyValuePair.key}</span>
-                                                                        </span>
-                                                                    }
+                                                                            {keyValuePair.clearValue ?
+                                                                                <Fragment>
+                                                                                    <ActionIcon icon={EyeClosed} tooltipText={t('global.hide')} onClick={() => {
+                                                                                        hideSecretValue(keyValuePair, this, 'myGroups', g, group)
+                                                                                    }} />
+                                                                                </Fragment>
+                                                                                :
+                                                                                <Fragment>
+                                                                                    <ActionIcon icon={Eye} tooltipText={t('global.show')} onClick={() => {
+                                                                                        showSecretValue(keyValuePair, group.encryptedKey, null, this, 'myGroups', g, group)
+                                                                                    }} />
+                                                                                    <ActionIcon icon={Clock} tooltipText={t('global.blink')} onClick={() => {
+                                                                                        blinkSecretValue(keyValuePair, group.encryptedKey, null, this, 'myGroups', g, group)
+                                                                                    }} />
+                                                                                </Fragment>
+                                                                            }
+                                                                        </div>
+                                                                        <div className="value-div">
+                                                                            <div>{keyValuePair.key}</div>
+                                                                            {keyValuePair.clearValue ? <div className="value-txt">{keyValuePair.clearValue}</div> : null}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             )}
                                                         </td>
-                                                        <td style={{ width: '6.5rem' }} align="center">
-                                                            <ActionIcon icon={Pencil} tooltipText={t('global.edit')} onClick={() => {
-                                                                secret.encryptedKey = group.encryptedKey;
-                                                                secretModal(t('secrets.title-edit-secret'), secret, this.editGroupSecret, group);
-                                                            }} />
-                                                            <span className="space-between-icons"></span>
-                                                            <ActionIcon icon={Trashcan} tooltipText={t('global.delete')}
-                                                                onClick={() => { this.deleteGroupSecret(secret, group) }} />
+                                                        <td className="icons-3-col" align="center">
+                                                            <div className="icons-div">
+                                                                <ActionIcon icon={Pencil} tooltipText={t('global.edit')} onClick={() => {
+                                                                    secret.encryptedKey = group.encryptedKey;
+                                                                    secretModal(t('secrets.title-edit-secret'), secret, this.editGroupSecret, group);
+                                                                }} />
+                                                                <ActionIcon icon={Trashcan} tooltipText={t('global.delete')} onClick={() => {
+                                                                    this.deleteGroupSecret(secret, group)
+                                                                }} />
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 )}

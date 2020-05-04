@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Container, Table, Collapse } from 'reactstrap';
-import { Sync, ChevronUp, ChevronDown, Key, File, Eye, X } from '@primer/octicons-react';
+import { Sync, ChevronUp, ChevronDown, Key, File, Eye, EyeClosed, Clock, X } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
 import { workingWithoutSession } from 'services/session.jsx';
-import { processSecrets, copySecretValueToClipboard, blinkSecretValue } from 'services/secret-utils.jsx';
+import { processSecrets, copySecretValueToClipboard, showSecretValue, hideSecretValue, blinkSecretValue, hideSecretsValues } from 'services/secret-utils.jsx';
 import { sortAccounts } from 'services/participant-utils.jsx';
 import { confirmationModal } from 'services/modal.jsx';
 import { checkKeysModal } from 'services/check-keys.jsx';
@@ -28,6 +28,8 @@ class SecretsSharedWithMe extends Component {
     }
 
     handleLocationChange = () => {
+
+        hideSecretsValues(this, 'secretsSharedWithMe');
 
         if (!workingWithoutSession()) {
             this.loadSecrets(false);
@@ -94,12 +96,18 @@ class SecretsSharedWithMe extends Component {
                 {/* Title and buttons */}
                 <h4>{t('secrets-shared-with-me.title')}</h4><hr />
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary"
-                        onClick={() => { this.loadSecrets(true) }} />
-                    <ButtonIcon icon={ChevronDown} tooltipText={t('global.expand-all')} color="success"
-                        onClick={() => { expandAllCollapsers(this) }} />
-                    <ButtonIcon icon={ChevronUp} tooltipText={t('global.collapse-all')} color="success"
-                        onClick={() => { collapseAllCollapsers(this) }} />
+                    <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary" onClick={() => {
+                        this.loadSecrets(true)
+                    }} />
+                    <ButtonIcon icon={ChevronDown} tooltipText={t('global.expand-all')} color="success" onClick={() => {
+                        expandAllCollapsers(this)
+                    }} />
+                    <ButtonIcon icon={ChevronUp} tooltipText={t('global.collapse-all')} color="success" onClick={() => {
+                        collapseAllCollapsers(this)
+                    }} />
+                    <ButtonIcon icon={EyeClosed} tooltipText={t('global.hide-all-secrets')} color="info" onClick={() => {
+                        hideSecretsValues(this, 'secretsSharedWithMe')
+                    }} />
                 </div>
 
                 {/* Shared secrets tables by owner */}
@@ -110,11 +118,9 @@ class SecretsSharedWithMe extends Component {
                             this.state.secretsSharedWithMe.map((account, a) =>
                                 <div key={'account-' + a}>
                                     <h5 className="view-section">
-                                        <ActionIcon icon={this.state.collapsersOpen[account.email] ? ChevronUp : ChevronDown}
+                                        <ActionIcon icon={this.state.collapsersOpen[account.email] ? ChevronUp : ChevronDown} style={{ textAlign: 'left' }}
                                             onClick={() => { toggleCollapser(this, account.email) }} />
-                                        <span className="space-between-text-and-icons"></span>
                                         <span className="text-success">{t('secrets-shared-with-me.title-from') + ' ' + account.email}</span>
-                                        <span className="space-between-text-and-icons"></span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>
                                             <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}
                                                 onClick={() => { checkKeysModal(account.email) }} />
@@ -124,42 +130,57 @@ class SecretsSharedWithMe extends Component {
                                         <Table striped hover>
                                             <thead>
                                                 <tr>
-                                                    <th style={{ width: '40%' }}>{t('secrets.secret-name')}</th>
-                                                    <th style={{ width: '60%' }}>{t('global.keys')}</th>
-                                                    <th style={{ width: '6.5rem' }}></th>
+                                                    <th className="name-col">{t('secrets.secret-name')}</th>
+                                                    <th className="values-col">{t('global.keys')}</th>
+                                                    <th className="icons-3-col"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {account.secrets.map((secret, s) =>
                                                     <tr key={'secret-' + s}>
-                                                        <td style={{ width: '40%' }}>
+                                                        <td className="name-col">
                                                             <span>{secret.value.name}</span>
                                                         </td>
-                                                        <td style={{ width: '60%' }}>
+                                                        <td className="values-col">
                                                             {secret.value.values.map((keyValuePair, k) =>
                                                                 <div key={'key-value-pair-' + k}>
                                                                     {k == 0 ? null : <hr style={{ margin: '0.75rem -0.75rem' }} />}
-                                                                    {keyValuePair.clearValue ?
-                                                                        <span>{keyValuePair.clearValue}</span>
-                                                                        :
-                                                                        <span>
+                                                                    <div style={{ display: 'flex' }}>
+                                                                        <div className="value-icons-div">
                                                                             <ActionIcon icon={File} tooltipText={t('global.copy')} onClick={() => {
                                                                                 copySecretValueToClipboard(keyValuePair, secret.encryptedKey, account.encryptionPublicKey)
                                                                             }} />
-                                                                            <span className="space-between-icons"></span>
-                                                                            <ActionIcon icon={Eye} tooltipText={t('global.show')} onClick={() => {
-                                                                                blinkSecretValue(keyValuePair, secret.encryptedKey, account.encryptionPublicKey, this, 'secretsSharedWithMe', a, account)
-                                                                            }} />
-                                                                            <span className="space-between-text-and-icons"></span>
-                                                                            <span>{keyValuePair.key}</span>
-                                                                        </span>
-                                                                    }
+                                                                            {keyValuePair.clearValue ?
+                                                                                <Fragment>
+                                                                                    <ActionIcon icon={EyeClosed} tooltipText={t('global.hide')} onClick={() => {
+                                                                                        hideSecretValue(keyValuePair, this, 'secretsSharedWithMe', a, account)
+                                                                                    }} />
+                                                                                </Fragment>
+                                                                                :
+                                                                                <Fragment>
+                                                                                    <ActionIcon icon={Eye} tooltipText={t('global.show')} onClick={() => {
+                                                                                        showSecretValue(keyValuePair, secret.encryptedKey, account.encryptionPublicKey, this, 'secretsSharedWithMe', a, account)
+                                                                                    }} />
+                                                                                    <ActionIcon icon={Clock} tooltipText={t('global.blink')} onClick={() => {
+                                                                                        blinkSecretValue(keyValuePair, secret.encryptedKey, account.encryptionPublicKey, this, 'secretsSharedWithMe', a, account)
+                                                                                    }} />
+                                                                                </Fragment>
+                                                                            }
+                                                                        </div>
+                                                                        <div className="value-div">
+                                                                            <div>{keyValuePair.key}</div>
+                                                                            {keyValuePair.clearValue ? <div className="value-txt">{keyValuePair.clearValue}</div> : null}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             )}
                                                         </td>
-                                                        <td style={{ width: '6.5rem' }} align="center">
-                                                            <ActionIcon icon={X} tooltipText={t('global.reject')}
-                                                                onClick={() => { this.rejectSharedSecret(secret) }} />
+                                                        <td className="icons-3-col" align="center">
+                                                            <div className="icons-div">
+                                                                <ActionIcon icon={X} tooltipText={t('global.reject')} onClick={() => {
+                                                                    this.rejectSharedSecret(secret)
+                                                                }} />
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 )}

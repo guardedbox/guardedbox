@@ -22,8 +22,8 @@ class PopoverIcon extends Component {
             <span
                 id={this.props.id || this.id}
                 onClick={() => { this.setState({ open: true }) }}
-                className={this.props.className}
-                style={{ ...this.props.style, ...{ cursor: 'pointer', position: 'relative' } }}>
+                className={'action-icon ' + this.props.className}
+                style={this.props.style}>
 
                 <Octicon icon={this.props.icon} />
 

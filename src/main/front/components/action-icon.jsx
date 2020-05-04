@@ -15,11 +15,11 @@ class ActionIcon extends Component {
 
         return (
 
-            <span
+            <div
                 id={this.props.id || this.id}
                 onClick={this.props.onClick}
-                className={this.props.className}
-                style={{ ...this.props.style, ...{ cursor: 'pointer', position: 'relative' } }}>
+                className={'action-icon ' + this.props.className}
+                style={this.props.style}>
 
                 <Octicon icon={this.props.icon} />
 
@@ -35,7 +35,7 @@ class ActionIcon extends Component {
                     </Badge>
                 }
 
-            </span>
+            </div>
 
         );
 

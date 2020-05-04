@@ -445,6 +445,44 @@ export function blinkSecretValue(objectWithValue, encryptedSymmetricKey, publicK
 
 }
 
+/**
+ * Hides all the secret values in an attribute of the state of a React component.
+ *
+ * @param {React.Component} reactComponent The React component.
+ * @param {string} stateAttribute The name of the attribute in the state of the component.
+ */
+export function hideSecretsValues(reactComponent, stateAttribute) {
+
+    var objectsWithValues = reactComponent.state[stateAttribute];
+    deleteClearValues(objectsWithValues);
+    reactComponent.setState({ [stateAttribute]: objectsWithValues });
+
+}
+
+function deleteClearValues(objectsWithValues) {
+
+    if (!objectsWithValues) {
+
+        return;
+
+    } else if (objectsWithValues.constructor == {}.constructor) {
+
+        delete objectsWithValues.clearValue;
+
+        for (var key in objectsWithValues) {
+            deleteClearValues(objectsWithValues[key]);
+        }
+
+    } else if (objectsWithValues.constructor == [].constructor) {
+
+        for (var item of objectsWithValues) {
+            deleteClearValues(item);
+        }
+
+    }
+
+}
+
 function encryptValue(value, symmetricKey) {
 
     if (value.constructor == ''.constructor) {

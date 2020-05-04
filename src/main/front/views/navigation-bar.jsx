@@ -64,7 +64,7 @@ class NavigationBar extends Component {
 
                         <Nav className="ml-auto" navbar>
                             <span style={{ margin: '8px 0' }}>{this.state.email}</span>
-                            <span className="space-between-text"></span>
+                            <span style={{ display: 'inline-block', width: '1rem' }}></span>
                             <Badge id="navigation-bar_expiration-time-badge"
                                 color={this.state.workingWithoutSession ? "warning" : "info"}
                                 style={{ margin: '8px 0', padding: '0.4em', height: '22px', width: this.state.workingWithoutSession ? '65px' : '45px' }}>
@@ -77,7 +77,7 @@ class NavigationBar extends Component {
                                         t('session.expiration-time')}
                                 </UncontrolledTooltip>
                             </Badge>
-                            <span className="space-between-text"></span>
+                            <span style={{ display: 'inline-block', width: '1rem' }}></span>
                             <div className="form-inline"><Button color="secondary" size="sm" onClick={logout}>{t('global.logout')}</Button></div>
                         </Nav>
 

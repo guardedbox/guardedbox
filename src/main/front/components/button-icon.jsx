@@ -21,7 +21,7 @@ class ButtonIcon extends Component {
                 onClick={this.props.onClick}
                 color={this.props.color}
                 className={this.props.className}
-                style={{ ...this.props.style, ...{ cursor: 'pointer' } }}>
+                style={this.props.style}>
 
                 <Octicon icon={this.props.icon} />
 

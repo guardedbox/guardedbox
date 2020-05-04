@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Button, Form, FormGroup, Input, InputGroup, UncontrolledTooltip, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Octicon, { File } from '@primer/octicons-react'
+import ActionIcon from 'components/action-icon.jsx';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
@@ -95,37 +96,18 @@ class MyAccount extends Component {
 
                 <h6>{t('global.email')}</h6>
                 <InputGroup>
-                    <span className="space-between-text-and-icons"></span>
-                    <span
-                        id="my-account-copy-email"
-                        onClick={() => { copyToClipboard(this.state.email) }}
-                        style={{ cursor: 'pointer', marginTop: '6px' }}>
-                        <Octicon icon={File} />
-                    </span>
-                    <UncontrolledTooltip placement="top" target="my-account-copy-email">
-                        {t('global.copy')}
-                    </UncontrolledTooltip>
-                    <span className="space-between-text-and-icons"></span>
+                    <ActionIcon icon={File} tooltipText={t('global.copy')} style={{ marginTop: '6px', width: '40px' }}
+                        onClick={() => { copyToClipboard(this.state.email) }} />
                     <Input
                         type="text"
                         readOnly
                         value={this.state.email}
-                        onFocus={(e) => { e.target.select(); }}
-                    />
+                        onFocus={(e) => { e.target.select(); }} />
                 </InputGroup>
                 <h6 style={{ marginTop: '15px' }}>{t('accounts.encryption-public-key')}</h6>
                 <InputGroup>
-                    <span className="space-between-text-and-icons"></span>
-                    <span
-                        id="my-account-copy-encryption-public-key"
-                        onClick={() => { copyToClipboard(this.state.encryptionPublicKey) }}
-                        style={{ cursor: 'pointer', marginTop: '6px' }}>
-                        <Octicon icon={File} />
-                    </span>
-                    <UncontrolledTooltip placement="top" target="my-account-copy-encryption-public-key">
-                        {t('global.copy')}
-                    </UncontrolledTooltip>
-                    <span className="space-between-text-and-icons"></span>
+                    <ActionIcon icon={File} tooltipText={t('global.copy')} style={{ marginTop: '6px', width: '40px' }}
+                        onClick={() => { copyToClipboard(this.state.encryptionPublicKey) }} />
                     <Input
                         type="text"
                         readOnly

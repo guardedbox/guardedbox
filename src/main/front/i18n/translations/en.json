@@ -20,6 +20,7 @@
         "blink": "Blink",
         "show": "Show",
         "hide": "Hide",
+        "hide-all-secrets": "Hide all secrets",
         "expand": "Expand",
         "collapse": "Collapse",
         "expand-all": "Expand all",

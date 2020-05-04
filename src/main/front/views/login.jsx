@@ -317,7 +317,7 @@ class Login extends Component {
                 </Row>
 
                 {/* Privacy modal */}
-                <Modal isOpen={this.state.privacyModalActive} toggle={() => { this.setState({ privacyModalActive: false }) }}>
+                <Modal isOpen={this.state.privacyModalActive}>
                     <ModalHeader>{t('login.privacy-modal-title')}</ModalHeader>
                     <ModalBody>
                         <div>{t('login.privacy-modal-p1')}</div>

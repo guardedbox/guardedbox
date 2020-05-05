@@ -43,6 +43,10 @@
     max-width: 16px;
 }
 
+.tooltip {
+    pointer-events: none;
+}
+
 @media (hover: none) {
     .tooltip {
         display: none;

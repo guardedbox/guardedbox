@@ -18,7 +18,7 @@ class ActionIcon extends Component {
             <div
                 id={this.props.id || this.id}
                 onClick={this.props.onClick}
-                className={'action-icon ' + this.props.className}
+                className={'action-icon' + (this.props.className ? ' ' + this.props.className : '')}
                 style={this.props.style}>
 
                 <Octicon icon={this.props.icon} />

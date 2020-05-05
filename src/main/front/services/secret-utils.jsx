@@ -377,13 +377,26 @@ export function recryptSymmetricKey(symmetricKey, encryptedSymmetricKey, publicK
  * @param {object} objectWithValue Object containing the attribute 'value' with the encrypted secret.
  * @param {(string|Uint8Array)} encryptedSymmetricKey The encrypted symmetric key to decrypt the secret, as a base64 string or an Uint8Array.
  * @param {(string|Uint8Array)} [publicKeyToDecryptSymmetricKey] The public key to decrypt the symmetric key, as a base64 string on an Uint8Array. If not introduced, the current session keys one will be used.
+ * @param {React.Component} reactComponent The React component whose state must be set in order to show the success of the action.
+ * @param {string} stateAttribute The name of the array attribute in the state of the component.
+ * @param {number} arrayIndex The array index to set.
+ * @param {any} element The element to set.
  */
-export function copySecretValueToClipboard(objectWithValue, encryptedSymmetricKey, publicKeyToDecryptSymmetricKey) {
+export function copySecretValueToClipboard(objectWithValue, encryptedSymmetricKey, publicKeyToDecryptSymmetricKey, reactComponent, stateAttribute, arrayIndex, element) {
 
     var valueDecryption = decryptSecret(objectWithValue.value, null, encryptedSymmetricKey, publicKeyToDecryptSymmetricKey);
     if (!valueDecryption) return;
 
     copyToClipboard(valueDecryption.decryptedSecret);
+
+    if (reactComponent) {
+        objectWithValue.copied = true;
+        setStateArrayElement(reactComponent, stateAttribute, arrayIndex, element);
+        setTimeout(() => {
+            delete objectWithValue.copied;
+            setStateArrayElement(reactComponent, stateAttribute, arrayIndex, element);
+        }, properties.general.showSuccessTime);
+    }
 
 }
 

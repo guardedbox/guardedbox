@@ -30,10 +30,6 @@
     border-radius: .2rem;
 }
 
-.tooltip {
-    pointer-events: none;
-}
-
 .react-overlay-loader-spinner:before {
     border-color: #8eadc3;
     border-top-color: #125c8e;
@@ -45,6 +41,12 @@
 
 .octicon {
     max-width: 16px;
+}
+
+@media (hover: none) {
+    .tooltip {
+        display: none;
+    }
 }
 
 /*

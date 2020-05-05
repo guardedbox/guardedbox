@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Container, Table, Collapse } from 'reactstrap';
-import { Sync, ChevronUp, ChevronDown, X, Organization, Key, File, Eye, EyeClosed, Clock } from '@primer/octicons-react';
+import { Sync, ChevronUp, ChevronDown, X, Organization, Key, File, Check, Eye, EyeClosed, Clock } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
@@ -197,25 +197,28 @@ class GroupsIWasAddedTo extends Component {
                                                                     {k == 0 ? null : <hr style={{ margin: '0.75rem -0.75rem' }} />}
                                                                     <div style={{ display: 'flex' }}>
                                                                         <div className="value-icons-div">
-                                                                            <ActionIcon icon={File} tooltipText={t('global.copy')} onClick={() => {
-                                                                                copySecretValueToClipboard(keyValuePair, group.encryptedKey, group.ownerAccount.encryptionPublicKey)
-                                                                            }} />
-                                                                            {keyValuePair.clearValue ?
-                                                                                <Fragment>
-                                                                                    <ActionIcon icon={EyeClosed} tooltipText={t('global.hide')} onClick={() => {
+                                                                            <ActionIcon
+                                                                                icon={keyValuePair.copied ? Check : File}
+                                                                                tooltipText={t('global.copy')}
+                                                                                onClick={() => {
+                                                                                    copySecretValueToClipboard(keyValuePair, group.encryptedKey, group.ownerAccount.encryptionPublicKey, this, 'groupsIWasAddedTo', g, group)
+                                                                                }} />
+                                                                            <ActionIcon
+                                                                                icon={keyValuePair.clearValue ? EyeClosed : Eye}
+                                                                                tooltipText={keyValuePair.clearValue ? t('global.hide') : t('global.show')}
+                                                                                onClick={() => {
+                                                                                    if (keyValuePair.clearValue)
                                                                                         hideSecretValue(keyValuePair, this, 'groupsIWasAddedTo', g, group)
-                                                                                    }} />
-                                                                                </Fragment>
-                                                                                :
-                                                                                <Fragment>
-                                                                                    <ActionIcon icon={Eye} tooltipText={t('global.show')} onClick={() => {
+                                                                                    else
                                                                                         showSecretValue(keyValuePair, group.encryptedKey, group.ownerAccount.encryptionPublicKey, this, 'groupsIWasAddedTo', g, group)
-                                                                                    }} />
-                                                                                    <ActionIcon icon={Clock} tooltipText={t('global.blink')} onClick={() => {
-                                                                                        blinkSecretValue(keyValuePair, group.encryptedKey, group.ownerAccount.encryptionPublicKey, this, 'groupsIWasAddedTo', g, group)
-                                                                                    }} />
-                                                                                </Fragment>
-                                                                            }
+                                                                                }} />
+                                                                            <ActionIcon
+                                                                                icon={Clock}
+                                                                                tooltipText={t('global.blink')}
+                                                                                className={keyValuePair.clearValue ? 'invisible' : ''}
+                                                                                onClick={() => {
+                                                                                    blinkSecretValue(keyValuePair, group.encryptedKey, group.ownerAccount.encryptionPublicKey, this, 'groupsIWasAddedTo', g, group)
+                                                                                }} />
                                                                         </div>
                                                                         <div className="value-div">
                                                                             <div>{keyValuePair.key}</div>

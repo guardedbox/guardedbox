@@ -1,7 +1,8 @@
 {
     "general": {
         "emailMaxLength": 254,
-        "emailPattern": ".+@.+\\..{2,}"
+        "emailPattern": ".+@.+\\..{2,}",
+        "showSuccessTime": 1500
     },
     "registration": {
         "registrationTokenPattern": "^[a-zA-Z0-9]{86}$",

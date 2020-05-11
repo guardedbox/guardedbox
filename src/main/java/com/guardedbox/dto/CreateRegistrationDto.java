@@ -31,4 +31,9 @@ public class CreateRegistrationDto
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
     private String email;
 
+    /** From Email. */
+    @Email(regexp = EMAIL_PATTERN)
+    @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
+    private String fromEmail;
+
 }

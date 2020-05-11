@@ -24,6 +24,9 @@ public class SecurityParametersProperties {
     /** Property: security-parameters.registration-min-ttl. */
     private final Long registrationMinTtl;
 
+    /** Property: security-parameters.invitation-ttl. */
+    private final Long invitationTtl;
+
     /** Property: security-parameters.registration-execution-time. */
     private final Long registrationExecutionTime;
 

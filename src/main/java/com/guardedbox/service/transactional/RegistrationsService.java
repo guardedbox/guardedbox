@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.guardedbox.dto.CreateRegistrationDto;
 import com.guardedbox.dto.RegistrationDto;
@@ -103,11 +104,16 @@ public class RegistrationsService {
             } while (registrationsRepository.existsByToken(token));
 
             // Send the registration message.
-            messagesService.sendRegistrationMessage(createRegistrationDto.getEmail(), token);
+            if (StringUtils.isEmpty(createRegistrationDto.getFromEmail())) {
+                messagesService.sendRegistrationMessage(createRegistrationDto.getEmail(), token);
+            } else {
+                messagesService.sendInvitationMessage(createRegistrationDto.getEmail(), createRegistrationDto.getFromEmail(), token);
+            }
 
             // Store the registration in the database, overwriting the previous one in case it exists.
             RegistrationEntity registration = (prevRegistration == null ? new RegistrationEntity() : prevRegistration)
                     .setEmail(createRegistrationDto.getEmail())
+                    .setFromEmail(createRegistrationDto.getFromEmail())
                     .setToken(token)
                     .setExpeditionTime(new Timestamp(currentTime));
             registrationsRepository.save(registration);
@@ -149,7 +155,10 @@ public class RegistrationsService {
                     .setErrorCode("registration.registration-token-not-found");
         }
 
-        if (currentTime > registration.getExpeditionTime().getTime() + securityParameters.getRegistrationTtl()) {
+        if (currentTime > registration.getExpeditionTime().getTime()
+                + (StringUtils.isEmpty(registration.getFromEmail())
+                        ? securityParameters.getRegistrationTtl()
+                        : securityParameters.getInvitationTtl())) {
             throw new ServiceException(String.format("Registration token %s is expired", token))
                     .setErrorCode("registration.registration-token-expired");
         }

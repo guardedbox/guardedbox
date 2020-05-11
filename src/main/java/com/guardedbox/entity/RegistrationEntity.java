@@ -51,6 +51,12 @@ public class RegistrationEntity
     @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
     private String email;
 
+    /** From Email. */
+    @Column(name = "from_email")
+    @Email(regexp = EMAIL_PATTERN)
+    @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH)
+    private String fromEmail;
+
     /** Token. */
     @Column(name = "token")
     @NotBlank

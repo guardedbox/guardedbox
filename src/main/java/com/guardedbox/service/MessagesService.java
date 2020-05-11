@@ -50,6 +50,27 @@ public class MessagesService {
     }
 
     /**
+     * Sends an invitation message to an email, from another email, with a registration token.
+     *
+     * @param email The email.
+     * @param fromEmail The inviter email.
+     * @param token The registration token.
+     */
+    public void sendInvitationMessage(
+            String email,
+            String fromEmail,
+            String token) {
+
+        emailService.sendAsync(
+                email,
+                emailsProperties.getInvitationSubject().get(languageService.getAppLanguage()),
+                String.format(emailsProperties.getInvitationBody().get(languageService.getAppLanguage()),
+                        fromEmail,
+                        serverProperties.getExternalUrl() + String.format(FRONT_REGISTRATION_COMPONENT_PATH, token)));
+
+    }
+
+    /**
      * Sends a message to an email indicating that the registration is complete.
      *
      * @param email The email.

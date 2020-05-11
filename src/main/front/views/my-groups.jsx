@@ -7,11 +7,11 @@ import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
 import { notLoading } from 'services/loading.jsx';
-import { workingWithoutSession } from 'services/session.jsx';
+import { workingWithoutSession, sessionEmail } from 'services/session.jsx';
 import { processSecrets, decryptSecret, encryptSecret, recryptSymmetricKey, secretModal, closeSecretModal, copySecretValueToClipboard, showSecretValue, hideSecretValue, blinkSecretValue, hideSecretsValues } from 'services/secret-utils.jsx';
 import { sortGroups, groupModal, closeGroupModal, rotateGroupKey } from 'services/group-utils.jsx';
 import { participantsModal } from 'services/participant-utils.jsx';
-import { confirmationModal } from 'services/modal.jsx';
+import { messageModal, confirmationModal } from 'services/modal.jsx';
 import { loadCollapsersOpen, expandAllCollapsers, collapseAllCollapsers, toggleCollapser, expandCollapser } from 'services/collapsers.jsx';
 
 class MyGroups extends Component {
@@ -231,6 +231,41 @@ class MyGroups extends Component {
 
                     }
                 });
+
+            },
+            serviceExceptionCallback: (response) => {
+
+                if (response.errorCode === 'accounts.email-not-registered') {
+
+                    var email = response.additionalData.email;
+
+                    confirmationModal(
+                        t('global.information'),
+                        t('accounts.email-not-registered-invite', { email: email }),
+                        () => {
+
+                            rest({
+                                method: 'post',
+                                url: '/api/registrations',
+                                body: {
+                                    email: email,
+                                    fromEmail: sessionEmail(),
+                                },
+                                callback: (response) => {
+
+                                    messageModal(t('accounts.invitation-success-modal-title'), t('accounts.invitation-success-modal-body', { email: email }));
+
+                                }
+                            });
+
+                        }
+                    );
+
+                } else {
+
+                    messageModal(t('global.error'), t(responseJson.errorCode || 'global.error-occurred', responseJson.additionalData));
+
+                }
 
             }
         });

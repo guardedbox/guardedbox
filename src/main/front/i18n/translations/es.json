@@ -85,7 +85,7 @@
         "privacy-modal-p3": "¿Aceptas nuestros términos del servicio y política de privacidad?",
         "register-success-modal-title": "Solicitud de registro recibida",
         "register-success-modal-body": "Recibirás un email con las instrucciones para completar el registro de tu cuenta en GuardedBox. Puedes cerrar esta página.",
-        "register-mail-just-sent": "Se ha enviado un email con las instrucciones para completar tu registro a {email}. Sigue las indicaciones del mensaje para terminar de crear tu cuenta."
+        "register-mail-just-sent": "Se envió un email de registro a {email} hace unos minutos."
     },
     "registration": {
         "title-register": "Crear nueva cuenta",
@@ -105,7 +105,10 @@
         "signing-public-key": "Clave pública de firma",
         "check-keys-info": "Te aconsejamos pedir a {email} que entre en la sección \"{view}\" de GuardedBox y te diga su clave pública de cifrado para que puedas comprobar que coincide con esta.",
         "email-already-registered": "La dirección {email} ya existe en GuardedBox.",
-        "email-not-registered": "La dirección {email} no está registrada en GuardedBox."
+        "email-not-registered": "La dirección {email} no está registrada en GuardedBox.",
+        "email-not-registered-invite": "La dirección {email} no está registrada en GuardedBox. ¿Deseas enviar una invitación?",
+        "invitation-success-modal-title": "Invitación enviada",
+        "invitation-success-modal-body": "Se ha enviado un email a {email} con las instrucciones para completar el registro en GuardedBox."
     },
     "my-account": {
         "title": "Mi cuenta",

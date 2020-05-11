@@ -121,6 +121,11 @@
             "description": "Security Parameter: Minimum time to live of a registration before another one can be requested for the same email."
         },
         {
+            "name": "security-parameters.invitation-ttl",
+            "type": "long",
+            "description": "Security Parameter: Time to live of an invitation before it expires."
+        },
+        {
             "name": "security-parameters.registration-execution-time",
             "type": "long",
             "description": "Security Parameter: RegistrationsController.createRegistration method execution time."
@@ -204,6 +209,16 @@
             "name": "emails.registration-body",
             "type": "java.util.HashMap",
             "description": "Map of bodies of the registration email by language."
+        },
+        {
+            "name": "emails.invitation-subject",
+            "type": "java.util.HashMap",
+            "description": "Map of subjects of the invitation email by language."
+        },
+        {
+            "name": "emails.invitation-body",
+            "type": "java.util.HashMap",
+            "description": "Map of bodies of the invitation email by language."
         },
         {
             "name": "emails.registration-complete-subject",

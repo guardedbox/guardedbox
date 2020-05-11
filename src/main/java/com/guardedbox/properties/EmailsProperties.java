@@ -26,6 +26,12 @@ public class EmailsProperties {
     /** Property Map: emails.registration-body. */
     private final HashMap<String, String> registrationBody;
 
+    /** Property Map: emails.invitation-subject. */
+    private final HashMap<String, String> invitationSubject;
+
+    /** Property Map: emails.invitation-body. */
+    private final HashMap<String, String> invitationBody;
+
     /** Property Map: emails.registration-complete-subject. */
     private final HashMap<String, String> registrationCompleteSubject;
 

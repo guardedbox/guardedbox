@@ -47,6 +47,7 @@ CREATE TABLE `group_` (
   `encrypted_key` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `must_rotate_key` bit(1) DEFAULT NULL,
   `had_participants` bit(1) DEFAULT NULL,
+  `participants_visible` bit(1) DEFAULT NULL,
   PRIMARY KEY (`group_id`),
   KEY `OWNER_ACCOUNT_ID` (`owner_account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -96,6 +97,7 @@ DROP TABLE IF EXISTS `registration`;
 CREATE TABLE `registration` (
   `registration_id` binary(16) NOT NULL,
   `email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `from_email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `token` char(86) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `expedition_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`registration_id`),

@@ -106,7 +106,7 @@
         "check-keys-info": "We recommend you to ask {email} to get into the \"{view}\" section of GuardedBox and to tell you his public encryption key so you can check that it matches this one.",
         "email-already-registered": "The email {email} is already registered in GuardedBox.",
         "email-not-registered": "The email {email} is not registered in GuardedBox.",
-        "email-not-registered-invite": "The email {email} is not registered in GuardedBox. ¿Would you like to send an invitation?",
+        "email-not-registered-invite": "The email {email} is not registered in GuardedBox. Would you like to send an invitation?",
         "invitation-success-modal-title": "Invitation sent",
         "invitation-success-modal-body": "An email was sent to {email} with the instructions to complete the GuardedBox registration process."
     },

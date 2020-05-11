@@ -12,17 +12,20 @@ import { rest } from 'services/rest.jsx';
 export function groupModal(header, group, acceptCallback) {
 
     var groupName = group ? group.name : '';
+    var participantsVisible = group ? group.participantsVisible : true;
 
     app().setState({
         groupModalActive: true,
         groupModalHeader: header,
         groupModalGroupName: groupName,
+        groupModalParticipantsVisible: participantsVisible,
         groupModalOriginalGroup: group,
         groupModalAcceptCallback: acceptCallback
     }, () => {
 
         setTimeout(() => {
             app().groupModalTxtName.current.value = groupName;
+            app().groupModalSwitchParticipantsVisible.current.checked = participantsVisible;
             app().groupModalTxtName.current.focus();
         }, 25);
 
@@ -53,7 +56,8 @@ export function closeGroupModal(callback) {
 export function buildGroupModalSecret() {
 
     var group = {
-        name: app().state.groupModalGroupName
+        name: app().state.groupModalGroupName,
+        participantsVisible: app().state.groupModalParticipantsVisible
     };
 
     return group;
@@ -145,6 +149,7 @@ export function rotateGroupKey(groupId, editedGroup, callback) {
                         body: {
                             name: groupEncryption.encryptedSecret.name,
                             encryptedKey: groupEncryption.encryptedSymmetricKeyForMe,
+                            participantsVisible: editedGroup.participantsVisible,
                             secrets: secrets,
                             participants: groupEncryption.encryptedSymmetricKeyForOthers
                         },

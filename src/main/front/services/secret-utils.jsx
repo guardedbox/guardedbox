@@ -526,7 +526,12 @@ function encryptValue(value, symmetricKey) {
 
         return encryptedValue;
 
+    } else {
+
+        return encrypt(value.toString(), symmetricKey);
+
     }
+
 }
 
 function decryptValue(value, symmetricKey, onlyNamesAndKeys = true) {
@@ -567,6 +572,10 @@ function decryptValue(value, symmetricKey, onlyNamesAndKeys = true) {
         }
 
         return decryptedValue;
+
+    } else {
+
+        return decrypt(value.toString(), symmetricKey);
 
     }
 

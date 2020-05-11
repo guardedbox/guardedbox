@@ -101,7 +101,9 @@ public class GroupsService {
 
         for (GroupEntity groupEntity : groupEntities) {
 
-            GroupDto groupDto = groupsMapper.toDto(groupEntity);
+            GroupDto groupDto = groupsMapper.toDto(groupEntity)
+                    .setNumberOfParticipants(groupEntity.getParticipants().size())
+                    .setHadParticipants(groupEntity.getHadParticipants());
 
             groupDto.setSecrets(new ArrayList<>(groupEntity.getSecrets().size()));
             for (GroupSecretEntity groupSecret : groupEntity.getSecrets()) {
@@ -142,6 +144,12 @@ public class GroupsService {
                             .setEncryptedKey(groupParticipant.getEncryptedKey())
                             .setSecrets(new ArrayList<>(groupEntity.getSecrets().size()));
 
+                    if (groupEntity.getParticipantsVisible()) {
+                        groupDto
+                                .setNumberOfParticipants(groupEntity.getParticipants().size())
+                                .setHadParticipants(groupEntity.getHadParticipants());
+                    }
+
                     for (GroupSecretEntity groupSecret : groupEntity.getSecrets()) {
                         SecretDto secret = new SecretDto()
                                 .setSecretId(groupSecret.getGroupSecretId())
@@ -172,6 +180,11 @@ public class GroupsService {
             UUID groupId) {
 
         GroupEntity group = findAndCheckGroup(groupId, ownerOrParticipantAccountId, true);
+
+        if (!group.getOwnerAccount().getAccountId().equals(ownerOrParticipantAccountId) && !group.getParticipantsVisible()) {
+            throw new AuthorizationServiceException(String.format(
+                    "Group %s participants cannot be retrieved by account %s", groupId, ownerOrParticipantAccountId));
+        }
 
         List<AccountDto> participants = new ArrayList<>(group.getParticipants().size());
         for (GroupParticipantEntity groupParticipant : group.getParticipants()) {
@@ -280,6 +293,7 @@ public class GroupsService {
         group
                 .setName(editGroupDto.getName())
                 .setEncryptedKey(editGroupDto.getEncryptedKey())
+                .setParticipantsVisible(editGroupDto.getParticipantsVisible())
                 .setMustRotateKey(false);
 
         return groupsMapper.toDto(groupsRepository.save(group));

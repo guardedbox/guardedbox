@@ -4,7 +4,7 @@ import { withRouter, Route } from 'react-router-dom';
 import CacheRoute, { CacheSwitch } from 'react-router-cache-route';
 import { Loader } from 'react-overlay-loader';
 import reactOverlayLoaderCss from 'react-overlay-loader/styles.css';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Badge, Progress, Form, FormGroup, Label, Input, InputGroup, Table, Popover, PopoverBody } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Badge, Progress, Form, FormGroup, Label, Input, InputGroup, CustomInput, Table } from 'reactstrap';
 import { Info, File, Key, X } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import PopoverIcon from 'components/popover-icon.jsx';
@@ -69,6 +69,7 @@ class App extends Component {
         groupModalActive: false,
         groupModalHeader: '',
         groupModalGroupName: '',
+        groupModalParticipantsVisible: false,
         groupModalOriginalGroup: null,
         groupModalAcceptCallback: null,
 
@@ -85,6 +86,7 @@ class App extends Component {
     participantsModalForm = React.createRef();
     participantsModalTxtEmail = React.createRef();
     groupModalTxtName = React.createRef();
+    groupModalSwitchParticipantsVisible = React.createRef();
 
     constructor(props) {
 
@@ -325,6 +327,15 @@ class App extends Component {
                                     maxLength={properties.groups.groupNameMaxLength}
                                     required
                                     onChange={(e) => { this.setState({ groupModalGroupName: e.target.value }) }}
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <CustomInput
+                                    id="app_switch-group-modal-participants-visible"
+                                    innerRef={this.groupModalSwitchParticipantsVisible}
+                                    type="switch"
+                                    label={t('groups.participants-can-see-each-other')}
+                                    onChange={(e) => { this.setState({ groupModalParticipantsVisible: e.target.checked }) }}
                                 />
                             </FormGroup>
                         </Form>

@@ -77,7 +77,8 @@ class MyGroups extends Component {
             url: '/api/groups',
             body: {
                 name: groupEncryption.encryptedSecret.name,
-                encryptedKey: groupEncryption.encryptedSymmetricKeyForMe
+                encryptedKey: groupEncryption.encryptedSymmetricKeyForMe,
+                participantsVisible: group.participantsVisible
             },
             callback: (response) => {
 
@@ -128,7 +129,8 @@ class MyGroups extends Component {
                         },
                         body: {
                             name: groupEncryption.encryptedSecret.name,
-                            encryptedKey: groupEncryption.encryptedSymmetricKeyForMe
+                            encryptedKey: groupEncryption.encryptedSymmetricKeyForMe,
+                            participantsVisible: group.participantsVisible
                         },
                         loadingChained: true,
                         callback: (response) => {

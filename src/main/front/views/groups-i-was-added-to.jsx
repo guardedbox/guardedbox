@@ -148,25 +148,27 @@ class GroupsIWasAddedTo extends Component {
                                         <div style={{ float: 'right', marginRight: '16px' }}>
                                             <ActionIcon icon={X} tooltipText={t('global.exit')}
                                                 onClick={() => { this.exitGroup(group) }} />
-                                            <ActionIcon
-                                                icon={Organization}
-                                                badgeText={group.hadParticipants ? group.numberOfParticipants : null} badgeColor="success"
-                                                tooltipText={group.hadParticipants ?
-                                                    group.numberOfParticipants > 0 ?
-                                                        t('groups.currently-has-participants', { n: group.numberOfParticipants }) :
-                                                        t('groups.had-participants') :
-                                                    t('groups.participants')
-                                                }
-                                                onClick={() => {
-                                                    participantsModal(
-                                                        t('groups.participants'),
-                                                        this.loadGroupParticipants,
-                                                        null,
-                                                        null,
-                                                        group
-                                                    )
-                                                }}
-                                            />
+                                            {group.participantsVisible ?
+                                                <ActionIcon
+                                                    icon={Organization}
+                                                    badgeText={group.hadParticipants ? group.numberOfParticipants : null} badgeColor="success"
+                                                    tooltipText={group.hadParticipants ?
+                                                        group.numberOfParticipants > 0 ?
+                                                            t('groups.currently-has-participants', { n: group.numberOfParticipants }) :
+                                                            t('groups.had-participants') :
+                                                        t('groups.participants')
+                                                    }
+                                                    onClick={() => {
+                                                        participantsModal(
+                                                            t('groups.participants'),
+                                                            this.loadGroupParticipants,
+                                                            null,
+                                                            null,
+                                                            group
+                                                        )
+                                                    }} />
+                                                : null
+                                            }
                                         </div>
                                     </h5>
                                     <h6>

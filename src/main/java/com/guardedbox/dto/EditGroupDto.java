@@ -46,6 +46,10 @@ public class EditGroupDto
     @Size(min = BASE64_44BYTES_LENGTH, max = BASE64_44BYTES_LENGTH)
     private String encryptedKey;
 
+    /** Participants Visible. */
+    @NotNull
+    private Boolean participantsVisible;
+
     /** Secrets. */
     private List<EditGroupEditSecretDto> secrets;
 

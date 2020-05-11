@@ -152,6 +152,7 @@
         "title-new-group": "Nuevo grupo",
         "title-edit-group": "Editar grupo",
         "participants": "Integrantes",
+        "participants-can-see-each-other": "Los participantes pueden verse entre ellos",
         "currently-has-participants": "{n} integrante(s)",
         "had-participants": "Ha tenido integrantes",
         "remove-participant": "¿Estás seguro de que quieres quitar a \"{email}\" del grupo \"{group}\"?",

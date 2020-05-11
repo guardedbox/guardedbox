@@ -152,6 +152,7 @@
         "title-new-group": "New group",
         "title-edit-group": "Edit group",
         "participants": "Participants",
+        "participants-can-see-each-other": "Participants can see each other",
         "currently-has-participants": "{n} participant(s)",
         "had-participants": "Had participants",
         "remove-participant": "Are you sure that you want to remove \"{email}\" from the \"{group}\" group?",

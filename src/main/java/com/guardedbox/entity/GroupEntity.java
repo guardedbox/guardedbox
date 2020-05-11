@@ -83,6 +83,11 @@ public class GroupEntity
     @NotNull
     private Boolean hadParticipants;
 
+    /** Participants Visible. */
+    @Column(name = "participants_visible")
+    @NotNull
+    private Boolean participantsVisible;
+
     /** Participants. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupParticipantEntity> participants;

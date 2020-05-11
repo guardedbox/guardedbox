@@ -44,6 +44,9 @@ public class GroupDto
     /** Had Participants. */
     private Boolean hadParticipants;
 
+    /** Participants Visible. */
+    private Boolean participantsVisible;
+
     /** Secrets. */
     private List<SecretDto> secrets;
 

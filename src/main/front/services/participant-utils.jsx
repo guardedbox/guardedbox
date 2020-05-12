@@ -113,7 +113,7 @@ export function participantsModalRemoveParticipant(account) {
 
                 setTimeout(() => {
                     app().participantsModalTxtEmail.current.focus();
-                }, 200);
+                }, 500);
 
                 if (callback) callback();
 
@@ -165,7 +165,7 @@ export function inviteEmail(email) {
 
                         setTimeout(() => {
                             app().participantsModalTxtEmail.current.focus();
-                        }, 25);
+                        }, 500);
 
                     });
 

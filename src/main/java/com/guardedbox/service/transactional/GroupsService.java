@@ -182,8 +182,9 @@ public class GroupsService {
         GroupEntity group = findAndCheckGroup(groupId, ownerOrParticipantAccountId, true);
 
         if (!group.getOwnerAccount().getAccountId().equals(ownerOrParticipantAccountId) && !group.getParticipantsVisible()) {
-            throw new AuthorizationServiceException(String.format(
-                    "Group %s participants cannot be retrieved by account %s", groupId, ownerOrParticipantAccountId));
+            throw new ServiceException(String.format(
+                    "Group %s participants cannot be retrieved by account %s", groupId, ownerOrParticipantAccountId))
+                            .setErrorCode("groups.you-cannot-view-group-participants");
         }
 
         List<AccountDto> participants = new ArrayList<>(group.getParticipants().size());

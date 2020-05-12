@@ -1,4 +1,8 @@
 import { app } from 'services/views.jsx';
+import { t } from 'services/translation.jsx';
+import { rest } from 'services/rest.jsx';
+import { sessionEmail } from 'services/session.jsx';
+import { messageModal, confirmationModal } from 'services/modal.jsx';
 
 /**
  * Opens the participants modal.
@@ -131,5 +135,44 @@ export function sortAccounts(accountsArray) {
     accountsArray.sort((account1, account2) => {
         return account1.email > account2.email ? 1 : account1.email < account2.email ? -1 : 0;
     });
+
+}
+
+/**
+ * Invites an email to register.
+ *
+ * @param {string} email The email.
+ */
+export function inviteEmail(email) {
+
+    confirmationModal(
+        t('global.information'),
+        t('accounts.email-not-registered-invite', { email: email }),
+        () => {
+
+            rest({
+                method: 'post',
+                url: '/api/registrations',
+                body: {
+                    email: email,
+                    fromEmail: sessionEmail(),
+                },
+                callback: (response) => {
+
+                    messageModal(t('accounts.invitation-success-modal-title'), t('accounts.invitation-success-modal-body', { email: email }), () => {
+
+                        app().participantsModalTxtEmail.current.value = '';
+
+                        setTimeout(() => {
+                            app().participantsModalTxtEmail.current.focus();
+                        }, 25);
+
+                    });
+
+                }
+            });
+
+        }
+    );
 
 }

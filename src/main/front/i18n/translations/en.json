@@ -164,6 +164,7 @@
         "do-not-self-invite": "You cannot invite yourself to one of your groups.",
         "email-already-participant-in-group": "{email} is already a member of this group.",
         "you-are-not-participant-in-group": "You are not a participant of this group.",
+        "you-cannot-view-group-participants": "You cannot view the participants of this group.",
         "group-does-not-exist": "This group no longer exists."
     },
     "my-groups": {

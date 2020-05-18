@@ -187,7 +187,7 @@
         },
         {
             "name": "keys.hidden-derivation",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.Integer,java.lang.String>",
             "description": "Map of secret keys (base64) used to create hidden derivations by length (number of bytes)."
         },
         {
@@ -202,62 +202,62 @@
         },
         {
             "name": "emails.registration-subject",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of subjects of the registration email by language."
         },
         {
             "name": "emails.registration-body",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of bodies of the registration email by language."
         },
         {
             "name": "emails.invitation-subject",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of subjects of the invitation email by language."
         },
         {
             "name": "emails.invitation-body",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of bodies of the invitation email by language."
         },
         {
             "name": "emails.registration-complete-subject",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of subjects of the registration complete email by language."
         },
         {
             "name": "emails.registration-complete-body",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of bodies of the registration complete email by language."
         },
         {
             "name": "emails.already-registered-subject",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of subjects of the already registered email by language."
         },
         {
             "name": "emails.already-registered-body",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of bodies of the already registered email by language."
         },
         {
             "name": "emails.otp-subject",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of subjects of the OTP email by language."
         },
         {
             "name": "emails.otp-body",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of bodies of the OTP email by language."
         },
         {
             "name": "emails.otp-incorrect-subject",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of subjects of the incorrect OTP email by language."
         },
         {
             "name": "emails.otp-incorrect-body",
-            "type": "java.util.HashMap",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of bodies of the incorrect OTP email by language."
         }
     ]

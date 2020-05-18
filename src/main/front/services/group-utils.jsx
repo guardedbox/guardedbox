@@ -116,7 +116,8 @@ export function rotateGroupKey(groupId, editedGroup, callback) {
                         if (!groupNameDecryption) { notLoading(); return; };
 
                         editedGroup = {
-                            name: groupNameDecryption.decryptedSecret
+                            name: groupNameDecryption.decryptedSecret,
+                            participantsVisible: group.participantsVisible
                         };
 
                     }

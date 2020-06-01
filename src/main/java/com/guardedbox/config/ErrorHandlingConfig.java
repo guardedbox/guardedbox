@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,8 @@ public class ErrorHandlingConfig
             RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.OPTIONS, RequestMethod.PATCH, RequestMethod.TRACE})
     public ResponseEntity<?> error() {
 
-        Map<String, Object> requestErrorAttributes = errorAttributes.getErrorAttributes(new ServletWebRequest(request), true);
+        Map<String, Object> requestErrorAttributes = errorAttributes.getErrorAttributes(
+                new ServletWebRequest(request), ErrorAttributeOptions.defaults());
         HttpStatus errorStatus = HttpStatus.valueOf((Integer) requestErrorAttributes.get("status"));
 
         if (HttpStatus.UNAUTHORIZED.equals(errorStatus) || HttpStatus.FORBIDDEN.equals(errorStatus)) {

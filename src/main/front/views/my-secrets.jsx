@@ -191,12 +191,32 @@ class MySecrets extends Component {
             pathVariables: {
                 'secret-id': secret.secretId
             },
+            loadingChain: true,
             callback: (response) => {
 
-                notLoading(() => {
+                var accounts = response;
 
-                    callback(response);
+                rest({
+                    method: 'get',
+                    url: '/api/invitation-pending-action/secret/{secret-id}',
+                    pathVariables: {
+                        'secret-id': secret.secretId
+                    },
+                    loadingChained: true,
+                    callback: (response) => {
 
+                        var registrationPendingAccounts = response;
+
+                        notLoading(() => {
+
+                            callback({
+                                accounts: accounts,
+                                registrationPendingAccounts: registrationPendingAccounts
+                            });
+
+                        });
+
+                    }
                 });
 
             }
@@ -243,7 +263,7 @@ class MySecrets extends Component {
             serviceExceptionCallback: (response) => {
 
                 if (response.errorCode === 'accounts.email-not-registered') {
-                    inviteEmail(response.additionalData.email);
+                    inviteEmail(response.additionalData.email, secret.secretId, null);
                 } else {
                     messageModal(t('global.error'), t(responseJson.errorCode || 'global.error-occurred', responseJson.additionalData));
                 }
@@ -257,25 +277,48 @@ class MySecrets extends Component {
 
         confirmationModal(
             t('global.confirmation'),
-            t('shared-secrets.remove-receiver', { secret: secret.value.name, email: account.email }),
+            t(account.pendingRegistration ? 'shared-secrets.remove-pending-registration-receiver' : 'shared-secrets.remove-receiver', { secret: secret.value.name, email: account.email }),
             () => {
 
-                rest({
-                    method: 'delete',
-                    url: '/api/shared-secrets/sent/{secret-id}',
-                    pathVariables: {
-                        'secret-id': secret.secretId
-                    },
-                    params: {
-                        'receiver-email': account.email
-                    },
-                    loadingChain: true,
-                    callback: (response) => {
+                if (account.pendingRegistration) {
 
-                        callback(() => { this.loadSecrets(false) });
+                    rest({
+                        method: 'delete',
+                        url: '/api/invitation-pending-action/secret/{secret-id}',
+                        pathVariables: {
+                            'secret-id': secret.secretId
+                        },
+                        params: {
+                            'receiver-email': account.email
+                        },
+                        loadingChain: true,
+                        callback: (response) => {
 
-                    }
-                });
+                            callback(() => { this.loadSecrets(false) });
+
+                        }
+                    });
+
+                } else {
+
+                    rest({
+                        method: 'delete',
+                        url: '/api/shared-secrets/sent/{secret-id}',
+                        pathVariables: {
+                            'secret-id': secret.secretId
+                        },
+                        params: {
+                            'receiver-email': account.email
+                        },
+                        loadingChain: true,
+                        callback: (response) => {
+
+                            callback(() => { this.loadSecrets(false) });
+
+                        }
+                    });
+
+                }
 
             }
         );
@@ -376,7 +419,12 @@ class MySecrets extends Component {
                                                         }
                                                         onClick={() => {
                                                             participantsModal(
-                                                                t('secrets.title-share-secret'),
+                                                                {
+                                                                    header: t('secrets.title-share-secret'),
+                                                                    accountsHeader: t('secrets.subtitle-shared-with'),
+                                                                    registrationPendingAccountsHeader: t('secrets.subtitle-pending-registration'),
+                                                                    noParticipants: t('secrets.not-shared')
+                                                                },
                                                                 this.loadSharedSecretReceiverAccounts,
                                                                 this.shareSecret,
                                                                 this.unshareSecret,

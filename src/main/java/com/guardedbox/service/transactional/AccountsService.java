@@ -1,17 +1,22 @@
 package com.guardedbox.service.transactional;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.CreateAccountDto;
 import com.guardedbox.entity.AccountEntity;
+import com.guardedbox.entity.InvitationPendingActionEntity;
+import com.guardedbox.entity.RegistrationEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
 import com.guardedbox.entity.projection.AccountLoginPublicKeyProjection;
 import com.guardedbox.entity.projection.AccountLoginSaltProjection;
@@ -21,6 +26,8 @@ import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.properties.CryptographyProperties;
 import com.guardedbox.repository.AccountsRepository;
+import com.guardedbox.repository.InvitationPendingActionsRepository;
+import com.guardedbox.repository.RegistrationsRepository;
 import com.guardedbox.service.HiddenDerivationService;
 import com.guardedbox.service.MessagesService;
 
@@ -43,8 +50,17 @@ public class AccountsService {
     /** AccountsRepository. */
     private final AccountsRepository accountsRepository;
 
+    /** RegistrationsRepository. */
+    private final RegistrationsRepository registrationsRepository;
+
+    /** InvitationPendingActionsRepository. */
+    private final InvitationPendingActionsRepository invitationPendingActionsRepository;
+
     /** AccountsMapper. */
     private final AccountsMapper accountsMapper;
+
+    /** RegistrationsService. */
+    private final RegistrationsService registrationsService;
 
     /** HiddenDerivationService. */
     private final HiddenDerivationService hiddenDerivationService;
@@ -130,11 +146,18 @@ public class AccountsService {
     public AccountDto createAccount(
             CreateAccountDto createAccountDto) {
 
+        long currentTime = System.currentTimeMillis();
+
+        // Get the registration, checking if it exists, is valid and is not expired.
+        RegistrationEntity registrationEntity = registrationsService.findAndCheckRegistrationByToken(createAccountDto.getRegistrationToken());
+        String email = registrationEntity.getEmail();
+        createAccountDto.setEmail(email);
+
         // Check if the email is already registered.
-        if (accountsRepository.existsByEmail(createAccountDto.getEmail())) {
+        if (accountsRepository.existsByEmail(email)) {
             throw new ServiceException(
-                    String.format("Account was not created since email %s is already registered", createAccountDto.getEmail()))
-                            .setErrorCode("accounts.email-already-registered").addAdditionalData("email", createAccountDto.getEmail());
+                    String.format("Account was not created since email %s is already registered", email))
+                            .setErrorCode("accounts.email-already-registered").addAdditionalData("email", email);
         }
 
         // Check if the any of the salts is repeated or already exist.
@@ -147,12 +170,36 @@ public class AccountsService {
         }
 
         // Create the new account.
-        AccountDto accountDto = accountsMapper.toDto(accountsRepository.save(accountsMapper.fromDto(createAccountDto)));
+        AccountEntity accountEntity = accountsRepository.save(
+                accountsMapper.fromDto(createAccountDto)
+                        .setCreationTime(new Timestamp(currentTime)));
+
+        // Mark the registration as consumed.
+        registrationsRepository.save(registrationEntity.setConsumed(true));
+
+        // Set all the registrations associated to the email as invalid and set their account.
+        List<RegistrationEntity> registrations = registrationsRepository.findByEmail(email);
+        for (RegistrationEntity registration : registrations) {
+            registrationsRepository.save(registration.setValid(false).setAccount(accountEntity));
+        }
 
         // Send the registration completed email.
-        messagesService.sendRegistrationCompleteMessage(accountDto.getEmail());
+        messagesService.sendRegistrationCompleteMessage(email);
 
-        return accountDto;
+        // Send the invitation completed emails.
+        Set<String> invitersEmails = new HashSet<>();
+        for (RegistrationEntity registration : registrationsRepository.findByEmail(email)) {
+            if (!StringUtils.isEmpty(registration.getFromEmail()))
+                invitersEmails.add(registration.getFromEmail());
+        }
+        for (InvitationPendingActionEntity invitationPendingAction : invitationPendingActionsRepository.findByReceiverEmail(email)) {
+            invitersEmails.add(invitationPendingAction.getFromAccount(AccountBaseProjection.class).getEmail());
+        }
+        for (String inviterEmail : invitersEmails) {
+            messagesService.sendInvitationCompleteMessage(inviterEmail, email);
+        }
+
+        return accountsMapper.toDto(accountEntity);
 
     }
 

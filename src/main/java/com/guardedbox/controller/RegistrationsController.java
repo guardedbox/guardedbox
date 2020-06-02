@@ -22,6 +22,7 @@ import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.dto.SuccessDto;
 import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.service.ExecutionTimeService;
+import com.guardedbox.service.SessionAccountService;
 import com.guardedbox.service.transactional.RegistrationsService;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,9 @@ public class RegistrationsController {
     /** RegistrationsService. */
     private final RegistrationsService registrationsService;
 
+    /** SessionAccountService. */
+    private final SessionAccountService sessionAccount;
+
     /** ExecutionTimeService. */
     private final ExecutionTimeService executionTimeService;
 
@@ -55,7 +59,6 @@ public class RegistrationsController {
     public RegistrationDto getRegistration(
             @RequestParam(name = "token", required = true) @NotBlank @Pattern(regexp = ALPHANUMERIC_PATTERN) @Size(min = ALPHANUMERIC_64BYTES_LENGTH, max = ALPHANUMERIC_64BYTES_LENGTH) String token) {
 
-        // Return the Registration.
         return registrationsService.getAndCheckRegistrationByToken(token);
 
     }
@@ -73,7 +76,7 @@ public class RegistrationsController {
         long startTime = System.currentTimeMillis();
 
         // Create Registration.
-        registrationsService.createRegistration(createRegistrationDto);
+        registrationsService.createRegistration(createRegistrationDto, sessionAccount.getAccount());
 
         // Fix execution time.
         executionTimeService.fix(startTime, securityParameters.getRegistrationExecutionTime());

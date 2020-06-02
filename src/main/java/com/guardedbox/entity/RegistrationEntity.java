@@ -12,9 +12,13 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -64,9 +68,25 @@ public class RegistrationEntity
     @Size(min = ALPHANUMERIC_64BYTES_LENGTH, max = ALPHANUMERIC_64BYTES_LENGTH)
     private String token;
 
-    /** Expedition Time. */
-    @Column(name = "expedition_time")
+    /** Creation Time. */
+    @Column(name = "creation_time")
     @NotNull
-    private Timestamp expeditionTime;
+    private Timestamp creationTime;
+
+    /** Valid. */
+    @Column(name = "valid")
+    @NotNull
+    private Boolean valid;
+
+    /** Consumed. */
+    @Column(name = "consumed")
+    @NotNull
+    private Boolean consumed;
+
+    /** Account. */
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "account_id")
+    @Valid
+    private AccountEntity account;
 
 }

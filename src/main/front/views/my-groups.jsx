@@ -147,8 +147,6 @@ class MyGroups extends Component {
             }
         });
 
-
-
     }
 
     deleteGroup = (group) => {
@@ -186,10 +184,29 @@ class MyGroups extends Component {
             },
             callback: (response) => {
 
-                notLoading(() => {
+                var accounts = response;
 
-                    callback(response);
+                rest({
+                    method: 'get',
+                    url: '/api/invitation-pending-action/group/{group-id}',
+                    pathVariables: {
+                        'group-id': group.groupId
+                    },
+                    loadingChained: true,
+                    callback: (response) => {
 
+                        var registrationPendingAccounts = response;
+
+                        notLoading(() => {
+
+                            callback({
+                                accounts: accounts,
+                                registrationPendingAccounts: registrationPendingAccounts
+                            });
+
+                        });
+
+                    }
                 });
 
             }
@@ -236,7 +253,7 @@ class MyGroups extends Component {
             serviceExceptionCallback: (response) => {
 
                 if (response.errorCode === 'accounts.email-not-registered') {
-                    inviteEmail(response.additionalData.email);
+                    inviteEmail(response.additionalData.email, null, group.groupId);
                 } else {
                     messageModal(t('global.error'), t(responseJson.errorCode || 'global.error-occurred', responseJson.additionalData));
                 }
@@ -250,24 +267,47 @@ class MyGroups extends Component {
 
         confirmationModal(
             t('global.confirmation'),
-            t('groups.remove-participant', { group: group.name, email: account.email }),
+            t(account.pendingRegistration ? 'groups.remove-pending-registration-participant' : 'groups.remove-participant', { group: group.name, email: account.email }),
             () => {
 
-                rest({
-                    method: 'delete',
-                    url: '/api/groups/{group-id}/participants',
-                    pathVariables: {
-                        'group-id': group.groupId
-                    },
-                    params: {
-                        'email': account.email
-                    },
-                    callback: (response) => {
+                if (account.pendingRegistration) {
 
-                        callback(() => { this.loadGroups(false) });
+                    rest({
+                        method: 'delete',
+                        url: '/api/invitation-pending-action/group/{group-id}',
+                        pathVariables: {
+                            'group-id': group.groupId
+                        },
+                        params: {
+                            'receiver-email': account.email
+                        },
+                        loadingChain: true,
+                        callback: (response) => {
 
-                    }
-                });
+                            callback(() => { this.loadGroups(false) });
+
+                        }
+                    });
+
+                } else {
+
+                    rest({
+                        method: 'delete',
+                        url: '/api/groups/{group-id}/participants',
+                        pathVariables: {
+                            'group-id': group.groupId
+                        },
+                        params: {
+                            'email': account.email
+                        },
+                        callback: (response) => {
+
+                            callback(() => { this.loadGroups(false) });
+
+                        }
+                    });
+
+                }
 
             }
         );
@@ -461,7 +501,12 @@ class MyGroups extends Component {
                                                 }
                                                 onClick={() => {
                                                     participantsModal(
-                                                        t('groups.participants'),
+                                                        {
+                                                            header: t('groups.title-participants'),
+                                                            accountsHeader: t('groups.subtitle-current-participants'),
+                                                            registrationPendingAccountsHeader: t('groups.subtitle-pending-registration'),
+                                                            noParticipants: t('groups.no-participants')
+                                                        },
                                                         this.loadGroupParticipants,
                                                         this.addParticipantToGroup,
                                                         this.removeParticipantFromGroup,

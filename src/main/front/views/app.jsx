@@ -5,7 +5,7 @@ import CacheRoute, { CacheSwitch } from 'react-router-cache-route';
 import { Loader } from 'react-overlay-loader';
 import reactOverlayLoaderCss from 'react-overlay-loader/styles.css';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Badge, Progress, Form, FormGroup, Label, Input, InputGroup, CustomInput, Table } from 'reactstrap';
-import { Info, File, Key, X } from '@primer/octicons-react';
+import { Info, File, Key, X, Sync, LineArrowUp } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import PopoverIcon from 'components/popover-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
@@ -23,7 +23,7 @@ import { listenLocationChange } from 'services/location.jsx';
 import { setStateArrayElement } from 'services/state-utils.jsx';
 import { closeMessageModal, closeConfirmationModal } from 'services/modal.jsx';
 import { secretStrength, secretModalAddKeyValuePair, secretModalRemoveKeyValuePair, secretModalGenerateRandomValue, buildSecretModalSecret, closeSecretModal } from 'services/secret-utils.jsx';
-import { participantsModalAddParticipant, participantsModalRemoveParticipant, closeParticipantsModal } from 'services/participant-utils.jsx';
+import { participantsModalAddParticipant, participantsModalRemoveParticipant, closeParticipantsModal, inviteEmail } from 'services/participant-utils.jsx';
 import { buildGroupModalSecret, closeGroupModal } from 'services/group-utils.jsx';
 import { checkKeysModal, closeCheckKeysModal } from 'services/check-keys.jsx';
 import { copyToClipboard } from 'services/selector.jsx';
@@ -58,8 +58,9 @@ class App extends Component {
         secretModalAcceptCallbackThirdArg: null,
 
         participantsModalActive: false,
-        participantsModalHeader: '',
+        participantsModalLiterals: '',
         participantsModalAccounts: [],
+        participantsModalRegistrationPendingAccounts: [],
         participantsModalEmail: '',
         participantsModalLoadParticipantsFunction: null,
         participantsModalAddParticipantFunction: null,
@@ -262,29 +263,90 @@ class App extends Component {
 
                 {/* Participants modal */}
                 <Modal isOpen={this.state.participantsModalActive} toggle={() => { closeParticipantsModal() }}>
-                    <ModalHeader>{this.state.participantsModalHeader}</ModalHeader>
+                    <ModalHeader>{this.state.participantsModalLiterals.header}</ModalHeader>
                     <ModalBody>
                         {
-                            !this.state.participantsModalAccounts || this.state.participantsModalAccounts.length == 0 ? null :
-                                <Table striped hover size="sm">
-                                    <tbody>
-                                        {this.state.participantsModalAccounts.map((account, a) =>
-                                            <tr key={'account-' + a}>
-                                                <td style={{ width: '100%' }}>{account.email}</td>
-                                                <td className="icons-2-col" align="center">
-                                                    <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}
-                                                        onClick={() => { checkKeysModal(account.email) }} />
-                                                    {
-                                                        this.state.participantsModalRemoveParticipantFunction ?
+                            <Fragment>
+                                <h6 className="text-success"><b>{this.state.participantsModalLiterals.accountsHeader}</b></h6>
+                                {!this.state.participantsModalAccounts || this.state.participantsModalAccounts.length == 0 ?
+                                    <div style={{ marginBottom: '1.65rem' }}>{this.state.participantsModalLiterals.noParticipants}</div> :
+                                    <Table striped hover size="sm" style={{ marginBottom: '1.65rem' }}>
+                                        <tbody>
+                                            {this.state.participantsModalAccounts.map((account, a) =>
+                                                <tr key={'account-' + a}>
+                                                    <td style={{ width: '100%' }}>{account.email}</td>
+                                                    <td className="icons-3-col" align="center">
+                                                        <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}
+                                                            onClick={() => { checkKeysModal(account.email) }} />
+                                                        {this.state.participantsModalRemoveParticipantFunction ?
                                                             <ActionIcon icon={X} tooltipText={t('global.remove')}
-                                                                onClick={() => { participantsModalRemoveParticipant({ 'email': account.email }) }} />
+                                                                onClick={() => {
+                                                                    participantsModalRemoveParticipant({
+                                                                        'email': account.email,
+                                                                        'pendingRegistration': false
+                                                                    })
+                                                                }} />
                                                             : null
-                                                    }
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </Table>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </Table>
+                                }
+                            </Fragment>
+                        }
+                        {
+                            !this.state.participantsModalRegistrationPendingAccounts || this.state.participantsModalRegistrationPendingAccounts.length == 0 ? null :
+                                <Fragment>
+                                    <h6 className="text-success"><b>{this.state.participantsModalLiterals.registrationPendingAccountsHeader}</b></h6>
+                                    <Table striped hover size="sm" style={{ marginBottom: '1.65rem' }}>
+                                        <tbody>
+                                            {this.state.participantsModalRegistrationPendingAccounts.map((registrationPendingAccount, a) =>
+                                                <tr key={'account-' + a}>
+                                                    <td style={{ width: '100%' }}>
+                                                        {registrationPendingAccount.receiverEmail}
+                                                        {!registrationPendingAccount.emailRegistered ? null :
+                                                            <Badge color='info' style={{ marginLeft: '10px' }}>{t('accounts.registered')}</Badge>
+                                                        }
+                                                    </td>
+                                                    <td className="icons-3-col" align="center">
+                                                        {registrationPendingAccount.emailRegistered ?
+                                                            <Fragment>
+                                                                <ActionIcon icon={LineArrowUp} className="text-info" tooltipText={t('global.add')}
+                                                                    onClick={() => {
+                                                                        participantsModalAddParticipant({
+                                                                            'email': registrationPendingAccount.receiverEmail
+                                                                        })
+                                                                    }} />
+                                                                <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}
+                                                                    onClick={() => { checkKeysModal(registrationPendingAccount.receiverEmail) }} />
+                                                            </Fragment>
+                                                            :
+                                                            <Fragment>
+                                                                <ActionIcon icon={Sync} tooltipText={t('accounts.resend-invitation')}
+                                                                    onClick={() => {
+                                                                        inviteEmail(
+                                                                            registrationPendingAccount.receiverEmail,
+                                                                            this.state.participantsModalFunctionsArg.secretId,
+                                                                            this.state.participantsModalFunctionsArg.groupId,
+                                                                            true)
+                                                                    }} />
+                                                            </Fragment>
+                                                        }
+                                                        <ActionIcon icon={X} tooltipText={t('global.remove')}
+                                                            onClick={() => {
+                                                                participantsModalRemoveParticipant({
+                                                                    'email': registrationPendingAccount.receiverEmail,
+                                                                    'pendingRegistration': true
+                                                                })
+                                                            }} />
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </Table>
+                                </Fragment>
                         }
                         {
                             this.state.participantsModalAddParticipantFunction ?
@@ -376,7 +438,7 @@ class App extends Component {
                     </ModalBody>
                 </Modal>
 
-            </div>
+            </div >
         );
 
     }

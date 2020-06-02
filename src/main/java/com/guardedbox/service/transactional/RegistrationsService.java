@@ -3,13 +3,14 @@ package com.guardedbox.service.transactional;
 import static com.guardedbox.constants.Constraints.ALPHANUMERIC_64BYTES_LENGTH;
 
 import java.sql.Timestamp;
-import java.util.UUID;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.CreateRegistrationDto;
 import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.entity.RegistrationEntity;
@@ -67,78 +68,104 @@ public class RegistrationsService {
      * Creates a Registration.
      *
      * @param createRegistrationDto CreateRegistrationDto with the new Registration data.
+     * @param fromAccount AccountDto representing the inviter.
      * @return RegistrationDto with the created Registration data.
      */
     public RegistrationDto createRegistration(
-            CreateRegistrationDto createRegistrationDto) {
+            CreateRegistrationDto createRegistrationDto,
+            AccountDto fromAccount) {
 
         long currentTime = System.currentTimeMillis();
-
-        // Check if a registration was created for the email a short time ago.
-        RegistrationEntity prevRegistration = registrationsRepository.findByEmail(createRegistrationDto.getEmail());
-        if (prevRegistration != null && currentTime < prevRegistration.getExpeditionTime().getTime() + securityParameters.getRegistrationMinTtl()) {
-            throw new ServiceException(String.format(
-                    "Registration token was not generated for email %s since another one was generated a short time ago",
-                    createRegistrationDto.getEmail()))
-                            .setErrorCode("login.register-mail-just-sent").addAdditionalData("email", createRegistrationDto.getEmail());
-        }
+        String email = createRegistrationDto.getEmail();
+        String fromEmail = fromAccount == null ? null : fromAccount.getEmail();
+        boolean emailAlreadyRegistered = accountsRepository.existsByEmail(email);
+        boolean isInvitation = fromAccount != null;
+        RegistrationEntity registration = null;
 
         // Check if the email is already registered.
-        if (accountsRepository.existsByEmail(createRegistrationDto.getEmail())) {
+        if (emailAlreadyRegistered) {
 
-            // Send a message indicating that the email is already registered.
-            messagesService.sendAlreadyRegisteredMessage(createRegistrationDto.getEmail());
+            // Check if this is an invitation.
+            if (isInvitation) {
 
-            throw new ServiceException(String.format(
-                    "Registration token was not generated for email %s since it is already registered",
-                    createRegistrationDto.getEmail()))
-                            .setErrorCode("accounts.email-already-registered").addAdditionalData("email", createRegistrationDto.getEmail())
-                            .setResponseAsSuccess(true);
+                // Throw a ServiceException indicating that the email is already registered.
+                throw new ServiceException(String.format("Registration token was not generated for email %s since it is already registered", email))
+                        .setErrorCode("accounts.email-already-registered").addAdditionalData("email", email);
+
+            } else {
+
+                // Create an invalid registration token.
+                registration = createRegistrationToken(currentTime, email, fromEmail, false);
+
+                // Send a message indicating that the email is already registered.
+                messagesService.sendAlreadyRegisteredMessage(email);
+
+            }
 
         } else {
 
-            // Generate the registration token.
-            String token = null;
-            do {
-                token = randomService.randomAlphanumericString(ALPHANUMERIC_64BYTES_LENGTH);
-            } while (registrationsRepository.existsByToken(token));
+            // Create a registration token.
+            registration = createRegistrationToken(currentTime, email, fromEmail, true);
 
-            // Send the registration message.
-            if (StringUtils.isEmpty(createRegistrationDto.getFromEmail())) {
-                messagesService.sendRegistrationMessage(createRegistrationDto.getEmail(), token);
+            // Send the invitation or registration message.
+            if (isInvitation) {
+                messagesService.sendInvitationMessage(email, fromEmail, registration.getToken());
             } else {
-                messagesService.sendInvitationMessage(createRegistrationDto.getEmail(), createRegistrationDto.getFromEmail(), token);
+                messagesService.sendRegistrationMessage(email, registration.getToken());
             }
-
-            // Store the registration in the database, overwriting the previous one in case it exists.
-            RegistrationEntity registration = (prevRegistration == null ? new RegistrationEntity() : prevRegistration)
-                    .setEmail(createRegistrationDto.getEmail())
-                    .setFromEmail(createRegistrationDto.getFromEmail())
-                    .setToken(token)
-                    .setExpeditionTime(new Timestamp(currentTime));
-            registrationsRepository.save(registration);
-
-            // Return the registration.
-            return registrationsMapper.toDto(registration);
 
         }
 
+        // Return the registration.
+        return registrationsMapper.toDto(registration);
+
     }
 
     /**
-     * Deletes a Registration.
+     * Creates and stores in the database a registration token, checking first if a previous one was generated a short time ago.
      *
-     * @param registrationId ID of the Registration to be deleted.
+     * @param currentTime The current time.
+     * @param email The email associated to the registration token.
+     * @param fromEmail The inviter email in case this is an invitation, or null otherwise.
+     * @param valid Boolean indicating if the registration token is valid or fake (to avoid enumeration).
+     * @return The created RegistrationEntity.
      */
-    public void deleteRegistration(
-            UUID registrationId) {
+    private RegistrationEntity createRegistrationToken(
+            long currentTime,
+            String email,
+            String fromEmail,
+            boolean valid) {
 
-        registrationsRepository.deleteById(registrationId);
+        // Check if a registration was created for the email a short time ago.
+        List<RegistrationEntity> prevRegistrations = registrationsRepository.findByEmail(email);
+        for (RegistrationEntity prevRegistration : prevRegistrations) {
+            if (currentTime < prevRegistration.getCreationTime().getTime() + securityParameters.getRegistrationMinTtl()) {
+                throw new ServiceException(String.format(
+                        "Registration token was not generated for email %s since another one was generated a short time ago", email))
+                                .setErrorCode("login.register-mail-just-sent").addAdditionalData("email", email);
+            }
+        }
+
+        // Generate the registration token.
+        String token = null;
+        do {
+            token = randomService.randomAlphanumericString(ALPHANUMERIC_64BYTES_LENGTH);
+        } while (registrationsRepository.existsByToken(token));
+
+        // Store it in the database.
+        return registrationsRepository.save(new RegistrationEntity()
+                .setEmail(email)
+                .setFromEmail(fromEmail)
+                .setToken(token)
+                .setCreationTime(new Timestamp(currentTime))
+                .setValid(valid)
+                .setConsumed(false)
+                .setAccount(null));
 
     }
 
     /**
-     * Finds a Registration by token and checks that it exists and is not expired.
+     * Finds a Registration by token and checks that it exists, is valid and is not expired.
      *
      * @param token Registration.token.
      * @return The RegistrationEntity corresponding to the introduced token.
@@ -155,7 +182,12 @@ public class RegistrationsService {
                     .setErrorCode("registration.registration-token-not-found");
         }
 
-        if (currentTime > registration.getExpeditionTime().getTime()
+        if (!registration.getValid()) {
+            throw new ServiceException(String.format("Registration token %s is not valid", token))
+                    .setErrorCode("registration.registration-token-invalid");
+        }
+
+        if (currentTime > registration.getCreationTime().getTime()
                 + (StringUtils.isEmpty(registration.getFromEmail())
                         ? securityParameters.getRegistrationTtl()
                         : securityParameters.getInvitationTtl())) {

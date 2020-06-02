@@ -23,6 +23,7 @@ import com.guardedbox.entity.projection.SecretValueProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.mapper.SecretsMapper;
+import com.guardedbox.repository.InvitationPendingActionsRepository;
 import com.guardedbox.repository.SecretsRepository;
 import com.guardedbox.repository.SharedSecretsRepository;
 
@@ -44,6 +45,9 @@ public class SharedSecretsService {
 
     /** SecretsRepository. */
     private final SecretsRepository secretsRepository;
+
+    /** InvitationPendingActionsRepository. */
+    private final InvitationPendingActionsRepository invitationPendingActionsRepository;
 
     /** SecretsService. */
     private final SecretsService secretsService;
@@ -147,6 +151,9 @@ public class SharedSecretsService {
                 .setEncryptedKey(shareSecretDto.getEncryptedKey());
 
         sharedSecretsRepository.save(sharedSecret);
+
+        invitationPendingActionsRepository.deleteBySecretSecretIdAndReceiverEmail(
+                secretId, shareSecretDto.getEmail());
 
     }
 

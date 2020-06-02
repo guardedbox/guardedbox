@@ -231,6 +231,16 @@
             "description": "Map of bodies of the registration complete email by language."
         },
         {
+            "name": "emails.invitation-complete-subject",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
+            "description": "Map of subjects of the invitation complete email by language."
+        },
+        {
+            "name": "emails.invitation-complete-body",
+            "type": "java.util.Map<java.lang.String,java.lang.String>",
+            "description": "Map of bodies of the invitation complete email by language."
+        },
+        {
             "name": "emails.already-registered-subject",
             "type": "java.util.Map<java.lang.String,java.lang.String>",
             "description": "Map of subjects of the already registered email by language."

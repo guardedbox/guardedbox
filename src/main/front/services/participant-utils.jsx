@@ -1,28 +1,29 @@
 import { app } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
-import { sessionEmail } from 'services/session.jsx';
 import { messageModal, confirmationModal } from 'services/modal.jsx';
 
 /**
  * Opens the participants modal.
  *
- * @param {string} header The participants modal header.
+ * @param {string} literals The participants modal literals.
  * @param {function} loadParticipantsFunction Function to load participants. Will receive functionsArg as first argument and must expect a callback function as second argument that expects the loaded accounts as first argument.
  * @param {function} addParticipantFunction Function to add a participant. Will receive functionsArg as first argument, the account to be added as second argument and must expect a callback function as third argument.
  * @param {function} removeParticipantFunction Function to remove a participant. Will receive functionsArg as first argument, the account to be added as second argument and must expect a callback function as third argument.
  * @param {any} functionsArg This argument will be passed to the functions as first argument.
  */
-export function participantsModal(header, loadParticipantsFunction, addParticipantFunction, removeParticipantFunction, functionsArg) {
+export function participantsModal(literals, loadParticipantsFunction, addParticipantFunction, removeParticipantFunction, functionsArg) {
 
-    loadParticipantsFunction(functionsArg, (accounts) => {
+    loadParticipantsFunction(functionsArg, (participants) => {
 
-        sortAccounts(accounts);
+        sortAccounts(participants.accounts);
+        if (participants.registrationPendingAccounts) sortAccounts(participants.registrationPendingAccounts);
 
         app().setState({
             participantsModalActive: true,
-            participantsModalHeader: header,
-            participantsModalAccounts: accounts,
+            participantsModalLiterals: literals,
+            participantsModalAccounts: participants.accounts,
+            participantsModalRegistrationPendingAccounts: participants.registrationPendingAccounts,
             participantsModalEmail: '',
             participantsModalLoadParticipantsFunction: loadParticipantsFunction,
             participantsModalAddParticipantFunction: addParticipantFunction,
@@ -49,14 +50,50 @@ export function closeParticipantsModal(callback) {
 
     app().setState({
         participantsModalActive: false,
-        participantsModalHeader: '',
+        participantsModalLiterals: '',
         participantsModalAccounts: [],
+        participantsModalRegistrationPendingAccounts: [],
         participantsModalEmail: '',
         participantsModalLoadParticipantsFunction: null,
         participantsModalAddParticipantFunction: null,
         participantsModalRemoveParticipantFunction: null,
         participantsModalFunctionsArg: null
     }, callback);
+
+}
+
+/**
+ * Loads the participants in the participants modal.
+ *
+ * @param {boolean} clearTxtEmail True to clear the email textbox.
+ * @param {function} callback This function will be invoked when the participants are loaded.
+ */
+export function participantsModalLoadParticipants(clearTxtEmail, callback) {
+
+    app().state.participantsModalLoadParticipantsFunction(app().state.participantsModalFunctionsArg, (participants) => {
+
+        sortAccounts(participants.accounts);
+        if (participants.registrationPendingAccounts) sortAccounts(participants.registrationPendingAccounts);
+
+        app().setState({
+            participantsModalAccounts: participants.accounts,
+            participantsModalRegistrationPendingAccounts: participants.registrationPendingAccounts,
+            participantsModalEmail: clearTxtEmail ? '' : app().state.participantsModalEmail
+        }, () => {
+
+            if (clearTxtEmail) {
+                app().participantsModalTxtEmail.current.value = '';
+            }
+
+            setTimeout(() => {
+                if (app().participantsModalTxtEmail.current) app().participantsModalTxtEmail.current.focus();
+            }, 500);
+
+            if (callback) callback();
+
+        });
+
+    });
 
 }
 
@@ -68,28 +105,7 @@ export function closeParticipantsModal(callback) {
 export function participantsModalAddParticipant(account) {
 
     app().state.participantsModalAddParticipantFunction(app().state.participantsModalFunctionsArg, account, (callback) => {
-
-        app().state.participantsModalLoadParticipantsFunction(app().state.participantsModalFunctionsArg, (accounts) => {
-
-            sortAccounts(accounts);
-
-            app().setState({
-                participantsModalAccounts: accounts,
-                participantsModalEmail: ''
-            }, () => {
-
-                app().participantsModalTxtEmail.current.value = '';
-
-                setTimeout(() => {
-                    app().participantsModalTxtEmail.current.focus();
-                }, 25);
-
-                if (callback) callback();
-
-            });
-
-        });
-
+        participantsModalLoadParticipants(true, callback);
     });
 
 }
@@ -102,25 +118,7 @@ export function participantsModalAddParticipant(account) {
 export function participantsModalRemoveParticipant(account) {
 
     app().state.participantsModalRemoveParticipantFunction(app().state.participantsModalFunctionsArg, account, (callback) => {
-
-        app().state.participantsModalLoadParticipantsFunction(app().state.participantsModalFunctionsArg, (accounts) => {
-
-            sortAccounts(accounts);
-
-            app().setState({
-                participantsModalAccounts: accounts
-            }, () => {
-
-                setTimeout(() => {
-                    app().participantsModalTxtEmail.current.focus();
-                }, 500);
-
-                if (callback) callback();
-
-            });
-
-        });
-
+        participantsModalLoadParticipants(true, callback);
     });
 
 }
@@ -142,31 +140,42 @@ export function sortAccounts(accountsArray) {
  * Invites an email to register.
  *
  * @param {string} email The email.
+ * @param {string} secretId A secret ID to create an invitation pending action.
+ * @param {string} groupId A group ID to create an invitation pending action.
+ * @param {boolean} reinvitation True to indicate that this invitation is a reinvitation.
  */
-export function inviteEmail(email) {
+export function inviteEmail(email, secretId, groupId, reinvitation) {
 
     confirmationModal(
-        t('global.information'),
-        t('accounts.email-not-registered-invite', { email: email }),
+        t(reinvitation ? 'global.confirmation' : 'global.information'),
+        t(reinvitation ? 'accounts.confirm-resend-invitation' : 'accounts.email-not-registered-invite', { email: email }),
         () => {
 
             rest({
                 method: 'post',
-                url: '/api/registrations',
+                url: '/api/invitation-pending-action',
                 body: {
-                    email: email,
-                    fromEmail: sessionEmail(),
+                    receiverEmail: email,
+                    secretId: secretId,
+                    groupId: groupId
                 },
+                loadingChain: true,
                 callback: (response) => {
 
-                    messageModal(t('accounts.invitation-success-modal-title'), t('accounts.invitation-success-modal-body', { email: email }), () => {
+                    participantsModalLoadParticipants(true);
 
-                        app().participantsModalTxtEmail.current.value = '';
+                    rest({
+                        method: 'post',
+                        url: '/api/registrations',
+                        body: {
+                            email: email
+                        },
+                        loadingChained: true,
+                        callback: (response) => {
 
-                        setTimeout(() => {
-                            app().participantsModalTxtEmail.current.focus();
-                        }, 500);
+                            messageModal(t('accounts.invitation-success-modal-title'), t('accounts.invitation-success-modal-body', { email: email }));
 
+                        }
                     });
 
                 }

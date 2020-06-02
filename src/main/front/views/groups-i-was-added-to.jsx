@@ -76,9 +76,13 @@ class GroupsIWasAddedTo extends Component {
             },
             callback: (response) => {
 
+                var accounts = response;
+
                 notLoading(() => {
 
-                    callback(response);
+                    callback({
+                        accounts: accounts
+                    });
 
                 });
 
@@ -160,7 +164,11 @@ class GroupsIWasAddedTo extends Component {
                                                     }
                                                     onClick={() => {
                                                         participantsModal(
-                                                            t('groups.participants'),
+                                                            {
+                                                                header: t('groups.title-participants'),
+                                                                accountsHeader: t('groups.subtitle-current-participants'),
+                                                                registrationPendingAccountsHeader: t('groups.subtitle-pending-registration')
+                                                            },
                                                             this.loadGroupParticipants,
                                                             null,
                                                             null,

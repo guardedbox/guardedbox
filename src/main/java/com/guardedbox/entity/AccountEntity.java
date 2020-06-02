@@ -7,6 +7,7 @@ import static com.guardedbox.constants.Constraints.EMAIL_MIN_LENGTH;
 import static com.guardedbox.constants.Constraints.EMAIL_PATTERN;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -95,6 +97,11 @@ public class AccountEntity
     @Size(min = BASE64_32BYTES_LENGTH, max = BASE64_32BYTES_LENGTH)
     private String signingPublicKey;
 
+    /** Creation Time. */
+    @Column(name = "creation_time")
+    @NotNull
+    private Timestamp creationTime;
+
     /** Secrets. */
     @OneToMany(mappedBy = "ownerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SecretEntity> ownedSecrets;
@@ -110,5 +117,13 @@ public class AccountEntity
     /** Group Participations. */
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupParticipantEntity> groupParticipations;
+
+    /** Registrations. */
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RegistrationEntity> registrations;
+
+    /** Invitation Pending Actions. */
+    @OneToMany(mappedBy = "fromAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvitationPendingActionEntity> invitationPendingActions;
 
 }

@@ -33,6 +33,7 @@ import com.guardedbox.mapper.GroupsMapper;
 import com.guardedbox.repository.GroupParticipantsRepository;
 import com.guardedbox.repository.GroupSecretsRepository;
 import com.guardedbox.repository.GroupsRepository;
+import com.guardedbox.repository.InvitationPendingActionsRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -55,6 +56,9 @@ public class GroupsService {
 
     /** GroupSecretsRepository. */
     private final GroupSecretsRepository groupSecretsRepository;
+
+    /** InvitationPendingActionsRepository. */
+    private final InvitationPendingActionsRepository invitationPendingActionsRepository;
 
     /** AccountsService. */
     private final AccountsService accountsService;
@@ -336,6 +340,9 @@ public class GroupsService {
                 .setEncryptedKey(addParticipantToGroupDto.getEncryptedKey());
 
         groupParticipantsRepository.save(groupParticipant);
+
+        invitationPendingActionsRepository.deleteByGroupGroupIdAndReceiverEmail(
+                addParticipantToGroupDto.getGroupId(), addParticipantToGroupDto.getEmail());
 
     }
 

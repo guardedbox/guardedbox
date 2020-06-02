@@ -28,6 +28,7 @@ CREATE TABLE `account` (
   `encryption_public_key` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signing_salt` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signing_public_key` char(44) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `creation_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`account_id`),
   KEY `EMAIL` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -88,6 +89,27 @@ CREATE TABLE `group_secret` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `invitation_pending_action`
+--
+
+DROP TABLE IF EXISTS `invitation_pending_action`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `invitation_pending_action` (
+  `invitation_pending_action_id` binary(16) NOT NULL,
+  `from_account_id` binary(16) DEFAULT NULL,
+  `receiver_email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `secret_id` binary(16) DEFAULT NULL,
+  `group_id` binary(16) DEFAULT NULL,
+  PRIMARY KEY (`invitation_pending_action_id`),
+  KEY `RECEIVER_EMAIL` (`receiver_email`),
+  KEY `SECRET_ID` (`secret_id`),
+  KEY `GROUP_ID` (`group_id`),
+  KEY `FROM_ACCOUNT_ID` (`from_account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `registration`
 --
 
@@ -99,10 +121,14 @@ CREATE TABLE `registration` (
   `email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `from_email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `token` char(86) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `expedition_time` timestamp NULL DEFAULT NULL,
+  `creation_time` timestamp NULL DEFAULT NULL,
+  `valid` bit(1) DEFAULT NULL,
+  `consumed` bit(1) DEFAULT NULL,
+  `account_id` binary(16) DEFAULT NULL,
   PRIMARY KEY (`registration_id`),
   KEY `EMAIL` (`email`),
-  KEY `TOKEN` (`token`)
+  KEY `TOKEN` (`token`),
+  KEY `ACCOUNT_ID` (`account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

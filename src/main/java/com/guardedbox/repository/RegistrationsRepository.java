@@ -1,5 +1,6 @@
 package com.guardedbox.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,9 +34,9 @@ public interface RegistrationsRepository
 
     /**
      * @param email RegistrationEntity.email.
-     * @return The RegistrationEntity corresponding to the introduced email.
+     * @return The List of RegistrationEntity corresponding to the introduced email.
      */
-    RegistrationEntity findByEmail(
+    List<RegistrationEntity> findByEmail(
             String email);
 
 }

@@ -86,6 +86,23 @@ public class MessagesService {
     }
 
     /**
+     * Sends a message to an email indicating that the invitation he sent to a receiverEmail is complete.
+     *
+     * @param email The email.
+     * @param receiverEmail The invitation receiver email.
+     */
+    public void sendInvitationCompleteMessage(
+            String email,
+            String receiverEmail) {
+
+        emailService.sendAsync(
+                email,
+                emailsProperties.getInvitationCompleteSubject().get(languageService.getAppLanguage()),
+                String.format(emailsProperties.getInvitationCompleteBody().get(languageService.getAppLanguage()), receiverEmail));
+
+    }
+
+    /**
      * Sends a message to an email indicating that it is already registered.
      *
      * @param email The email.

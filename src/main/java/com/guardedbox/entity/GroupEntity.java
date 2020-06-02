@@ -96,6 +96,10 @@ public class GroupEntity
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupSecretEntity> secrets;
 
+    /** Invitation Pending Actions. */
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvitationPendingActionEntity> invitationPendingActions;
+
     /**
      * @param <T> A projection type.
      * @param type The class of the projection.

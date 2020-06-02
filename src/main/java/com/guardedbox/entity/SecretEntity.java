@@ -87,6 +87,10 @@ public class SecretEntity
     @OneToMany(mappedBy = "secret", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedSecretEntity> sharedSecrets;
 
+    /** Invitation Pending Actions. */
+    @OneToMany(mappedBy = "secret", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvitationPendingActionEntity> invitationPendingActions;
+
     /**
      * @param <T> A projection type.
      * @param type The class of the projection.

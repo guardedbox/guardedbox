@@ -21,13 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.CreateAccountDto;
-import com.guardedbox.dto.RegistrationDto;
 import com.guardedbox.dto.SuccessDto;
 import com.guardedbox.properties.SecurityParametersProperties;
 import com.guardedbox.service.ExecutionTimeService;
 import com.guardedbox.service.SessionAccountService;
 import com.guardedbox.service.transactional.AccountsService;
-import com.guardedbox.service.transactional.RegistrationsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,9 +46,6 @@ public class AccountsController {
 
     /** AccountsService. */
     private final AccountsService accountsService;
-
-    /** RegistrationsService. */
-    private final RegistrationsService registrationsService;
 
     /** SessionAccountService. */
     private final SessionAccountService sessionAccount;
@@ -108,17 +103,8 @@ public class AccountsController {
     public SuccessDto createAccount(
             @RequestBody(required = true) @Valid CreateAccountDto createAccountDto) {
 
-        // Get the registration, checking if it exists and is not expired.
-        RegistrationDto registrationDto = registrationsService.getAndCheckRegistrationByToken(createAccountDto.getRegistrationToken());
-
-        // Create the account.
-        createAccountDto.setEmail(registrationDto.getEmail());
         accountsService.createAccount(createAccountDto);
 
-        // Delete the registration.
-        registrationsService.deleteRegistration(registrationDto.getRegistrationId());
-
-        // Successful result.
         return new SuccessDto(true);
 
     }

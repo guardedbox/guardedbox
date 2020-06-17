@@ -182,6 +182,7 @@ class MyGroups extends Component {
             pathVariables: {
                 'group-id': group.groupId
             },
+            loadingChain: true,
             callback: (response) => {
 
                 var accounts = response;
@@ -192,18 +193,34 @@ class MyGroups extends Component {
                     pathVariables: {
                         'group-id': group.groupId
                     },
+                    loadingChain: true,
                     loadingChained: true,
                     callback: (response) => {
 
                         var registrationPendingAccounts = response;
 
-                        notLoading(() => {
+                        rest({
+                            method: 'get',
+                            url: '/api/groups/{group-id}/ex-members',
+                            pathVariables: {
+                                'group-id': group.groupId
+                            },
+                            loadingChained: true,
+                            callback: (response) => {
 
-                            callback({
-                                accounts: accounts,
-                                registrationPendingAccounts: registrationPendingAccounts
-                            });
+                                var exMembers = response;
 
+                                notLoading(() => {
+
+                                    callback({
+                                        accounts: accounts,
+                                        registrationPendingAccounts: registrationPendingAccounts,
+                                        exMembers: exMembers
+                                    });
+
+                                });
+
+                            }
                         });
 
                     }
@@ -267,7 +284,12 @@ class MyGroups extends Component {
 
         confirmationModal(
             t('global.confirmation'),
-            t(account.pendingRegistration ? 'groups.remove-pending-registration-participant' : 'groups.remove-participant', { group: group.name, email: account.email }),
+            t(account.pendingRegistration ?
+                'groups.remove-pending-registration-participant' :
+                account.exMember ?
+                    'groups.remove-ex-member' :
+                    'groups.remove-participant',
+                { group: group.name, email: account.email }),
             () => {
 
                 if (account.pendingRegistration) {
@@ -289,6 +311,25 @@ class MyGroups extends Component {
                         }
                     });
 
+                } else if (account.exMember) {
+
+                    rest({
+                        method: 'delete',
+                        url: '/api/groups/{group-id}/ex-member',
+                        pathVariables: {
+                            'group-id': group.groupId
+                        },
+                        params: {
+                            'email': account.email
+                        },
+                        loadingChain: true,
+                        callback: (response) => {
+
+                            callback(() => { this.loadGroups(false) });
+
+                        }
+                    });
+
                 } else {
 
                     rest({
@@ -300,6 +341,7 @@ class MyGroups extends Component {
                         params: {
                             'email': account.email
                         },
+                        loadingChain: true,
                         callback: (response) => {
 
                             callback(() => { this.loadGroups(false) });
@@ -492,12 +534,20 @@ class MyGroups extends Component {
                                                 onClick={() => { this.deleteGroup(group) }} />
                                             <ActionIcon
                                                 icon={Organization}
-                                                badgeText={group.hadParticipants ? group.numberOfParticipants : null} badgeColor="success"
-                                                tooltipText={group.hadParticipants ?
+                                                badgeText={
+                                                    group.numberOfParticipants > 0 ?
+                                                        group.numberOfParticipants :
+                                                        group.numberOfExMembers > 0 ?
+                                                            '0' :
+                                                            null
+                                                }
+                                                badgeColor="success"
+                                                tooltipText={
                                                     group.numberOfParticipants > 0 ?
                                                         t('groups.currently-has-participants', { n: group.numberOfParticipants }) :
-                                                        t('groups.had-participants') :
-                                                    t('groups.participants')
+                                                        group.numberOfExMembers > 0 ?
+                                                            t('groups.had-participants') :
+                                                            t('groups.participants')
                                                 }
                                                 onClick={() => {
                                                     participantsModal(
@@ -505,6 +555,8 @@ class MyGroups extends Component {
                                                             header: t('groups.title-participants'),
                                                             accountsHeader: t('groups.subtitle-current-participants'),
                                                             registrationPendingAccountsHeader: t('groups.subtitle-pending-registration'),
+                                                            exMembersHeader: t('groups.subtitle-ex-members'),
+                                                            exMembersHeaderInfo: t('groups.subtitle-ex-members-info'),
                                                             noParticipants: t('groups.no-participants')
                                                         },
                                                         this.loadGroupParticipants,

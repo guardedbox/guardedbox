@@ -37,7 +37,7 @@ public class SecretDto
     /** Number of Sharings. */
     private Integer numberOfSharings;
 
-    /** Was Shared. */
-    private Boolean wasShared;
+    /** Number of Ex Members. */
+    private Integer numberOfExMembers;
 
 }

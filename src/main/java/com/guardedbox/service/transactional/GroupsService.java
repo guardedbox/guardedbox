@@ -1,5 +1,8 @@
 package com.guardedbox.service.transactional;
 
+import static com.guardedbox.constants.ExMemberCause.GROUP_PARTICIPANT_LEFT;
+import static com.guardedbox.constants.ExMemberCause.GROUP_PARTICIPANT_REMOVED_BY_OWNER;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +21,12 @@ import com.guardedbox.dto.CreateGroupDto;
 import com.guardedbox.dto.EditGroupDto;
 import com.guardedbox.dto.EditGroupEditSecretDto;
 import com.guardedbox.dto.EditGroupSecretDto;
+import com.guardedbox.dto.ExMemberDto;
 import com.guardedbox.dto.GroupDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.dto.ShareSecretDto;
 import com.guardedbox.entity.AccountEntity;
+import com.guardedbox.entity.ExMemberEntity;
 import com.guardedbox.entity.GroupEntity;
 import com.guardedbox.entity.GroupParticipantEntity;
 import com.guardedbox.entity.GroupSecretEntity;
@@ -30,6 +35,7 @@ import com.guardedbox.entity.projection.AccountPublicKeysProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.mapper.GroupsMapper;
+import com.guardedbox.repository.ExMembersRepository;
 import com.guardedbox.repository.GroupParticipantsRepository;
 import com.guardedbox.repository.GroupSecretsRepository;
 import com.guardedbox.repository.GroupsRepository;
@@ -56,6 +62,9 @@ public class GroupsService {
 
     /** GroupSecretsRepository. */
     private final GroupSecretsRepository groupSecretsRepository;
+
+    /** ExMembersRepository. */
+    private final ExMembersRepository exMembersRepository;
 
     /** InvitationPendingActionsRepository. */
     private final InvitationPendingActionsRepository invitationPendingActionsRepository;
@@ -107,7 +116,7 @@ public class GroupsService {
 
             GroupDto groupDto = groupsMapper.toDto(groupEntity)
                     .setNumberOfParticipants(groupEntity.getParticipants().size())
-                    .setHadParticipants(groupEntity.getHadParticipants());
+                    .setNumberOfExMembers(groupEntity.getExMembers().size());
 
             groupDto.setSecrets(new ArrayList<>(groupEntity.getSecrets().size()));
             for (GroupSecretEntity groupSecret : groupEntity.getSecrets()) {
@@ -149,9 +158,7 @@ public class GroupsService {
                             .setSecrets(new ArrayList<>(groupEntity.getSecrets().size()));
 
                     if (groupEntity.getParticipantsVisible()) {
-                        groupDto
-                                .setNumberOfParticipants(groupEntity.getParticipants().size())
-                                .setHadParticipants(groupEntity.getHadParticipants());
+                        groupDto.setNumberOfParticipants(groupEntity.getParticipants().size());
                     }
 
                     for (GroupSecretEntity groupSecret : groupEntity.getSecrets()) {
@@ -202,6 +209,30 @@ public class GroupsService {
     }
 
     /**
+     * @param ownerOrParticipantAccountId An ID representing an account.
+     * @param groupId An ID representing a group.
+     * @return The List of ex members of the group. Checks that the account is the owner of the group.
+     */
+    public List<ExMemberDto> getGroupExMembers(
+            UUID ownerOrParticipantAccountId,
+            UUID groupId) {
+
+        GroupEntity group = findAndCheckGroup(groupId, ownerOrParticipantAccountId, false);
+        List<ExMemberEntity> secretExMembers = group.getExMembers();
+
+        List<ExMemberDto> exMembers = new ArrayList<>(secretExMembers.size());
+        for (ExMemberEntity exMember : secretExMembers) {
+            exMembers.add(new ExMemberDto()
+                    .setExMemberId(exMember.getExMemberId())
+                    .setEmail(exMember.getEmail())
+                    .setCause(exMember.getCause()));
+        }
+
+        return exMembers;
+
+    }
+
+    /**
      * @param ownerAccountId Account.accountId.
      * @param groupId Group.groupId.
      * @return GroupDto indicating if the group corresponding to the introduced groupId must rotate its key.
@@ -231,8 +262,7 @@ public class GroupsService {
 
         GroupEntity group = groupsMapper.fromDto(createGroupDto)
                 .setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId))
-                .setMustRotateKey(false)
-                .setHadParticipants(false);
+                .setMustRotateKey(false);
 
         return groupsMapper.toDto(groupsRepository.save(group));
 
@@ -316,7 +346,6 @@ public class GroupsService {
             AddParticipantToGroupDto addParticipantToGroupDto) {
 
         GroupEntity group = findAndCheckGroup(addParticipantToGroupDto.getGroupId(), ownerAccountId, false);
-        groupsRepository.save(group.setHadParticipants(true));
 
         AccountBaseProjection account = accountsService.findAndCheckAccountByEmail(addParticipantToGroupDto.getEmail(), AccountBaseProjection.class);
         if (account.getAccountId().equals(ownerAccountId)) {
@@ -340,6 +369,9 @@ public class GroupsService {
                 .setEncryptedKey(addParticipantToGroupDto.getEncryptedKey());
 
         groupParticipantsRepository.save(groupParticipant);
+
+        exMembersRepository.deleteByGroupGroupIdAndEmail(
+                addParticipantToGroupDto.getGroupId(), addParticipantToGroupDto.getEmail());
 
         invitationPendingActionsRepository.deleteByGroupGroupIdAndReceiverEmail(
                 addParticipantToGroupDto.getGroupId(), addParticipantToGroupDto.getEmail());
@@ -446,6 +478,13 @@ public class GroupsService {
             }
         }
 
+        if (!exMembersRepository.existsByGroupGroupIdAndEmail(group.getGroupId(), email)) {
+            exMembersRepository.save(new ExMemberEntity()
+                    .setGroup(group)
+                    .setEmail(email)
+                    .setCause(GROUP_PARTICIPANT_REMOVED_BY_OWNER.getCauseName()));
+        }
+
     }
 
     /**
@@ -465,10 +504,36 @@ public class GroupsService {
         if (groupParticipant == null) {
             throw new ServiceException(String.format(
                     "Account %s is not a participant of the group %s", participantAccountId, groupId))
-                            .setErrorCode("groups-i-was-added-to.you-are-not-participant-in-group");
+                            .setErrorCode("groups.you-are-not-participant-in-group");
         }
 
         groupParticipantsRepository.delete(groupParticipant);
+
+        String email = groupParticipant.getAccount(AccountBaseProjection.class).getEmail();
+        if (!exMembersRepository.existsByGroupGroupIdAndEmail(group.getGroupId(), email)) {
+            exMembersRepository.save(new ExMemberEntity()
+                    .setGroup(group)
+                    .setEmail(email)
+                    .setCause(GROUP_PARTICIPANT_LEFT.getCauseName()));
+        }
+
+    }
+
+    /**
+     * Deletes an ex member associated to a group and an email.
+     *
+     * @param ownerAccountId Account.accountId of the group owner.
+     * @param groupId Group.groupId of the group.
+     * @param email The email.
+     */
+    public void forgetGroupExMember(
+            UUID ownerAccountId,
+            UUID groupId,
+            String email) {
+
+        findAndCheckGroup(groupId, ownerAccountId, false);
+
+        exMembersRepository.deleteByGroupGroupIdAndEmail(groupId, email);
 
     }
 

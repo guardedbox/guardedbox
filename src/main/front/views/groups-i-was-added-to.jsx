@@ -155,19 +155,26 @@ class GroupsIWasAddedTo extends Component {
                                             {group.participantsVisible ?
                                                 <ActionIcon
                                                     icon={Organization}
-                                                    badgeText={group.hadParticipants ? group.numberOfParticipants : null} badgeColor="success"
-                                                    tooltipText={group.hadParticipants ?
+                                                    badgeText={
+                                                        group.numberOfParticipants > 0 ?
+                                                            group.numberOfParticipants
+                                                            : null
+                                                    }
+                                                    badgeColor="success"
+                                                    tooltipText={
                                                         group.numberOfParticipants > 0 ?
                                                             t('groups.currently-has-participants', { n: group.numberOfParticipants }) :
-                                                            t('groups.had-participants') :
-                                                        t('groups.participants')
+                                                            t('groups.participants')
                                                     }
                                                     onClick={() => {
                                                         participantsModal(
                                                             {
                                                                 header: t('groups.title-participants'),
                                                                 accountsHeader: t('groups.subtitle-current-participants'),
-                                                                registrationPendingAccountsHeader: t('groups.subtitle-pending-registration')
+                                                                registrationPendingAccountsHeader: t('groups.subtitle-pending-registration'),
+                                                                exMembersHeader: t('groups.subtitle-ex-members'),
+                                                                exMembersHeaderInfo: t('groups.subtitle-ex-members-info'),
+                                                                noParticipants: t('groups.no-participants')
                                                             },
                                                             this.loadGroupParticipants,
                                                             null,

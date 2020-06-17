@@ -270,7 +270,7 @@ export function processSecrets(encryptedSecrets, encryptedSymmetricKey, publicKe
             value: secretValueDecryption.decryptedSecret,
             encryptedKey: encryptedSecret.encryptedKey,
             numberOfSharings: encryptedSecret.numberOfSharings,
-            wasShared: encryptedSecret.wasShared
+            numberOfExMembers: encryptedSecret.numberOfExMembers
         });
 
     }

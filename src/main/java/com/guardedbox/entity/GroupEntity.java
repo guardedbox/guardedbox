@@ -78,11 +78,6 @@ public class GroupEntity
     @NotNull
     private Boolean mustRotateKey;
 
-    /** Had Participants. */
-    @Column(name = "had_participants")
-    @NotNull
-    private Boolean hadParticipants;
-
     /** Participants Visible. */
     @Column(name = "participants_visible")
     @NotNull
@@ -95,6 +90,10 @@ public class GroupEntity
     /** Secrets. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupSecretEntity> secrets;
+
+    /** Ex Members. */
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ExMemberEntity> exMembers;
 
     /** Invitation Pending Actions. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

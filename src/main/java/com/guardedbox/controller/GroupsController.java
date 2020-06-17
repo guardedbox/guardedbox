@@ -30,6 +30,7 @@ import com.guardedbox.dto.AddSecretToGroupDto;
 import com.guardedbox.dto.CreateGroupDto;
 import com.guardedbox.dto.EditGroupDto;
 import com.guardedbox.dto.EditGroupSecretDto;
+import com.guardedbox.dto.ExMemberDto;
 import com.guardedbox.dto.GroupDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.dto.SuccessDto;
@@ -97,6 +98,18 @@ public class GroupsController {
             @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
 
         return groupsService.getGroupParticipants(sessionAccount.getAccountId(), groupId);
+
+    }
+
+    /**
+     * @param groupId An ID representing a group.
+     * @return The ex members of the group corresponding to the introduced ID.
+     */
+    @GetMapping("/{group-id}/ex-members")
+    public List<ExMemberDto> getGroupExMembers(
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
+
+        return groupsService.getGroupExMembers(sessionAccount.getAccountId(), groupId);
 
     }
 
@@ -241,6 +254,23 @@ public class GroupsController {
             @PathVariable(name = "group-id", required = true) @NotNull UUID groupId) {
 
         groupsService.exitFromGroup(groupId, sessionAccount.getAccountId());
+        return new SuccessDto(true);
+
+    }
+
+    /**
+     * Forgets a group ex member.
+     *
+     * @param groupId The group ID.
+     * @param email The email of the ex member.
+     * @return Object indicating if the execution was successful.
+     */
+    @DeleteMapping("/{group-id}/ex-member")
+    public SuccessDto forgetGroupExMember(
+            @PathVariable(name = "group-id", required = true) @NotNull UUID groupId,
+            @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
+
+        groupsService.forgetGroupExMember(sessionAccount.getAccountId(), groupId, email);
         return new SuccessDto(true);
 
     }

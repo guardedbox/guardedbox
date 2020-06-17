@@ -61,6 +61,7 @@ class App extends Component {
         participantsModalLiterals: '',
         participantsModalAccounts: [],
         participantsModalRegistrationPendingAccounts: [],
+        participantsModalExMembers: [],
         participantsModalEmail: '',
         participantsModalLoadParticipantsFunction: null,
         participantsModalAddParticipantFunction: null,
@@ -339,6 +340,53 @@ class App extends Component {
                                                                 participantsModalRemoveParticipant({
                                                                     'email': registrationPendingAccount.receiverEmail,
                                                                     'pendingRegistration': true
+                                                                })
+                                                            }} />
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </Table>
+                                </Fragment>
+                        }
+                        {
+                            !this.state.participantsModalExMembers || this.state.participantsModalExMembers.length == 0 ? null :
+                                <Fragment>
+                                    <h6 className="text-success">
+                                        <b>{this.state.participantsModalLiterals.exMembersHeader}</b>
+                                        <ActionIcon icon={Info} tooltipText={this.state.participantsModalLiterals.exMembersHeaderInfo} />
+                                    </h6>
+                                    <Table striped hover size="sm" style={{ marginBottom: '1.65rem' }}>
+                                        <tbody>
+                                            {this.state.participantsModalExMembers.map((exMember, a) =>
+                                                <tr key={'member-' + a}>
+                                                    <td style={{ width: '100%' }}>
+                                                        {exMember.email}
+                                                        <ActionIcon icon={Info} tooltipText={t(exMember.cause)} className={(() => {
+                                                            switch (exMember.cause) {
+                                                                case 'shared-secrets.secret-unshared-by-owner':
+                                                                case 'groups.participant-removed-by-owner':
+                                                                    return "text-success";
+                                                                case 'shared-secrets.secret-rejected-by-receiver':
+                                                                case 'groups.participant-left':
+                                                                    return 'text-warning';
+                                                                case 'accounts.account-was-deleted':
+                                                                    return 'text-danger';
+                                                            }
+                                                        })()} />
+                                                    </td>
+                                                    <td className="icons-3-col" align="center">
+                                                        <ActionIcon icon={LineArrowUp} tooltipText={t('global.add')}
+                                                            onClick={() => {
+                                                                participantsModalAddParticipant({
+                                                                    'email': exMember.email
+                                                                })
+                                                            }} />
+                                                        <ActionIcon icon={X} tooltipText={t('global.forget')}
+                                                            onClick={() => {
+                                                                participantsModalRemoveParticipant({
+                                                                    'email': exMember.email,
+                                                                    'exMember': true
                                                                 })
                                                             }} />
                                                     </td>

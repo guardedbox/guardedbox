@@ -202,18 +202,34 @@ class MySecrets extends Component {
                     pathVariables: {
                         'secret-id': secret.secretId
                     },
+                    loadingChain: true,
                     loadingChained: true,
                     callback: (response) => {
 
                         var registrationPendingAccounts = response;
 
-                        notLoading(() => {
+                        rest({
+                            method: 'get',
+                            url: '/api/shared-secrets/sent/{secret-id}/ex-members',
+                            pathVariables: {
+                                'secret-id': secret.secretId
+                            },
+                            loadingChained: true,
+                            callback: (response) => {
 
-                            callback({
-                                accounts: accounts,
-                                registrationPendingAccounts: registrationPendingAccounts
-                            });
+                                var exMembers = response;
 
+                                notLoading(() => {
+
+                                    callback({
+                                        accounts: accounts,
+                                        registrationPendingAccounts: registrationPendingAccounts,
+                                        exMembers: exMembers
+                                    });
+
+                                });
+
+                            }
                         });
 
                     }
@@ -277,7 +293,12 @@ class MySecrets extends Component {
 
         confirmationModal(
             t('global.confirmation'),
-            t(account.pendingRegistration ? 'shared-secrets.remove-pending-registration-receiver' : 'shared-secrets.remove-receiver', { secret: secret.value.name, email: account.email }),
+            t(account.pendingRegistration ?
+                'shared-secrets.remove-pending-registration-receiver' :
+                account.exMember ?
+                    'shared-secrets.remove-ex-member' :
+                    'shared-secrets.remove-receiver',
+                { secret: secret.value.name, email: account.email }),
             () => {
 
                 if (account.pendingRegistration) {
@@ -290,6 +311,25 @@ class MySecrets extends Component {
                         },
                         params: {
                             'receiver-email': account.email
+                        },
+                        loadingChain: true,
+                        callback: (response) => {
+
+                            callback(() => { this.loadSecrets(false) });
+
+                        }
+                    });
+
+                } else if (account.exMember) {
+
+                    rest({
+                        method: 'delete',
+                        url: '/api/shared-secrets/sent/{secret-id}/ex-member',
+                        pathVariables: {
+                            'secret-id': secret.secretId
+                        },
+                        params: {
+                            'email': account.email
                         },
                         loadingChain: true,
                         callback: (response) => {
@@ -410,12 +450,20 @@ class MySecrets extends Component {
                                                     }} />
                                                     <ActionIcon
                                                         icon={Organization}
-                                                        badgeText={secret.wasShared ? secret.numberOfSharings : null} badgeColor="success"
-                                                        tooltipText={secret.wasShared ?
+                                                        badgeText={
+                                                            secret.numberOfSharings > 0 ?
+                                                                secret.numberOfSharings :
+                                                                secret.numberOfExMembers > 0 ?
+                                                                    '0' :
+                                                                    null
+                                                        }
+                                                        badgeColor="success"
+                                                        tooltipText={
                                                             secret.numberOfSharings > 0 ?
                                                                 t('shared-secrets.currently-shared', { n: secret.numberOfSharings }) :
-                                                                t('shared-secrets.was-shared') :
-                                                            t('global.share')
+                                                                secret.numberOfExMembers > 0 ?
+                                                                    t('shared-secrets.was-shared') :
+                                                                    t('global.share')
                                                         }
                                                         onClick={() => {
                                                             participantsModal(
@@ -423,6 +471,8 @@ class MySecrets extends Component {
                                                                     header: t('secrets.title-share-secret'),
                                                                     accountsHeader: t('secrets.subtitle-shared-with'),
                                                                     registrationPendingAccountsHeader: t('secrets.subtitle-pending-registration'),
+                                                                    exMembersHeader: t('secrets.subtitle-ex-members'),
+                                                                    exMembersHeaderInfo: t('secrets.subtitle-ex-members-info'),
                                                                     noParticipants: t('secrets.not-shared')
                                                                 },
                                                                 this.loadSharedSecretReceiverAccounts,

@@ -18,12 +18,14 @@ export function participantsModal(literals, loadParticipantsFunction, addPartici
 
         sortAccounts(participants.accounts);
         if (participants.registrationPendingAccounts) sortAccounts(participants.registrationPendingAccounts);
+        if (participants.exMembers) sortAccounts(participants.exMembers);
 
         app().setState({
             participantsModalActive: true,
             participantsModalLiterals: literals,
             participantsModalAccounts: participants.accounts,
             participantsModalRegistrationPendingAccounts: participants.registrationPendingAccounts,
+            participantsModalExMembers: participants.exMembers,
             participantsModalEmail: '',
             participantsModalLoadParticipantsFunction: loadParticipantsFunction,
             participantsModalAddParticipantFunction: addParticipantFunction,
@@ -53,6 +55,7 @@ export function closeParticipantsModal(callback) {
         participantsModalLiterals: '',
         participantsModalAccounts: [],
         participantsModalRegistrationPendingAccounts: [],
+        participantsModalExMembers: [],
         participantsModalEmail: '',
         participantsModalLoadParticipantsFunction: null,
         participantsModalAddParticipantFunction: null,
@@ -74,10 +77,12 @@ export function participantsModalLoadParticipants(clearTxtEmail, callback) {
 
         sortAccounts(participants.accounts);
         if (participants.registrationPendingAccounts) sortAccounts(participants.registrationPendingAccounts);
+        if (participants.exMembers) sortAccounts(participants.exMembers);
 
         app().setState({
             participantsModalAccounts: participants.accounts,
             participantsModalRegistrationPendingAccounts: participants.registrationPendingAccounts,
+            participantsModalExMembers: participants.exMembers,
             participantsModalEmail: clearTxtEmail ? '' : app().state.participantsModalEmail
         }, () => {
 

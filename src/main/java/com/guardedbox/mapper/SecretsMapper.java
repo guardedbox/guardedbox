@@ -35,7 +35,7 @@ public class SecretsMapper {
                 .setValue(secretEntity.getValue())
                 .setEncryptedKey(secretEntity.getEncryptedKey())
                 .setNumberOfSharings(secretEntity.getSharedSecrets() == null ? null : secretEntity.getSharedSecrets().size())
-                .setWasShared(secretEntity.getWasShared());
+                .setNumberOfExMembers(secretEntity.getExMembers() == null ? null : secretEntity.getExMembers().size());
 
     }
 

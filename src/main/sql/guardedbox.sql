@@ -35,6 +35,26 @@ CREATE TABLE `account` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `ex_member`
+--
+
+DROP TABLE IF EXISTS `ex_member`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ex_member` (
+  `ex_member_id` binary(16) NOT NULL,
+  `secret_id` binary(16) DEFAULT NULL,
+  `group_id` binary(16) DEFAULT NULL,
+  `email` varchar(254) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cause` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`ex_member_id`),
+  KEY `SECRET_ID` (`secret_id`),
+  KEY `GROUP_ID` (`group_id`),
+  KEY `EMAIL` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `group_`
 --
 

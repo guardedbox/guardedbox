@@ -1,5 +1,8 @@
 package com.guardedbox.service.transactional;
 
+import static com.guardedbox.constants.ExMemberCause.SECRET_REJECTED_BY_RECEIVER;
+import static com.guardedbox.constants.ExMemberCause.SECRET_UNSHARED_BY_OWNER;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,9 +15,11 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.guardedbox.dto.AccountDto;
+import com.guardedbox.dto.ExMemberDto;
 import com.guardedbox.dto.SecretDto;
 import com.guardedbox.dto.ShareSecretDto;
 import com.guardedbox.entity.AccountEntity;
+import com.guardedbox.entity.ExMemberEntity;
 import com.guardedbox.entity.SecretEntity;
 import com.guardedbox.entity.SharedSecretEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
@@ -23,6 +28,7 @@ import com.guardedbox.entity.projection.SecretValueProjection;
 import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.mapper.SecretsMapper;
+import com.guardedbox.repository.ExMembersRepository;
 import com.guardedbox.repository.InvitationPendingActionsRepository;
 import com.guardedbox.repository.SecretsRepository;
 import com.guardedbox.repository.SharedSecretsRepository;
@@ -45,6 +51,9 @@ public class SharedSecretsService {
 
     /** SecretsRepository. */
     private final SecretsRepository secretsRepository;
+
+    /** ExMembersRepository. */
+    private final ExMembersRepository exMembersRepository;
 
     /** InvitationPendingActionsRepository. */
     private final InvitationPendingActionsRepository invitationPendingActionsRepository;
@@ -114,6 +123,30 @@ public class SharedSecretsService {
     }
 
     /**
+     * @param ownerAccountId Account.accountId of the secret owner.
+     * @param secretId Secret.secretId of the shared secret.
+     * @return The List of ex members with which the introduced secretId was shared.
+     */
+    public List<ExMemberDto> getSharedSecretExMembers(
+            UUID ownerAccountId,
+            UUID secretId) {
+
+        SecretEntity secret = secretsService.findAndCheckSecret(secretId, ownerAccountId);
+        List<ExMemberEntity> secretExMembers = secret.getExMembers();
+
+        List<ExMemberDto> exMembers = new ArrayList<>(secretExMembers.size());
+        for (ExMemberEntity exMember : secretExMembers) {
+            exMembers.add(new ExMemberDto()
+                    .setExMemberId(exMember.getExMemberId())
+                    .setEmail(exMember.getEmail())
+                    .setCause(exMember.getCause()));
+        }
+
+        return exMembers;
+
+    }
+
+    /**
      * Shares a secret.
      *
      * @param ownerAccountId Account.accountId of the secret owner.
@@ -126,7 +159,6 @@ public class SharedSecretsService {
             ShareSecretDto shareSecretDto) {
 
         SecretEntity secret = secretsService.findAndCheckSecret(secretId, ownerAccountId);
-        secretsRepository.save(secret.setWasShared(true));
 
         AccountBaseProjection receiverAccount = accountsService.findAndCheckAccountByEmail(
                 shareSecretDto.getEmail(), AccountBaseProjection.class);
@@ -151,6 +183,9 @@ public class SharedSecretsService {
                 .setEncryptedKey(shareSecretDto.getEncryptedKey());
 
         sharedSecretsRepository.save(sharedSecret);
+
+        exMembersRepository.deleteBySecretSecretIdAndEmail(
+                secretId, shareSecretDto.getEmail());
 
         invitationPendingActionsRepository.deleteBySecretSecretIdAndReceiverEmail(
                 secretId, shareSecretDto.getEmail());
@@ -184,6 +219,13 @@ public class SharedSecretsService {
 
         sharedSecretsRepository.delete(sharedSecret);
 
+        if (!exMembersRepository.existsBySecretSecretIdAndEmail(secret.getSecretId(), receiverEmail)) {
+            exMembersRepository.save(new ExMemberEntity()
+                    .setSecret(secret)
+                    .setEmail(receiverEmail)
+                    .setCause(SECRET_UNSHARED_BY_OWNER.getCauseName()));
+        }
+
     }
 
     /**
@@ -208,6 +250,32 @@ public class SharedSecretsService {
         }
 
         sharedSecretsRepository.delete(sharedSecret);
+
+        String receiverEmail = sharedSecret.getReceiverAccount(AccountBaseProjection.class).getEmail();
+        if (!exMembersRepository.existsBySecretSecretIdAndEmail(secret.getSecretId(), receiverEmail)) {
+            exMembersRepository.save(new ExMemberEntity()
+                    .setSecret(secret)
+                    .setEmail(receiverEmail)
+                    .setCause(SECRET_REJECTED_BY_RECEIVER.getCauseName()));
+        }
+
+    }
+
+    /**
+     * Deletes an ex member associated to a secret and an email.
+     *
+     * @param ownerAccountId Account.accountId of the secret owner.
+     * @param secretId Secret.secretId of the secret.
+     * @param email The email.
+     */
+    public void forgetSharedSecretExMember(
+            UUID ownerAccountId,
+            UUID secretId,
+            String email) {
+
+        secretsService.findAndCheckSecret(secretId, ownerAccountId);
+
+        exMembersRepository.deleteBySecretSecretIdAndEmail(secretId, email);
 
     }
 

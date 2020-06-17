@@ -81,8 +81,7 @@ public class SecretsService {
 
         SecretEntity secret = secretsMapper.fromDto(createSecretDto)
                 .setOwnerAccount(new AccountEntity().setAccountId(ownerAccountId))
-                .setMustRotateKey(false)
-                .setWasShared(false);
+                .setMustRotateKey(false);
 
         return secretsMapper.toDto(secretsRepository.save(secret));
 

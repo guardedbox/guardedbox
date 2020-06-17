@@ -1,5 +1,7 @@
 package com.guardedbox.service.transactional;
 
+import static com.guardedbox.constants.ExMemberCause.ACCOUNT_WAS_DELETED;
+
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,8 +17,11 @@ import org.springframework.util.StringUtils;
 import com.guardedbox.dto.AccountDto;
 import com.guardedbox.dto.CreateAccountDto;
 import com.guardedbox.entity.AccountEntity;
+import com.guardedbox.entity.ExMemberEntity;
+import com.guardedbox.entity.GroupParticipantEntity;
 import com.guardedbox.entity.InvitationPendingActionEntity;
 import com.guardedbox.entity.RegistrationEntity;
+import com.guardedbox.entity.SharedSecretEntity;
 import com.guardedbox.entity.projection.AccountBaseProjection;
 import com.guardedbox.entity.projection.AccountLoginPublicKeyProjection;
 import com.guardedbox.entity.projection.AccountLoginSaltProjection;
@@ -26,6 +31,7 @@ import com.guardedbox.exception.ServiceException;
 import com.guardedbox.mapper.AccountsMapper;
 import com.guardedbox.properties.CryptographyProperties;
 import com.guardedbox.repository.AccountsRepository;
+import com.guardedbox.repository.ExMembersRepository;
 import com.guardedbox.repository.InvitationPendingActionsRepository;
 import com.guardedbox.repository.RegistrationsRepository;
 import com.guardedbox.service.HiddenDerivationService;
@@ -52,6 +58,9 @@ public class AccountsService {
 
     /** RegistrationsRepository. */
     private final RegistrationsRepository registrationsRepository;
+
+    /** ExMembersRepository. */
+    private final ExMembersRepository exMembersRepository;
 
     /** InvitationPendingActionsRepository. */
     private final InvitationPendingActionsRepository invitationPendingActionsRepository;
@@ -211,7 +220,21 @@ public class AccountsService {
     public void deleteAccount(
             UUID accountId) {
 
-        accountsRepository.deleteById(accountId);
+        AccountEntity account = accountsRepository.getOne(accountId);
+        accountsRepository.delete(account);
+
+        for (SharedSecretEntity sharedSecret : account.getReceivedSharedSecrets()) {
+            exMembersRepository.save(new ExMemberEntity()
+                    .setSecret(sharedSecret.getSecret())
+                    .setEmail(account.getEmail())
+                    .setCause(ACCOUNT_WAS_DELETED.getCauseName()));
+        }
+        for (GroupParticipantEntity groupParticipant : account.getGroupParticipations()) {
+            exMembersRepository.save(new ExMemberEntity()
+                    .setGroup(groupParticipant.getGroup())
+                    .setEmail(account.getEmail())
+                    .setCause(ACCOUNT_WAS_DELETED.getCauseName()));
+        }
 
     }
 

@@ -78,14 +78,13 @@ public class SecretEntity
     @NotNull
     private Boolean mustRotateKey;
 
-    /** Was Shared. */
-    @Column(name = "was_shared")
-    @NotNull
-    private Boolean wasShared;
-
     /** Shared Secrets Based on this Secret. */
     @OneToMany(mappedBy = "secret", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedSecretEntity> sharedSecrets;
+
+    /** Ex Members. */
+    @OneToMany(mappedBy = "secret", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ExMemberEntity> exMembers;
 
     /** Invitation Pending Actions. */
     @OneToMany(mappedBy = "secret", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

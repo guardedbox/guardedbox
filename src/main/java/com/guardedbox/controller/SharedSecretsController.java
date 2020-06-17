@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guardedbox.dto.AccountDto;
+import com.guardedbox.dto.ExMemberDto;
 import com.guardedbox.dto.ShareSecretDto;
 import com.guardedbox.dto.SuccessDto;
 import com.guardedbox.service.SessionAccountService;
@@ -73,6 +74,18 @@ public class SharedSecretsController {
     }
 
     /**
+     * @param secretId A secret ID representing a secret. It must belong to the current session account.
+     * @return All the ex members with which the introduced secret was shared.
+     */
+    @GetMapping("/sent/{secret-id}/ex-members")
+    public List<ExMemberDto> getSharedSecretExMembers(
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId) {
+
+        return sharedSecretsService.getSharedSecretExMembers(sessionAccount.getAccountId(), secretId);
+
+    }
+
+    /**
      * Shares a secret.
      *
      * @param secretId The secret ID of the secret to be shared.
@@ -117,6 +130,23 @@ public class SharedSecretsController {
             @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId) {
 
         sharedSecretsService.rejectSharedSecret(secretId, sessionAccount.getAccountId());
+        return new SuccessDto(true);
+
+    }
+
+    /**
+     * Forgets a shared secret ex member.
+     *
+     * @param secretId The secret ID of the shared secret.
+     * @param email The email of the ex member.
+     * @return Object indicating if the execution was successful.
+     */
+    @DeleteMapping("/sent/{secret-id}/ex-member")
+    public SuccessDto forgetSharedSecretExMember(
+            @PathVariable(name = "secret-id", required = true) @NotNull UUID secretId,
+            @RequestParam(name = "email", required = true) @NotBlank @Email(regexp = EMAIL_PATTERN) @Size(min = EMAIL_MIN_LENGTH, max = EMAIL_MAX_LENGTH) String email) {
+
+        sharedSecretsService.forgetSharedSecretExMember(sessionAccount.getAccountId(), secretId, email);
         return new SuccessDto(true);
 
     }

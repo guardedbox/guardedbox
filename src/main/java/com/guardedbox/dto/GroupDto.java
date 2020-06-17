@@ -41,8 +41,8 @@ public class GroupDto
     /** Number of Participants. */
     private Integer numberOfParticipants;
 
-    /** Had Participants. */
-    private Boolean hadParticipants;
+    /** Number of Ex Members. */
+    private Integer numberOfExMembers;
 
     /** Participants Visible. */
     private Boolean participantsVisible;

@@ -14,7 +14,7 @@
         "react-dom": "16.13.1",
         "react-i18next": "11.5.0",
         "react-overlay-loader": "0.0.3",
-        "react-router-cache-route": "1.8.4",
+        "react-router-cache-route": "1.9.0",
         "react-router-dom": "5.1.2",
         "reactstrap": "8.4.1",
         "zxcvbn": "4.4.2"

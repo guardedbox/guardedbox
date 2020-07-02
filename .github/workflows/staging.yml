@@ -23,7 +23,7 @@ jobs:
     - name: cache-mvn-dependencies
       uses: actions/cache@v2
       with:
-        path: /root/.m2/repository
+        path: ~/.m2/repository
         key: ${{ hashFiles('pom.xml') }}
 
     - name: mvn-clean-install

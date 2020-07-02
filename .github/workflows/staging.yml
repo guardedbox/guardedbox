@@ -15,4 +15,6 @@ jobs:
     - name: mvn-clean-install
       run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox s3curitybug/guardedbox-build
     - name: docker-push
-      run: docker push s3curitybug/guardedbox:$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+        docker push s3curitybug/guardedbox:$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)

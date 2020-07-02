@@ -25,6 +25,9 @@ jobs:
       with:
         path: ~/.m2/repository
         key: ${{ hashFiles('pom.xml') }}
+        
+    - name: cache-docker-images
+      uses: satackey/action-docker-layer-caching@v0.0.3
 
     - name: mvn-clean-install
       run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build

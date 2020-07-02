@@ -13,4 +13,4 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
     - name: mvn-clean-install
-      run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox:/guardedbox s3curitybug/guardedbox-build
+      run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox s3curitybug/guardedbox-build

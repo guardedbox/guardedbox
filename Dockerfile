@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk13:alpine-jre@sha256:92bdf255a0ebc7ab51d37bf04a0d15b1d4fed7e56395e71b1f2096ba5eb30293
+FROM adoptopenjdk/openjdk14:alpine-jre@sha256:cdd86f0dcf7d1d4151c37c23b0a22c3369a7c8cbb12b0975ed0c2d8c9ab2963e
 LABEL maintainer="s3curitybug@gmail.com"
 COPY target/guardedbox*.jar /opt/guardedbox/guardedbox.jar
 RUN chmod 444 /opt/guardedbox/guardedbox.jar

@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: docker:dind
+    runs-on: ubuntu-latest
     env:
       GITHUB_WORKSPACE: /guardedbox
     steps:

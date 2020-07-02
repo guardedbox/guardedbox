@@ -1,0 +1,18 @@
+name: staging
+
+on:
+  push:
+    branches: [ development ]
+  pull_request:
+    branches: [ development ]
+
+jobs:
+  build:
+    runs-on: dind
+    env:
+      GITHUB_WORKSPACE: /guardedbox
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: build
+      run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /guardedbox:/guardedbox s3curitybug/guardedbox-build

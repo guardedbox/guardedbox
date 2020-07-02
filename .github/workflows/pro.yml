@@ -1,0 +1,36 @@
+name: pro
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v2
+      
+    - name: cache-node-modules
+      uses: actions/cache@v2
+      with:
+        path: /home/runner/work/guardedbox/guardedbox/node_modules
+        key: ${{ hashFiles('package-lock.json') }}
+        
+    - name: cache-mvn-dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ hashFiles('pom.xml') }}
+
+    - name: mvn-clean-install
+      run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build
+
+    - name: docker-push
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+        docker push s3curitybug/guardedbox:$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        docker push s3curitybug/guardedbox:latest

@@ -1,8 +1,8 @@
-name: pro
+name: staging
 
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
 
 jobs:
   build:
@@ -11,18 +11,20 @@ jobs:
 
     - name: checkout
       uses: actions/checkout@v2
-      
+
     - name: cache-node-modules
       uses: actions/cache@v2
       with:
         path: /home/runner/work/guardedbox/guardedbox/node_modules
-        key: ${{ hashFiles('package-lock.json') }}
-        
+        key: cache-node-modules-${{ hashFiles('package-lock.json') }}
+        restore-keys: cache-node-modules
+
     - name: cache-mvn-dependencies
       uses: actions/cache@v2
       with:
         path: ~/.m2/repository
-        key: ${{ hashFiles('pom.xml') }}
+        key: cache-mvn-dependencies-${{ hashFiles('pom.xml') }}
+        restore-keys: cache-mvn-dependencies
 
     - name: mvn-clean-install
       run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build

@@ -1,8 +1,8 @@
-name: staging
+name: master
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -33,3 +33,4 @@ jobs:
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
         docker push s3curitybug/guardedbox:$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        docker push s3curitybug/guardedbox:latest

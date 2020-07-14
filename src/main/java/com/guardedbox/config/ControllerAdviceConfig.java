@@ -45,7 +45,7 @@ public class ControllerAdviceConfig {
     public ResponseEntity<ServiceExceptionDto> serviceExceptionHandler(
             ServiceException e) {
 
-        log.error(String.format(
+        log.info(String.format(
                 "Error during the request %s %s",
                 request.getMethod(),
                 request.getRequestURI()),

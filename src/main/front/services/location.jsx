@@ -22,7 +22,9 @@ function handleLocationChange(location) {
     } else if (path === views.viewPaths.login && isAuthenticated()) {
         changeLocation(views.defaultPath);
     } else if (path === views.viewPaths.login && workingWithoutSession()) {
-        reset()
+        reset();
+    } else if (!isLocationPublic(path) && !isAuthenticated() && !workingWithoutSession()) {
+        reset();
     } else {
         setTimeout(() => { handleLocationChangeToPath(path) }, 25);
     }

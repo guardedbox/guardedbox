@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Table } from 'reactstrap';
-import { DiffAdded, Sync, File, Check, Eye, EyeClosed, Clock, Pencil, Trashcan, Organization } from '@primer/octicons-react'
+import { Plus, Sync, File, Check, Eye, EyeClosed, Clock, Pencil, Trashcan, Organization } from '@primer/octicons-react'
 import ActionIcon from 'components/action-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
@@ -373,7 +373,7 @@ class MySecrets extends Component {
                 {/* Title and buttons */}
                 <h4>{t('my-secrets.title')}</h4><hr />
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <ButtonIcon icon={DiffAdded} tooltipText={t('my-secrets.btn-new-secret')} color="primary" onClick={() => {
+                    <ButtonIcon icon={Plus} tooltipText={t('my-secrets.btn-new-secret')} color="primary" onClick={() => {
                         secretModal(t('secrets.title-new-secret'), null, this.createSecret)
                     }} />
                     <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary" onClick={() => {

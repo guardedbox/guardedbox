@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { NavLink as RRNavLink } from 'react-router-dom';
-import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink, Badge, Button, UncontrolledTooltip } from 'reactstrap';
+import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink, Badge, UncontrolledTooltip } from 'reactstrap';
+import { Person, SignOut } from '@primer/octicons-react';
+import ActionIcon from 'components/action-icon.jsx';
+import InfoIcon from 'components/info-icon.jsx';
 import logo from 'images/logo.png';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
@@ -63,22 +66,28 @@ class NavigationBar extends Component {
                         </Nav>
 
                         <Nav className="ml-auto" navbar>
-                            <span style={{ margin: '8px 0' }}>{this.state.email}</span>
-                            <span style={{ display: 'inline-block', width: '1rem' }}></span>
-                            <Badge id="navigation-bar_expiration-time-badge"
-                                color={this.state.workingWithoutSession ? "warning" : "info"}
-                                style={{ margin: '8px 0', padding: '0.4em', height: '22px', width: this.state.workingWithoutSession ? '65px' : '45px' }}>
-                                {this.state.workingWithoutSession ?
-                                    t('session.no-session') :
-                                    this.state.sessionExpirationTime / 60 + ' ' + t('session.minutes')}
-                                <UncontrolledTooltip placement="bottom" target="navigation-bar_expiration-time-badge">
+                            <span style={{ margin: '8px 6px' }}>
+                                <span style={{ marginRight: '16px', fontSize: '93%' }} className="md-to-xl-hidden">{this.state.email}</span>
+                                <InfoIcon icon={Person} className="md-to-xl-visible" tooltipText={this.state.email} tooltipPlacement="bottom" />
+                            </span>
+                            <div className="form-inline" style={{ flexFlow: 'row nowrap' }}>
+                                <Badge
+                                    id="navigation-bar_expiration-time-badge"
+                                    color={this.state.workingWithoutSession ? "warning" : "info"}
+                                    style={{ marginRight: '6px', padding: '0.5em', height: '22px', width: this.state.workingWithoutSession ? '65px' : '45px' }}>
                                     {this.state.workingWithoutSession ?
-                                        t('session.no-session-info') :
-                                        t('session.expiration-time')}
-                                </UncontrolledTooltip>
-                            </Badge>
-                            <span style={{ display: 'inline-block', width: '1rem' }}></span>
-                            <div className="form-inline"><Button color="secondary" size="sm" onClick={logout}>{t('global.logout')}</Button></div>
+                                        t('session.no-session') :
+                                        this.state.sessionExpirationTime / 60 + ' ' + t('session.minutes')}
+                                    <UncontrolledTooltip placement="bottom" target="navigation-bar_expiration-time-badge">
+                                        {this.state.workingWithoutSession ?
+                                            t('session.no-session-info') :
+                                            t('session.expiration-time')}
+                                    </UncontrolledTooltip>
+                                </Badge>
+                                <span style={{ width: '10px' }} className="md-to-xl-hidden"></span>
+                                <ActionIcon icon={SignOut} tooltipText={t('global.logout')} tooltipPlacement="bottom" onClick={logout} />
+                                <span style={{ width: '4px' }} className="md-to-xl-hidden"></span>
+                            </div>
                         </Nav>
 
                     </Collapse>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Table, Collapse } from 'reactstrap';
-import { DiffAdded, Sync, ChevronUp, ChevronDown, File, Check, Eye, EyeClosed, Clock, Pencil, Trashcan, Organization } from '@primer/octicons-react';
+import { Plus, Sync, ChevronUp, ChevronDown, File, Check, Eye, EyeClosed, Clock, Pencil, Trashcan, Organization } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import { registerView } from 'services/views.jsx';
@@ -495,7 +495,7 @@ class MyGroups extends Component {
                 {/* Title and buttons */}
                 <h4>{t('my-groups.title')}</h4><hr />
                 <div className="group-spaced" style={{ margin: '1.5rem 0' }}>
-                    <ButtonIcon icon={DiffAdded} tooltipText={t('my-groups.btn-new-group')} color="primary" onClick={() => {
+                    <ButtonIcon icon={Plus} tooltipText={t('my-groups.btn-new-group')} color="primary" onClick={() => {
                         groupModal(t('groups.title-new-group'), null, this.createGroup)
                     }} />
                     <ButtonIcon icon={Sync} tooltipText={t('global.reload')} color="secondary" onClick={() => {
@@ -524,7 +524,7 @@ class MyGroups extends Component {
                                             onClick={() => { toggleCollapser(this, group.groupId) }} />
                                         <span className="text-success">{group.name}</span>
                                         <div style={{ float: 'right', marginRight: '16px' }}>
-                                            <ActionIcon icon={DiffAdded} tooltipText={t('groups.add-secret')} onClick={() => {
+                                            <ActionIcon icon={Plus} tooltipText={t('groups.add-secret')} onClick={() => {
                                                 expandCollapser(this, group.groupId);
                                                 secretModal(t('secrets.title-new-secret'), null, this.createGroupSecret, group);
                                             }} />

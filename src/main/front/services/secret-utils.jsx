@@ -1,14 +1,146 @@
 import React from 'react';
 import { app } from 'services/views.jsx';
-import { addElementToStateArray, setStateArrayElement, removeStateArrayElement } from 'services/state-utils.jsx';
+import { addElementsToStateArrays, setStateArrayElement, setStateArraysElements, removeStateArraysElements } from 'services/state-utils.jsx';
 import { generateRandomSymmetricKey, getSymmetricKey, encrypt, decrypt } from 'services/crypto/crypto.jsx';
 import { Uint8Array } from 'services/crypto/Uint8Array.jsx';
 import { copyToClipboard } from 'services/selector.jsx';
-import zxcvbn from 'zxcvbn';
+import taiPasswordStrength from 'tai-password-strength';
 import { randomInt } from 'services/crypto/random.jsx';
 import { t } from 'services/translation.jsx';
 import { messageModal } from 'services/modal.jsx';
 import properties from 'constants/properties.json';
+
+var MAX_ENTROPY = 72;
+var MAX_UNIQUE_CHARS = 13;
+var SEQUENCE_CHARS_MAX_DISTANCE = 2;
+var MIN_SEQUENCE_LENGTH = 3;
+var ABC_SEQUENCE_MAP = {
+    'a': 'zb',
+    'b': 'ac',
+    'c': 'bd',
+    'd': 'ce',
+    'e': 'df',
+    'f': 'eg',
+    'g': 'fh',
+    'h': 'gi',
+    'i': 'hj',
+    'j': 'ik',
+    'k': 'jl',
+    'l': 'km',
+    'm': 'lnñ',
+    'n': 'mño',
+    'ñ': 'no',
+    'o': 'nñp',
+    'p': 'oq',
+    'q': 'pr',
+    'r': 'qs',
+    's': 'rt',
+    't': 'su',
+    'u': 'tv',
+    'v': 'uw',
+    'w': 'vx',
+    'x': 'wy',
+    'y': 'xz',
+    'z': 'ya',
+    '0': '91',
+    '1': '02',
+    '2': '13',
+    '3': '24',
+    '4': '35',
+    '5': '46',
+    '6': '57',
+    '7': '68',
+    '8': '79',
+    '9': '80'
+};
+var QWERTY_SEQUENCE_MAP = {
+    '`': '1p\'+´',
+    'º': '1',
+    '1': '`º2q',
+    '2': '13w',
+    '3': '24e',
+    '4': '35r',
+    '5': '46t',
+    '6': '57y',
+    '7': '68u',
+    '8': '79i',
+    '9': '80o',
+    '0': '9p-\'',
+    '-': '0=[.ñ',
+    '=': '-])?p',
+    '\'': '0¡`;[\\',
+    '¡': '\'+',
+    '~': '!',
+    '!': '~@qª"',
+    '@': '!#w',
+    '#': '@$e',
+    '$': '#%r·%',
+    '%': '$^t&',
+    '^': '%&y',
+    '&': '^*u%/y',
+    '*': '&(i',
+    '(': '*)o/i',
+    ')': '(_p=o',
+    '_': ')+',
+    '+': '_`¡ç',
+    'ª': '!',
+    '"': '!·w',
+    '·': '"$e',
+    '/': '&(u.;',
+    '¿': '?',
+    'q': '1wa',
+    'w': 'q2es',
+    'e': 'w3rd',
+    'r': 'e4tf',
+    't': 'r5yg',
+    'y': 't6uh',
+    'u': 'y7ij',
+    'i': 'u8ok',
+    'o': 'i9pl',
+    'p': 'o0ñ[`',
+    '[': 'p-]\'',
+    ']': '[=#',
+    'a': 'qsz',
+    's': 'awdx',
+    'd': 'sefc',
+    'f': 'drgv',
+    'g': 'fthb',
+    'h': 'gyjn',
+    'j': 'hukm',
+    'k': 'jil,',
+    'l': 'ko;.ñ',
+    ';': 'lp\'/',
+    '\\': '\']z',
+    'ñ': 'lp´.',
+    '´': 'ñ`ç',
+    'ç': '´+',
+    '<': 'z',
+    'z': 'ax',
+    'x': 'zsc',
+    'c': 'xdv',
+    'v': 'cfb',
+    'b': 'vgn',
+    'n': 'bhm',
+    'm': 'nj,',
+    ',': 'mk.',
+    '.': ',l/'
+};
+var SEQUENCE_MAPS = [
+    { map: ABC_SEQUENCE_MAP, onlyStrictSequences: false },
+    { map: QWERTY_SEQUENCE_MAP, onlyStrictSequences: false }
+]
+
+var strengthTester = new taiPasswordStrength.PasswordStrength();
+strengthTester.addCommonPasswords(taiPasswordStrength.commonPasswords);
+
+var randomSecretCharsets = [];
+for (var charset of properties.secrets.randomSecretCharsets) {
+    randomSecretCharsets.push({
+        name: charset.name,
+        charset: charset.charset,
+        active: true
+    });
+}
 
 /**
  * Opens the secret modal.
@@ -20,12 +152,17 @@ import properties from 'constants/properties.json';
  */
 export function secretModal(header, secret, acceptCallback, acceptCallbackThirdArg) {
 
+    activateAllRandomSecretChatsets();
+
     if (secret) {
 
         try {
 
             var secretName = secret.value.name;
             var keyValuePairs = [];
+            var showPasswordOptions = [];
+            var generateRandomValueLength = [];
+            var generateRandomValueDropdownOpen = [];
             var symmetricKey = decryptSymmetricKey(secret.encryptedKey);
 
             for (var keyValuePair of secret.value.values) {
@@ -38,6 +175,10 @@ export function secretModal(header, secret, acceptCallback, acceptCallbackThirdA
                     valueLength: clearValue.length,
                     valueStrength: secretStrength(clearValue)
                 });
+
+                showPasswordOptions.push(false);
+                generateRandomValueLength.push(0);
+                generateRandomValueDropdownOpen.push(false);
 
             }
 
@@ -53,16 +194,23 @@ export function secretModal(header, secret, acceptCallback, acceptCallbackThirdA
             key: '',
             value: '',
             valueLength: 0,
-            valueStrength: 0
+            valueStrength: { strength: 0 }
         }];
+        var showPasswordOptions = [false];
+        var generateRandomValueLength = [0];
+        var generateRandomValueDropdownOpen = [false];
 
     }
 
     app().secretModalTxtKey = [];
-    app().secretModalTxtValue = []
+    app().secretModalTxtValue = [];
+    app().secretModalSwitchShowPasswordOptions = [];
+    app().secretModalTxtGenerateRandomValueLength = [];
     for (var i in keyValuePairs) {
         app().secretModalTxtKey.push(React.createRef());
         app().secretModalTxtValue.push(React.createRef());
+        app().secretModalSwitchShowPasswordOptions.push(React.createRef());
+        app().secretModalTxtGenerateRandomValueLength.push(React.createRef());
     }
 
     app().setState({
@@ -70,7 +218,9 @@ export function secretModal(header, secret, acceptCallback, acceptCallbackThirdA
         secretModalHeader: header,
         secretModalSecretName: secretName,
         secretModalSecretKeyValuePairs: keyValuePairs,
-        secretModalGenerateRandomValueLength: 0,
+        secretModalShowPasswordOptions: showPasswordOptions,
+        secretModalGenerateRandomValueLength: generateRandomValueLength,
+        secretModalGenerateRandomValueDropdownOpen: generateRandomValueDropdownOpen,
         secretModalOriginalSecret: secret,
         secretModalAcceptCallback: acceptCallback,
         secretModalAcceptCallbackThirdArg: acceptCallbackThirdArg
@@ -102,13 +252,17 @@ export function closeSecretModal(callback) {
 
     app().secretModalTxtKey = [];
     app().secretModalTxtValue = [];
+    app().secretModalSwitchShowPasswordOptions = [];
+    app().secretModalTxtGenerateRandomValueLength = [];
 
     app().setState({
         secretModalActive: false,
         secretModalHeader: '',
         secretModalSecretName: '',
         secretModalSecretKeyValuePairs: [],
-        secretModalGenerateRandomValueLength: 0,
+        secretModalShowPasswordOptions: [],
+        secretModalGenerateRandomValueLength: [],
+        secretModalGenerateRandomValueDropdownOpen: [],
         secretModalOriginalSecret: null,
         secretModalAcceptCallback: null,
         secretModalAcceptCallbackThirdArg: null
@@ -125,52 +279,171 @@ export function secretModalAddKeyValuePair() {
     var secretModalTxtValueRef = React.createRef();
     app().secretModalTxtKey.push(secretModalTxtKeyRef);
     app().secretModalTxtValue.push(secretModalTxtValueRef);
+    app().secretModalSwitchShowPasswordOptions.push(React.createRef());
+    app().secretModalTxtGenerateRandomValueLength.push(React.createRef());
 
-    addElementToStateArray(app(), 'secretModalSecretKeyValuePairs', { key: '', value: '', valueLength: 0, valueStrength: 0 }, () => {
-        setTimeout(() => {
-            secretModalTxtKeyRef.current.focus();
-        }, 25);
-    });
+    addElementsToStateArrays(
+        app(),
+        [
+            {
+                stateAttribute: 'secretModalSecretKeyValuePairs',
+                element: { key: '', value: '', valueLength: 0, valueStrength: { strength: 0 } }
+            },
+            {
+                stateAttribute: 'secretModalShowPasswordOptions',
+                element: false
+            },
+            {
+                stateAttribute: 'secretModalGenerateRandomValueLength',
+                element: 0
+            }
+        ],
+        () => {
+            setTimeout(() => {
+                secretModalTxtKeyRef.current.focus();
+            }, 25);
+        });
 
 }
 
 /**
  * Removes a key value pair from the secret modal.
  *
- * @param {number} i Key value pair index.
+ * @param {number} k Key value pair index.
  */
-export function secretModalRemoveKeyValuePair(i) {
+export function secretModalRemoveKeyValuePair(k) {
 
-    app().secretModalTxtKey.splice(i, 1);
-    app().secretModalTxtValue.splice(i, 1);
+    app().secretModalTxtKey.splice(k, 1);
+    app().secretModalTxtValue.splice(k, 1);
+    app().secretModalSwitchShowPasswordOptions.splice(k, 1);
+    app().secretModalTxtGenerateRandomValueLength.splice(k, 1);
 
-    removeStateArrayElement(app(), 'secretModalSecretKeyValuePairs', i, () => {
-        for (var i in app().state.secretModalSecretKeyValuePairs) {
-            var keyValuePair = app().state.secretModalSecretKeyValuePairs[i];
-            app().secretModalTxtKey[i].current.value = keyValuePair.key;
-            app().secretModalTxtValue[i].current.value = keyValuePair.value;
-        }
-    });
+    removeStateArraysElements(
+        app(),
+        [
+            {
+                stateAttribute: 'secretModalSecretKeyValuePairs',
+                arrayIndex: k
+            },
+            {
+                stateAttribute: 'secretModalShowPasswordOptions',
+                arrayIndex: k
+            },
+            {
+                stateAttribute: 'secretModalGenerateRandomValueLength',
+                arrayIndex: k
+            }
+        ],
+        () => {
+            for (var i in app().state.secretModalSecretKeyValuePairs) {
+                app().secretModalTxtKey[i].current.value = app().state.secretModalSecretKeyValuePairs[i].key;
+                app().secretModalTxtValue[i].current.value = app().state.secretModalSecretKeyValuePairs[i].value;
+                app().secretModalSwitchShowPasswordOptions[i].current.checked = app().state.secretModalShowPasswordOptions[i];
+                app().secretModalTxtGenerateRandomValueLength[i].current.value = app().state.secretModalGenerateRandomValueLength[i];
+            }
+        });
+
+}
+
+/**
+ * Moves a key value pair one position up in the secret modal.
+ *
+ * @param {number} k Current key value pair index.
+ */
+export function secretModalMoveKeyValuePairUp(k) {
+
+    setStateArraysElements(
+        app(),
+        [
+            {
+                stateAttribute: 'secretModalSecretKeyValuePairs',
+                arrayIndexesAndElements: [
+                    { arrayIndex: k - 1, element: app().state.secretModalSecretKeyValuePairs[k] },
+                    { arrayIndex: k, element: app().state.secretModalSecretKeyValuePairs[k - 1] }
+                ]
+            },
+            {
+                stateAttribute: 'secretModalShowPasswordOptions',
+                arrayIndexesAndElements: [
+                    { arrayIndex: k - 1, element: app().state.secretModalShowPasswordOptions[k] },
+                    { arrayIndex: k, element: app().state.secretModalShowPasswordOptions[k - 1] }
+                ]
+            },
+            {
+                stateAttribute: 'secretModalGenerateRandomValueLength',
+                arrayIndexesAndElements: [
+                    { arrayIndex: k - 1, element: app().state.secretModalGenerateRandomValueLength[k] },
+                    { arrayIndex: k, element: app().state.secretModalGenerateRandomValueLength[k - 1] }
+                ]
+            }
+        ],
+        () => {
+            [app().secretModalTxtKey[k - 1].current.value, app().secretModalTxtKey[k].current.value] = [app().secretModalTxtKey[k].current.value, app().secretModalTxtKey[k - 1].current.value];
+            [app().secretModalTxtValue[k - 1].current.value, app().secretModalTxtValue[k].current.value] = [app().secretModalTxtValue[k].current.value, app().secretModalTxtValue[k - 1].current.value];
+            [app().secretModalSwitchShowPasswordOptions[k - 1].current.checked, app().secretModalSwitchShowPasswordOptions[k].current.checked] = [app().secretModalSwitchShowPasswordOptions[k].current.checked, app().secretModalSwitchShowPasswordOptions[k - 1].current.checked];
+            [app().secretModalTxtGenerateRandomValueLength[k - 1].current.value, app().secretModalTxtGenerateRandomValueLength[k].current.value] = [app().secretModalTxtGenerateRandomValueLength[k].current.value, app().secretModalTxtGenerateRandomValueLength[k - 1].current.value];
+        });
+
+}
+
+/**
+ * Moves a key value pair one position down in the secret modal.
+ *
+ * @param {number} k Current key value pair index.
+ */
+export function secretModalMoveKeyValuePairDown(k) {
+
+    setStateArraysElements(
+        app(),
+        [
+            {
+                stateAttribute: 'secretModalSecretKeyValuePairs',
+                arrayIndexesAndElements: [
+                    { arrayIndex: k + 1, element: app().state.secretModalSecretKeyValuePairs[k] },
+                    { arrayIndex: k, element: app().state.secretModalSecretKeyValuePairs[k + 1] }
+                ]
+            },
+            {
+                stateAttribute: 'secretModalShowPasswordOptions',
+                arrayIndexesAndElements: [
+                    { arrayIndex: k + 1, element: app().state.secretModalShowPasswordOptions[k] },
+                    { arrayIndex: k, element: app().state.secretModalShowPasswordOptions[k + 1] }
+                ]
+            },
+            {
+                stateAttribute: 'secretModalGenerateRandomValueLength',
+                arrayIndexesAndElements: [
+                    { arrayIndex: k + 1, element: app().state.secretModalGenerateRandomValueLength[k] },
+                    { arrayIndex: k, element: app().state.secretModalGenerateRandomValueLength[k + 1] }
+                ]
+            }
+        ],
+        () => {
+            [app().secretModalTxtKey[k + 1].current.value, app().secretModalTxtKey[k].current.value] = [app().secretModalTxtKey[k].current.value, app().secretModalTxtKey[k + 1].current.value];
+            [app().secretModalTxtValue[k + 1].current.value, app().secretModalTxtValue[k].current.value] = [app().secretModalTxtValue[k].current.value, app().secretModalTxtValue[k + 1].current.value];
+            [app().secretModalSwitchShowPasswordOptions[k + 1].current.checked, app().secretModalSwitchShowPasswordOptions[k].current.checked] = [app().secretModalSwitchShowPasswordOptions[k].current.checked, app().secretModalSwitchShowPasswordOptions[k + 1].current.checked];
+            [app().secretModalTxtGenerateRandomValueLength[k + 1].current.value, app().secretModalTxtGenerateRandomValueLength[k].current.value] = [app().secretModalTxtGenerateRandomValueLength[k].current.value, app().secretModalTxtGenerateRandomValueLength[k + 1].current.value];
+        });
 
 }
 
 /**
  * Generates a random value in the secret modal.
  *
- * @param {number} i Key value pair index.
+ * @param {number} k Key value pair index.
  */
-export function secretModalGenerateRandomValue(i) {
+export function secretModalGenerateRandomValue(k) {
 
-    var generatedRandomSecret = randomSecret(app().state.secretModalGenerateRandomValueLength);
+    var generatedRandomSecret = randomSecret(app().state.secretModalGenerateRandomValueLength[k]);
 
-    setStateArrayElement(app(), 'secretModalSecretKeyValuePairs', i, {
-        key: app().state.secretModalSecretKeyValuePairs[i].key,
+    setStateArrayElement(app(), 'secretModalSecretKeyValuePairs', k, {
+        key: app().state.secretModalSecretKeyValuePairs[k].key,
         value: generatedRandomSecret.value,
         valueLength: generatedRandomSecret.length,
         valueStrength: generatedRandomSecret.strength
     }, () => {
-        app().secretModalTxtValue[i].current.value = generatedRandomSecret.value;
-        app().secretModalTxtValue[i].current.select();
+        app().secretModalTxtValue[k].current.value = generatedRandomSecret.value;
+        app().secretModalTxtValue[k].current.select();
     });
 
 }
@@ -204,34 +477,192 @@ export function buildSecretModalSecret() {
  */
 export function secretStrength(secret) {
 
-    if (!secret) return 0;
+    if (!secret) return { strength: 0 };
 
-    var maxLength = properties.secrets.secretStrengthMaxLength;
-    var value = secret.length > maxLength ? secret.substr(0, maxLength) : secret;
+    var secretResult = strengthTester.check(secret);
+    var sequenceTreatedSecret = treatSecretSequences(secret);
+    var sequenceTreatedSecretResult = strengthTester.check(sequenceTreatedSecret);
+    var uniqueCharacters = new Set(sequenceTreatedSecret).size;
 
-    return zxcvbn(value).score * 25;
+    return {
+        commonPassword: secretResult.commonPassword,
+        sequenceTreatedSecret: sequenceTreatedSecret,
+        shannonEntropyBits: sequenceTreatedSecretResult.shannonEntropyBits,
+        uniqueCharacters: uniqueCharacters,
+        strength: secretResult.commonPassword ? 0 : (Math.floor(100 *
+            (Math.min(sequenceTreatedSecretResult.shannonEntropyBits, MAX_ENTROPY) / MAX_ENTROPY) *
+            (Math.min(uniqueCharacters, MAX_UNIQUE_CHARS) / MAX_UNIQUE_CHARS)))
+    };
+
+}
+
+function treatSecretSequences(secret) {
+
+    var sequencesSubstitutions = {};
+
+    for (var sequenceMap of SEQUENCE_MAPS) {
+
+        for (var i = 0; i < secret.length; i++) {
+
+            var sequenceLength = 1;
+            var firstSequenceChar = secret.charAt(i);
+            var lastSequenceChar = firstSequenceChar;
+            var distanceFromLastSequenceChar = 0;
+            var sequenceGrowingSign = 0;
+            var sequenceSubstitutions = { [i]: firstSequenceChar };
+
+            for (var j = i + 1; j < secret.length; j++) {
+
+                var char = secret.charAt(j);
+                var asciiDiff = lastSequenceChar.toLowerCase().charCodeAt(0) - char.toLowerCase().charCodeAt(0);
+
+                if ((lastSequenceChar.toLowerCase() == char.toLowerCase()) ||
+                    (sequenceMap.map[lastSequenceChar.toLowerCase()] && sequenceMap.map[lastSequenceChar.toLowerCase()].includes(char.toLowerCase()) &&
+                        (!sequenceMap.onlyStrictSequences || asciiDiff * sequenceGrowingSign >= 0))) {
+
+                    sequenceLength++;
+                    lastSequenceChar = char;
+                    distanceFromLastSequenceChar = 0;
+                    if (sequenceGrowingSign == 0) sequenceGrowingSign = asciiDiff;
+
+                    if (sequenceLength < MIN_SEQUENCE_LENGTH) {
+                        sequenceSubstitutions[j] = char;
+                    } else {
+                        sequenceSubstitutions[j] = firstSequenceChar;
+                    }
+
+                } else {
+
+                    distanceFromLastSequenceChar++;
+
+                }
+
+                if (distanceFromLastSequenceChar == SEQUENCE_CHARS_MAX_DISTANCE) {
+                    break;
+                }
+
+            }
+
+            if (sequenceLength >= MIN_SEQUENCE_LENGTH) {
+                for (var j in sequenceSubstitutions) {
+                    if (!(j in sequencesSubstitutions)) sequencesSubstitutions[j] = sequenceSubstitutions[j];
+                }
+            }
+
+        }
+
+    }
+
+    var sequenceTreatedSecret = '';
+    for (var i = 0; i < secret.length; i++) {
+        if (i in sequencesSubstitutions) {
+            sequenceTreatedSecret += sequencesSubstitutions[i];
+        } else {
+            sequenceTreatedSecret += secret.charAt(i);
+        }
+    }
+
+    return sequenceTreatedSecret;
 
 }
 
 /**
- * Generates a random secret.
+ * @param {string} charsetName A random secret generation charset name.
+ * @returns {boolean} Boolean indicating if the charset is active.
+ */
+export function isRandomSecretCharsetActive(charsetName) {
+
+    for (var charset of randomSecretCharsets) {
+        if (charset.name == charsetName) {
+            return charset.active;
+        }
+    }
+
+}
+
+/**
+ * @param {string} charsetName A random secret generation charset name.
+ * @returns {boolean} Boolean indicating if the charset is the only one active.
+ */
+export function isOnlyRandomSecretCharsetActive(charsetName) {
+
+    var othersInactive = true;
+
+    for (var charset of randomSecretCharsets) {
+        if (charset.name == charsetName) {
+            var active = charset.active;
+        } else {
+            othersInactive &= !charset.active;
+        }
+    }
+
+    return active && othersInactive;
+
+}
+
+/**
+ * Toggles (activates or deactivates) one of the random secret generation charsets.
+ *
+ * @param {string} charsetName The charset name.
+ */
+export function toggleRandomSecretCharset(charsetName) {
+
+    for (var charset of randomSecretCharsets) {
+        if (charset.name == charsetName) {
+            charset.active = !charset.active;
+        }
+    }
+
+}
+
+/**
+ * Activates all the random secret generation charsets.
+ */
+export function activateAllRandomSecretChatsets() {
+
+    for (var charset of randomSecretCharsets) {
+        charset.active = true;
+    }
+
+}
+
+/**
+ * Generates a random secret using the active charsets.
  *
  * @param {number} length The secret length.
  * @returns {object} An object with the generated secret value, length and strength.
  */
 export function randomSecret(length) {
 
-    var charset = properties.secrets.randomSecretCharset;
+    var totalCharset = '';
+    for (var charset of randomSecretCharsets) {
+        if (charset.active) totalCharset += charset.charset;
+    }
 
-    var value = "";
-    for (var i = 0; i < length; i++)
-        value += charset.charAt(randomInt(0, charset.length));
+    var iterations = length < 2 ? 1 : (length < 20 ? 5 * length : (length < 40 ? 100 : (length < 100 ? 100 - length : 1)));
+    var bestStrength = -1;
+    var ret = null;
 
-    return {
-        value: value,
-        length: value.length,
-        strength: secretStrength(value)
-    };
+    for (var i = 0; i < iterations; i++) {
+
+        var value = "";
+        for (var j = 0; j < length; j++)
+            value += totalCharset.charAt(randomInt(0, totalCharset.length));
+
+        var iteration = {
+            value: value,
+            length: value.length,
+            strength: secretStrength(value)
+        };
+
+        if (iteration.strength.strength > bestStrength) {
+            ret = iteration;
+            bestStrength = iteration.strength.strength;
+        }
+
+    }
+
+    return ret;
 
 }
 

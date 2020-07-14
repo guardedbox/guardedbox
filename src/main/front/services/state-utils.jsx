@@ -1,6 +1,6 @@
 /**
  * Adds an element to an array in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {string} stateAttribute The name of the array attribute in the state of the component.
  * @param {any} element The element to add.
@@ -19,7 +19,7 @@ export function addElementToStateArray(reactComponent, stateAttribute, element, 
 
 /**
  * Adds all the elements in an array to an array in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {string} stateAttribute The name of the array attribute in the state of the component.
  * @param {any[]} elements The elements to add.
@@ -38,7 +38,7 @@ export function addElementsToStateArray(reactComponent, stateAttribute, elements
 
 /**
  * Adds an element or all the elements in an array to multiple arrays in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {object[]} stateAttributesAndElements The array of names of the array attributes in the state of the component and elements or arrays of elements to add.
  * @param {string} stateAttributesAndElements.stateAttribute The name of the array attribute in the state of the component.
@@ -52,7 +52,7 @@ export function addElementsToStateArrays(reactComponent, stateAttributesAndEleme
     for (var stateAttributeAndElements of stateAttributesAndElements) {
         var arrayCopy = reactComponent.state[stateAttributeAndElements.stateAttribute].slice();
         if (typeof stateAttributeAndElements.element != 'undefined') arrayCopy.push(stateAttributeAndElements.element);
-        if (typeof stateAttributeAndElements.elements == 'array') arrayCopy = arrayCopy.concat(stateAttributeAndElements.elements);
+        if (stateAttributeAndElements.elements && stateAttributeAndElements.elements.constructor == [].constructor) arrayCopy = arrayCopy.concat(stateAttributeAndElements.elements);
         stateChange[stateAttributeAndElements.stateAttribute] = arrayCopy;
     }
 
@@ -62,7 +62,7 @@ export function addElementsToStateArrays(reactComponent, stateAttributesAndEleme
 
 /**
  * Sets the element at an index in an array in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {string} stateAttribute The name of the array attribute in the state of the component.
  * @param {number} arrayIndex The array index to set.
@@ -82,7 +82,7 @@ export function setStateArrayElement(reactComponent, stateAttribute, arrayIndex,
 
 /**
  * Sets the elements at multiple indexes in an array in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {string} stateAttribute The name of the array attribute in the state of the component.
  * @param {object[]} arrayIndexesAndElements The array of array indexes and elements to set.
@@ -105,7 +105,7 @@ export function setStateArrayElements(reactComponent, stateAttribute, arrayIndex
 
 /**
  * Sets the element or elements at one or multiple indexes in multiple arrays in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {object[]} stateAttributesAndArrayIndexesAndElements The array of names of the array attributes in the state of the component and index and element or array of array indexes and elements to set.
  * @param {string} stateAttributesAndArrayIndexesAndElements.stateAttribute The name of the array attribute in the state of the component.
@@ -124,7 +124,7 @@ export function setStateArraysElements(reactComponent, stateAttributesAndArrayIn
         if (typeof stateAttributeAndArrayIndexesAndElements.arrayIndex == 'number' && stateAttributeAndArrayIndexesAndElements.element != 'undefined') {
             arrayCopy[stateAttributeAndArrayIndexesAndElements.arrayIndex] = stateAttributeAndArrayIndexesAndElements.element;
         }
-        if (typeof stateAttributeAndArrayIndexesAndElements.arrayIndexesAndElements == 'array') {
+        if (stateAttributeAndArrayIndexesAndElements.arrayIndexesAndElements && stateAttributeAndArrayIndexesAndElements.arrayIndexesAndElements.constructor == [].constructor) {
             for (var arrayIndexAndElement of stateAttributeAndArrayIndexesAndElements.arrayIndexesAndElements) {
                 arrayCopy[arrayIndexAndElement.arrayIndex] = arrayIndexAndElement.element;
             }
@@ -138,7 +138,7 @@ export function setStateArraysElements(reactComponent, stateAttributesAndArrayIn
 
 /**
  * Removes the element at an index in an array in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {string} stateAttribute The name of the array attribute in the state of the component.
  * @param {number} arrayIndex The array index to remove.
@@ -157,7 +157,7 @@ export function removeStateArrayElement(reactComponent, stateAttribute, arrayInd
 
 /**
  * Removes the element at multiple indexes in an array in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {string} stateAttribute The name of the array attribute in the state of the component.
  * @param {number[]} arrayIndexes The array of array indexes to remove.
@@ -178,7 +178,7 @@ export function removeStateArrayElements(reactComponent, stateAttribute, arrayIn
 
 /**
  * Removes the elements at one or multiple indexes in multiple arrays in the state of a React component.
- * 
+ *
  * @param {React.Component} reactComponent The React component.
  * @param {object[]} stateAttributesAndArrayIndexes The array of names of array attributes and indexes or arrays of indexes to remove.
  * @param {string} stateAttributesAndArrayIndexes.stateAttribute The name of the array attribute in the state of the component.
@@ -194,7 +194,7 @@ export function removeStateArraysElements(reactComponent, stateAttributesAndArra
         if (typeof stateAttributeAndArrayIndexes.arrayIndex == 'number') {
             arrayCopy.splice(stateAttributeAndArrayIndexes.arrayIndex, 1);
         }
-        if (typeof stateAttributeAndArrayIndexes.arrayIndexex == 'array') {
+        if (stateAttributeAndArrayIndexes.arrayIndexex && stateAttributeAndArrayIndexes.arrayIndexex.constructor == [].constructor) {
             for (var arrayIndex of stateAttributeAndArrayIndexes.arrayIndexex) {
                 arrayCopy.splice(arrayIndex, 1);
             }

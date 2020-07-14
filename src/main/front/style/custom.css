@@ -30,6 +30,11 @@
     border-radius: .2rem;
 }
 
+.custom-control {
+    word-wrap: inherit;
+    white-space: inherit;
+}
+
 .react-overlay-loader-spinner:before {
     border-color: #8eadc3;
     border-top-color: #125c8e;
@@ -47,9 +52,17 @@
     pointer-events: none;
 }
 
+.no-tooltip-fallback {
+    display: none;
+}
+
 @media (hover: none) {
     .tooltip {
         display: none;
+    }
+
+    .no-tooltip-fallback {
+        display: inherit;
     }
 }
 
@@ -120,7 +133,7 @@ input::-webkit-inner-spin-button {
     width: 120px;
 }
 
-@media screen and (max-width: 1279px) {
+@media screen and (max-width: 767px) {
     .icons-1-col {
         width: 80px;
     }
@@ -152,7 +165,7 @@ input::-webkit-inner-spin-button {
     width: calc(100% - 120px)
 }
 
-@media screen and (max-width: 1279px) {
+@media screen and (max-width: 767px) {
     .value-icons-div {
         width: 70px;
     }
@@ -181,16 +194,34 @@ input::-webkit-inner-spin-button {
     text-align: center;
 }
 
-.badge-progress {
-    height: 0.95rem;
-    font-size: 0.625rem;
-    font-weight: 100;
-}
-
 .badge-notification {
     position: absolute;
     display: block;
     top: -.2rem;
     right: -.2rem;
     font-size: 11px;
+}
+
+.no-hover {
+    color: #212529 !important;
+    background-image: none !important;
+    background-color: #fff !important;
+}
+
+.md-to-xl-hidden {
+    display: inherit;
+}
+
+.md-to-xl-visible {
+    display: none;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+    .md-to-xl-hidden {
+        display: none;
+    }
+
+    .md-to-xl-visible {
+        display: inherit;
+    }
 }

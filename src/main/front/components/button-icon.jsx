@@ -19,14 +19,18 @@ class ButtonIcon extends Component {
             <Button
                 id={this.props.id || this.id}
                 onClick={this.props.onClick}
+                type={this.props.type}
+                form={this.props.form}
+                disabled={this.props.disabled}
                 color={this.props.color}
+                size={this.props.size}
                 className={this.props.className}
                 style={this.props.style}>
 
                 <Octicon icon={this.props.icon} />
 
                 {this.props.tooltipText == null ? null :
-                    <UncontrolledTooltip placement="top" target={this.props.id || this.id}>
+                    <UncontrolledTooltip placement={this.props.tooltipPlacement || "top"} target={this.props.id || this.id}>
                         {this.props.tooltipText}
                     </UncontrolledTooltip>
                 }

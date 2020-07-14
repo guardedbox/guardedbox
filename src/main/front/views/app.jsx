@@ -4,10 +4,10 @@ import { withRouter, Route } from 'react-router-dom';
 import CacheRoute, { CacheSwitch } from 'react-router-cache-route';
 import { Loader } from 'react-overlay-loader';
 import reactOverlayLoaderCss from 'react-overlay-loader/styles.css';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Badge, Progress, Form, FormGroup, Label, Input, InputGroup, CustomInput, Table } from 'reactstrap';
-import { Info, File, Key, X, Sync, LineArrowUp } from '@primer/octicons-react';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Badge, Progress, Form, FormGroup, Label, Input, InputGroup, CustomInput, Table, Collapse, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, UncontrolledTooltip } from 'reactstrap';
+import { Info, File, Key, Check, X, Sync, ChevronUp, ChevronDown, LineArrowUp, Trashcan, Zap, Plus } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
-import PopoverIcon from 'components/popover-icon.jsx';
+import InfoIcon from 'components/info-icon.jsx';
 import ButtonIcon from 'components/button-icon.jsx';
 import Login from 'views/login.jsx';
 import Registration from 'views/registration.jsx';
@@ -22,7 +22,7 @@ import { t } from 'services/translation.jsx';
 import { listenLocationChange } from 'services/location.jsx';
 import { setStateArrayElement } from 'services/state-utils.jsx';
 import { closeMessageModal, closeConfirmationModal } from 'services/modal.jsx';
-import { secretStrength, secretModalAddKeyValuePair, secretModalRemoveKeyValuePair, secretModalGenerateRandomValue, buildSecretModalSecret, closeSecretModal } from 'services/secret-utils.jsx';
+import { secretStrength, secretModalAddKeyValuePair, secretModalRemoveKeyValuePair, secretModalMoveKeyValuePairUp, secretModalMoveKeyValuePairDown, buildSecretModalSecret, secretModalGenerateRandomValue, isRandomSecretCharsetActive, toggleRandomSecretCharset, isOnlyRandomSecretCharsetActive, closeSecretModal } from 'services/secret-utils.jsx';
 import { participantsModalAddParticipant, participantsModalRemoveParticipant, closeParticipantsModal, inviteEmail } from 'services/participant-utils.jsx';
 import { buildGroupModalSecret, closeGroupModal } from 'services/group-utils.jsx';
 import { checkKeysModal, closeCheckKeysModal } from 'services/check-keys.jsx';
@@ -52,7 +52,9 @@ class App extends Component {
         secretModalHeader: '',
         secretModalSecretName: '',
         secretModalSecretKeyValuePairs: [],
-        secretModalGenerateRandomValueLength: 0,
+        secretModalShowPasswordOptions: [],
+        secretModalGenerateRandomValueLength: [],
+        secretModalGenerateRandomValueDropdownOpen: [],
         secretModalOriginalSecret: null,
         secretModalAcceptCallback: null,
         secretModalAcceptCallbackThirdArg: null,
@@ -85,10 +87,13 @@ class App extends Component {
     secretModalTxtName = React.createRef();
     secretModalTxtKey = [];
     secretModalTxtValue = [];
+    secretModalSwitchShowPasswordOptions = [];
+    secretModalTxtGenerateRandomValueLength = [];
     participantsModalForm = React.createRef();
     participantsModalTxtEmail = React.createRef();
     groupModalTxtName = React.createRef();
     groupModalSwitchParticipantsVisible = React.createRef();
+    checkKeysModalTxtEncryptionPublicKey = React.createRef();
 
     constructor(props) {
 
@@ -133,8 +138,16 @@ class App extends Component {
                     <ModalHeader>{this.state.confirmationModalHeader}</ModalHeader>
                     <ModalBody>{this.state.confirmationModalBody}</ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={() => { closeConfirmationModal('yes') }}>{t('global.yes')}</Button>
-                        <Button color="secondary" onClick={() => { closeConfirmationModal('no') }}>{t('global.no')}</Button>
+                        <ButtonIcon
+                            icon={Check}
+                            tooltipText={t('global.yes')}
+                            color="primary"
+                            onClick={() => { closeConfirmationModal('yes'); }} />
+                        <ButtonIcon
+                            icon={X}
+                            tooltipText={t('global.no')}
+                            color="secondary"
+                            onClick={() => { closeConfirmationModal('no'); }} />
                     </ModalFooter>
                 </Modal>
 
@@ -179,8 +192,8 @@ class App extends Component {
                                             }}
                                         />
                                         {k > 0 ? null :
-                                            <PopoverIcon icon={Info} className="text-info" style={{ margin: '6px' }}
-                                                popoverText={t('secrets.key-value-pair-info')} />
+                                            <InfoIcon icon={Info} className="text-info" style={{ margin: '6px' }} tooltipPlacement="right"
+                                                tooltipText={t('secrets.key-value-pair-info')} />
                                         }
                                     </InputGroup>
                                     <Input
@@ -198,66 +211,223 @@ class App extends Component {
                                             });
                                         }}
                                     />
-                                    <InputGroup style={{ margin: '.4rem 0' }}>
-                                        <Badge color="primary" className="badge-progress" style={{ width: '30%' }}>
+                                    <InputGroup style={{ margin: '8px 0 0 0' }}>
+                                        <Badge style={{ flex: '1', margin: '0 8px 5px 0', fontWeight: '400' }} color="primary">
                                             {t('global.length') + ' ' + this.state.secretModalSecretKeyValuePairs[k].valueLength + ' / ' + properties.secrets.secretValueMaxLength}
                                         </Badge>
-                                        <div style={{ width: '1%' }}></div>
-                                        <Progress color="primary" value={this.state.secretModalSecretKeyValuePairs[k].valueStrength} style={{ width: '69%' }}>
-                                            {t('global.strength') + ' ' + this.state.secretModalSecretKeyValuePairs[k].valueStrength + '%'}
-                                        </Progress>
+                                        <div style={{ fontSize: '96.75%', maxHeight: '19px', margin: '-3px 8px 5px 0' }}>
+                                            <CustomInput
+                                                id={"app_switch-secret-modal-show-password-options-" + k}
+                                                innerRef={this.secretModalSwitchShowPasswordOptions[k]}
+                                                type="switch"
+                                                label={t('secrets.show-password-options')}
+                                                onChange={(e) => {
+                                                    setStateArrayElement(this, 'secretModalShowPasswordOptions', k, !this.state.secretModalShowPasswordOptions[k]);
+                                                }} />
+                                        </div>
                                     </InputGroup>
-                                    <fieldset disabled={Boolean(this.state.secretModalSecretKeyValuePairs[k].value)}>
-                                        <InputGroup className="group-spaced">
-                                            <Label size="sm">{t('secrets.generate-random-value')}</Label>
-                                            <Input
-                                                form={'app_form-secret-modal-generate-random-value' + k}
-                                                type="number"
-                                                placeholder={t('global.length')}
-                                                min={1}
-                                                max={properties.secrets.secretValueMaxLength}
-                                                pattern="[0-9]*"
-                                                required
-                                                bsSize="sm"
-                                                style={{ flexGrow: '100' }}
-                                                onChange={(e) => { this.setState({ secretModalGenerateRandomValueLength: e.target.value }); }} />
-                                            <Button
-                                                type="submit"
-                                                form={'app_form-secret-modal-generate-random-value' + k}
-                                                color="secondary"
-                                                size="sm">
-                                                {t('global.generate')}
-                                            </Button>
-                                        </InputGroup>
-                                    </fieldset>
-                                    <Button
-                                        onClick={() => { secretModalRemoveKeyValuePair(k) }}
-                                        color="secondary"
-                                        size="sm" style={{ marginTop: '6px' }}
-                                        disabled={this.state.secretModalSecretKeyValuePairs.length == 1}>
-                                        {t('secrets.remove-key-value-pair')}
-                                    </Button>
+                                    <Collapse isOpen={this.state.secretModalShowPasswordOptions[k]}>
+                                        <Progress multi>
+                                            <Progress bar
+                                                color="primary"
+                                                value={this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength}>
+                                                {this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength >= 67 ? t('global.strength') + ' ' : null}
+                                                {this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength + ' %'}
+                                            </Progress>
+                                            <Progress bar
+                                                color={this.state.secretModalSecretKeyValuePairs[k].valueStrength.commonPassword ? 'warning' : 'light'}
+                                                className={this.state.secretModalSecretKeyValuePairs[k].valueStrength.commonPassword ? 'text-white' : 'text-primary'}
+                                                value={100 - this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength}>
+                                                {this.state.secretModalSecretKeyValuePairs[k].valueStrength.commonPassword ? t('secrets.common-password') :
+                                                    (this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength < 67 ? t('global.strength') : null)}
+                                            </Progress>
+                                        </Progress>
+                                        <fieldset disabled={Boolean(this.state.secretModalSecretKeyValuePairs[k].value)} style={{ margin: '4px 0' }}>
+                                            <InputGroup className="group-spaced">
+                                                <Label size="sm">{t('secrets.generate-random-value')}</Label>
+                                                <Input
+                                                    innerRef={this.secretModalTxtGenerateRandomValueLength[k]}
+                                                    form={'app_form-secret-modal-generate-random-value' + k}
+                                                    type="number"
+                                                    placeholder={t('global.length')}
+                                                    min={1}
+                                                    max={properties.secrets.secretValueMaxLength}
+                                                    pattern="[0-9]*"
+                                                    required
+                                                    bsSize="sm"
+                                                    style={{ flexGrow: '100' }}
+                                                    onChange={(e) => {
+                                                        setStateArrayElement(this, 'secretModalGenerateRandomValueLength', k, e.target.value);
+                                                    }} />
+                                                <InputGroupButtonDropdown
+                                                    direction="up"
+                                                    addonType="append"
+                                                    isOpen={this.state.secretModalGenerateRandomValueDropdownOpen[k]}
+                                                    toggle={() => {
+                                                        setStateArrayElement(this, 'secretModalGenerateRandomValueDropdownOpen', k, !this.state.secretModalGenerateRandomValueDropdownOpen[k]);
+                                                    }}>
+                                                    <ButtonIcon
+                                                        icon={Zap}
+                                                        tooltipText={t('global.generate')}
+                                                        color="primary"
+                                                        size="sm"
+                                                        type="submit"
+                                                        form={'app_form-secret-modal-generate-random-value' + k} />
+                                                    <DropdownToggle split color="primary" size="sm" />
+                                                    <DropdownMenu>
+                                                        <div id={"app_secret-modal-charset-" + k + '-' + 0} className="dropdown-item no-hover" style={{ padding: '0.1rem 0.75rem' }}>
+                                                            <CustomInput
+                                                                id={"app_secret-modal-charset-switch-" + k + '-' + 0}
+                                                                type="switch"
+                                                                style={{ paddingLeft: '0' }}
+                                                                label={t('secrets.charsets.' + properties.secrets.randomSecretCharsets[0].name)}
+                                                                defaultChecked={isRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[0].name)}
+                                                                onChange={(e) => {
+                                                                    if (isOnlyRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[0].name)) {
+                                                                        e.target.checked = true;
+                                                                    } else {
+                                                                        toggleRandomSecretCharset(properties.secrets.randomSecretCharsets[0].name);
+                                                                    }
+                                                                }} />
+                                                            <UncontrolledTooltip target={"app_secret-modal-charset-" + k + '-' + 0} placement="right">
+                                                                {properties.secrets.randomSecretCharsets[0].charset}
+                                                            </UncontrolledTooltip>
+                                                        </div>
+                                                        <div id={"app_secret-modal-charset-" + k + '-' + 1} className="dropdown-item no-hover" style={{ padding: '0.1rem 0.75rem' }}>
+                                                            <CustomInput
+                                                                id={"app_secret-modal-charset-switch-" + k + '-' + 1}
+                                                                type="switch"
+                                                                defaultChecked={isRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[1].name)}
+                                                                label={t('secrets.charsets.' + properties.secrets.randomSecretCharsets[1].name)}
+                                                                onChange={(e) => {
+                                                                    if (isOnlyRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[1].name)) {
+                                                                        e.target.checked = true;
+                                                                    } else {
+                                                                        toggleRandomSecretCharset(properties.secrets.randomSecretCharsets[1].name);
+                                                                    }
+                                                                }} />
+                                                            <UncontrolledTooltip target={"app_secret-modal-charset-" + k + '-' + 1} placement="right">
+                                                                {properties.secrets.randomSecretCharsets[1].charset}
+                                                            </UncontrolledTooltip>
+                                                        </div>
+                                                        <div id={"app_secret-modal-charset-" + k + '-' + 2} className="dropdown-item no-hover" style={{ padding: '0.1rem 0.75rem' }}>
+                                                            <CustomInput
+                                                                id={"app_secret-modal-charset-switch-" + k + '-' + 2}
+                                                                type="switch"
+                                                                defaultChecked={isRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[2].name)}
+                                                                label={t('secrets.charsets.' + properties.secrets.randomSecretCharsets[2].name)}
+                                                                onChange={(e) => {
+                                                                    if (isOnlyRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[2].name)) {
+                                                                        e.target.checked = true;
+                                                                    } else {
+                                                                        toggleRandomSecretCharset(properties.secrets.randomSecretCharsets[2].name);
+                                                                    }
+                                                                }} />
+                                                            <UncontrolledTooltip target={"app_secret-modal-charset-" + k + '-' + 2} placement="right">
+                                                                {properties.secrets.randomSecretCharsets[2].charset}
+                                                            </UncontrolledTooltip>
+                                                        </div>
+                                                        <div id={"app_secret-modal-charset-" + k + '-' + 3} className="dropdown-item no-hover" style={{ padding: '0.1rem 0.75rem' }}>
+                                                            <CustomInput
+                                                                id={"app_secret-modal-charset-switch-" + k + '-' + 3}
+                                                                type="switch"
+                                                                defaultChecked={isRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[3].name)}
+                                                                label={t('secrets.charsets.' + properties.secrets.randomSecretCharsets[3].name)}
+                                                                onChange={(e) => {
+                                                                    if (isOnlyRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[3].name)) {
+                                                                        e.target.checked = true;
+                                                                    } else {
+                                                                        toggleRandomSecretCharset(properties.secrets.randomSecretCharsets[3].name);
+                                                                    }
+                                                                }} />
+                                                            <UncontrolledTooltip target={"app_secret-modal-charset-" + k + '-' + 3} placement="right">
+                                                                {properties.secrets.randomSecretCharsets[3].charset}
+                                                            </UncontrolledTooltip>
+                                                        </div>
+                                                        <div id={"app_secret-modal-charset-" + k + '-' + 4} className="dropdown-item no-hover" style={{ padding: '0.1rem 0.75rem' }}>
+                                                            <CustomInput
+                                                                id={"app_secret-modal-charset-switch-" + k + '-' + 4}
+                                                                type="switch"
+                                                                defaultChecked={isRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[4].name)}
+                                                                label={t('secrets.charsets.' + properties.secrets.randomSecretCharsets[4].name)}
+                                                                onChange={(e) => {
+                                                                    if (isOnlyRandomSecretCharsetActive(properties.secrets.randomSecretCharsets[4].name)) {
+                                                                        e.target.checked = true;
+                                                                    } else {
+                                                                        toggleRandomSecretCharset(properties.secrets.randomSecretCharsets[4].name);
+                                                                    }
+                                                                }} />
+                                                            <UncontrolledTooltip target={"app_secret-modal-charset-" + k + '-' + 4} placement="right">
+                                                                {properties.secrets.randomSecretCharsets[4].charset}
+                                                            </UncontrolledTooltip>
+                                                        </div>
+                                                    </DropdownMenu>
+                                                </InputGroupButtonDropdown>
+                                            </InputGroup>
+                                        </fieldset>
+                                    </Collapse>
+                                    <div className="group-spaced" style={{ marginTop: '6px' }}>
+                                        <ButtonIcon
+                                            icon={ChevronUp}
+                                            tooltipText={t('global.go-up')}
+                                            color="success"
+                                            size="sm"
+                                            disabled={k == 0}
+                                            type="button"
+                                            onClick={() => { secretModalMoveKeyValuePairUp(k); }} />
+                                        <ButtonIcon
+                                            icon={ChevronDown}
+                                            tooltipText={t('global.go-down')}
+                                            color="success"
+                                            size="sm"
+                                            disabled={k == this.state.secretModalSecretKeyValuePairs.length - 1}
+                                            type="button"
+                                            onClick={() => { secretModalMoveKeyValuePairDown(k); }} />
+                                        <ButtonIcon
+                                            icon={Trashcan}
+                                            tooltipText={t('secrets.remove-key-value-pair')}
+                                            color="secondary"
+                                            size="sm"
+                                            disabled={this.state.secretModalSecretKeyValuePairs.length == 1}
+                                            type="button"
+                                            onClick={() => { secretModalRemoveKeyValuePair(k); }} />
+                                    </div>
                                 </FormGroup>
                             )}
                         </Form>
-                        {this.state.secretModalSecretKeyValuePairs.map((keyValuePair, k) =>
-                            <Form
-                                key={'key-value-pair-' + k}
-                                id={'app_form-secret-modal-generate-random-value' + k}
-                                onSubmit={(e) => { e.preventDefault(); secretModalGenerateRandomValue(k); }}>
-                            </Form>
-                        )}
+                        {
+                            this.state.secretModalSecretKeyValuePairs.map((keyValuePair, k) =>
+                                <Form
+                                    key={'key-value-pair-' + k}
+                                    id={'app_form-secret-modal-generate-random-value' + k}
+                                    onSubmit={(e) => { e.preventDefault(); secretModalGenerateRandomValue(k); }}>
+                                </Form>
+                            )
+                        }
                     </ModalBody>
                     <ModalFooter>
                         <fieldset className="w-100 group-spaced">
-                            <Button
-                                onClick={() => { secretModalAddKeyValuePair() }}
+                            <ButtonIcon
+                                icon={Plus}
+                                tooltipText={t('secrets.add-key-value-pair')}
+                                color="success"
+                                disabled={this.state.secretModalSecretKeyValuePairs.length >= properties.secrets.secretMaxKeyValuePairs}
+                                type="button"
+                                onClick={() => { secretModalAddKeyValuePair() }} />
+                            <ButtonIcon
+                                icon={X}
+                                tooltipText={t('global.cancel')}
+                                color="secondary"
+                                className="float-right"
+                                type="button"
+                                onClick={() => { closeSecretModal() }} />
+                            <ButtonIcon
+                                icon={Check}
+                                tooltipText={t('global.accept')}
                                 color="primary"
-                                disabled={this.state.secretModalSecretKeyValuePairs.length >= properties.secrets.secretMaxKeyValuePairs}>
-                                {t('secrets.add-key-value-pair')}
-                            </Button>
-                            <Button onClick={() => { closeSecretModal() }} color="secondary" className="float-right">{t('global.cancel')}</Button>
-                            <Button type="submit" form="app_form-secret-modal" color="primary" className="float-right">{t('global.accept')}</Button>
+                                className="float-right"
+                                type="submit"
+                                form="app_form-secret-modal" />
                         </fieldset>
                     </ModalFooter>
                 </Modal>
@@ -362,7 +532,7 @@ class App extends Component {
                                                 <tr key={'member-' + a}>
                                                     <td style={{ width: '100%' }}>
                                                         {exMember.email}
-                                                        <ActionIcon icon={Info} tooltipText={t(exMember.cause)} className={(() => {
+                                                        <InfoIcon icon={Info} tooltipText={t(exMember.cause)} className={(() => {
                                                             switch (exMember.cause) {
                                                                 case 'shared-secrets.secret-unshared-by-owner':
                                                                 case 'groups.participant-removed-by-owner':
@@ -412,9 +582,19 @@ class App extends Component {
                                         required
                                         onChange={(e) => { this.setState({ participantsModalEmail: e.target.value }); }}
                                     />
-                                    <ButtonIcon icon={Key} tooltipText={t('accounts.check-keys')} color="secondary"
-                                        onClick={() => { if (this.participantsModalForm.current.reportValidity()) checkKeysModal(this.state.participantsModalEmail) }} />
-                                    <Button type="submit" color="primary">{t('global.add')}</Button>
+                                    <ButtonIcon
+                                        icon={Key}
+                                        tooltipText={t('accounts.check-keys')}
+                                        color="secondary"
+                                        type="button"
+                                        onClick={() => {
+                                            if (this.participantsModalForm.current.reportValidity()) checkKeysModal(this.state.participantsModalEmail);
+                                        }} />
+                                    <ButtonIcon
+                                        icon={LineArrowUp}
+                                        tooltipText={t('global.add')}
+                                        color="primary"
+                                        type="submit" />
                                 </Form>
                                 : null
                         }
@@ -445,14 +625,23 @@ class App extends Component {
                                     innerRef={this.groupModalSwitchParticipantsVisible}
                                     type="switch"
                                     label={t('groups.participants-can-see-each-other')}
-                                    onChange={(e) => { this.setState({ groupModalParticipantsVisible: e.target.checked }) }}
-                                />
+                                    onChange={(e) => { this.setState({ groupModalParticipantsVisible: e.target.checked }) }} />
                             </FormGroup>
                         </Form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button type="submit" form="app_form-group-modal" color="primary">{t('global.accept')}</Button>
-                        <Button color="secondary" onClick={() => { closeGroupModal() }}>{t('global.cancel')}</Button>
+                        <ButtonIcon
+                            icon={Check}
+                            tooltipText={t('global.accept')}
+                            color="primary"
+                            type="submit"
+                            form="app_form-group-modal" />
+                        <ButtonIcon
+                            icon={X}
+                            tooltipText={t('global.cancel')}
+                            color="secondary"
+                            type="button"
+                            onClick={() => { closeGroupModal() }} />
                     </ModalFooter>
                 </Modal>
 
@@ -474,9 +663,11 @@ class App extends Component {
                             <ActionIcon icon={File} tooltipText={t('global.copy')} style={{ marginTop: '6px', width: '40px' }}
                                 onClick={() => { copyToClipboard(this.state.checkKeysEncryptionPublicKey) }} />
                             <Input
-                                type="text"
+                                innerRef={this.checkKeysModalTxtEncryptionPublicKey}
+                                type="textarea"
                                 readOnly
                                 value={this.state.checkKeysEncryptionPublicKey}
+                                style={{ resize: 'none' }}
                                 onFocus={(e) => { e.target.select(); }}
                             />
                         </InputGroup>

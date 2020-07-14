@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Popover, PopoverBody } from 'reactstrap';
+import { UncontrolledTooltip, Popover, PopoverBody, Badge } from 'reactstrap';
 import Octicon from '@primer/octicons-react'
 
-class PopoverIcon extends Component {
+class InfoIcon extends Component {
 
     state = {
         open: false
@@ -11,7 +11,7 @@ class PopoverIcon extends Component {
     constructor(props) {
 
         super(props);
-        this.id = 'popover-icon-' + Math.random().toString().substr(2);
+        this.id = 'info-icon-' + Math.random().toString().substr(2);
 
     }
 
@@ -27,14 +27,21 @@ class PopoverIcon extends Component {
 
                 <Octicon icon={this.props.icon} />
 
-                {this.props.popoverText == null ? null :
-                    < Popover
+                {this.props.tooltipText == null ? null :
+                    <UncontrolledTooltip placement={this.props.tooltipPlacement || "top"} target={this.props.id || this.id}>
+                        {this.props.tooltipText}
+                    </UncontrolledTooltip>
+                }
+
+                {this.props.tooltipText == null ? null :
+                    <Popover
                         target={this.props.id || this.id}
                         trigger="legacy"
-                        placement={this.props.placement}
+                        placement={this.props.tooltipPlacement || "top"}
+                        className="no-tooltip-fallback"
                         isOpen={this.state.open}
                         toggle={() => { this.setState({ open: false }) }}>
-                        <PopoverBody>{this.props.popoverText}</PopoverBody>
+                        <PopoverBody>{this.props.tooltipText}</PopoverBody>
                     </Popover>
                 }
 
@@ -52,4 +59,4 @@ class PopoverIcon extends Component {
 
 }
 
-export default PopoverIcon;
+export default InfoIcon;

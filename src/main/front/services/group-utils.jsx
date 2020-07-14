@@ -12,7 +12,7 @@ import { rest } from 'services/rest.jsx';
 export function groupModal(header, group, acceptCallback) {
 
     var groupName = group ? group.name : '';
-    var participantsVisible = group ? group.participantsVisible : true;
+    var participantsVisible = group ? group.participantsVisible : false;
 
     app().setState({
         groupModalActive: true,

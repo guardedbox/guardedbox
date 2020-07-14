@@ -6,7 +6,7 @@
     <!-- Project -->
     <groupId>com.guardedbox</groupId>
     <artifactId>guardedbox</artifactId>
-    <version>1.5.2</version>
+    <version>1.6.0</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>
@@ -45,6 +45,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependencies Versions -->
+        <logback-json.version>0.1.5</logback-json.version>
         <bouncycastle.version>1.65.01</bouncycastle.version>
 
         <!-- Docker -->
@@ -185,6 +186,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- Logback -->
+        <dependency>
+            <groupId>ch.qos.logback.contrib</groupId>
+            <artifactId>logback-json-classic</artifactId>
+            <version>${logback-json.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback.contrib</groupId>
+            <artifactId>logback-jackson</artifactId>
+            <version>${logback-json.version}</version>
         </dependency>
 
         <!-- ECC Provider -->

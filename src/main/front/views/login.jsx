@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, InputGroup, Button, Popover, PopoverHeader, PopoverBody, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
-import { Eye, Key } from '@primer/octicons-react';
+import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, Button, Popover, PopoverHeader, PopoverBody, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
+import { Eye, Key, Check, X } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
+import ButtonIcon from 'components/button-icon.jsx';
 import logo from 'images/logo.png';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
@@ -52,7 +53,8 @@ class Login extends Component {
         var password = this.txtPassword.current.value;
 
         this.setState({
-            loginFailedPopoverActive: false
+            loginFailedPopoverActive: false,
+            passwordVisible: false
         }, () => {
 
             rest({
@@ -122,7 +124,8 @@ class Login extends Component {
         var password = this.txtPassword.current.value;
 
         this.setState({
-            getCodePopoverActive: false
+            getCodePopoverActive: false,
+            passwordVisible: false
         }, () => {
 
             rest({
@@ -214,7 +217,7 @@ class Login extends Component {
                 <Row>
 
                     {/* Left part */}
-                    <Col className="logo-col">
+                    <Col className="col-md-6 col-12 logo-col">
                         <div className="text-center" style={{ marginBottom: '2.5em' }}>
                             <h1>{t('global.app-name')}</h1>
                             <img src={logo} style={{ marginTop: '5em', marginBottom: '5em' }} />
@@ -223,7 +226,7 @@ class Login extends Component {
                     </Col>
 
                     {/* Rigth part */}
-                    <Col className="main-col">
+                    <Col className="col-md-6 col-12 main-col">
                         <Jumbotron className="text-center">
 
                             {/* Email and password */}
@@ -353,10 +356,16 @@ class Login extends Component {
                         <div style={{ marginTop: '1rem' }}>{t('login.privacy-modal-p3')}</div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={() => {
-                            this.setState({ privacyModalActive: false }, () => { this.register() });
-                        }}>{t('global.yes')}</Button>
-                        <Button color="secondary" onClick={() => { this.setState({ privacyModalActive: false }) }}>{t('global.no')}</Button>
+                        <ButtonIcon
+                            icon={Check}
+                            tooltipText={t('global.yes')}
+                            color="primary"
+                            onClick={() => { this.setState({ privacyModalActive: false }, () => { this.register() }); }} />
+                        <ButtonIcon
+                            icon={X}
+                            tooltipText={t('global.no')}
+                            color="secondary"
+                            onClick={() => { this.setState({ privacyModalActive: false }); }} />
                     </ModalFooter>
                 </Modal>
 

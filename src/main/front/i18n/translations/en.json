@@ -26,6 +26,8 @@
         "collapse": "Collapse",
         "expand-all": "Expand all",
         "collapse-all": "Collapse all",
+        "go-up": "Go up",
+        "go-down": "Go down",
         "success": "Success",
         "information": "Information",
         "confirmation": "Confirmation",
@@ -137,9 +139,18 @@
         "not-shared": "This secret is not shared with anyone",
         "secret-name": "Secret name",
         "key-value-pair-info": "A secret may have several properties. For example, if the secret is a credit card, it may have 3 properties: Card number, CVV and Expiration date.",
+        "show-password-options": "Password options",
+        "common-password": "Common password",
+        "generate-random-value": "Generate random value",
+        "charsets": {
+            "lowerCaseLetters": "Lower case letters",
+            "upperCaseLetters": "Upper case letters",
+            "numbers": "Numbers",
+            "symbols1": "Simple symbols",
+            "symbols2": "Complex symbols"
+        },
         "add-key-value-pair": "Add property",
-        "remove-key-value-pair": "Remove property",
-        "generate-random-value": "Generate random value"
+        "remove-key-value-pair": "Remove property"
     },
     "my-secrets": {
         "title": "My secrets",

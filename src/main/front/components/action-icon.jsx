@@ -24,7 +24,7 @@ class ActionIcon extends Component {
                 <Octicon icon={this.props.icon} />
 
                 {this.props.tooltipText == null ? null :
-                    <UncontrolledTooltip placement="top" target={this.props.id || this.id}>
+                    <UncontrolledTooltip placement={this.props.tooltipPlacement || "top"} target={this.props.id || this.id}>
                         {this.props.tooltipText}
                     </UncontrolledTooltip>
                 }

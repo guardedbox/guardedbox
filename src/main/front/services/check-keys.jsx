@@ -22,6 +22,13 @@ export function checkKeysModal(email) {
                 checkKeysEmail: email,
                 checkKeysEncryptionPublicKey: Uint8Array(response.encryptionPublicKey, 'base64').toString('hex'),
                 checkKeysSigningPublicKey: Uint8Array(response.signingPublicKey, 'base64').toString('hex')
+            }, () => {
+
+                setTimeout(() => {
+                    var height = app().checkKeysModalTxtEncryptionPublicKey.current.scrollHeight + 3;
+                    app().checkKeysModalTxtEncryptionPublicKey.current.style.height = height + 'px';
+                }, 25);
+
             });
 
         }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, InputGroup, Alert, Button, Progress, Popover, PopoverBody } from 'reactstrap';
+import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, Alert, Button, Progress, Popover, PopoverBody } from 'reactstrap';
 import { Eye, Key } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import logo from 'images/logo.png';
@@ -22,7 +22,7 @@ class Registration extends Component {
         email: '',
         passwordVisible: false,
         passwordLength: 0,
-        passwordStrength: 0,
+        passwordStrength: { strength: 0 },
         passwordError: null,
         passwordPopoverActive: false,
         passwordPopoverBody: '',
@@ -104,7 +104,7 @@ class Registration extends Component {
 
         if (newState.passwordLength < properties.registration.passwordMinLength) {
             newState.passwordError = 'registration.password-insufficient-length';
-        } else if (newState.passwordStrength < properties.registration.passwordMinStrength) {
+        } else if (newState.passwordStrength.strength < properties.registration.passwordMinStrength) {
             newState.passwordError = 'registration.password-insufficient-strength';
         } else {
             newState.passwordPopoverActive = false;
@@ -173,53 +173,59 @@ class Registration extends Component {
 
         this.checkPasswordErrors(true, () => {
 
-            loading(() => {
+            this.setState({
+                passwordVisible: false
+            }, () => {
 
-                var token = this.state.token;
-                var password = this.txtPassword.current.value;
-                var loginSalt = randomBytes(properties.cryptography.length, 'base64');
-                var encryptionSalt = randomBytes(properties.cryptography.length, 'base64');
-                var signingSalt = randomBytes(properties.cryptography.length, 'base64');
+                loading(() => {
 
-                try {
+                    var token = this.state.token;
+                    var password = this.txtPassword.current.value;
+                    var loginSalt = randomBytes(properties.cryptography.length, 'base64');
+                    var encryptionSalt = randomBytes(properties.cryptography.length, 'base64');
+                    var signingSalt = randomBytes(properties.cryptography.length, 'base64');
 
-                    generateLoginKeys(password, loginSalt);
-                    var loginPublicKey = getLoginPublicKey();
-                    deleteLoginKeys();
+                    try {
 
-                    generateSessionKeys(password, encryptionSalt, signingSalt);
-                    var encryptionPublicKey = getEncryptionPublicKey();
-                    var signingPublicKey = getSigningPublicKey();
-                    deleteSessionKeys();
+                        generateLoginKeys(password, loginSalt);
+                        var loginPublicKey = getLoginPublicKey();
+                        deleteLoginKeys();
 
-                } catch (err) {
-                    notLoading(() => { messageModal(t('global.error'), t('global.error-occurred')); });
-                    return;
-                }
+                        generateSessionKeys(password, encryptionSalt, signingSalt);
+                        var encryptionPublicKey = getEncryptionPublicKey();
+                        var signingPublicKey = getSigningPublicKey();
+                        deleteSessionKeys();
 
-                rest({
-                    method: 'post',
-                    url: '/api/accounts',
-                    body: {
-                        registrationToken: token,
-                        loginSalt: loginSalt,
-                        loginPublicKey: loginPublicKey,
-                        encryptionSalt: encryptionSalt,
-                        encryptionPublicKey: encryptionPublicKey,
-                        signingSalt: signingSalt,
-                        signingPublicKey: signingPublicKey
-                    },
-                    loadingChained: true,
-                    callback: (response) => {
-
-                        messageModal(t('global.success'), t('registration.registration-completed'), reset);
-
-                    },
-                    serviceExceptionCallback: (response) => {
-
-                        messageModal(t('global.error'), t(response.errorCode || 'global.error-occurred', response.additionalData), reset);
-
+                    } catch (err) {
+                        notLoading(() => { messageModal(t('global.error'), t('global.error-occurred')); });
+                        return;
                     }
+
+                    rest({
+                        method: 'post',
+                        url: '/api/accounts',
+                        body: {
+                            registrationToken: token,
+                            loginSalt: loginSalt,
+                            loginPublicKey: loginPublicKey,
+                            encryptionSalt: encryptionSalt,
+                            encryptionPublicKey: encryptionPublicKey,
+                            signingSalt: signingSalt,
+                            signingPublicKey: signingPublicKey
+                        },
+                        loadingChained: true,
+                        callback: (response) => {
+
+                            messageModal(t('global.success'), t('registration.registration-completed'), reset);
+
+                        },
+                        serviceExceptionCallback: (response) => {
+
+                            messageModal(t('global.error'), t(response.errorCode || 'global.error-occurred', response.additionalData), reset);
+
+                        }
+                    });
+
                 });
 
             });
@@ -236,7 +242,7 @@ class Registration extends Component {
                 <Row>
 
                     {/* Left part */}
-                    <Col className="logo-col">
+                    <Col className="col-md-6 col-12 logo-col">
                         <div className="text-center" style={{ marginBottom: '2.5em' }}>
                             <h1>{t('global.app-name')}</h1>
                             <img src={logo} style={{ marginTop: '5em', marginBottom: '5em' }} />
@@ -245,7 +251,7 @@ class Registration extends Component {
                     </Col>
 
                     {/* Right part */}
-                    <Col className="main-col">
+                    <Col className="col-md-6 col-12 main-col">
                         <Jumbotron className="text-center">
 
                             {/* Register */}
@@ -264,12 +270,37 @@ class Registration extends Component {
                                 <Alert color="secondary" className="small">
                                     {t('registration.info-password', { passwordMinlength: properties.registration.passwordMinLength })}
                                 </Alert>
-                                <div>
-                                    <Progress color="primary" value={this.state.passwordLength * 100 / properties.registration.passwordMinLength}>
-                                        {t('global.length') + ' ' + this.state.passwordLength + ' / ' + properties.registration.passwordMinLength}
+                                <div style={{ marginBottom: '5px' }}>
+                                    <Progress multi>
+                                        <Progress bar
+                                            color="primary"
+                                            value={this.state.passwordLength * 100 / properties.registration.passwordMinLength}>
+                                            {this.state.passwordLength >= properties.registration.passwordMinLength * 67 / 100 ? t('global.length') + ' ' : null}
+                                            {this.state.passwordLength + ' / ' + properties.registration.passwordMinLength}
+                                        </Progress>
+                                        <Progress bar
+                                            color="light"
+                                            className="text-primary"
+                                            value={100 - this.state.passwordLength * 100 / properties.registration.passwordMinLength}>
+                                            {this.state.passwordLength < properties.registration.passwordMinLength * 67 / 100 ? t('global.length') : null}
+                                        </Progress>
                                     </Progress>
-                                    <Progress color="primary" style={{ marginTop: '5px', marginBottom: '14px' }} value={this.state.passwordStrength}>
-                                        {t('global.strength') + ' ' + this.state.passwordStrength + '%'}
+                                </div>
+                                <div style={{ marginBottom: '14px' }}>
+                                    <Progress multi>
+                                        <Progress bar
+                                            color="primary"
+                                            value={this.state.passwordStrength.strength}>
+                                            {this.state.passwordStrength.strength >= 67 ? t('global.strength') + ' ' : null}
+                                            {this.state.passwordStrength.strength + ' %'}
+                                        </Progress>
+                                        <Progress bar
+                                            color={this.state.passwordStrength.commonPassword ? 'warning' : 'light'}
+                                            className={this.state.passwordStrength.commonPassword ? 'text-white' : 'text-primary'}
+                                            value={100 - this.state.passwordStrength.strength}>
+                                            {this.state.passwordStrength.commonPassword ? t('secrets.common-password') :
+                                                (this.state.passwordStrength.strength < 67 ? t('global.strength') : null)}
+                                        </Progress>
                                     </Progress>
                                 </div>
                                 <FormGroup>

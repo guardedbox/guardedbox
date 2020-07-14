@@ -1,19 +1,25 @@
 version: '3.7'
+
 services:
-    guardedbox:
-        container_name: guardedbox
-        image: s3curitybug/guardedbox
-        # command: ["-Xms1024m", "-Xmx1024m", "-jar", "/opt/guardedbox/guardedbox.jar", "--spring.config.location=file:/etc/guardedbox/application.properties"]
-        ports:
-        - 8080:8080
-        - 8443:8443
-        secrets:
-        - source: application.properties
-          target: /etc/guardedbox/application.properties
-        - source: server.p12
-          target: /etc/guardedbox/server.p12
+  guardedbox:
+    container_name: guardedbox
+    image: s3curitybug/guardedbox
+    # command: ["-Xms1024m", "-Xmx1024m", "-jar", "/opt/guardedbox/guardedbox.jar", "--spring.config.location=file:/etc/guardedbox/application.properties"]
+    ports:
+    - 8080:8080
+    - 8443:8443
+    secrets:
+    - source: application.properties
+      target: /etc/guardedbox/application.properties
+    - source: server.p12
+      target: /etc/guardedbox/server.p12
+    - source: logback.xml
+      target: /etc/guardedbox/logback.xml
+
 secrets:
     application.properties:
-        file: config/local-docker/application.properties
+      file: config/local-docker/application.properties
     server.p12:
-        file: config/local-docker/server.p12
+      file: config/local-docker/server.p12
+    logback.xml:
+      file: config/local-docker/logback-csv.xml

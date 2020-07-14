@@ -1,0 +1,19 @@
+<configuration>
+
+    <appender name="consoleLogger" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+            <includeThreadName>false</includeThreadName>
+            <includeContextName>false</includeContextName>
+            <timestampFormat>yyyy-MM-dd HH:mm:ss.SSS</timestampFormat>
+            <appendLineSeparator>true</appendLineSeparator>
+            <jsonFormatter class="com.guardedbox.config.CustomLogbackJsonFormatter">
+                <prettyPrint>true</prettyPrint>
+            </jsonFormatter>
+        </layout>
+    </appender>
+
+    <logger name="root">
+        <appender-ref ref="consoleLogger" />
+    </logger>
+
+</configuration>

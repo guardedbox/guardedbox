@@ -18,8 +18,29 @@
         "secretValueMaxLength": 4000,
         "secretMaxKeyValuePairs": 10,
         "secretStrengthMaxLength": 40,
-        "randomSecretCharset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
-        "showSecretTime": 2500
+        "showSecretTime": 2500,
+        "randomSecretCharsets": [
+            {
+                "name": "lowerCaseLetters",
+                "charset": "abcdefghijklmnopqrstuvwxyz"
+            },
+            {
+                "name": "upperCaseLetters",
+                "charset": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            },
+            {
+                "name": "numbers",
+                "charset": "0123456789"
+            },
+            {
+                "name": "symbols1",
+                "charset": "!@#$%^&*()"
+            },
+            {
+                "name": "symbols2",
+                "charset": "\"+-/\\|.,;:=<>[]{}'`?_~"
+            }
+        ]
     },
     "groups": {
         "groupNameMaxLength": 100

@@ -103,13 +103,9 @@ function processSuccess(callback, serviceExceptionCallback, response) {
 
         setTimeout(sessionRenewed, 100);
 
-    } else if (response.status == 401) {
+    } else if (response.status == 401 || response.status == 403) {
 
         startWorkingWithoutSession();
-
-    } else if (response.status == 403) {
-
-        reset();
 
     } else {
 

@@ -432,6 +432,50 @@ class App extends Component {
                     </ModalFooter>
                 </Modal>
 
+                {/* Group modal */}
+                <Modal isOpen={this.state.groupModalActive}>
+                    <ModalHeader>{this.state.groupModalHeader}</ModalHeader>
+                    <ModalBody>
+                        <Form id="app_form-group-modal" onSubmit={(e) => {
+                            e.preventDefault();
+                            this.state.groupModalAcceptCallback(buildGroupModalSecret(), this.state.groupModalOriginalGroup);
+                        }}>
+                            <FormGroup>
+                                <Input
+                                    innerRef={this.groupModalTxtName}
+                                    type="text"
+                                    placeholder={t('global.name')}
+                                    maxLength={properties.groups.groupNameMaxLength}
+                                    required
+                                    onChange={(e) => { this.setState({ groupModalGroupName: e.target.value }) }}
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <CustomInput
+                                    id="app_switch-group-modal-participants-visible"
+                                    innerRef={this.groupModalSwitchParticipantsVisible}
+                                    type="switch"
+                                    label={t('groups.participants-can-see-each-other')}
+                                    onChange={(e) => { this.setState({ groupModalParticipantsVisible: e.target.checked }) }} />
+                            </FormGroup>
+                        </Form>
+                    </ModalBody>
+                    <ModalFooter>
+                        <ButtonIcon
+                            icon={Check}
+                            tooltipText={t('global.accept')}
+                            color="primary"
+                            type="submit"
+                            form="app_form-group-modal" />
+                        <ButtonIcon
+                            icon={X}
+                            tooltipText={t('global.cancel')}
+                            color="secondary"
+                            type="button"
+                            onClick={() => { closeGroupModal() }} />
+                    </ModalFooter>
+                </Modal>
+
                 {/* Participants modal */}
                 <Modal isOpen={this.state.participantsModalActive} toggle={() => { closeParticipantsModal() }}>
                     <ModalHeader>{this.state.participantsModalLiterals.header}</ModalHeader>
@@ -445,7 +489,11 @@ class App extends Component {
                                         <tbody>
                                             {this.state.participantsModalAccounts.map((account, a) =>
                                                 <tr key={'account-' + a}>
-                                                    <td style={{ width: '100%' }}>{account.email}</td>
+                                                    <td style={{ width: '100%' }}>
+                                                        <ActionIcon icon={File} tooltipText={t('global.copy')}
+                                                            onClick={() => { copyToClipboard(account.email) }} />
+                                                        {account.email}
+                                                    </td>
                                                     <td className="icons-3-col" align="center">
                                                         <ActionIcon icon={Key} tooltipText={t('accounts.check-keys')}
                                                             onClick={() => { checkKeysModal(account.email) }} />
@@ -476,6 +524,8 @@ class App extends Component {
                                             {this.state.participantsModalRegistrationPendingAccounts.map((registrationPendingAccount, a) =>
                                                 <tr key={'account-' + a}>
                                                     <td style={{ width: '100%' }}>
+                                                        <ActionIcon icon={File} tooltipText={t('global.copy')}
+                                                            onClick={() => { copyToClipboard(registrationPendingAccount.receiverEmail) }} />
                                                         {registrationPendingAccount.receiverEmail}
                                                         {!registrationPendingAccount.emailRegistered ? null :
                                                             <Badge color='info' style={{ marginLeft: '10px' }}>{t('accounts.registered')}</Badge>
@@ -531,6 +581,8 @@ class App extends Component {
                                             {this.state.participantsModalExMembers.map((exMember, a) =>
                                                 <tr key={'member-' + a}>
                                                     <td style={{ width: '100%' }}>
+                                                        <ActionIcon icon={File} tooltipText={t('global.copy')}
+                                                            onClick={() => { copyToClipboard(exMember.email) }} />
                                                         {exMember.email}
                                                         <InfoIcon icon={Info} tooltipText={t(exMember.cause)} className={(() => {
                                                             switch (exMember.cause) {
@@ -599,50 +651,6 @@ class App extends Component {
                                 : null
                         }
                     </ModalBody>
-                </Modal>
-
-                {/* Group modal */}
-                <Modal isOpen={this.state.groupModalActive}>
-                    <ModalHeader>{this.state.groupModalHeader}</ModalHeader>
-                    <ModalBody>
-                        <Form id="app_form-group-modal" onSubmit={(e) => {
-                            e.preventDefault();
-                            this.state.groupModalAcceptCallback(buildGroupModalSecret(), this.state.groupModalOriginalGroup);
-                        }}>
-                            <FormGroup>
-                                <Input
-                                    innerRef={this.groupModalTxtName}
-                                    type="text"
-                                    placeholder={t('global.name')}
-                                    maxLength={properties.groups.groupNameMaxLength}
-                                    required
-                                    onChange={(e) => { this.setState({ groupModalGroupName: e.target.value }) }}
-                                />
-                            </FormGroup>
-                            <FormGroup>
-                                <CustomInput
-                                    id="app_switch-group-modal-participants-visible"
-                                    innerRef={this.groupModalSwitchParticipantsVisible}
-                                    type="switch"
-                                    label={t('groups.participants-can-see-each-other')}
-                                    onChange={(e) => { this.setState({ groupModalParticipantsVisible: e.target.checked }) }} />
-                            </FormGroup>
-                        </Form>
-                    </ModalBody>
-                    <ModalFooter>
-                        <ButtonIcon
-                            icon={Check}
-                            tooltipText={t('global.accept')}
-                            color="primary"
-                            type="submit"
-                            form="app_form-group-modal" />
-                        <ButtonIcon
-                            icon={X}
-                            tooltipText={t('global.cancel')}
-                            color="secondary"
-                            type="button"
-                            onClick={() => { closeGroupModal() }} />
-                    </ModalFooter>
                 </Modal>
 
                 {/* Check keys modal */}

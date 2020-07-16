@@ -63,7 +63,7 @@
         "title-login": "Iniciar sesión",
         "btn-get-code": "Obtener código de acceso",
         "popover-get-code-title": "Código de acceso enviado",
-        "popover-get-code": "Si tus credenciales son correctas, recibirás un email con un código de acceso en los próximos 2 minutos. En caso contrario, verifica el email y la contraseña tecleados e inténtalo de nuevo.",
+        "popover-get-code": "Si tus credenciales son correctas, recibirás un email con un código de acceso en breve (en los próximos 1-10 minutos). En caso contrario, verifica el email y la contraseña tecleados e inténtalo de nuevo.",
         "txt-code": "Código",
         "btn-login": "Iniciar sesión",
         "popover-login-failed-title": "Credenciales incorrectas",

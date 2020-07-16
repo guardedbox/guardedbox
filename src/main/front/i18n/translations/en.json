@@ -63,7 +63,7 @@
         "title-login": "Log in",
         "btn-get-code": "Get access code",
         "popover-get-code-title": "Access code submitted",
-        "popover-get-code": "If your credentials are correct, you will receive an email with your login code within the next 2 minutes. Otherwise, check your email and password and try again.",
+        "popover-get-code": "If your credentials are correct, you will receive an email with your login code soon (within the next 1-10 minutes). Otherwise, check your email and password and try again.",
         "txt-code": "Code",
         "btn-login": "Log in",
         "popover-login-failed-title": "Incorrect credentials",

@@ -1,5 +1,7 @@
 package com.guardedbox.service;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,26 +59,32 @@ public class OtpService {
      * Verifies a one time password response.
      *
      * @param otpResponseDto One time password response object.
-     * @param otpDto One time password object, as it is returned by the method generateAndSendOtp.
+     * @param otpDtos List of one time password objects, as they are returned by the method generateAndSendOtp.
      * @return Boolean indicating if the one time password response is valid.
      */
     public boolean verifyOtp(
             OtpResponseDto otpResponseDto,
-            OtpDto otpDto) {
+            List<OtpDto> otpDtos) {
 
-        // Verify expiration time.
         long currentTime = System.currentTimeMillis();
 
-        if (otpDto.getExpirationTime() <= currentTime) {
-            return false;
+        for (OtpDto otpDto : otpDtos) {
+
+            // Verify expiration time.
+            if (otpDto.getExpirationTime() <= currentTime) {
+                continue;
+            }
+
+            // Verify one time password.
+            if (!passwordEncoder.matches(otpResponseDto.getOtp(), otpDto.getOtp())) {
+                continue;
+            }
+
+            return true;
+
         }
 
-        // Verify one time password.
-        if (!passwordEncoder.matches(otpResponseDto.getOtp(), otpDto.getOtp())) {
-            return false;
-        }
-
-        return true;
+        return false;
 
     }
 

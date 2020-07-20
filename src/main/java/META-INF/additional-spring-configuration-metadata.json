@@ -161,6 +161,11 @@
             "description": "Security Parameter: Time to live of a One Time Password (OTP) before it expires."
         },
         {
+            "name": "security-parameters.otp-max-valid-otps",
+            "type": "long",
+            "description": "Security Parameter: Maximum number of valid One Time Passwords (OTPs) in session while performing a login."
+        },
+        {
             "name": "security-parameters.otp-execution-time",
             "type": "long",
             "description": "Security Parameter: SessionController.obtainOtp method execution time."

@@ -55,9 +55,9 @@ public class ChallengeService {
             ChallengeDto challengeDto,
             boolean login) {
 
-        // Verify expiration time.
         long currentTime = System.currentTimeMillis();
 
+        // Verify expiration time.
         if (challengeDto.getExpirationTime() <= currentTime) {
             return false;
         }

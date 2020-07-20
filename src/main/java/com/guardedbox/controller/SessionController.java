@@ -3,6 +3,7 @@ package com.guardedbox.controller;
 import static com.guardedbox.constants.PathParameters.API_BASE_PATH;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -118,9 +120,8 @@ public class SessionController {
 
         long startTime = System.currentTimeMillis();
 
-        // Remove the challenge and the one time password from the current session.
+        // Remove the challenge from the current session.
         session.removeAttribute(SessionAttribute.CHALLENGE.getAttributeName());
-        session.removeAttribute(SessionAttribute.OTP.getAttributeName());
 
         // Generate the challenge.
         ChallengeDto challengeDto = challengeService.generateChallenge();
@@ -159,9 +160,21 @@ public class SessionController {
                 throw new ServiceException("Challenge is not stored in session");
             }
 
-            // Remove the challenge and the one time password from the current session.
+            // Remove the challenge from the current session.
             session.removeAttribute(SessionAttribute.CHALLENGE.getAttributeName());
-            session.removeAttribute(SessionAttribute.OTP.getAttributeName());
+
+            // Check if the one time passwords previously stored in session are associated to the email received in the signed challenge response,
+            // and, if that is not the case, remove them.
+            @SuppressWarnings("unchecked")
+            LinkedList<OtpDto> otpSessionAttribute = (LinkedList<OtpDto>) session.getAttribute(SessionAttribute.OTP.getAttributeName());
+            if (otpSessionAttribute != null) {
+                for (OtpDto previousOtpDto : otpSessionAttribute) {
+                    if (!previousOtpDto.getEmail().equals(signedChallengeResponseDto.getEmail())) {
+                        otpSessionAttribute = null;
+                        session.removeAttribute(SessionAttribute.OTP.getAttributeName());
+                    }
+                }
+            }
 
             // Verify the signed challenge response.
             if (!challengeService.verifySignedChallengeResponse(signedChallengeResponseDto, challengeDto, true)) {
@@ -178,7 +191,14 @@ public class SessionController {
             }
 
             // Store it in the current session.
-            session.setAttribute(SessionAttribute.OTP.getAttributeName(), otpDto);
+            if (otpSessionAttribute == null) {
+                otpSessionAttribute = new LinkedList<OtpDto>();
+            }
+            otpSessionAttribute.addFirst(otpDto);
+            while (otpSessionAttribute.size() > securityParameters.getOtpMaxValidOtps()) {
+                otpSessionAttribute.removeLast();
+            }
+            session.setAttribute(SessionAttribute.OTP.getAttributeName(), otpSessionAttribute);
 
         } catch (Exception e) {
         }
@@ -209,8 +229,9 @@ public class SessionController {
         try {
 
             // Check if a one time password was previously generated.
-            OtpDto otpDto = (OtpDto) session.getAttribute(SessionAttribute.OTP.getAttributeName());
-            if (otpDto == null) {
+            @SuppressWarnings("unchecked")
+            LinkedList<OtpDto> otpSessionAttribute = (LinkedList<OtpDto>) session.getAttribute(SessionAttribute.OTP.getAttributeName());
+            if (CollectionUtils.isEmpty(otpSessionAttribute)) {
                 throw new ServiceException("One time password is not stored in session");
             }
 
@@ -219,13 +240,13 @@ public class SessionController {
             session.removeAttribute(SessionAttribute.OTP.getAttributeName());
 
             // Verify the one time password response.
-            if (!dev && !otpService.verifyOtp(otpResponseDto, otpDto)) {
-                messagesService.sendOtpIncorrectMessage(otpDto.getEmail());
+            if (!dev && !otpService.verifyOtp(otpResponseDto, otpSessionAttribute)) {
+                messagesService.sendOtpIncorrectMessage(otpSessionAttribute.getFirst().getEmail());
                 throw new ServiceException("One time password response is incorrect");
             }
 
             // Set the authentication.
-            AccountDto accountDto = accountsService.getAndCheckAccountByEmail(otpDto.getEmail());
+            AccountDto accountDto = accountsService.getAndCheckAccountByEmail(otpSessionAttribute.getFirst().getEmail());
             AuthenticationPrincipal authenticationPrincipal = new AuthenticationPrincipal(accountDto);
             List<GrantedAuthority> roles = Arrays.asList(Role.ACCOUNT.getAuthority());
             Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationPrincipal, null, roles);

@@ -129,7 +129,8 @@ public class SessionController {
         // Store it in the current session.
         session.setAttribute(SessionAttribute.CHALLENGE.getAttributeName(), challengeDto);
 
-        // Add the session id to the session id response header.
+        // Renew the session id and add it to the session id response header.
+        request.changeSessionId();
         response.addHeader(Header.SESSION_ID.getHeaderName(), session.getId());
 
         // Fix execution time.
@@ -203,7 +204,8 @@ public class SessionController {
         } catch (Exception e) {
         }
 
-        // Add the session id to the session id response header.
+        // Renew the session id and add it to the session id response header.
+        request.changeSessionId();
         response.addHeader(Header.SESSION_ID.getHeaderName(), session.getId());
 
         // Fix execution time.
@@ -252,9 +254,6 @@ public class SessionController {
             Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationPrincipal, null, roles);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Change session ID.
-            request.changeSessionId();
-
             // Successful result.
             return getSessionInfo().setSuccess(true);
 
@@ -265,7 +264,8 @@ public class SessionController {
 
         } finally {
 
-            // Add the session id to the session id response header.
+            // Renew the session id and add it to the session id response header.
+            request.changeSessionId();
             response.addHeader(Header.SESSION_ID.getHeaderName(), session.getId());
 
             // Fix execution time.

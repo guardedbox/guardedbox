@@ -141,13 +141,14 @@
         "key-value-pair-info": "A secret may have several properties. For example, if the secret is a credit card, it may have 3 properties: Card number, CVV and Expiration date.",
         "show-password-options": "Password options",
         "common-password": "Common password",
-        "generate-random-value": "Generate random value",
+        "generate-random-value": "Generate random value of length:",
+        "generate-random-value-disabled": "As a protection, you must delete the current value to generate a random one",
         "charsets": {
             "lowerCaseLetters": "Lower case letters",
             "upperCaseLetters": "Upper case letters",
             "numbers": "Numbers",
-            "symbols1": "Simple symbols",
-            "symbols2": "Complex symbols"
+            "symbols1": "Common symbols",
+            "symbols2": "Other symbols"
         },
         "add-key-value-pair": "Add property",
         "remove-key-value-pair": "Remove property"

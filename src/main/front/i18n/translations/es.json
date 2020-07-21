@@ -141,13 +141,14 @@
         "key-value-pair-info": "Un secreto puede tener varias propiedades. Por ejemplo, si el secreto es una tarjeta de crédito, puede tener 3 propiedades: Número de tarjeta, CVV y Fecha de caducidad.",
         "show-password-options": "Opciones de contraseña",
         "common-password": "Contraseña común",
-        "generate-random-value": "Generar un valor aleatorio",
+        "generate-random-value": "Generar valor aleatorio de longitud:",
+        "generate-random-value-disabled": "Como protección, debe borrar el valor actual para generar uno aleatorio",
         "charsets": {
             "lowerCaseLetters": "Letras minúsculas",
             "upperCaseLetters": "Letras mayúsculas",
             "numbers": "Números",
-            "symbols1": "Símbolos sencillos",
-            "symbols2": "Símbolos complejos"
+            "symbols1": "Símbolos comunes",
+            "symbols2": "Otros símbolos"
         },
         "add-key-value-pair": "Añadir propiedad",
         "remove-key-value-pair": "Quitar propiedad"

@@ -185,9 +185,10 @@ class App extends Component {
                                             onChange={(e) => {
                                                 setStateArrayElement(this, 'secretModalSecretKeyValuePairs', k, {
                                                     key: e.target.value,
-                                                    value: this.state.secretModalSecretKeyValuePairs[k].value,
-                                                    valueLength: this.state.secretModalSecretKeyValuePairs[k].valueLength,
-                                                    valueStrength: this.state.secretModalSecretKeyValuePairs[k].valueStrength
+                                                    value: keyValuePair.value,
+                                                    valueLength: keyValuePair.valueLength,
+                                                    valueStrength: keyValuePair.valueStrength,
+                                                    valueRandom: keyValuePair.valueRandom,
                                                 });
                                             }}
                                         />
@@ -204,16 +205,17 @@ class App extends Component {
                                         required
                                         onChange={(e) => {
                                             setStateArrayElement(this, 'secretModalSecretKeyValuePairs', k, {
-                                                key: this.state.secretModalSecretKeyValuePairs[k].key,
+                                                key: keyValuePair.key,
                                                 value: e.target.value,
                                                 valueLength: e.target.value.length,
-                                                valueStrength: secretStrength(e.target.value)
+                                                valueStrength: secretStrength(e.target.value),
+                                                valueRandom: false
                                             });
                                         }}
                                     />
                                     <InputGroup style={{ margin: '8px 0 0 0' }}>
                                         <Badge style={{ flex: '1', margin: '0 8px 5px 0', fontWeight: '400' }} color="primary">
-                                            {t('global.length') + ' ' + this.state.secretModalSecretKeyValuePairs[k].valueLength + ' / ' + properties.secrets.secretValueMaxLength}
+                                            {t('global.length') + ' ' + keyValuePair.valueLength + ' / ' + properties.secrets.secretValueMaxLength}
                                         </Badge>
                                         <div style={{ fontSize: '96.75%', maxHeight: '19px', margin: '-3px 8px 5px 0' }}>
                                             <CustomInput
@@ -230,19 +232,19 @@ class App extends Component {
                                         <Progress multi>
                                             <Progress bar
                                                 color="primary"
-                                                value={this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength}>
-                                                {this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength >= 67 ? t('global.strength') + ' ' : null}
-                                                {this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength + ' %'}
+                                                value={keyValuePair.valueStrength.strength}>
+                                                {keyValuePair.valueStrength.strength >= 67 ? t('global.strength') + ' ' : null}
+                                                {keyValuePair.valueStrength.strength + ' %'}
                                             </Progress>
                                             <Progress bar
-                                                color={this.state.secretModalSecretKeyValuePairs[k].valueStrength.commonPassword ? 'warning' : 'light'}
-                                                className={this.state.secretModalSecretKeyValuePairs[k].valueStrength.commonPassword ? 'text-white' : 'text-primary'}
-                                                value={100 - this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength}>
-                                                {this.state.secretModalSecretKeyValuePairs[k].valueStrength.commonPassword ? t('secrets.common-password') :
-                                                    (this.state.secretModalSecretKeyValuePairs[k].valueStrength.strength < 67 ? t('global.strength') : null)}
+                                                color={keyValuePair.valueStrength.commonPassword ? 'warning' : 'light'}
+                                                className={keyValuePair.valueStrength.commonPassword ? 'text-white' : 'text-primary'}
+                                                value={100 - keyValuePair.valueStrength.strength}>
+                                                {keyValuePair.valueStrength.commonPassword ? t('secrets.common-password') :
+                                                    (keyValuePair.valueStrength.strength < 67 ? t('global.strength') : null)}
                                             </Progress>
                                         </Progress>
-                                        <fieldset disabled={Boolean(this.state.secretModalSecretKeyValuePairs[k].value)} style={{ margin: '4px 0' }}>
+                                        <div style={{ margin: '4px 0' }}>
                                             <InputGroup className="group-spaced">
                                                 <Label size="sm">{t('secrets.generate-random-value')}</Label>
                                                 <Input
@@ -252,6 +254,7 @@ class App extends Component {
                                                     placeholder={t('global.length')}
                                                     min={1}
                                                     max={properties.secrets.secretValueMaxLength}
+                                                    maxLength={properties.secrets.secretValueMaxLength.toString().length}
                                                     pattern="[0-9]*"
                                                     required
                                                     bsSize="sm"
@@ -266,13 +269,23 @@ class App extends Component {
                                                     toggle={() => {
                                                         setStateArrayElement(this, 'secretModalGenerateRandomValueDropdownOpen', k, !this.state.secretModalGenerateRandomValueDropdownOpen[k]);
                                                     }}>
-                                                    <ButtonIcon
-                                                        icon={Zap}
-                                                        tooltipText={t('global.generate')}
-                                                        color="primary"
-                                                        size="sm"
-                                                        type="submit"
-                                                        form={'app_form-secret-modal-generate-random-value' + k} />
+                                                    <span id={"app_btn-secret-modal-generate-random-value-" + k}>
+                                                        <ButtonIcon
+                                                            icon={Zap}
+                                                            tooltipText={Boolean(keyValuePair.value) && !keyValuePair.valueRandom ? t('xx') : t('global.generate')}
+                                                            color="primary"
+                                                            size="sm"
+                                                            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+                                                            disabled={Boolean(keyValuePair.value) && !keyValuePair.valueRandom}
+                                                            type="submit"
+                                                            form={'app_form-secret-modal-generate-random-value' + k} />
+                                                        <UncontrolledTooltip
+                                                            target={"app_btn-secret-modal-generate-random-value-" + k}
+                                                            placement="top"
+                                                            className={Boolean(keyValuePair.value) && !keyValuePair.valueRandom ? null : 'invisible'}>
+                                                            {t('secrets.generate-random-value-disabled')}
+                                                        </UncontrolledTooltip>
+                                                    </span>
                                                     <DropdownToggle split color="primary" size="sm" />
                                                     <DropdownMenu>
                                                         <div id={"app_secret-modal-charset-" + k + '-' + 0} className="dropdown-item no-hover" style={{ padding: '0.1rem 0.75rem' }}>
@@ -364,7 +377,7 @@ class App extends Component {
                                                     </DropdownMenu>
                                                 </InputGroupButtonDropdown>
                                             </InputGroup>
-                                        </fieldset>
+                                        </div>
                                     </Collapse>
                                     <div className="group-spaced" style={{ marginTop: '6px' }}>
                                         <ButtonIcon

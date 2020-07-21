@@ -1,8 +1,7 @@
-name: develop
+name: codeql
 
 on:
-  push:
-    branches: [ develop ]
+  workflow_dispatch
 
 jobs:
   build:
@@ -26,10 +25,14 @@ jobs:
         key: cache-mvn-dependencies-${{ hashFiles('pom.xml') }}
         restore-keys: cache-mvn-dependencies
 
+    - name: codeql-init
+      uses: github/codeql-action/init@v1
+      with:
+        languages: javascript
+        config-file: ./.github/codeql/codeql-config.yml
+
     - name: mvn-clean-install
       run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build
 
-    - name: docker-push
-      run: |
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
-        docker push s3curitybug/guardedbox:$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+    - name: codeql-analysis
+      uses: github/codeql-action/analyze@v1

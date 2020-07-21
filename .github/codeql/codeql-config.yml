@@ -6,3 +6,4 @@ queries:
 paths-ignore:
   - 'node_modules/**'
   - 'src/main/resources/static/**'
+  - 'target/classes/static/**'

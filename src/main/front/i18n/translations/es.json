@@ -92,7 +92,7 @@
     },
     "registration": {
         "title-register": "Crear nueva cuenta",
-        "info-password": "Por favor, elige una contraseña robusta con un mínimo de {passwordMinlength} caracteres. Te sugerimos utilizar una frase de paso que solo tú puedas recordar. Esta contraseña se utilizará para cifrar tus secretos. Si olvidas esta contraseña, ¡no podrás acceder a tus secretos!. IMPORTANTE: la versión actual de GuardedBox no permite modificar la contraseña.",
+        "info-password": "Por favor, elige una contraseña robusta con un mínimo de {passwordMinLength} caracteres y {passwordMinStrength}% de fortaleza, aunque es recomendable 100%. Te sugerimos utilizar una frase de paso que solo tú puedas recordar. Esta contraseña se utilizará para cifrar tus secretos. Si olvidas esta contraseña, ¡no podrás acceder a tus secretos!. IMPORTANTE: la versión actual de GuardedBox no permite modificar la contraseña.",
         "txt-repeat-password": "Repite la contraseña",
         "btn-register": "Registrarse",
         "registration-completed": "Tu cuenta ha sido creada correctamente.",

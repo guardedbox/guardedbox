@@ -92,7 +92,7 @@
     },
     "registration": {
         "title-register": "Create new account",
-        "info-password": "Please, choose a very strong password. It must have at least {passwordMinlength} characters. Try to use a passphrase only you can remember, rather than a simple password. Your password will be used to encrypt your secrets. If you forget this password, you will not have access to your secrets!. IMPORTANT: The current GuardedBox version doesn't support changing the password.",
+        "info-password": "Please, choose a very strong password. It must have at least {passwordMinlength} characters and {passwordMinStrength}% strength, although 100% is recommended. Try to use a passphrase only you can remember, rather than a simple password. Your password will be used to encrypt your secrets. If you forget this password, you will not have access to your secrets!. IMPORTANT: The current GuardedBox version doesn't support changing the password.",
         "txt-repeat-password": "Repeat password",
         "btn-register": "Sign up",
         "registration-completed": "Your account has been successfully created.",

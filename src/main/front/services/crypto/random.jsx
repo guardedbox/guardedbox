@@ -1,5 +1,9 @@
 import crypto from 'crypto';
 
+const EPSILON_BITS = -Math.log2(Number.EPSILON);
+const EPSILON_BYTES = Math.ceil(EPSILON_BITS / 8);
+const FIRST_BYTE_MASK = 0b11111111 >> (EPSILON_BYTES * 8 - EPSILON_BITS);
+
 /**
  * Generates an Uint8Array of random values.
  *
@@ -19,13 +23,11 @@ export function randomBytes(size, outputFormat) {
  */
 export function randomDecimal() {
 
-    const BYTES = 6;
-    const MAX = 281474976710656; // 2 ^ (6 * BYTES)
-
-    var bytes = randomBytes(BYTES);
+    var bytes = randomBytes(EPSILON_BYTES);
+    bytes[0] &= FIRST_BYTE_MASK;
     var number = bytes.readUIntBE(0, bytes.length);
 
-    return number / MAX;
+    return number * Number.EPSILON;
 
 }
 

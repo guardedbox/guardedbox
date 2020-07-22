@@ -36,7 +36,7 @@ jobs:
         config-file: ./.github/codeql/codeql-config.yml
 
     - name: mvn-clean-install
-      run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build
+      run: mvn clean install
 
     - name: codeql-analysis
       uses: github/codeql-action/analyze@v1

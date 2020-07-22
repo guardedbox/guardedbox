@@ -117,8 +117,6 @@
                                 <argument>image</argument>
                                 <argument>build</argument>
                                 <argument>-t</argument>
-                                <argument>${docker.repository}/${project.name}</argument>
-                                <argument>-t</argument>
                                 <argument>${docker.repository}/${project.name}:${project.version}</argument>
                                 <argument>.</argument>
                             </arguments>

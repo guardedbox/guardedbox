@@ -51,7 +51,7 @@ jobs:
       run: |
         docker tag s3curitybug/guardedbox:$POM_VERSION s3curitybug/guardedbox:snapshot
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
-        docker push s3curitybug/guardedbox:latest
+        docker push s3curitybug/guardedbox:snapshot
 
     - name: docker-push-latest-version
       if: ${{ github.event.inputs.pushDockerLatestVersion == 'true' }}

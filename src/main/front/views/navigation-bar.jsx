@@ -4,7 +4,7 @@ import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink, Ba
 import { Person, SignOut } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
 import InfoIcon from 'components/info-icon.jsx';
-import logo from 'images/logo.png';
+import logo from 'images/logo-long-dark.png';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { sessionEmail, logout } from 'services/session.jsx';
@@ -38,11 +38,12 @@ class NavigationBar extends Component {
 
         return (
             <div>
-                <Navbar color="light" light expand="md">
+                <Navbar light color="light" expand="md">
 
-                    <NavbarBrand><img src={logo} height="25" width="25" style={{ verticalAlign: "bottom", margin: "0 1rem 0 0.5rem" }} />
-                        {t('global.app-name')}
+                    <NavbarBrand style={{ margin: '-7px 16px 0 5px' }}>
+                        <img src={logo} style={{ height: '28px', verticalAlign: 'bottom' }} />
                     </NavbarBrand>
+
                     <NavbarToggler onClick={this.toggleNavbarToggler} />
 
                     <Collapse isOpen={this.state.navbarTogglerActive} navbar>

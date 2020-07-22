@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Row, Col, Jumbotron, Form, FormGroup, Input, Alert, Button, Progress, Popover, PopoverBody } from 'reactstrap';
 import { Eye, Key } from '@primer/octicons-react';
 import ActionIcon from 'components/action-icon.jsx';
-import logo from 'images/logo.png';
+import logo from 'images/logo-long-dark.png';
 import { registerView } from 'services/views.jsx';
 import { t } from 'services/translation.jsx';
 import { rest } from 'services/rest.jsx';
@@ -244,8 +244,7 @@ class Registration extends Component {
                     {/* Left part */}
                     <Col className="col-md-6 col-12 logo-col">
                         <div className="text-center" style={{ marginBottom: '2.5em' }}>
-                            <h1>{t('global.app-name')}</h1>
-                            <img src={logo} style={{ marginTop: '5em', marginBottom: '5em' }} />
+                            <img src={logo} style={{ width: '85%', marginTop: '2.5em', marginBottom: '5em' }} />
                             <h6>{t('global.slogan')}</h6>
                         </div>
                     </Col>

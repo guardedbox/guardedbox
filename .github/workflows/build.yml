@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       pushDockerPomVersion:
-        required: false
+        required: true
         default: 'false'
       pushDockerLatestVersion:
-        required: false
+        required: true
         default: 'false'
 
 jobs:
@@ -36,13 +36,13 @@ jobs:
       run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build
 
     - name: docker-push-pom-version
-      if: ${{ github.event.inputs.pushDockerPomVersion }}
+      if: ${{ github.event.inputs.pushDockerPomVersion == 'true' }}
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
         docker push s3curitybug/guardedbox:$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
 
     - name: docker-push-latest-version
-      if: ${{ github.event.inputs.pushDockerLatestVersion }}
+      if: ${{ github.event.inputs.pushDockerLatestVersion == 'true' }}
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
         docker push s3curitybug/guardedbox:latest

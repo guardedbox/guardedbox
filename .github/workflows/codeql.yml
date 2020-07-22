@@ -2,9 +2,13 @@ name: codeql
 
 on:
   workflow_dispatch:
+      inputs:
+      languages:
+        required: true
+        default: 'java, javascript'
 
 jobs:
-  build:
+  codeql:
     runs-on: ubuntu-latest
     steps:
 
@@ -28,7 +32,7 @@ jobs:
     - name: codeql-init
       uses: github/codeql-action/init@v1
       with:
-        languages: javascript
+        languages: ${{ github.event.inputs.languages }}
         config-file: ./.github/codeql/codeql-config.yml
 
     - name: mvn-clean-install

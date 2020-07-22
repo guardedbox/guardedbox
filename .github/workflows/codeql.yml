@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: 14
-        java-version: 14
+        node-version: '14'
+        java-version: '14'
     steps:
 
     - name: checkout

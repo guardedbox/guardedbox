@@ -2,7 +2,7 @@ name: codeql
 
 on:
   workflow_dispatch:
-      inputs:
+    inputs:
       languages:
         required: true
         default: 'java, javascript'

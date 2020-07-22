@@ -7,6 +7,10 @@ on:
         required: true
         default: 'java, javascript'
 
+env:
+  JAVA_VERSION: 14
+  NODE_VERSION: 14
+
 jobs:
   codeql:
     runs-on: ubuntu-latest
@@ -32,12 +36,12 @@ jobs:
     - name: setup-java
       uses: actions/setup-java@v1
       with:
-        java-version: 14
+        java-version: ${{ env.JAVA_VERSION }}
 
     - name: setup-npm
       uses: actions/setup-node@v1
       with:
-        node-version: 14
+        node-version: ${{ env.NODE_VERSION }}
 
     - name: codeql-init
       uses: github/codeql-action/init@v1

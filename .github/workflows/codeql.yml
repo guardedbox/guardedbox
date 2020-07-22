@@ -10,10 +10,6 @@ on:
 jobs:
   codeql:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: '14'
-        java-version: '14'
     steps:
 
     - name: checkout
@@ -36,12 +32,12 @@ jobs:
     - name: setup-java
       uses: actions/setup-java@v1
       with:
-        java-version: ${{ matrix.java-version }}
+        java-version: 14
 
     - name: setup-npm
       uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 14
 
     - name: codeql-init
       uses: github/codeql-action/init@v1

@@ -6,6 +6,9 @@ on:
       pushDockerPomVersion:
         required: true
         default: 'false'
+      pushDockerSnapshotVersion:
+        required: true
+        default: 'false'
       pushDockerLatestVersion:
         required: true
         default: 'false'
@@ -33,16 +36,26 @@ jobs:
         restore-keys: cache-mvn-dependencies
 
     - name: mvn-clean-install
-      run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build
+      run: |
+        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build
+        export POM_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
 
     - name: docker-push-pom-version
       if: ${{ github.event.inputs.pushDockerPomVersion == 'true' }}
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
-        docker push s3curitybug/guardedbox:$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        docker push s3curitybug/guardedbox:$POM_VERSION
+
+    - name: docker-push-snapshot-version
+      if: ${{ github.event.inputs.pushDockerSnapshotVersion == 'true' }}
+      run: |
+        docker tag s3curitybug/guardedbox:$POM_VERSION s3curitybug/guardedbox:snapshot
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+        docker push s3curitybug/guardedbox:latest
 
     - name: docker-push-latest-version
       if: ${{ github.event.inputs.pushDockerLatestVersion == 'true' }}
       run: |
+        docker tag s3curitybug/guardedbox:$POM_VERSION s3curitybug/guardedbox:latest
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
         docker push s3curitybug/guardedbox:latest

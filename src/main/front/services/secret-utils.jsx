@@ -128,7 +128,7 @@ var QWERTY_SEQUENCE_MAP = {
 var SEQUENCE_MAPS = [
     { map: ABC_SEQUENCE_MAP, onlyStrictSequences: false },
     { map: QWERTY_SEQUENCE_MAP, onlyStrictSequences: false }
-]
+];
 
 var strengthTester = new taiPasswordStrength.PasswordStrength();
 strengthTester.addCommonPasswords(taiPasswordStrength.commonPasswords);

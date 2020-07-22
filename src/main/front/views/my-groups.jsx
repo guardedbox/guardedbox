@@ -18,8 +18,6 @@ class MyGroups extends Component {
 
     state = {
         myGroups: null,
-        newGroupModalActive: false,
-        newGroupName: '',
         collapsersOpen: {}
     };
 

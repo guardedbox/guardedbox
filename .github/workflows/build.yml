@@ -38,7 +38,7 @@ jobs:
     - name: mvn-clean-install
       run: |
         docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/runner/work/guardedbox/guardedbox:/guardedbox -v ~/.m2/repository:/root/.m2/repository s3curitybug/guardedbox-build
-        export POM_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        echo ::set-env name=POM_VERSION::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
 
     - name: docker-push-pom-version
       if: ${{ github.event.inputs.pushDockerPomVersion == 'true' }}

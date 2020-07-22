@@ -1,9 +1,8 @@
 import crypto from 'crypto';
-import { Uint8Array } from 'services/crypto/Uint8Array.jsx';
 
 /**
  * Generates an Uint8Array of random values.
- * 
+ *
  * @param {number} size The size of the generated Uint8Array.
  * @param {string} [params.outputFormat] The format of the output. Default: Uint8Array.
  * @returns {(Uint8Array|string)} The generated Uint8Array.
@@ -32,7 +31,7 @@ export function randomDecimal() {
 
 /**
  * Generates a random integer.
- * 
+ *
  * @param {number} min Minimum value (included).
  * @param {number} max Maximum value (not included).
  */

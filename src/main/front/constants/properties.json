@@ -6,8 +6,8 @@
     },
     "registration": {
         "registrationTokenPattern": "^[a-zA-Z0-9]{86}$",
-        "passwordMinLength": 20,
-        "passwordMinStrength": 100
+        "passwordMinLength": 16,
+        "passwordMinStrength": 80
     },
     "session": {
         "timeout": 1800
@@ -34,11 +34,11 @@
             },
             {
                 "name": "symbols1",
-                "charset": "!@#$%^&*()"
+                "charset": "!@#$%&*()"
             },
             {
                 "name": "symbols2",
-                "charset": "\"+-/\\|.,;:=<>[]{}'`?_~"
+                "charset": "\"+-/\\|.,;:=<>[]{}'`^?_~"
             }
         ]
     },

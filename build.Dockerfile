@@ -3,7 +3,7 @@
 # Run (Linux):      docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/guardedbox -v $M2_REPO:/root/.m2/repository s3curitybug/guardedbox-build
 # Run (Windows):    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/guardedbox -v %M2_REPO%:/root/.m2/repository s3curitybug/guardedbox-build
 
-FROM adoptopenjdk/openjdk14:x86_64-alpine-jdk-14.0.1_7@sha256:c50307183937904b43dbdd7946b308859ea6b56d2005ad2ca0537414108b6a2b
+FROM adoptopenjdk/openjdk14:x86_64-alpine-jdk-14.0.2_12@sha256:679597daf90eda6a0c4da75ab3ea872984c22b363ddcdec5e13ff73cc8ca6465
 
 LABEL maintainer="s3curitybug@gmail.com"
 

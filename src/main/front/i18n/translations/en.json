@@ -63,7 +63,7 @@
         "title-login": "Log in",
         "btn-get-code": "Get access code",
         "popover-get-code-title": "Access code submitted",
-        "popover-get-code": "If your credentials are correct, you will receive an email with your login code within the next 2 minutes. Otherwise, check your email and password and try again.",
+        "popover-get-code": "If your credentials are correct, you will receive an email with your login code soon (within the next 1-10 minutes). Otherwise, check your email and password and try again.",
         "txt-code": "Code",
         "btn-login": "Log in",
         "popover-login-failed-title": "Incorrect credentials",
@@ -92,7 +92,7 @@
     },
     "registration": {
         "title-register": "Create new account",
-        "info-password": "Please, choose a very strong password. It must have at least {passwordMinlength} characters. Try to use a passphrase only you can remember, rather than a simple password. Your password will be used to encrypt your secrets. If you forget this password, you will not have access to your secrets!. IMPORTANT: The current GuardedBox version doesn't support changing the password.",
+        "info-password": "Please, choose a very strong password. It must have at least {passwordMinlength} characters and {passwordMinStrength}% strength, although 100% is recommended. Try to use a passphrase only you can remember, rather than a simple password. Your password will be used to encrypt your secrets. If you forget this password, you will not have access to your secrets!. IMPORTANT: The current GuardedBox version doesn't support changing the password.",
         "txt-repeat-password": "Repeat password",
         "btn-register": "Sign up",
         "registration-completed": "Your account has been successfully created.",
@@ -141,13 +141,14 @@
         "key-value-pair-info": "A secret may have several properties. For example, if the secret is a credit card, it may have 3 properties: Card number, CVV and Expiration date.",
         "show-password-options": "Password options",
         "common-password": "Common password",
-        "generate-random-value": "Generate random value",
+        "generate-random-value": "Generate random value of length:",
+        "generate-random-value-disabled": "As a protection, you must delete the current value to generate a random one",
         "charsets": {
             "lowerCaseLetters": "Lower case letters",
             "upperCaseLetters": "Upper case letters",
             "numbers": "Numbers",
-            "symbols1": "Simple symbols",
-            "symbols2": "Complex symbols"
+            "symbols1": "Common symbols",
+            "symbols2": "Other symbols"
         },
         "add-key-value-pair": "Add property",
         "remove-key-value-pair": "Remove property"

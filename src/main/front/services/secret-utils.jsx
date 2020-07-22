@@ -128,7 +128,7 @@ var QWERTY_SEQUENCE_MAP = {
 var SEQUENCE_MAPS = [
     { map: ABC_SEQUENCE_MAP, onlyStrictSequences: false },
     { map: QWERTY_SEQUENCE_MAP, onlyStrictSequences: false }
-]
+];
 
 var strengthTester = new taiPasswordStrength.PasswordStrength();
 strengthTester.addCommonPasswords(taiPasswordStrength.commonPasswords);
@@ -173,7 +173,8 @@ export function secretModal(header, secret, acceptCallback, acceptCallbackThirdA
                     key: keyValuePair.key,
                     value: clearValue,
                     valueLength: clearValue.length,
-                    valueStrength: secretStrength(clearValue)
+                    valueStrength: secretStrength(clearValue),
+                    valueRandom: false
                 });
 
                 showPasswordOptions.push(false);
@@ -194,7 +195,8 @@ export function secretModal(header, secret, acceptCallback, acceptCallbackThirdA
             key: '',
             value: '',
             valueLength: 0,
-            valueStrength: { strength: 0 }
+            valueStrength: { strength: 0 },
+            valueRandom: false
         }];
         var showPasswordOptions = [false];
         var generateRandomValueLength = [0];
@@ -434,13 +436,16 @@ export function secretModalMoveKeyValuePairDown(k) {
  */
 export function secretModalGenerateRandomValue(k) {
 
-    var generatedRandomSecret = randomSecret(app().state.secretModalGenerateRandomValueLength[k]);
+    var length = app().state.secretModalGenerateRandomValueLength[k];
+    var iterations = length < 2 ? 1 : (length < 20 ? 5 * length : (length < 40 ? 100 : (length < 100 ? 100 - length : 1)));
+    var generatedRandomSecret = randomSecret(length, iterations);
 
     setStateArrayElement(app(), 'secretModalSecretKeyValuePairs', k, {
         key: app().state.secretModalSecretKeyValuePairs[k].key,
         value: generatedRandomSecret.value,
         valueLength: generatedRandomSecret.length,
-        valueStrength: generatedRandomSecret.strength
+        valueStrength: generatedRandomSecret.strength,
+        valueRandom: true
     }, () => {
         app().secretModalTxtValue[k].current.value = generatedRandomSecret.value;
         app().secretModalTxtValue[k].current.select();
@@ -630,16 +635,16 @@ export function activateAllRandomSecretChatsets() {
  * Generates a random secret using the active charsets.
  *
  * @param {number} length The secret length.
+ * @param {number} [iterations] The number of iterations the secret will be randomly generated, returning the strongest one. Default: 1.
  * @returns {object} An object with the generated secret value, length and strength.
  */
-export function randomSecret(length) {
+export function randomSecret(length, iterations = 1) {
 
     var totalCharset = '';
     for (var charset of randomSecretCharsets) {
         if (charset.active) totalCharset += charset.charset;
     }
 
-    var iterations = length < 2 ? 1 : (length < 20 ? 5 * length : (length < 40 ? 100 : (length < 100 ? 100 - length : 1)));
     var bestStrength = -1;
     var ret = null;
 

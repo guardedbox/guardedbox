@@ -48,6 +48,9 @@ public class SecurityParametersProperties {
     /** Property: security-parameters.otp-ttl. */
     private final Long otpTtl;
 
+    /** Property: security-parameters.otp-max-valid-otps. */
+    private final Long otpMaxValidOtps;
+
     /** Property: security-parameters.otp-execution-time. */
     private final Long otpExecutionTime;
 

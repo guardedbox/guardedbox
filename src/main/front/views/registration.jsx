@@ -268,7 +268,7 @@ class Registration extends Component {
                                     />
                                 </FormGroup>
                                 <Alert color="secondary" className="small">
-                                    {t('registration.info-password', { passwordMinlength: properties.registration.passwordMinLength })}
+                                    {t('registration.info-password', { passwordMinLength: properties.registration.passwordMinLength, passwordMinStrength: properties.registration.passwordMinStrength })}
                                 </Alert>
                                 <div style={{ marginBottom: '5px' }}>
                                     <Progress multi>

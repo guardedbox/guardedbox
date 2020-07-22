@@ -2,7 +2,7 @@
 # Build:    docker image build -t s3curitybug/guardedbox .
 # Run:      docker run --rm s3curitybug/guardedbox
 
-FROM adoptopenjdk/openjdk14:x86_64-alpine-jre-14.0.1_7@sha256:cdd86f0dcf7d1d4151c37c23b0a22c3369a7c8cbb12b0975ed0c2d8c9ab2963e
+FROM adoptopenjdk/openjdk14:x86_64-alpine-jre-14.0.2_12@sha256:19edfd215b79af35a043e3b9bca1d8724f5f0e763a3c3ea7e797e5245c3b9d4a
 
 LABEL maintainer="s3curitybug@gmail.com"
 

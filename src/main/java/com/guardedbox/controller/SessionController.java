@@ -202,6 +202,10 @@ public class SessionController {
             session.setAttribute(SessionAttribute.OTP.getAttributeName(), otpSessionAttribute);
 
         } catch (Exception e) {
+
+            // Remove the one time passwords from the current session.
+            session.removeAttribute(SessionAttribute.OTP.getAttributeName());
+
         }
 
         // Renew the session id and add it to the session id response header.
@@ -237,7 +241,7 @@ public class SessionController {
                 throw new ServiceException("One time password is not stored in session");
             }
 
-            // Remove the challenge and the one time password from the current session.
+            // Remove the challenge and the one time passwords from the current session.
             session.removeAttribute(SessionAttribute.CHALLENGE.getAttributeName());
             session.removeAttribute(SessionAttribute.OTP.getAttributeName());
 

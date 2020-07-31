@@ -55,7 +55,7 @@
         "no-session": "No session",
         "no-session-info": "You cannot load data or make any changes.",
         "title-session-expired": "Your session has expired.",
-        "body-session-expired": "Would you like to keep working without a session? If you choose 'Yes', you will be able to continue working but you will not be able to load data or make any changes. If you choose 'No', you will be redirected to the login page.",
+        "body-session-expired": "Would you like to keep working without a session? If you choose ✓ you will be able to continue working but you will not be able to load data or make any changes. If you choose ✕ you will be redirected to the login page.",
         "title-working-without-session": "You are working without a session.",
         "body-working-without-session": "You cannot load data or make any changes."
     },

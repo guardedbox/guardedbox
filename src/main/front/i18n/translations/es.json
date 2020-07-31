@@ -55,7 +55,7 @@
         "no-session": "Sin sesión",
         "no-session-info": "No puedes cargar datos ni hacer ninguna modificación.",
         "title-session-expired": "Tu sesión ha caducado.",
-        "body-session-expired": "¿Quieres seguir trabajando sin una sesión? Si eliges 'Sí', podrás seguir trabajando pero no podrás cargar datos ni hacer ninguna modificación. Si eliges 'No', serás redirigido a la página de login.",
+        "body-session-expired": "¿Quieres seguir trabajando sin una sesión? Si eliges ✓ podrás seguir trabajando pero no podrás cargar datos ni hacer ninguna modificación. Si eliges ✕ serás redirigido a la página de login.",
         "title-working-without-session": "Estás trabajando sin una sesión.",
         "body-working-without-session": "No puedes cargar datos ni hacer ninguna modificación."
     },

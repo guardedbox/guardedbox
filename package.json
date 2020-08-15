@@ -8,7 +8,7 @@
     "dependencies": {
         "@primer/octicons-react": "9.6.0",
         "crypto-browserify": "3.12.0",
-        "i18next": "19.6.2",
+        "i18next": "19.6.3",
         "query-string": "6.13.1",
         "react": "16.13.1",
         "react-dom": "16.13.1",

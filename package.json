@@ -37,7 +37,7 @@
         "terser-webpack-plugin": "4.1.0",
         "webpack": "4.44.1",
         "webpack-cli": "3.3.12",
-        "webpack-subresource-integrity": "1.4.1"
+        "webpack-subresource-integrity": "1.5.1"
     },
     "resolutions": {
         "stream-browserify": "3.0.0"

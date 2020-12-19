@@ -46,7 +46,7 @@
 
         <!-- Dependencies Versions -->
         <logback-json.version>0.1.5</logback-json.version>
-        <bouncycastle.version>1.66</bouncycastle.version>
+        <bouncycastle.version>1.67</bouncycastle.version>
 
         <!-- Docker -->
         <docker.repository>s3curitybug</docker.repository>

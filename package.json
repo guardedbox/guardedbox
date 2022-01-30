@@ -14,7 +14,7 @@
         "react-dom": "16.13.1",
         "react-i18next": "11.7.0",
         "react-overlay-loader": "0.0.3",
-        "react-router-cache-route": "1.9.0",
+        "react-router-cache-route": "1.12.1",
         "react-router-dom": "5.2.0",
         "reactstrap": "8.5.1",
         "tai-password-strength": "1.1.1"
